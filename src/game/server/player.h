@@ -7,6 +7,9 @@
 #include "entities/character.h"
 #include "gamecontext.h"
 
+#include "entities/weapon.h"
+#include <vector>
+
 // player object
 class CPlayer
 {
@@ -150,6 +153,8 @@ public:
 		TIMERTYPE_GAMETIMER_AND_BROADCAST,
 		TIMERTYPE_NONE,
 	};
+
+	std::vector< std::vector<CWeapon*> > m_vWeaponLimit;
 
 	bool m_DND;
 	int64 m_FirstVoteTick;

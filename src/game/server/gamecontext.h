@@ -261,6 +261,8 @@ public:
 	bool PlayerModerating();
 	void ForceVote(int EnforcerID, bool Success);
 
+	bool m_ClientLeftServer[MAX_CLIENTS];
+
 private:
 
 	bool m_VoteWillPass;

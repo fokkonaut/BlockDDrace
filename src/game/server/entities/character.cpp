@@ -593,8 +593,8 @@ void CCharacter::FireWeapon()
 
 	m_AttackTick = Server()->Tick();
 
-	/*if(m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo > 0) // -1 == unlimited
-		m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo--;*/
+	if(m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo > 0) // -1 == unlimited
+		m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo--;
 
 	if(!m_ReloadTimer)
 	{
@@ -2237,11 +2237,18 @@ bool CCharacter::Freeze(int Seconds)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
 	{
-		for(int i = 0; i < NUM_WEAPONS; i++)
-			if(m_aWeapons[i].m_Got)
-			 {
-				 m_aWeapons[i].m_Ammo = 0;
-			 }
+		if (!m_WeaponsBackupped)
+		{
+			for (int i = 0; i < NUM_WEAPONS; i++)
+			{
+				if (m_aWeapons[i].m_Got)
+				{
+					m_aWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo; 
+					m_aWeapons[i].m_Ammo = 0;
+				}
+			}
+			m_WeaponsBackupped = true;
+		}
 		m_Armor = 0;
 
 		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
@@ -2265,12 +2272,18 @@ bool CCharacter::UnFreeze()
 {
 	if (m_FreezeTime > 0)
 	{
+		if (m_WeaponsBackupped)
+		{
+			for (int i = 0; i < NUM_WEAPONS; i++)
+			{
+				if (m_aWeapons[i].m_Got)
+				{
+					m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
+				}
+			}
+			m_WeaponsBackupped = false;
+		}
 		m_Armor=10;
-		for(int i=0;i<NUM_WEAPONS;i++)
-			if(m_aWeapons[i].m_Got)
-			 {
-				 m_aWeapons[i].m_Ammo = -1;
-			 }
 		if(!m_aWeapons[m_Core.m_ActiveWeapon].m_Got)
 			m_Core.m_ActiveWeapon = WEAPON_GUN;
 		m_FreezeTime = 0;
@@ -2282,7 +2295,7 @@ bool CCharacter::UnFreeze()
 	return false;
 }
 
-void CCharacter::GiveWeapon(int Weapon, bool Remove)
+void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 {
 	if (Weapon == WEAPON_NINJA)
 	{
@@ -2301,7 +2314,12 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove)
 	else
 	{
 		if (!m_FreezeTime)
-			m_aWeapons[Weapon].m_Ammo = -1;
+			m_aWeapons[Weapon].m_Ammo = Ammo;
+		else
+		{
+			m_aWeaponsBackup[Weapon][1] = Ammo;
+			m_aWeapons[Weapon].m_Ammo = 0;	//needs to be here because somehow a weapon that was dropped and picked up while being freezed had ammo, no idea how
+		}
 	}
 
 	m_aWeapons[Weapon].m_Got = !Remove;
@@ -2415,4 +2433,67 @@ int CCharacter::GetAimDir()
 	else
 		return 1;
 	return 0;
+}
+
+bool CCharacter::SetWeaponThatChrHas()
+{
+	if (m_aWeapons[WEAPON_GUN].m_Got)
+		SetWeapon(WEAPON_GUN);
+	else if (m_aWeapons[WEAPON_HAMMER].m_Got)
+		SetWeapon(WEAPON_HAMMER);
+	else if (m_aWeapons[WEAPON_SHOTGUN].m_Got)
+		SetWeapon(WEAPON_SHOTGUN);
+	else if (m_aWeapons[WEAPON_GRENADE].m_Got)
+		SetWeapon(WEAPON_GRENADE);
+	else if (m_aWeapons[WEAPON_RIFLE].m_Got)
+		SetWeapon(WEAPON_RIFLE);
+	else
+		return false;
+
+	return true;
+}
+
+void CCharacter::DropWeapon(int WeaponID)
+{
+	if ((isFreezed) || (m_FreezeTime) || !g_Config.m_SvAllowDroppingWeapons || (WeaponID == WEAPON_NINJA))
+		return;
+
+	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)
+	{
+		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset();
+		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
+	}
+
+
+	int m_CountWeapons = 0;
+
+	for (int i = 5; i > -1; i--)
+	{
+		if (m_aWeapons[i].m_Got)
+			m_CountWeapons++;
+	}
+
+	if (WeaponID == WEAPON_GUN && m_Jetpack)
+	{
+		m_Jetpack = false;
+		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You lost your jetpack gun");
+
+		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+
+		CWeapon *Weapon = new CWeapon(&GameServer()->m_World, WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), Team(), m_aWeapons[WeaponID].m_Ammo, true);
+		m_pPlayer->m_vWeaponLimit[WEAPON_GUN].push_back(Weapon);
+	}
+	else if (m_CountWeapons > 1)
+	{
+		m_aWeapons[WeaponID].m_Got = false;
+
+		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+
+		CWeapon *Weapon = new CWeapon(&GameServer()->m_World, WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), Team(), m_aWeapons[WeaponID].m_Ammo);
+		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
+	}
+
+	SetWeaponThatChrHas();
+
+	return;
 }

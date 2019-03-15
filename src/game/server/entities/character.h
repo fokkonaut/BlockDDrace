@@ -78,7 +78,7 @@ public:
 	bool IncreaseHealth(int Amount);
 	bool IncreaseArmor(int Amount);
 
-	void GiveWeapon(int Weapon, bool Remove = false);
+	void GiveWeapon(int Weapon, bool Remove = false, int Ammo = -1);
 	void GiveNinja();
 	void RemoveNinja();
 
@@ -92,6 +92,9 @@ public:
 	class CPlayer *GetPlayer() { return m_pPlayer; }
 
 	bool isFreezed;
+
+	void DropWeapon(int WeaponID);
+	bool SetWeaponThatChrHas();
 
 private:
 	// player controlling this character
@@ -113,6 +116,9 @@ private:
 		bool m_Got;
 
 	} m_aWeapons[NUM_WEAPONS];
+
+	int m_aWeaponsBackup[NUM_WEAPONS][2];
+	bool m_WeaponsBackupped;
 
 	int m_LastWeapon;
 	int m_QueuedWeapon;

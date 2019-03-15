@@ -1117,6 +1117,7 @@ void CGameContext::OnClientEnter(int ClientID)
 
 void CGameContext::OnClientConnected(int ClientID)
 {
+	m_ClientLeftServer[ClientID] = false;
 	{
 		bool Empty = true;
 		for(int i = 0; i < MAX_CLIENTS; i++)
@@ -1167,6 +1168,7 @@ void CGameContext::OnClientConnected(int ClientID)
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
+	m_ClientLeftServer[ClientID] = true;
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);
 	delete m_apPlayers[ClientID];
@@ -1678,10 +1680,6 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 			if (pMsg->m_Vote == 1) //vote yes (f3)
 			{
-				//
-			}
-			else if (pMsg->m_Vote == -1) //vote no (f4)
-			{
 				if (pChr)
 				{
 					IGameController* ControllerDDrace = pChr->GameServer()->m_pController;
@@ -1699,6 +1697,13 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 							((CGameControllerDDRace*)ControllerDDrace)->DropFlag(1, pChr->GetAimDir()); //blue
 						}
 					}
+				}
+			}
+			else if (pMsg->m_Vote == -1) //vote no (f4)
+			{
+				if (g_Config.m_SvAllowDroppingWeapons)
+				{
+					pChr->DropWeapon(pChr->GetActiveWeapon()); // drop the weapon youre holding
 				}
 			}
 
