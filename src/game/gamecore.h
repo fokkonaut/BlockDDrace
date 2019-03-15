@@ -197,6 +197,8 @@ public:
 	int m_HookTick;
 	int m_HookState;
 	int m_HookedPlayer;
+	int m_LastHookedPlayer;
+	int m_LastHookedTick;
 	int m_ActiveWeapon;
 
 	bool m_NewHook;
@@ -216,6 +218,21 @@ public:
 	void Reset();
 	void Tick(bool UseInput, bool IsClient);
 	void Move();
+
+	void setFlagPos(int id, vec2 Pos, int Stand, vec2 Vel, int carry);
+
+	vec2 m_FlagPos1;
+	vec2 m_FlagPos2;
+	int m_AtStand1;
+	int m_AtStand2;
+	vec2 m_FlagVel1;
+	vec2 m_FlagVel2;
+
+	int m_updateFlagVel;
+	vec2 m_UFlagVel;
+
+	int m_carryFlagChar1;
+	int m_carryFlagChar2;
 
 	void Read(const CNetObj_CharacterCore *pObjCore);
 	void Write(CNetObj_CharacterCore *pObjCore);

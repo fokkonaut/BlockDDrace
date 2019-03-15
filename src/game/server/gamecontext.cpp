@@ -16,6 +16,7 @@
 #include <game/version.h>
 #include <game/collision.h>
 #include <game/gamecore.h>
+#include <game/server/entities/flag.h>
 /*#include "gamemodes/dm.h"
 #include "gamemodes/tdm.h"
 #include "gamemodes/ctf.h"
@@ -1672,6 +1673,35 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if(MsgID == NETMSGTYPE_CL_VOTE)
 		{
+			CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
+			CCharacter *pChr = pPlayer->GetCharacter();
+
+			if (pMsg->m_Vote == 1) //vote yes (f3)
+			{
+				//
+			}
+			else if (pMsg->m_Vote == -1) //vote no (f4)
+			{
+				if (pChr)
+				{
+					IGameController* ControllerDDrace = pChr->GameServer()->m_pController;
+					if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0])
+					{
+						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0]->m_pCarryingCharacter == pChr)
+						{
+							((CGameControllerDDRace*)ControllerDDrace)->DropFlag(0, pChr->GetAimDir()); //red
+						}
+					}
+					if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1])
+					{
+						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1]->m_pCarryingCharacter == pChr)
+						{
+							((CGameControllerDDRace*)ControllerDDrace)->DropFlag(1, pChr->GetAimDir()); //blue
+						}
+					}
+				}
+			}
+
 			if(!m_VoteCloseTime)
 				return;
 
@@ -1682,7 +1712,6 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 			pPlayer->m_LastVoteTry = Now;
 
-			CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
 			if(!pMsg->m_Vote)
 				return;
 
@@ -2920,6 +2949,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 			{
 				vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
 				//m_pController->OnEntity(Index-ENTITY_OFFSET, Pos);
+				((CGameControllerDDRace*)m_pController)->OnEntity(Index - ENTITY_OFFSET, Pos);
 				m_pController->OnEntity(Index - ENTITY_OFFSET, Pos, LAYER_GAME, pTiles[y * pTileMap->m_Width + x].m_Flags);
 			}
 

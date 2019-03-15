@@ -94,6 +94,7 @@ void CCharacterCore::Reset()
 	m_HookDir = vec2(0,0);
 	m_HookTick = 0;
 	m_HookState = HOOK_IDLE;
+	m_LastHookedPlayer = -1;
 	m_HookedPlayer = -1;
 	m_Jumped = 0;
 	m_JumpedTotal = 0;
@@ -103,8 +104,39 @@ void CCharacterCore::Reset()
 	m_Collision = true;
 }
 
+void CCharacterCore::setFlagPos(int id, vec2 Pos, int Stand, vec2 Vel, int carry)
+{
+	if (id == 0)
+	{
+		m_FlagPos1 = Pos;
+		m_AtStand1 = Stand;
+		m_FlagVel1 = Vel;
+		m_carryFlagChar1 = carry;
+	}
+	else if (id == 1)
+	{
+		m_FlagPos2 = Pos;
+		m_AtStand2 = Stand;
+		m_FlagVel2 = Vel;
+		m_carryFlagChar2 = carry;
+	}
+}
+
 void CCharacterCore::Tick(bool UseInput, bool IsClient)
 {
+	m_updateFlagVel = 0;
+
+	if (m_LastHookedTick != -1)
+	{
+		m_LastHookedTick = m_LastHookedTick + 1;
+	}
+
+	if (m_LastHookedTick > SERVER_TICK_SPEED * 10)
+	{
+		m_LastHookedPlayer = -1;
+		m_LastHookedTick = -1;
+	}
+
 	float PhysSize = 28.0f;
 	int MapIndex = Collision()->GetPureMapIndex(m_Pos);
 	int MapIndexL = Collision()->GetPureMapIndex(vec2(m_Pos.x + (28/2)+4,m_Pos.y));
@@ -306,9 +338,37 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 						m_HookState = HOOK_GRABBED;
 						m_HookedPlayer = i;
 						Distance = distance(m_HookPos, pCharCore->m_Pos);
+						pCharCore->m_LastHookedPlayer = m_Id;
+						pCharCore->m_LastHookedTick = 0;
 					}
 				}
 			}
+			//Check against Flags
+			vec2 ClosestPoint;
+			ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos1);
+			if (distance(m_FlagPos1, ClosestPoint) < PhysSize + 2.0f && m_AtStand1 == 0 && m_carryFlagChar1 == 0 && m_HookedPlayer != 130 && m_HookedPlayer != 129)
+			{
+				if (m_HookedPlayer == -1)
+				{
+					m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
+					m_HookState = HOOK_GRABBED;
+					m_HookedPlayer = 129;
+					Distance = distance(m_HookPos, m_FlagPos1);
+				}
+			}
+
+			ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos2);
+			if (distance(m_FlagPos2, ClosestPoint) < PhysSize + 2.0f && m_AtStand2 == 0 && m_carryFlagChar2 == 0 && m_HookedPlayer != 129 && m_HookedPlayer != 130)
+			{
+				if (m_HookedPlayer == -1)
+				{
+					m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
+					m_HookState = HOOK_GRABBED;
+					m_HookedPlayer = 130;
+					Distance = distance(m_HookPos, m_FlagPos2);
+				}
+			}
+			//Check against Flags
 		}
 
 		if(m_HookState == HOOK_FLYING)
@@ -345,7 +405,36 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 
 	if(m_HookState == HOOK_GRABBED)
 	{
-		if(m_HookedPlayer != -1)
+		// UPDATE HOOK POS ON FLAG POS!!!!!
+		if (m_HookedPlayer == 129)
+		{
+			if (m_carryFlagChar1 == 0 || !m_carryFlagChar1)
+			{
+				m_HookPos = m_FlagPos1;
+			}
+			else
+			{
+				m_HookedPlayer = -1;
+				m_HookState = HOOK_RETRACTED;
+				m_HookPos = m_Pos;
+			}
+		}
+		else if (m_HookedPlayer == 130)
+		{
+			if (m_carryFlagChar2 == 0 || !m_carryFlagChar2)
+			{
+				m_HookPos = m_FlagPos2;
+			}
+			else
+			{
+				m_HookedPlayer = -1;
+				m_HookState = HOOK_RETRACTED;
+				m_HookPos = m_Pos;
+			}
+		}
+		// UPDATE HOOK POS ON FLAG POS!!!!!
+
+		else if (m_HookedPlayer != -1)
 		{
 			CCharacterCore *pCharCore = m_pWorld->m_apCharacters[m_HookedPlayer];
 			if(pCharCore && (IsClient || m_pTeams->CanKeepHook(m_Id, pCharCore->m_Id)))
@@ -389,12 +478,38 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 
 		// release hook (max default hook time is 1.25 s)
 		m_HookTick++;
-		if(m_HookedPlayer != -1 && (m_HookTick > SERVER_TICK_SPEED+SERVER_TICK_SPEED/5 || !m_pWorld->m_apCharacters[m_HookedPlayer]))
+		if (m_HookedPlayer != -1 && (m_HookTick > SERVER_TICK_SPEED+SERVER_TICK_SPEED/5 || (m_HookedPlayer < 129 && !m_pWorld->m_apCharacters[m_HookedPlayer])))
 		{
 			m_HookedPlayer = -1;
 			m_HookState = HOOK_RETRACTED;
 			m_HookPos = m_Pos;
 		}
+
+
+		if (m_HookedPlayer == 129)
+		{
+			if (m_AtStand1 == 1 || m_carryFlagChar1 == -1)
+			{
+				m_HookedPlayer = -1;
+				m_HookState = HOOK_RETRACTED;
+				m_HookPos = m_Pos;
+			}
+
+		}
+		if (m_HookedPlayer == 130)
+		{
+			if (m_AtStand2 == 1 || m_carryFlagChar2 == -1)
+			{
+				m_HookedPlayer = -1;
+				m_HookState = HOOK_RETRACTED;
+				m_HookPos = m_Pos;
+			}
+		}
+	}
+
+	if (m_LastHookedPlayer != -1 && !m_pWorld->m_apCharacters[m_LastHookedPlayer])
+	{
+		m_LastHookedPlayer = -1;
 	}
 
 	if(m_pWorld)
@@ -463,6 +578,43 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 						Temp.y = 0;
 					m_Vel = Temp;
 				}
+			}
+		}
+
+		if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+		{
+			float Distance;
+			vec2 FlagVel;
+			vec2 Dir;
+			vec2 FPos;
+			vec2 Temp;
+
+			if (m_HookedPlayer == 129) { m_updateFlagVel = 129; Temp = m_FlagVel1; FlagVel = m_FlagVel1; FPos = m_FlagPos1; Distance = distance(m_Pos, m_FlagPos1); Dir = normalize(m_Pos - m_FlagPos1); }
+			if (m_HookedPlayer == 130) { m_updateFlagVel = 130; Temp = m_FlagVel2; FlagVel = m_FlagVel2; FPos = m_FlagPos2; Distance = distance(m_Pos, m_FlagPos2); Dir = normalize(m_Pos - m_FlagPos2); }
+
+			if (Distance > PhysSize*1.50f)
+			{
+
+				float Accel = m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookDragAccel * (Distance / m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookLength);
+				float DragSpeed = m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookDragSpeed;
+
+				Temp.x = SaturatedAdd(-DragSpeed, DragSpeed, FlagVel.x, Accel*Dir.x*1.5f);
+				Temp.y = SaturatedAdd(-DragSpeed, DragSpeed, FlagVel.y, Accel*Dir.y*1.5f);
+
+				m_UFlagVel = Temp;
+
+				Temp.x = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.x, -Accel * Dir.x*0.25f);
+				Temp.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, -Accel * Dir.y*0.25f);
+				if (Temp.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA) || (m_TileSIndex == TILE_STOP && m_TileSFlags == ROTATION_270) || (m_TileSIndexL == TILE_STOP && m_TileSFlagsL == ROTATION_270) || (m_TileSIndexL == TILE_STOPS && (m_TileSFlagsL == ROTATION_90 || m_TileSFlagsL == ROTATION_270)) || (m_TileSIndexL == TILE_STOPA)))
+					Temp.x = 0;
+				if (Temp.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA) || (m_TileSIndex == TILE_STOP && m_TileSFlags == ROTATION_90) || (m_TileSIndexR == TILE_STOP && m_TileSFlagsR == ROTATION_90) || (m_TileSIndexR == TILE_STOPS && (m_TileSFlagsR == ROTATION_90 || m_TileSFlagsR == ROTATION_270)) || (m_TileSIndexR == TILE_STOPA)))
+					Temp.x = 0;
+				if (Temp.y < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_180) || (m_TileIndexB == TILE_STOP && m_TileFlagsB == ROTATION_180) || (m_TileIndexB == TILE_STOPS && (m_TileFlagsB == ROTATION_0 || m_TileFlagsB == ROTATION_180)) || (m_TileIndexB == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_180) || (m_TileFIndexB == TILE_STOP && m_TileFFlagsB == ROTATION_180) || (m_TileFIndexB == TILE_STOPS && (m_TileFFlagsB == ROTATION_0 || m_TileFFlagsB == ROTATION_180)) || (m_TileFIndexB == TILE_STOPA) || (m_TileSIndex == TILE_STOP && m_TileSFlags == ROTATION_180) || (m_TileSIndexB == TILE_STOP && m_TileSFlagsB == ROTATION_180) || (m_TileSIndexB == TILE_STOPS && (m_TileSFlagsB == ROTATION_0 || m_TileSFlagsB == ROTATION_180)) || (m_TileSIndexB == TILE_STOPA)))
+					Temp.y = 0;
+				if (Temp.y > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_0) || (m_TileIndexT == TILE_STOP && m_TileFlagsT == ROTATION_0) || (m_TileIndexT == TILE_STOPS && (m_TileFlagsT == ROTATION_0 || m_TileFlagsT == ROTATION_180)) || (m_TileIndexT == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_0) || (m_TileFIndexT == TILE_STOP && m_TileFFlagsT == ROTATION_0) || (m_TileFIndexT == TILE_STOPS && (m_TileFFlagsT == ROTATION_0 || m_TileFFlagsT == ROTATION_180)) || (m_TileFIndexT == TILE_STOPA) || (m_TileSIndex == TILE_STOP && m_TileSFlags == ROTATION_0) || (m_TileSIndexT == TILE_STOP && m_TileSFlagsT == ROTATION_0) || (m_TileSIndexT == TILE_STOPS && (m_TileSFlagsT == ROTATION_0 || m_TileSFlagsT == ROTATION_180)) || (m_TileSIndexT == TILE_STOPA)))
+					Temp.y = 0;
+				m_Vel = Temp;
+
 			}
 		}
 
@@ -661,7 +813,14 @@ void CCharacterCore::Write(CNetObj_CharacterCore *pObjCore)
 	pObjCore->m_HookY = round_to_int(m_HookPos.y);
 	pObjCore->m_HookDx = round_to_int(m_HookDir.x*256.0f);
 	pObjCore->m_HookDy = round_to_int(m_HookDir.y*256.0f);
-	pObjCore->m_HookedPlayer = m_HookedPlayer;
+	if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+	{
+		pObjCore->m_HookedPlayer = -1;
+	}
+	else
+	{
+		pObjCore->m_HookedPlayer = m_HookedPlayer;
+	}
 	pObjCore->m_Jumped = m_Jumped;
 	pObjCore->m_Direction = m_Direction;
 	pObjCore->m_Angle = m_Angle;
@@ -679,7 +838,14 @@ void CCharacterCore::Read(const CNetObj_CharacterCore *pObjCore)
 	m_HookPos.y = pObjCore->m_HookY;
 	m_HookDir.x = pObjCore->m_HookDx/256.0f;
 	m_HookDir.y = pObjCore->m_HookDy/256.0f;
-	m_HookedPlayer = pObjCore->m_HookedPlayer;
+	if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+	{
+		//
+	}
+	else
+	{
+		m_HookedPlayer = pObjCore->m_HookedPlayer;
+	}
 	m_Jumped = pObjCore->m_Jumped;
 	m_Direction = pObjCore->m_Direction;
 	m_Angle = pObjCore->m_Angle;

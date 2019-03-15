@@ -41,6 +41,8 @@ public:
 
 	CCharacter(CGameWorld *pWorld);
 
+	int m_FirstFreezeTick;
+
 	virtual void Reset();
 	virtual void Destroy();
 	virtual void Tick();
@@ -50,6 +52,7 @@ public:
 	virtual int NetworkClipped(int SnappingClient);
 	virtual int NetworkClipped(int SnappingClient, vec2 CheckPos);
 
+	int GetAimDir();
 	bool IsGrounded();
 
 	void SetWeapon(int W);
@@ -87,6 +90,8 @@ public:
 	bool IsAlive() const { return m_Alive; }
 	bool IsPaused() const { return m_Paused; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }
+
+	bool isFreezed;
 
 private:
 	// player controlling this character

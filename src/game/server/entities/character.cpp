@@ -8,6 +8,7 @@
 #include "character.h"
 #include "laser.h"
 #include "projectile.h"
+#include "flag.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -744,7 +745,33 @@ void CCharacter::Tick()
 	DDRaceTick();
 
 	m_Core.m_Input = m_Input;
+
+	int carry1 = 1; int carry2 = 1;
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == NULL)
+		{
+			carry1 = 0;
+		}
+		m_Core.setFlagPos(0, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel, carry1);
+	}
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == NULL)
+		{
+			carry2 = 0;
+		}
+		m_Core.setFlagPos(1, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel, carry2);
+	}
+
 	m_Core.Tick(true, false);
+
+	if (m_Core.m_updateFlagVel == 129) {
+		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel = m_Core.m_UFlagVel;
+	}
+	else if (m_Core.m_updateFlagVel == 130) {
+		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel = m_Core.m_UFlagVel;
+	}
 
 	// handle Weapons
 	HandleWeapons();
@@ -876,6 +903,29 @@ bool CCharacter::IncreaseArmor(int Amount)
 
 void CCharacter::Die(int Killer, int Weapon)
 {
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
+		{
+			if (m_Core.m_LastHookedPlayer != -1)
+			{
+				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(0, m_Core.m_LastHookedPlayer);
+			}
+		}
+	}
+
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this)
+		{
+			if (m_Core.m_LastHookedPlayer != -1)
+			{
+				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(1, m_Core.m_LastHookedPlayer);
+			}
+		}
+	}
+
+
 	if(Server()->IsRecording(m_pPlayer->GetCID()))
 		Server()->StopRecord(m_pPlayer->GetCID());
 
@@ -1624,6 +1674,34 @@ void CCharacter::HandleTiles(int Index)
 		m_LastRefillJumps = false;
 	}
 
+	// flags
+	if (((m_TileIndex == 66) || (m_TileFIndex == 66)) && m_Core.m_Vel.x < 0) {
+
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this || ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this) {
+		}
+		else
+		{
+			if ((int)GameServer()->Collision()->GetPos(MapIndexL).x)
+				if ((int)GameServer()->Collision()->GetPos(MapIndexL).x < (int)m_Core.m_Pos.x)
+					m_Core.m_Pos = m_PrevPos;
+			m_Core.m_Vel.x = 0;
+		}
+	}
+
+
+	if (((m_TileIndex == 67) || (m_TileFIndex == 67)) && m_Core.m_Vel.x > 0) {
+
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this || ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this) {
+		}
+		else
+		{
+			if ((int)GameServer()->Collision()->GetPos(MapIndexL).x)
+				if ((int)GameServer()->Collision()->GetPos(MapIndexL).x < (int)m_Core.m_Pos.x)
+					m_Core.m_Pos = m_PrevPos;
+			m_Core.m_Vel.x = 0;
+		}
+	}
+
 	// Teleport gun
 	if (((m_TileIndex == TILE_TELE_GUN_ENABLE) || (m_TileFIndex == TILE_TELE_GUN_ENABLE)) && !m_HasTeleGun)
 	{
@@ -2091,6 +2169,7 @@ void CCharacter::DDRaceTick()
 
 void CCharacter::DDRacePostCoreTick()
 {
+	isFreezed = false;
 	m_Time = (float)(Server()->Tick() - m_StartTime) / ((float)Server()->TickSpeed());
 
 	if (m_pPlayer->m_DefEmoteReset >= 0 && m_pPlayer->m_DefEmoteReset <= Server()->Tick())
@@ -2142,11 +2221,18 @@ void CCharacter::DDRacePostCoreTick()
 		m_IsBlueTeleGunTeleport = false;
 	}
 
+	if (!(isFreezed))
+	{
+
+		m_FirstFreezeTick = 0;
+	}
+
 	HandleBroadcast();
 }
 
 bool CCharacter::Freeze(int Seconds)
 {
+	isFreezed = true;
 	if ((Seconds <= 0 || m_Super || m_FreezeTime == -1 || m_FreezeTime > Seconds * Server()->TickSpeed()) && Seconds != -1)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
@@ -2157,6 +2243,12 @@ bool CCharacter::Freeze(int Seconds)
 				 m_aWeapons[i].m_Ammo = 0;
 			 }
 		m_Armor = 0;
+
+		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
+		{
+			m_FirstFreezeTick = Server()->Tick();
+		}
+
 		m_FreezeTime = Seconds == -1 ? Seconds : Seconds * Server()->TickSpeed();
 		m_FreezeTick = Server()->Tick();
 		return true;
@@ -2183,6 +2275,7 @@ bool CCharacter::UnFreeze()
 			m_Core.m_ActiveWeapon = WEAPON_GUN;
 		m_FreezeTime = 0;
 		m_FreezeTick = 0;
+		m_FirstFreezeTick = 0;
 		if (m_Core.m_ActiveWeapon==WEAPON_HAMMER) m_ReloadTimer = 0;
 		return true;
 	}
@@ -2313,4 +2406,13 @@ void CCharacter::Rescue()
 			UnFreeze();
 		}
 	}
+}
+
+int CCharacter::GetAimDir()
+{
+	if (m_Input.m_TargetX < 0)
+		return -1;
+	else
+		return 1;
+	return 0;
 }
