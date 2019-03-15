@@ -1,0 +1,1032 @@
+##### authors #####
+#translated to catalan by:
+#	Ryozuki
+##### translated strings #####
+
+%ds left
+== %ds restants
+
+%i minute left
+== %i minuts restants
+
+%i minutes left
+== %i minuts restants
+
+%i second left
+== %i segons restants
+
+%i seconds left
+== %i segons restants
+
+%s wins!
+== ¡%s ha guanyat!
+
+-Page %d-
+== -Pàgina %d-
+
+Abort
+== Cancelar
+
+Add
+== Afegir
+
+Add Friend
+== Afegir amic
+
+Address
+== Direcció
+
+All
+== Tots
+
+Are you sure that you want to delete the demo?
+== Estàs segur que vols eliminar la repetició?
+
+Are you sure that you want to quit?
+== Estàs segur que vols sortir?
+
+Are you sure that you want to remove the player from your friends list?
+== Estàs segur que vols eliminar aquest jugador de la llista d'amics?
+
+As this is the first time you launch the game, please enter your nick name below. It's recommended that you check the settings to adjust them to your liking before joining a server.
+== Com que és la primera vegada que obres el joc, si us plau, posa el teu nom. És recomanable que verifiquis la configuració del joc abans d'unir-te a un servidor.
+
+Automatically record demos
+== Gravar repeticions automàticament
+
+Automatically take game over screenshot
+== Fer una foto de la pantalla al final de la partida automàticament
+
+Blue team
+== Equip blau
+
+Blue team wins!
+== El equip blau ha guanyat!
+
+Body
+== Cos
+
+Call vote
+== Votar
+
+Change settings
+== Canviar la configuració
+
+Chat
+== Conversació
+
+Clan
+== Clan
+
+Client
+== Client
+
+Close
+== Tancar
+
+Compatible version
+== Versió compatible
+
+Connect
+== Connectar
+
+Connecting to
+== T'estàs unint a
+
+Connection Problems...
+== Problemes de connexió...
+
+Console
+== Consola
+
+Controls
+== Controls
+
+Count players only
+== Només contar jugadors
+
+Country
+== País
+
+Current
+== Actual
+
+Custom colors
+== Colors personalitzats
+
+Delete
+== Esborrar
+
+Delete demo
+== Esborrar repetició
+
+Demo details
+== Detalls de la repetició
+
+Demofile: %s
+== Fitxer de la repetició: %s
+
+Demos
+== Repeticions
+
+Disconnect
+== Desconnectar
+
+Disconnected
+== Desconnectat
+
+Downloading map
+== Descarregant mapa
+
+Draw!
+== Empat!
+
+Dynamic Camera
+== Càmera dinàmica
+
+Emoticon
+== Emoticó
+
+Enter
+== Entrar
+
+Error
+== Error
+
+Error loading demo
+== Error en carregar la repetició
+
+Favorite
+== Preferit
+
+Favorites
+== Preferits
+Feet
+== Peus
+
+Filter
+== Filtre
+
+Fire
+== Disparar
+
+Folder
+== Carpeta
+
+Force vote
+== Forçar la votació
+
+Free-View
+== Vista lliure
+
+Friends
+== Amics
+
+Fullscreen
+== Pantalla completa
+
+Game
+== Joc
+
+Game info
+== Informació de la partida
+
+Game over
+== Fi de la partida
+
+Game paused
+== Joc en pausa
+
+Game type
+== Mode de joc
+
+Game types:
+== Modes de joc:
+
+General
+== General
+
+Graphics
+== Gràfics
+
+Grenade
+== Granada
+
+Hammer
+== Martell
+
+Has people playing
+== Hi ha gent jugant
+
+High Detail
+== Més detalls
+
+Hook
+== Ganxo
+
+Invalid Demo
+== Repetició invàlida
+
+Join blue
+== Unir-se al blau
+
+Join red
+== Unir-se al vermell
+
+Jump
+== Saltar
+
+Kick player
+== Expulsar el jugador
+
+Language
+== Idioma
+
+MOTD
+== MOTD
+
+Map
+== Mapa
+
+Maximum ping:
+== Ping màxim:
+
+Mouse sens.
+== Sensibilitat del ratolí
+
+Move left
+== Moure's a l'esquerra
+
+Move player to spectators
+== Moure el jugador als espectadors
+
+Move right
+== Moure's a la dreta
+
+Movement
+== Moviment
+
+Mute when not active
+== Silenciar si no està actiu
+
+Name
+== Nom
+
+Next weapon
+== Arma següent
+
+Nickname
+== Nom
+
+No
+== No
+
+No password
+== Sense contrasenya
+
+No servers found
+== Cap servidor trobat
+
+No servers match your filter criteria
+== Cap servidor correspon als criteris de filtratge
+
+Ok
+== Ok
+
+Open
+== Obrir
+
+Parent Folder
+== Carpeta principal
+
+Password
+== Contrasenya
+
+Password incorrect
+== Contrasenya incorrecta
+
+Ping
+== Ping
+
+Pistol
+== Pistola
+
+Play
+== Reproduir
+
+Play background music
+== Reproduir música de fons
+
+Player
+== Jugador
+
+Player country:
+== País del jugador
+
+Player options
+== Opcions del jugador
+
+Players
+== Jugadors
+
+Please balance teams!
+== Si us plau, equilibreu els equips!
+
+Prev. weapon
+== Arma anterior
+
+Quality Textures
+== Textures de qualitat
+
+Quit
+== Sortir
+
+Reason:
+== Motiu:
+
+Red team
+== Equip vermell
+
+Red team wins!
+== El equip vermell guanya!
+
+Refresh
+== Actualitzar
+
+Refreshing master servers
+== Actualitzant servidors principals
+
+Remote console
+== Consola remota
+
+Remove
+== Eliminar
+
+Remove friend
+== Eliminar amic
+
+Rename
+== Reanomenar
+
+Rename demo
+== Canviar de nom la repetició
+
+Reset filter
+== Reiniciar el filtre
+
+Respawn
+== Reaparèixer
+
+Sample rate
+== Freqüència de la imatge
+
+Score
+== Punts
+
+Score limit
+== Límit de punts
+
+Scoreboard
+== Puntuació
+
+Screenshot
+== Foto de pantalla
+
+Server address:
+== IP del servidor:
+
+Server details
+== Detalls del servidor
+
+Server filter
+== Filtre del servidor
+
+Server info
+== Servidor
+
+Server not full
+== Servidor sense omplir
+
+Shotgun
+== Escopeta
+
+Show chat
+== Veure el xat
+
+Show friends only
+== Només veure els amics
+
+Show ingame HUD
+== Veure el HUD en el joc
+
+Show name plates
+== Veure els noms
+
+Show only chat messages from friends
+== Rebre només missatges d'amics
+
+Show only supported
+== Veure únicament modes compatibles
+
+Skins
+== Skins
+
+Sound
+== So
+
+Sound error
+== Error de so
+
+Spectate
+== Asistir
+
+Spectate next
+== Observar el següent
+
+Spectate previous
+== Observar l'anterior
+
+Spectator mode
+== Mode espectador
+
+Spectators
+== Espectadors
+
+Standard gametype
+== Tipus de joc estàndard
+
+Standard map
+== Mapa estàndard
+
+Stop record
+== Parar la grabació
+
+Strict gametype filter
+== Filtratge estricte del mode de joc
+
+Sudden Death
+== Mort sobtada
+
+Switch weapon on pickup
+== Canviar d'arma a l'agafar-la
+
+Team
+== Equip
+
+Team chat
+== En equip
+
+Texture Compression
+== Compressió de textures
+
+The audio device couldn't be initialised.
+== El dispositiu d'àudio no pot ser inicialitzat.
+
+The server is running a non-standard tuning on a pure game type.
+== El servidor està utilitzant una modificació en un mode de joc estàndard
+
+There's an unsaved map in the editor, you might want to save it before you quit the game.
+== Tens un mapa sense guardar a l'editor, segurament vols guardar-lo abans de sortir.
+
+Time limit
+== Temps límit
+
+Time limit: %d min
+== Temps límit: %d minuts
+
+Try again
+== Intenteu de nou
+
+Type
+== Tipus
+
+Unable to delete the demo
+== No es pot eliminar la repetició
+
+Unable to rename the demo
+== No es pot reanomenar la repetició
+
+Use sounds
+== Utilitzar sons
+
+Use team colors for name plates
+== Fer servir els colors dels equips en els noms
+
+V-Sync
+== V-Sync
+
+Version
+== Versió
+
+Vote command:
+== Ordre per la votació:
+
+Vote description:
+== Descripció de la votació:
+
+Vote no
+== Votar no
+
+Vote yes
+== Votar sí
+
+Voting
+== Votació
+
+Warmup
+== Escalfament
+
+Weapon
+== Arma
+
+Yes
+== Sí
+
+You must restart the game for all settings to take effect.
+== Has de reiniciar el joc perquè els canvis tinguin efecte.
+
+Borderless window
+== Pantalla sense finestra
+
+Demo
+== Repetició
+
+Laser
+== Làser
+
+Reset
+== Reiniciat
+
+Screen
+== Pantalla
+
+New name:
+== Nom nou:
+
+Sat.
+== Saturació
+
+Miscellaneous
+== Miscel·lània
+
+Internet
+== Internet
+
+Max demos
+== Número màxim de repeticions
+
+News
+== Notícies
+
+Join game
+== Unir-se
+
+FSAA samples
+== Mostres FSAA
+
+%d of %d servers, %d players
+== %d de %d servidors, %d jugadors
+
+Sound volume
+== Volum del so
+
+Created:
+== Creat:
+
+Max Screenshots
+== Número màxim de captures
+
+Length:
+== Longitud:
+
+Rifle
+== Láser
+
+Netversion:
+== Netversion:
+
+Map:
+== Mapa:
+
+Info
+== Informació
+
+Hue
+== Tonalitat
+
+Record demo
+== Grabar repetició
+
+Your skin
+== La teva skin
+
+Size:
+== Mida:
+
+Reset to defaults
+== Restaurar als valors predeterminats
+
+Quit anyway?
+== Sortir igualment?
+
+Display Modes
+== Modes de vídeo
+
+Version:
+== Versió:
+
+Round
+== Ronda
+
+Lht.
+== Lluminositat
+
+UI Color
+== Color del menú
+
+Host address
+== Direcció del host
+
+Crc:
+== Crc:
+
+Alpha
+== Alfa
+
+Current version: %s
+== Versió actual: %s
+
+LAN
+== LAN
+
+Name plates size
+== Mida de la lletra dels noms
+
+Type:
+== Tipus:
+
+Ratio
+== Proporció
+
+Dummy settings
+== Configuració del maniquí
+
+AntiPing
+== AntiPing
+
+Show quads
+== Mostrar els quads
+
+Map sound volume
+== Volum del so del mapa
+
+Countries
+== Països
+
+\n\nReconnect in %d sec
+== Reconnectar-se en %d segons
+
+Grabs
+== Agafa
+
+Background (entities)
+== Fons (entitats)
+
+Show kill messages
+== Mostrar missatges de mort
+
+Show ghost
+== Mostrar el fantasma
+
+DDNet
+== DDNet
+
+No updates available
+== No hi ha actualitzacions disponibles
+
+Enable server message sound
+== Activa el so del missatge del servidor
+
+second
+== segon
+
+Show votes window after voting
+== Mostrar la finestra de votacions després de votar
+
+HUD
+== HUD
+
+Look out!
+== Estigues atent!
+
+Select a name
+== Selecciona un nom
+
+Enable team chat sound
+== Activar el so del xat d'equip
+
+Show other players' hook collision lines
+== Mostra les línies de col·lisió d'altres jugadors
+
+We will win
+== Nosaltres guanyarem
+
+Hi o/
+== Hola o/
+
+Deaths
+== Morts
+
+Enable game sounds
+== Activar sons del joc
+
+DDNet Client needs to be restarted to complete update!
+== El client DDNet necessita reiniciar-se per completar l'actualització!
+
+Spectator
+== Espectador
+
+Please use a different name
+== Si us plau, fes servir un nom diferent
+
+Wait before try for
+== Espereu abans de provar-ho
+
+Show console window
+== Mostra la finestra de la consola
+
+Show others
+== Mostrar altres
+
+Gameplay
+== Joc
+
+Restart
+== Reiniciar
+
+Old mouse mode
+== Mode antic del ratolí
+
+Browser
+== Navegador
+
+Follow
+== Seguir
+
+Enable gun sound
+== Activar el so de la pistola
+
+Show health + ammo
+== Mostrar la vida + munició
+
+Team message
+== Missatge d'equip
+
+Manual %3d:%02d  
+== Manual %3d:%02d
+
+Automatically create statboard csv
+== Crear un fitxer csv d'estadístiques automàticament
+
+Save the best demo of each race
+== Guardar la millor demo de cada carrera
+
+Show tiles layers from BG map
+== Mostrar les capes de rajoles del mapa de fons
+
+Are you sure that you want to disconnect?
+== Estàs segur que et vols desconnectar?
+
+Types
+== Tipus
+
+Ghost
+== Fantasma
+
+Remove chat
+== Eliminar el xat
+
+Threaded sound loading
+== Càrrega de so en fils
+
+Check now
+== Comprova ara
+
+Race %3d:%02d  
+== Carrera %3d:%02d  
+
+Background (regular)
+== Fons (regular)
+
+DDNet %s is out! Download it at DDNet.tw!
+== DDNet %s ja està disponible! Descarrega'l a DDNet.tw!
+
+Reset wanted weapon on death
+== Reiniciar l'arma desitjada al morir
+
+Frags
+== Morts fetes
+
+AntiPing: predict other players
+== AntiPing: Predir altres jugadors
+
+Show other players' key presses
+== Mostrar les tecles premudes d'altres jugadors
+
+Automatically take statboard screenshot
+== Fer una foto de la taula d'estadístiques automàticament
+
+System message
+== Missatge del sistema
+
+Enable long pain sound (used when shooting in freeze)
+== Activar el so de dolor llarg (quan dispares congelat)
+
+DDNet %s is available:
+== DDNet %s està disponible:
+
+Updating...
+== Actualitzant...
+
+Overlay entities
+== Entitats superposades
+
+Messages
+== Missatges
+
+%.2f MiB
+== %.2f MiB
+
+Refresh Rate
+== Freqüència d'actualització
+
+New random timeout code
+== Nou codi aleatori pel timeout
+
+Suicides
+== És suïcida
+
+Net
+== Net
+
+Loading DDNet Client
+== Carregant el client DDNet
+
+FPM
+== FPM
+
+Default zoom
+== Zoom predeterminat
+
+Show score
+== Mostrar la puntuació
+
+Spree
+== Spree
+
+Show client IDs in Scoreboard
+== Mostrar les IDs dels clients a la taula d'estadístiques
+
+Max CSVs
+== CSVs màxims
+
+seconds
+== segons
+
+%.2f KiB
+== %.2f KiB
+
+Try fast HTTP map download first
+== Intentar primer la descàrrega ràpida del mapa
+
+Use DDRace Scoreboard
+== Fer servir la taula d'estadístiques DDRace
+
+Best
+== Millor
+
+Enable regular chat sound
+== Activar el so de xat regular
+
+Normal message
+== Missatge normal
+
+Search
+== Buscar
+
+Connecting dummy
+== Connectant el maniquí
+
+Clan plates size
+== Mida del clan
+
+Update now
+== Actualitza ara
+
+Auto %3d:%02d  
+== Auto %3d:%02d 
+
+Show clan above name plates
+== Mostrar el clan a sobre dels noms
+
+Save ghost
+== Guardar el fantasma
+
+Exclude
+== Excloure
+
+Enable highlighted chat sound
+== Activar el so del xat destacat
+
+Hello and welcome
+== Hola i benvingut
+
+AntiPing: predict weapons
+== AntiPing: predir armes
+
+DDNet Client updated!
+== El client DDNet s'ha actualitzat!
+
+Outline color
+== Color del contorn
+
+Highlighted message
+== Missatge destacat
+
+Friend
+== Amic
+
+Switch weapon when out of ammo
+== Canviar d'arma en quedar-se sense munició
+
+AntiPing: predict grenade paths
+== AntiPing: predir el camí de la granada
+
+AntiPing limit
+== Límit del AntiPing
+
+Inner color
+== Color interior
+
+Kitty skins (DDCat)
+== Skins gatunes (DDCat)
+
+Friend message
+== Missatge d'amics
+
+\xEE\x85\x8B
+== \xEE\x85\x8B
+
+Fat skins (DDFat)
+== Skins Groses (DDFat)
+
+Show names in chat in team colors
+== Mostrar els noms en el xat amb colors
+
+may cause delay
+== pot causar retràs
+
+Unfinished map
+== Mapa inacabat
+
+Deactivate
+== Desactivar
+
+Welcome to DDNet
+== Benvingut a DDNet
+
+Preinit VBO (iGPUs only)
+== Preinicialitzar VBO (iGPUs només)
+
+Activate
+== Activar
+
+Multiple texture units (disable for MacOS)
+== Multiple texture units (disable for MacOS)
+
+Use OpenGL 3.3 (experimental)
+== Utilitzar OpenGL 3.3 (experimental)
+
+UI mouse s.
+== UI mouse s.
+
+File already exists, do you want to overwrite it?
+== L'arxiu ja existeix, vols reescriure'l?
+
+Indicate map finish
+== Indicar la finalització d'un mapa
+
+Save
+== Guardar
+
+Vanilla skins only
+== Només Vanilla skins only
+
+Date
+== Data
+
+Show DDNet map finishes in server browser\n(transmits your player name to info.ddnet.tw)
+== Mostrar finalitzacions de mapes en el buscador de servidors\n(retransmet el teu nom de jugar a info.ddnet.tw)
+
+Reload
+== Recarga
