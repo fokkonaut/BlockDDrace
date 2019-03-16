@@ -54,11 +54,11 @@ void CGameContext::ConInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info", aBuf);
 	}
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
-			"Official site: DDNet.tw");
+			"BlockDDrace is a mod, based on DDNet 11.9.");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
-			"For more info: /cmdlist");
+		"It contains many new featurs, including block and city elements.");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
-			"Or visit DDNet.tw");
+			"For more info, say '/cmdlist'");
 }
 
 void CGameContext::ConHelp(IConsole::IResult *pResult, void *pUserData)
@@ -231,7 +231,7 @@ void CGameContext::ConRules(IConsole::IResult *pResult, void *pUserData)
 	if (g_Config.m_SvDDRaceRules)
 	{
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "rules",
-				"Be nice.");
+				"There are no rules.");
 		Printed = true;
 	}
 	#define _RL(n) g_Config.m_SvRulesLine ## n
@@ -295,60 +295,14 @@ void ToggleSpecPause(IConsole::IResult *pResult, void *pUserData, int PauseType)
 	}
 }
 
-void ToggleSpecPauseVoted(IConsole::IResult *pResult, void *pUserData, int PauseType)
-{
-	if(!CheckClientID(pResult->m_ClientID))
-		return;
-
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
-	if(!pPlayer)
-		return;
-
-	int PauseState = pPlayer->IsPaused();
-	if(PauseState > 0)
-	{
-		IServer* pServ = pSelf->Server();
-		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "You are force-paused for %d seconds.", (PauseState - pServ->Tick()) / pServ->TickSpeed());
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "spec", aBuf);
-		return;
-	}
-
-	bool IsPlayerBeingVoted = pSelf->m_VoteCloseTime &&
-		(pSelf->m_VoteKick || pSelf->m_VoteSpec) &&
-		pResult->m_ClientID != pSelf->m_VoteVictim;
-	if((!IsPlayerBeingVoted && -PauseState == PauseType) ||
-		(IsPlayerBeingVoted && PauseState && pPlayer->m_SpectatorID == pSelf->m_VoteVictim))
-	{
-		pPlayer->Pause(CPlayer::PAUSE_NONE, false);
-	}
-	else
-	{
-		pPlayer->Pause(PauseType, false);
-		if(IsPlayerBeingVoted)
-			pPlayer->m_SpectatorID = pSelf->m_VoteVictim;
-	}
-}
-
 void CGameContext::ConToggleSpec(IConsole::IResult *pResult, void *pUserData)
 {
 	ToggleSpecPause(pResult, pUserData, g_Config.m_SvPauseable ? CPlayer::PAUSE_SPEC : CPlayer::PAUSE_PAUSED);
 }
 
-void CGameContext::ConToggleSpecVoted(IConsole::IResult *pResult, void *pUserData)
-{
-	ToggleSpecPauseVoted(pResult, pUserData, g_Config.m_SvPauseable ? CPlayer::PAUSE_SPEC : CPlayer::PAUSE_PAUSED);
-}
-
 void CGameContext::ConTogglePause(IConsole::IResult *pResult, void *pUserData)
 {
 	ToggleSpecPause(pResult, pUserData, CPlayer::PAUSE_PAUSED);
-}
-
-void CGameContext::ConTogglePauseVoted(IConsole::IResult *pResult, void *pUserData)
-{
-	ToggleSpecPauseVoted(pResult, pUserData, CPlayer::PAUSE_PAUSED);
 }
 
 void CGameContext::ConTeamTop5(IConsole::IResult *pResult, void *pUserData)
@@ -413,54 +367,6 @@ void CGameContext::ConTop5(IConsole::IResult *pResult, void *pUserData)
 #endif
 }
 
-#if defined(CONF_SQL)
-void CGameContext::ConTimes(IConsole::IResult *pResult, void *pUserData)
-{
-	if(!CheckClientID(pResult->m_ClientID)) return;
-	CGameContext *pSelf = (CGameContext *)pUserData;
-
-	if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-		if(pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery + g_Config.m_SvSqlQueriesDelay * pSelf->Server()->TickSpeed() >= pSelf->Server()->Tick())
-			return;
-
-	if(g_Config.m_SvUseSQL)
-	{
-		CSqlScore *pScore = (CSqlScore *)pSelf->Score();
-		CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
-		if(!pPlayer)
-			return;
-
-		if(pResult->NumArguments() == 0)
-		{
-			pScore->ShowTimes(pPlayer->GetCID(),1);
-		}
-		else if(pResult->NumArguments() < 3)
-		{
-			if (pResult->NumArguments() == 1)
-			{
-				if(pResult->GetInteger(0) != 0)
-					pScore->ShowTimes(pPlayer->GetCID(),pResult->GetInteger(0));
-				else
-					pScore->ShowTimes(pPlayer->GetCID(), (str_comp(pResult->GetString(0), "me") == 0) ? pSelf->Server()->ClientName(pResult->m_ClientID) : pResult->GetString(0),1);
-			}
-			else if (pResult->GetInteger(1) != 0)
-			{
-				pScore->ShowTimes(pPlayer->GetCID(), (str_comp(pResult->GetString(0), "me") == 0) ? pSelf->Server()->ClientName(pResult->m_ClientID) : pResult->GetString(0),pResult->GetInteger(1));
-			}
-		}
-		else
-		{
-			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "times", "/times needs 0, 1 or 2 parameter. 1. = name, 2. = start number");
-			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "times", "Example: /times, /times me, /times Hans, /times \"Papa Smurf\" 5");
-			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "times", "Bad: /times Papa Smurf 5 # Good: /times \"Papa Smurf\" 5 ");
-		}
-
-		if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-			pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery = pSelf->Server()->Tick();
-	}
-}
-#endif
-
 void CGameContext::ConDND(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -512,33 +418,6 @@ void CGameContext::ConMap(IConsole::IResult *pResult, void *pUserData)
 #endif
 
 	pSelf->Score()->MapVote(pResult->m_ClientID, pResult->GetString(0));
-
-#if defined(CONF_SQL)
-	if(g_Config.m_SvUseSQL)
-		pPlayer->m_LastSQLQuery = pSelf->Server()->Tick();
-#endif
-}
-
-void CGameContext::ConMapInfo(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	if (!CheckClientID(pResult->m_ClientID))
-		return;
-
-	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
-	if (!pPlayer)
-		return;
-
-#if defined(CONF_SQL)
-	if(g_Config.m_SvUseSQL)
-		if(pPlayer->m_LastSQLQuery + g_Config.m_SvSqlQueriesDelay * pSelf->Server()->TickSpeed() >= pSelf->Server()->Tick())
-			return;
-#endif
-
-	if (pResult->NumArguments() > 0)
-		pSelf->Score()->MapInfo(pResult->m_ClientID, pResult->GetString(0));
-	else
-		pSelf->Score()->MapInfo(pResult->m_ClientID, g_Config.m_SvMap);
 
 #if defined(CONF_SQL)
 	if(g_Config.m_SvUseSQL)
@@ -1274,82 +1153,6 @@ void CGameContext::ConTime(IConsole::IResult *pResult, void *pUserData)
 	pSelf->SendBroadcast(aBuftime, pResult->m_ClientID);
 }
 
-static const char s_aaMsg[3][128] = {"game/round timer.", "broadcast.", "both game/round timer and broadcast."};
-
-void CGameContext::ConSetTimerType(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-
-	if (!CheckClientID(pResult->m_ClientID))
-		return;
-
-	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
-	if (!pPlayer)
-		return;
-
-	char aBuf[128];
-
-	if(pResult->NumArguments() > 0)
-	{
-		int OldType = pPlayer->m_TimerType;
-
-		if(str_comp_nocase(pResult->GetString(0), "gametimer") == 0)
-		{
-			if(pPlayer->m_ClientVersion >= VERSION_DDNET_GAMETICK)
-				pPlayer->m_TimerType = CPlayer::TIMERTYPE_GAMETIMER;
-			else
-				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "timer", "gametimer is not supported by your client.");
-		}
-		else if(str_comp_nocase(pResult->GetString(0), "broadcast") == 0)
-			pPlayer->m_TimerType = CPlayer::TIMERTYPE_BROADCAST;
-		else if(str_comp_nocase(pResult->GetString(0), "both") == 0)
-		{
-			if(pPlayer->m_ClientVersion >= VERSION_DDNET_GAMETICK)
-				pPlayer->m_TimerType = CPlayer::TIMERTYPE_GAMETIMER_AND_BROADCAST;
-			else
-			{
-				pPlayer->m_TimerType = CPlayer::TIMERTYPE_BROADCAST;
-				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "timer", "gametimer is not supported by your client.");
-			}
-		}
-		else if(str_comp_nocase(pResult->GetString(0), "none") == 0)
-			pPlayer->m_TimerType = CPlayer::TIMERTYPE_NONE;
-		else if(str_comp_nocase(pResult->GetString(0), "cycle") == 0)
-		{
-			if(pPlayer->m_ClientVersion >= VERSION_DDNET_GAMETICK)
-			{
-				if(pPlayer->m_TimerType < CPlayer::TIMERTYPE_NONE)
-					pPlayer->m_TimerType++;
-				else if(pPlayer->m_TimerType == CPlayer::TIMERTYPE_NONE)
-					pPlayer->m_TimerType = CPlayer::TIMERTYPE_GAMETIMER;
-			}
-			else
-			{
-				if(pPlayer->m_TimerType < CPlayer::TIMERTYPE_NONE)
-					pPlayer->m_TimerType = CPlayer::TIMERTYPE_NONE;
-				else if(pPlayer->m_TimerType == CPlayer::TIMERTYPE_NONE)
-					pPlayer->m_TimerType = CPlayer::TIMERTYPE_BROADCAST;
-			}
-		}
-		else
-		{
-			str_format(aBuf, sizeof(aBuf), "Unknown \"%s\" parameter. Accepted values: gametimer, broadcast, both, none, cycle", pResult->GetString(0));
-			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "timer", aBuf);
-			return;
-		}
-
-		if((OldType == CPlayer::TIMERTYPE_BROADCAST || OldType == CPlayer::TIMERTYPE_GAMETIMER_AND_BROADCAST) && (pPlayer->m_TimerType == CPlayer::TIMERTYPE_GAMETIMER || pPlayer->m_TimerType == CPlayer::TIMERTYPE_NONE))
-			pSelf->SendBroadcast("", pResult->m_ClientID);
-	}
-
-	if(pPlayer->m_TimerType <= CPlayer::TIMERTYPE_GAMETIMER_AND_BROADCAST && pPlayer->m_TimerType >= CPlayer::TIMERTYPE_GAMETIMER)
-		str_format(aBuf, sizeof(aBuf), "Timer is displayed in %s", s_aaMsg[pPlayer->m_TimerType]);
-	else if(pPlayer->m_TimerType == CPlayer::TIMERTYPE_NONE)
-		str_format(aBuf, sizeof(aBuf), "Timer isn't displayed.");
-
-	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "timer", aBuf);
-}
-
 void CGameContext::ConRescue(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
@@ -1394,65 +1197,3 @@ void CGameContext::ConProtectedKill(IConsole::IResult *pResult, void *pUserData)
 			//pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
 }
-
-#if defined(CONF_SQL)
-void CGameContext::ConPoints(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	if (!CheckClientID(pResult->m_ClientID))
-		return;
-
-	if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-		if(pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery + g_Config.m_SvSqlQueriesDelay * pSelf->Server()->TickSpeed() >= pSelf->Server()->Tick())
-			return;
-
-	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
-	if (!pPlayer)
-		return;
-
-	if (pResult->NumArguments() > 0)
-		if (!g_Config.m_SvHideScore)
-			pSelf->Score()->ShowPoints(pResult->m_ClientID, pResult->GetString(0),
-					true);
-		else
-			pSelf->Console()->Print(
-					IConsole::OUTPUT_LEVEL_STANDARD,
-					"points",
-					"Showing the global points of other players is not allowed on this server.");
-	else
-		pSelf->Score()->ShowPoints(pResult->m_ClientID,
-				pSelf->Server()->ClientName(pResult->m_ClientID));
-
-	if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-		pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery = pSelf->Server()->Tick();
-}
-#endif
-
-#if defined(CONF_SQL)
-void CGameContext::ConTopPoints(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	if (!CheckClientID(pResult->m_ClientID))
-		return;
-
-	if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-		if(pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery + g_Config.m_SvSqlQueriesDelay * pSelf->Server()->TickSpeed() >= pSelf->Server()->Tick())
-			return;
-
-	if (g_Config.m_SvHideScore)
-	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "toppoints",
-				"Showing the global top points is not allowed on this server.");
-		return;
-	}
-
-	if (pResult->NumArguments() > 0)
-		pSelf->Score()->ShowTopPoints(pResult, pResult->m_ClientID, pUserData,
-				pResult->GetInteger(0));
-	else
-		pSelf->Score()->ShowTopPoints(pResult, pResult->m_ClientID, pUserData);
-
-	if(pSelf->m_apPlayers[pResult->m_ClientID] && g_Config.m_SvUseSQL)
-		pSelf->m_apPlayers[pResult->m_ClientID]->m_LastSQLQuery = pSelf->Server()->Tick();
-}
-#endif
