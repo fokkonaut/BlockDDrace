@@ -270,6 +270,7 @@ public:
 	bool m_IsBlueTeleGunTeleport;
 
 	bool m_PlasmaGun;
+	bool m_HeartGun;
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };

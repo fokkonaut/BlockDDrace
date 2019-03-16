@@ -363,6 +363,8 @@ private:
 
 	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 

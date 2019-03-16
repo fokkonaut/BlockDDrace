@@ -10,6 +10,7 @@
 #include "projectile.h"
 #include "flag.h"
 #include "plasmabullet.h"
+#include "heartprojectile.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -464,6 +465,27 @@ void CCharacter::FireWeapon()
 					0,						//unfreeze
 					1,						//bloody
 					0,						//ghost
+					Team(),					//responibleteam
+					6,						//lifetime
+					1.0f,					//accel
+					10.0f					//speed
+				);
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			}
+			else if (m_HeartGun)
+			{
+				new CHeartProjectile
+				(
+					GameWorld(),
+					m_pPlayer->GetCID(),	//owner
+					ProjStartPos,			//pos
+					Direction,				//dir
+					0,						//freeze
+					0,						//explosive
+					1,						//unfreeze
+					0,						//bloody
+					0,						//ghost
+					0,						//spooky
 					Team(),					//responibleteam
 					6,						//lifetime
 					1.0f,					//accel

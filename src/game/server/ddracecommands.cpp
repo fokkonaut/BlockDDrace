@@ -183,7 +183,10 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
+	{
 		pChr->m_PlasmaGun = true;
+		pChr->m_HeartGun = false;
+	}
 }
 
 void CGameContext::ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData)
@@ -193,6 +196,27 @@ void CGameContext::ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->m_PlasmaGun = false;
+}
+
+void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		pChr->m_HeartGun = true;
+		pChr->m_PlasmaGun = false;
+	}
+}
+
+void CGameContext::ConUnHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_HeartGun = false;
 }
 
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
