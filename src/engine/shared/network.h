@@ -64,6 +64,8 @@ enum
 	NET_CONNSTATE_ONLINE=3,
 	NET_CONNSTATE_ERROR=4,
 
+	NET_CONNSTATE_BOT = 5,
+
 	NET_PACKETFLAG_CONTROL=1,
 	NET_PACKETFLAG_CONNLESS=2,
 	NET_PACKETFLAG_RESEND=4,
@@ -234,6 +236,9 @@ public:
 	void DirectInit(NETADDR &Addr, SECURITY_TOKEN SecurityToken);
 	void SetUnknownSeq() { m_UnknownSeq = true; }
 	void SetSequence(int Sequence) { m_Sequence = Sequence; }
+
+	void BotConnect();
+	void BotDrop();
 };
 
 class CConsoleNetConnection
@@ -375,6 +380,9 @@ public:
 	SECURITY_TOKEN GetToken(const NETADDR &Addr);
 	// vanilla token/gametick shouldn't be negative
 	SECURITY_TOKEN GetVanillaToken(const NETADDR &Addr) { return absolute(GetToken(Addr)); }
+
+	void BotInit(int BotID);
+	void BotDelete(int BotID);
 };
 
 class CNetConsole

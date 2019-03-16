@@ -195,6 +195,57 @@ void CGameContext::ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_PlasmaGun = false;
 }
 
+void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	
+	int DummyID = pSelf->GetNextClientID();
+	if (DummyID < 0)
+	{
+		dbg_msg("dummy", "can't get ClientID, server might be full");
+		return;
+	}
+
+	if (pSelf->m_apPlayers[DummyID])
+	{
+		pSelf->m_apPlayers[DummyID]->OnDisconnect("");
+		delete pSelf->m_apPlayers[DummyID];
+		pSelf->m_apPlayers[DummyID] = 0;
+	}
+
+	pSelf->m_apPlayers[DummyID] = new(DummyID) CPlayer(pSelf, DummyID, TEAM_RED);
+
+	pSelf->m_apPlayers[DummyID]->m_IsDummy = true;
+	pSelf->Server()->BotJoin(DummyID);
+
+	str_copy(pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
+	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
+	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
+	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+
+	dbg_msg("dummy", "Dummy connected: %d", DummyID);
+
+	pSelf->OnClientEnter(DummyID);
+
+	return;
+}
+
+void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (pSelf->m_apPlayers[i] && pSelf->m_apPlayers[i]->m_IsDummy)
+		{
+			pSelf->Server()->BotLeave(i);
+		}
+	}
+	pSelf->SendChatTarget(pResult->m_ClientID, "All bots have been removed.");
+
+	return;
+}
+
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;

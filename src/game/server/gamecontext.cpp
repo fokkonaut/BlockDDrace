@@ -1056,6 +1056,7 @@ void CGameContext::ProgressVoteOptions(int ClientID)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
+	m_ClientLeftServer[ClientID] = false;
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
 	// init the player
@@ -1117,7 +1118,6 @@ void CGameContext::OnClientEnter(int ClientID)
 
 void CGameContext::OnClientConnected(int ClientID)
 {
-	m_ClientLeftServer[ClientID] = false;
 	{
 		bool Empty = true;
 		for(int i = 0; i < MAX_CLIENTS; i++)
@@ -3689,4 +3689,19 @@ void CGameContext::ForceVote(int EnforcerID, bool Success)
 	SendChatTarget(-1, aBuf);
 	str_format(aBuf, sizeof(aBuf), "forcing vote %s", pOption);
 	Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+}
+
+int CGameContext::GetNextClientID()
+{
+	int ClientID = -1;
+	for (int i = 0; i < g_Config.m_SvMaxClients; i++)
+	{
+		if (m_apPlayers[i])
+			continue;
+
+		ClientID = i;
+		break;
+	}
+
+	return ClientID;
 }

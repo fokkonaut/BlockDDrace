@@ -691,6 +691,9 @@ int CNetServer::Send(CNetChunk *pChunk)
 	}
 	else
 	{
+		if (m_aSlots[pChunk->m_ClientID].m_Connection.State() == NET_CONNSTATE_BOT)
+			return -1;
+
 		int Flags = 0;
 		dbg_assert(pChunk->m_ClientID >= 0, "errornous client id");
 		dbg_assert(pChunk->m_ClientID < MaxClients(), "errornous client id");
@@ -746,4 +749,14 @@ int CNetServer::ResetErrorString(int ClientID)
 const char *CNetServer::ErrorString(int ClientID)
 {
 	return m_aSlots[ClientID].m_Connection.ErrorString();
+}
+
+void CNetServer::BotInit(int BotID)
+{
+	m_aSlots[BotID].m_Connection.BotConnect();
+}
+
+void CNetServer::BotDelete(int BotID)
+{
+	m_aSlots[BotID].m_Connection.BotDrop();
 }

@@ -182,6 +182,8 @@ public:
 	void CreateSound(vec2 Pos, int Sound, int64_t Mask=-1);
 	void CreateSoundGlobal(int Sound, int Target=-1);
 
+	int GetNextClientID();
+
 
 	enum
 	{
@@ -361,6 +363,8 @@ private:
 
 	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
+	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

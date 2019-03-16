@@ -125,6 +125,8 @@ public:
 			STATE_READY,
 			STATE_INGAME,
 
+			STATE_BOT,
+
 			SNAPRATE_INIT=0,
 			SNAPRATE_FULL,
 			SNAPRATE_RECOVER,
@@ -175,6 +177,9 @@ public:
 		// DDRace
 
 		NETADDR m_Addr;
+
+		bool m_IsDummy;
+		bool m_IsClientDummy;
 
 		// DNSBL
 		int m_DnsblState;
@@ -363,6 +368,9 @@ public:
 	void SnapSetStaticsize(int ItemType, int Size);
 
 	// DDRace
+
+	void BotJoin(int BotID);
+	void BotLeave(int BotID);
 
 	void GetClientAddr(int ClientID, NETADDR *pAddr);
 	int m_aPrevStates[MAX_CLIENTS];

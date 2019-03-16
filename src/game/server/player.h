@@ -181,6 +181,8 @@ public:
 
 	bool m_Moderating;
 
+	bool m_IsDummy;
+
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
 	int64 m_LastPlaytime;

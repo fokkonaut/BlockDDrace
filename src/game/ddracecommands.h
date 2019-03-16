@@ -34,6 +34,8 @@ CONSOLE_COMMAND("down", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoDown, this, "Makes
 
 CONSOLE_COMMAND("plasmagun", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConPlasmaGun, this, "Gives plasmagun to player v")
 CONSOLE_COMMAND("unplasmagun", "?v[id]", CFGFLAG_SERVER, ConUnPlasmaGun, this, "Takes the plasmagun from player v")
+CONSOLE_COMMAND("connectdummy", "?i[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
+CONSOLE_COMMAND("disconnectdummy", "", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects all dummies")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")
