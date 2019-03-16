@@ -1008,6 +1008,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/projectile.h
   entities/weapon.cpp
   entities/weapon.h
+  entities/plasmabullet.cpp
+  entities/plasmabullet.h
   entity.cpp
   entity.h
   eventhandler.cpp

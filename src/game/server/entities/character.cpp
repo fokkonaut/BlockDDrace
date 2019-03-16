@@ -9,6 +9,7 @@
 #include "laser.h"
 #include "projectile.h"
 #include "flag.h"
+#include "plasmabullet.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -450,7 +451,27 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_GUN:
 		{
-			if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
+			if (m_PlasmaGun)
+			{
+				new CPlasmaBullet
+				(
+					GameWorld(),
+					m_pPlayer->GetCID(),	//owner
+					ProjStartPos,			//pos
+					Direction,				//dir
+					0,						//freeze
+					0,						//explosive
+					0,						//unfreeze
+					1,						//bloody
+					0,						//ghost
+					Team(),					//responibleteam
+					6,						//lifetime
+					1.0f,					//accel
+					10.0f					//speed
+				);
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			}
+			else if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
 			{
 				int Lifetime;
 				if (!m_TuneZone)
