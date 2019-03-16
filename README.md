@@ -1,1 +1,1 @@
-BlockDDrace is a mod developed by fokkonaut, based on DDNet 11.8
+BlockDDrace is a mod developed by fokkonaut, based on DDNet 11.9
