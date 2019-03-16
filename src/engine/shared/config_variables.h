@@ -205,7 +205,7 @@ MACRO_CONFIG_INT(SvEyeEmoteChangeDelay, sv_eye_emote_change_delay, 1, 0, 9999, C
 
 MACRO_CONFIG_INT(SvFlagSounds, sv_flag_sounds, 0, 0, 1, CFGFLAG_SERVER, "Whether flags create a public sound on drop/pickup/respawn or not")
 MACRO_CONFIG_INT(SvAllowDroppingWeapons, sv_allow_dropping_weapons, 1, 0, 1, CFGFLAG_SERVER, "0=off, 1=all")
-MACRO_CONFIG_INT(SvShowClientDummysInMaster, sv_show_client_dummys_in_master, 0, 0, 1, CFGFLAG_SERVER, "0=hides clientdummys in master 1=shows clientdummys in master")
+MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "0=Show bots in scoreboard/master, 1=show in sb , 2=hide completely")
 
 MACRO_CONFIG_INT(SvChatDelay, sv_chat_delay, 1, 0, 9999, CFGFLAG_SERVER, "The time in seconds between chat messages")
 MACRO_CONFIG_INT(SvTeamChangeDelay, sv_team_change_delay, 3, 0, 9999, CFGFLAG_SERVER, "The time in seconds between team changes (spectator/in game)")

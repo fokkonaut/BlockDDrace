@@ -199,33 +199,39 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	
-	int DummyID = pSelf->GetNextClientID();
-	if (DummyID < 0)
+	int Amount = str_toint(pResult->GetString(0));
+	if (!Amount)
+		Amount = 1;
+	for (int i = 0; i < Amount; i++)
 	{
-		dbg_msg("dummy", "can't get ClientID, server might be full");
-		return;
+		int DummyID = pSelf->GetNextClientID();
+		if (DummyID < 0)
+		{
+			dbg_msg("dummy", "can't get ClientID, server might be full");
+			return;
+		}
+
+		if (pSelf->m_apPlayers[DummyID])
+		{
+			pSelf->m_apPlayers[DummyID]->OnDisconnect("");
+			delete pSelf->m_apPlayers[DummyID];
+			pSelf->m_apPlayers[DummyID] = 0;
+		}
+
+		pSelf->m_apPlayers[DummyID] = new(DummyID) CPlayer(pSelf, DummyID, TEAM_RED);
+
+		pSelf->m_apPlayers[DummyID]->m_IsDummy = true;
+		pSelf->Server()->BotJoin(DummyID);
+
+		str_copy(pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
+		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
+		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
+		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+
+		dbg_msg("dummy", "Dummy connected: %d", DummyID);
+
+		pSelf->OnClientEnter(DummyID);
 	}
-
-	if (pSelf->m_apPlayers[DummyID])
-	{
-		pSelf->m_apPlayers[DummyID]->OnDisconnect("");
-		delete pSelf->m_apPlayers[DummyID];
-		pSelf->m_apPlayers[DummyID] = 0;
-	}
-
-	pSelf->m_apPlayers[DummyID] = new(DummyID) CPlayer(pSelf, DummyID, TEAM_RED);
-
-	pSelf->m_apPlayers[DummyID]->m_IsDummy = true;
-	pSelf->Server()->BotJoin(DummyID);
-
-	str_copy(pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
-	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
-	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
-	pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
-
-	dbg_msg("dummy", "Dummy connected: %d", DummyID);
-
-	pSelf->OnClientEnter(DummyID);
 
 	return;
 }
@@ -233,15 +239,22 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-
-	for (int i = 0; i < MAX_CLIENTS; i++)
+	int ID = pResult->GetString(0) ? str_toint(pResult->GetString(0)) : -1;
+	if (!str_comp_nocase(pResult->GetString(0), "all"))
 	{
-		if (pSelf->m_apPlayers[i] && pSelf->m_apPlayers[i]->m_IsDummy)
+		for (int i = 0; i < MAX_CLIENTS; i++)
 		{
-			pSelf->Server()->BotLeave(i);
+			if (pSelf->m_apPlayers[i] && pSelf->m_apPlayers[i]->m_IsDummy)
+			{
+				pSelf->Server()->BotLeave(i);
+			}
 		}
+		pSelf->SendChatTarget(pResult->m_ClientID, "All bots have been removed.");
 	}
-	pSelf->SendChatTarget(pResult->m_ClientID, "All bots have been removed.");
+	else if (pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
+	{
+		pSelf->Server()->BotLeave(ID);
+	}
 
 	return;
 }

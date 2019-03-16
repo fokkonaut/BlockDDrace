@@ -234,6 +234,11 @@ void CPlayer::Tick()
 	{
 		GameServer()->SendTuningParams(m_ClientID, m_TuneZone);
 	}
+
+	if (m_IsDummy && g_Config.m_SvHideBots == 2)
+		m_Team = TEAM_BLUE;
+	else
+		m_Team = TEAM_RED;
 }
 
 void CPlayer::PostTick()
