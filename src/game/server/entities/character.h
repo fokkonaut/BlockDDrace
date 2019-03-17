@@ -286,6 +286,9 @@ public:
 	bool m_SpookyGhostWeaponsBackupped;
 	int m_aSpookyGhostWeaponsBackupGot[NUM_WEAPONS][2];
 
+	//cosmetics
+	bool m_Rainbow;
+
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
 	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };

@@ -191,6 +191,7 @@ public:
 	int m_RealColorBody;
 	int m_RealColorFeet;
 
+	int m_RainbowColor;
 
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);

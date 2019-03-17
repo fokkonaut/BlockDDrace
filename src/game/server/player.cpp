@@ -316,7 +316,15 @@ void CPlayer::Snap(int SnappingClient)
 		}
 	}
 
-	if (m_StolenSkin && SnappingClient != m_ClientID && g_Config.m_SvSkinStealAction == 1)
+	if (GetCharacter() && GetCharacter()->m_Rainbow)
+	{
+		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
+		pClientInfo->m_UseCustomColor = true;
+		m_RainbowColor = (m_RainbowColor + 1) % 256;
+		pClientInfo->m_ColorBody = m_RainbowColor * 0x010000 + 0xff00;
+		pClientInfo->m_ColorFeet = m_RainbowColor * 0x010000 + 0xff00;
+	}
+	else if (m_StolenSkin && SnappingClient != m_ClientID && g_Config.m_SvSkinStealAction == 1)
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, "pinky");
 		pClientInfo->m_UseCustomColor = 0;

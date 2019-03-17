@@ -2452,6 +2452,8 @@ void CCharacter::DDRaceInit()
 	m_Jetpack = false;
 	m_Core.m_Jumps = 2;
 	m_FreezeHammer = false;
+	m_SpookyGhost = false;
+	m_Rainbow = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
