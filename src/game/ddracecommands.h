@@ -44,6 +44,8 @@ CONSOLE_COMMAND("rainbow", "?v[id]", CFGFLAG_SERVER, ConRainbow, this, "Gives ra
 CONSOLE_COMMAND("unrainbow", "?v[id]", CFGFLAG_SERVER, ConUnRainbow, this, "Takes the rainbow from player v")
 CONSOLE_COMMAND("atom", "?v[id]", CFGFLAG_SERVER, ConAtom, this, "Gives atom to player v")
 CONSOLE_COMMAND("unatom", "?v[id]", CFGFLAG_SERVER, ConUnAtom, this, "Takes the atom from player v")
+CONSOLE_COMMAND("trail", "?v[id]", CFGFLAG_SERVER, ConTrail, this, "Gives trail to player v")
+CONSOLE_COMMAND("untrail", "?v[id]", CFGFLAG_SERVER, ConUnTrail, this, "Takes the trail from player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

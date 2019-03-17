@@ -234,6 +234,24 @@ void CGameContext::ConUnAtom(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_Atom = false;
 }
 
+void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_Trail = true;
+}
+
+void CGameContext::ConUnTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_Trail = false;
+}
+
 void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

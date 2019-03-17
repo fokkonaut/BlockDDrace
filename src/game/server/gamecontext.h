@@ -373,6 +373,8 @@ private:
 	static void ConUnRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConAtom(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnAtom(IConsole::IResult *pResult, void *pUserData);
+	static void ConTrail(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnTrail(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

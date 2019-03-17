@@ -847,6 +847,89 @@ void CCharacter::Tick()
 		m_AtomProjs.clear();
 	}
 
+	if (m_Trail)
+	{
+		if (m_TrailProjs.empty())
+		{
+			for (int i = 0; i<NUM_TRAILS; i++)
+			{
+				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN));
+			}
+			m_TrailHistory.clear();
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, 0.0f));
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, NUM_TRAILS*TRAIL_DIST));
+			m_TrailHistoryLength = NUM_TRAILS * TRAIL_DIST;
+		}
+		vec2 FrontPos = m_TrailHistory.front().m_Pos;
+		if (FrontPos != m_Pos)
+		{
+			float FrontLength = distance(m_Pos, FrontPos);
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, FrontLength));
+			m_TrailHistoryLength += FrontLength;
+		}
+
+		while (1)
+		{
+			float LastDist = m_TrailHistory.back().m_Dist;
+			if (m_TrailHistoryLength - LastDist >= NUM_TRAILS * TRAIL_DIST)
+			{
+				m_TrailHistory.pop_back();
+				m_TrailHistoryLength -= LastDist;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		int HistoryPos = 0;
+		float HistoryPosLength = 0.0f;
+		float AdditionalLength = 0.0f;
+		for (int i = 0; i<NUM_TRAILS; i++)
+		{
+			float Length = (i + 1)*TRAIL_DIST;
+			float NextDist = 0.0f;
+			while (1)
+			{
+				// in case floating point arithmetic errors should fuck us up
+				// don't crash and recalculate total history length
+				if ((unsigned int)HistoryPos >= m_TrailHistory.size())
+				{
+					m_TrailHistoryLength = 0.0f;
+					for (std::deque<HistoryPoint>::iterator it = m_TrailHistory.begin(); it != m_TrailHistory.end(); ++it)
+					{
+						m_TrailHistoryLength += it->m_Dist;
+					}
+					break;
+				}
+				NextDist = m_TrailHistory[HistoryPos].m_Dist;
+
+				if (Length <= HistoryPosLength + NextDist)
+				{
+					AdditionalLength = Length - HistoryPosLength;
+					break;
+				}
+				else
+				{
+					HistoryPos += 1;
+					HistoryPosLength += NextDist;
+					AdditionalLength = 0;
+				}
+			}
+			m_TrailProjs[i]->m_Pos = m_TrailHistory[HistoryPos].m_Pos;
+			//the line under this comment crashed the server, dont know why but it works without that line too since the position gets set above this line too
+			//m_TrailProjs[i]->m_Pos += (m_TrailHistory[HistoryPos + 1].m_Pos - m_TrailProjs[i]->m_Pos)*(AdditionalLength / NextDist);
+		}
+	}
+	else if (!m_TrailProjs.empty())
+	{
+		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
+		{
+			GameServer()->m_World.DestroyEntity(*it);
+		}
+		m_TrailProjs.clear();
+	}
+
 	DDRaceTick();
 
 	m_Core.m_Input = m_Input;
@@ -871,10 +954,12 @@ void CCharacter::Tick()
 
 	m_Core.Tick(true, false);
 
-	if (m_Core.m_updateFlagVel == 129) {
+	if (m_Core.m_updateFlagVel == 129)
+	{
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel = m_Core.m_UFlagVel;
 	}
-	else if (m_Core.m_updateFlagVel == 130) {
+	else if (m_Core.m_updateFlagVel == 130)
+	{
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel = m_Core.m_UFlagVel;
 	}
 
@@ -1030,6 +1115,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		}
 	}
 
+	// remove atom projectiles on death
 	if (!m_AtomProjs.empty())
 	{
 		for (std::vector<CStableProjectile *>::iterator it = m_AtomProjs.begin(); it != m_AtomProjs.end(); ++it)
@@ -1037,6 +1123,16 @@ void CCharacter::Die(int Killer, int Weapon)
 			GameServer()->m_World.DestroyEntity(*it);
 		}
 		m_AtomProjs.clear();
+	}
+
+	// remove trail projectiles on death
+	if (!m_TrailProjs.empty())
+	{
+		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
+		{
+			GameServer()->m_World.DestroyEntity(*it);
+		}
+		m_TrailProjs.clear();
 	}
 
 	if(Server()->IsRecording(m_pPlayer->GetCID()))
@@ -2496,6 +2592,8 @@ void CCharacter::DDRaceInit()
 	m_FreezeHammer = false;
 	m_SpookyGhost = false;
 	m_Rainbow = false;
+	m_Atom = false;
+	m_Trail = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 

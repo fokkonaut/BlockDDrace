@@ -3,6 +3,7 @@
 #ifndef GAME_SERVER_ENTITIES_CHARACTER_H
 #define GAME_SERVER_ENTITIES_CHARACTER_H
 
+#include <deque>
 #include <game/server/entity.h>
 #include <game/server/entities/stable_projectile.h>
 #include <game/generated/server_data.h>
@@ -11,6 +12,8 @@
 #include <game/gamecore.h>
 
 #define NUM_ATOMS 6
+#define NUM_TRAILS 20
+#define TRAIL_DIST 20
 
 class CGameTeams;
 
@@ -292,10 +295,23 @@ public:
 	//cosmetics
 	bool m_Rainbow;
 	bool m_Atom;
+	bool m_Trail;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
 	int m_AtomPosition;
+
+	// trail
+	std::vector<CStableProjectile *> m_TrailProjs;
+	struct HistoryPoint
+	{
+		vec2 m_Pos;
+		float m_Dist;
+
+		HistoryPoint(vec2 Pos, float Dist) : m_Pos(Pos), m_Dist(Dist) {}
+	};
+	std::deque<HistoryPoint> m_TrailHistory;
+	float m_TrailHistoryLength;
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
