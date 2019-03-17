@@ -280,7 +280,6 @@ public:
 
 	//spooky ghost
 	bool m_SpookyGhost;
-	bool m_HasSpookyGhost; //replace later when account are there with enums and a saved player var like m_HasItem[SPOOKY_GHOST] or stuff like that
 	void SetSpookyGhost();
 	void UnsetSpookyGhost();
 	void SaveRealInfos();

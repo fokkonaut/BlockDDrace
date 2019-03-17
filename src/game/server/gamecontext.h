@@ -361,20 +361,20 @@ private:
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
-	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnSpookyGhost(IConsole::IResult *pResult, void *pUserData);
 	static void ConRainbow(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnRainbow(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConAtom(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnAtom(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfAtom(IConsole::IResult *pResult, void *pUserData);
 	static void ConTrail(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnTrail(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfTrail(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

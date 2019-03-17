@@ -292,7 +292,7 @@ void CPlayer::Snap(int SnappingClient)
 
 	//spooky ghost
 	const char *pClan;
-	if (GetCharacter()->m_SpookyGhost)
+	if (GetCharacter() && GetCharacter()->m_SpookyGhost)
 	{
 		pClan = m_RealName;
 		StrToInts(&pClientInfo->m_Name0, 4, " ");
@@ -316,7 +316,7 @@ void CPlayer::Snap(int SnappingClient)
 		}
 	}
 
-	if (GetCharacter() && GetCharacter()->m_Rainbow)
+	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow)
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = true;

@@ -364,7 +364,7 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 	{
 		WillFire = true;
-		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN)
+		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_pPlayer->m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN)
 		{
 			m_CountSpookyGhostInputs = true;
 		}
@@ -465,7 +465,7 @@ void CCharacter::FireWeapon()
 		case WEAPON_GUN:
 		{
 			int SpookyGhost = m_SpookyGhost ? 1 : 0;
-			if (m_PlasmaGun)
+			if (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun)
 			{
 				new CPlasmaBullet
 				(
@@ -486,7 +486,7 @@ void CCharacter::FireWeapon()
 				);
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 			}
-			else if (m_HeartGun)
+			else if (m_HeartGun || m_pPlayer->m_InfHeartGun)
 			{
 				new CHeartProjectile
 				(
@@ -544,7 +544,7 @@ void CCharacter::FireWeapon()
 			}
 
 			//spooky ghost
-			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
+			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_pPlayer->m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
 			{
 				m_TimesShot++;
 				if ((m_TimesShot == 2) && !m_SpookyGhost)
@@ -816,7 +816,7 @@ void CCharacter::Tick()
 	if (m_Paused)
 		return;
 
-	if (m_Atom)
+	if (m_Atom || m_pPlayer->m_InfAtom)
 	{
 		if (m_AtomProjs.empty())
 		{
@@ -847,7 +847,7 @@ void CCharacter::Tick()
 		m_AtomProjs.clear();
 	}
 
-	if (m_Trail)
+	if (m_Trail || m_pPlayer->m_InfTrail)
 	{
 		if (m_TrailProjs.empty())
 		{

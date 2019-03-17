@@ -184,90 +184,47 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		pChr->m_PlasmaGun = true;
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->m_PlasmaGun)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Plasma Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->m_PlasmaGun ^= true;
 		pChr->m_HeartGun = false;
+		pChr->GetPlayer()->m_InfHeartGun = false;
+		if (pChr->m_PlasmaGun)
+			pChr->GetPlayer()->m_InfPlasmaGun = false;
 	}
 }
 
-void CGameContext::ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->m_PlasmaGun = false;
-}
-
-void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Rainbow = true;
-}
-
-void CGameContext::ConUnRainbow(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Rainbow = false;
-}
-
-void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Atom = true;
-}
-
-void CGameContext::ConUnAtom(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Atom = false;
-}
-
-void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Trail = true;
-}
-
-void CGameContext::ConUnTrail(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Trail = false;
-}
-
-void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_HasSpookyGhost = true;
-}
-
-void CGameContext::ConUnSpookyGhost(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_HasSpookyGhost = false;
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_InfPlasmaGun)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Infinite Plasma Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_InfPlasmaGun ^= true;
+		pChr->m_HeartGun = false;
+		pChr->GetPlayer()->m_InfHeartGun = false;
+		if (pChr->GetPlayer()->m_InfPlasmaGun)
+			pChr->m_PlasmaGun = false;
+	}
 }
 
 void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
@@ -277,18 +234,206 @@ void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		pChr->m_HeartGun = true;
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->m_HeartGun)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Heart Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->m_HeartGun ^= true;
 		pChr->m_PlasmaGun = false;
+		pChr->GetPlayer()->m_InfPlasmaGun = false;
+		if (pChr->m_HeartGun)
+			pChr->GetPlayer()->m_InfHeartGun = false;
 	}
 }
 
-void CGameContext::ConUnHeartGun(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->m_HeartGun = false;
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_InfHeartGun)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Infinite Heart Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_InfHeartGun ^= true;
+		pChr->m_PlasmaGun = false;
+		pChr->GetPlayer()->m_InfPlasmaGun = false;
+		if (pChr->GetPlayer()->m_InfHeartGun)
+			pChr->m_HeartGun = false;
+	}
+}
+
+void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->m_Rainbow)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Rainbow was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->m_Rainbow ^= true;
+		if (pChr->m_Rainbow)
+			pChr->GetPlayer()->m_InfRainbow = false;
+	}
+}
+
+void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_InfRainbow)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Infinite Rainbow was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_InfRainbow ^= true;
+		if (pChr->GetPlayer()->m_InfRainbow)
+			pChr->m_Rainbow = false;
+	}
+}
+
+void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->m_Atom)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Atom was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->m_Atom ^= true;
+		if (pChr->m_Atom)
+			pChr->GetPlayer()->m_InfAtom = false;
+	}
+}
+
+void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_InfAtom)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Infinite Atom was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_InfAtom ^= true;
+		if (pChr->GetPlayer()->m_InfAtom)
+			pChr->m_Atom = false;
+	}
+}
+
+void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->m_Trail)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Trail was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->m_Trail ^= true;
+		if (pChr->m_Trail)
+			pChr->GetPlayer()->m_InfTrail = false;
+	}
+}
+
+void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_InfTrail)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Infinite Trail was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_InfTrail ^= true;
+		if (pChr->GetPlayer()->m_InfTrail)
+			pChr->m_Trail = false;
+	}
+}
+
+void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		char aMsg[64];
+		char aGiven[32];
+		if (pChr->GetPlayer()->m_HasSpookyGhost)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+		str_format(aMsg, sizeof aMsg, "Spooky ghost was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
+			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
+		pChr->GetPlayer()->m_HasSpookyGhost ^= true;
+	}
 }
 
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
