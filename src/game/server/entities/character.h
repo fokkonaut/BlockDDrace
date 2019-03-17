@@ -4,10 +4,13 @@
 #define GAME_SERVER_ENTITIES_CHARACTER_H
 
 #include <game/server/entity.h>
+#include <game/server/entities/stable_projectile.h>
 #include <game/generated/server_data.h>
 #include <game/generated/protocol.h>
 
 #include <game/gamecore.h>
+
+#define NUM_ATOMS 6
 
 class CGameTeams;
 
@@ -288,6 +291,11 @@ public:
 
 	//cosmetics
 	bool m_Rainbow;
+	bool m_Atom;
+
+	// atom
+	std::vector<CStableProjectile *> m_AtomProjs;
+	int m_AtomPosition;
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };

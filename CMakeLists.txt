@@ -1012,6 +1012,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/plasmabullet.h
   entities/heartprojectile.cpp
   entities/heartprojectile.h
+  entities/stable_projectile.cpp
+  entities/stable_projectile.h
   entity.cpp
   entity.h
   eventhandler.cpp

@@ -42,6 +42,8 @@ CONSOLE_COMMAND("spookyghost", "?v[id]", CFGFLAG_SERVER, ConSpookyGhost, this, "
 CONSOLE_COMMAND("unspookyghost", "?v[id]", CFGFLAG_SERVER, ConUnSpookyGhost, this, "Takes the spooky ghost from player v")
 CONSOLE_COMMAND("rainbow", "?v[id]", CFGFLAG_SERVER, ConRainbow, this, "Gives rainbow to player v")
 CONSOLE_COMMAND("unrainbow", "?v[id]", CFGFLAG_SERVER, ConUnRainbow, this, "Takes the rainbow from player v")
+CONSOLE_COMMAND("atom", "?v[id]", CFGFLAG_SERVER, ConAtom, this, "Gives atom to player v")
+CONSOLE_COMMAND("unatom", "?v[id]", CFGFLAG_SERVER, ConUnAtom, this, "Takes the atom from player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

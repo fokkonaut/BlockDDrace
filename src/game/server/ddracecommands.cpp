@@ -216,6 +216,24 @@ void CGameContext::ConUnRainbow(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_Rainbow = false;
 }
 
+void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_Atom = true;
+}
+
+void CGameContext::ConUnAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_Atom = false;
+}
+
 void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
