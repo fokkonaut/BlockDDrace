@@ -38,6 +38,8 @@ CONSOLE_COMMAND("heartgun", "?v[id]", CFGFLAG_SERVER, ConHeartGun, this, "Gives 
 CONSOLE_COMMAND("unheartgun", "?v[id]", CFGFLAG_SERVER, ConUnHeartGun, this, "Takes the heartgun from player v")
 CONSOLE_COMMAND("connectdummy", "?s[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
 CONSOLE_COMMAND("disconnectdummy", "s[id/all]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy s/all")
+CONSOLE_COMMAND("spookyghost", "?v[id]", CFGFLAG_SERVER, ConSpookyGhost, this, "Gives spooky ghost to player v")
+CONSOLE_COMMAND("unspookyghost", "?v[id]", CFGFLAG_SERVER, ConUnSpookyGhost, this, "Takes the spooky ghost from player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

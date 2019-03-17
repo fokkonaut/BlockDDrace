@@ -198,6 +198,26 @@ void CGameContext::ConUnPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_PlasmaGun = false;
 }
 
+void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		pChr->m_HasSpookyGhost = true;
+	}
+}
+
+void CGameContext::ConUnSpookyGhost(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->m_HasSpookyGhost = false;
+}
+
 void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

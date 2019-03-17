@@ -81,6 +81,9 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	Server()->StartRecord(m_pPlayer->GetCID());
 
+	SaveRealInfos();
+	UnsetSpookyGhost();
+
 	return true;
 }
 
@@ -356,7 +359,13 @@ void CCharacter::FireWeapon()
 	// check if we gonna fire
 	bool WillFire = false;
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
+	{
 		WillFire = true;
+		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN)
+		{
+			m_CountSpookyGhostInputs = true;
+		}
+	}
 
 	if(FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo)
 		WillFire = true;
@@ -452,6 +461,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_GUN:
 		{
+			int SpookyGhost = m_SpookyGhost ? 1 : 0;
 			if (m_PlasmaGun)
 			{
 				new CPlasmaBullet
@@ -464,7 +474,8 @@ void CCharacter::FireWeapon()
 					0,						//explosive
 					0,						//unfreeze
 					1,						//bloody
-					0,						//ghost
+					SpookyGhost,			//ghost
+					SpookyGhost,						//spooky
 					Team(),					//responibleteam
 					6,						//lifetime
 					1.0f,					//accel
@@ -484,8 +495,8 @@ void CCharacter::FireWeapon()
 					0,						//explosive
 					1,						//unfreeze
 					0,						//bloody
-					0,						//ghost
-					0,						//spooky
+					SpookyGhost,			//ghost
+					SpookyGhost,			//spooky
 					Team(),					//responibleteam
 					6,						//lifetime
 					1.0f,					//accel
@@ -527,6 +538,23 @@ void CCharacter::FireWeapon()
 
 				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 				GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			}
+
+			//spooky ghost
+			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
+			{
+				m_TimesShot++;
+				if ((m_TimesShot == 2) && !m_SpookyGhost)
+				{
+					SetSpookyGhost();
+					m_TimesShot = 0;
+				}
+				else if ((m_TimesShot == 2) && m_SpookyGhost)
+				{
+					UnsetSpookyGhost();
+					m_TimesShot = 0;
+				}
+				m_CountSpookyGhostInputs = false;
 			}
 		} break;
 
@@ -1089,7 +1117,11 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	else
 		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);*/
 
-	if (Dmg)
+	if ((From != -1) && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->GetCharacter()->m_SpookyGhost)
+	{
+		// dont do emote pain if the shooter has spooky ghost
+	}
+	else if (Dmg)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -2537,6 +2569,63 @@ void CCharacter::DropWeapon(int WeaponID)
 	}
 
 	SetWeaponThatChrHas();
+
+	return;
+}
+
+void CCharacter::SetSpookyGhost()
+{
+	if (!m_SpookyGhostWeaponsBackupped)
+	{
+		for (int i = 0; i < NUM_WEAPONS; i++)
+		{
+			m_aSpookyGhostWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo;
+			m_aSpookyGhostWeaponsBackupGot[i][1] = m_aWeapons[i].m_Got;
+			m_aWeapons[i].m_Ammo = 0;
+			m_aWeapons[i].m_Got = false;
+		}
+		m_SpookyGhostWeaponsBackupped = true;
+		m_aWeapons[1].m_Got = 1;
+		m_aWeapons[1].m_Ammo = -1;
+	}
+
+	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, "ghost", sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
+	m_pPlayer->m_TeeInfos.m_UseCustomColor = 0;
+
+	m_SpookyGhost = 1;
+
+	return;
+}
+
+void CCharacter::UnsetSpookyGhost()
+{
+	if (m_SpookyGhostWeaponsBackupped)
+	{
+		for (int i = 0; i < NUM_WEAPONS; i++)
+		{
+			m_aWeapons[i].m_Got = m_aSpookyGhostWeaponsBackupGot[i][1];
+			m_aWeapons[i].m_Ammo = m_aSpookyGhostWeaponsBackup[i][1];
+		}
+		m_SpookyGhostWeaponsBackupped = false;
+	}
+
+	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, m_pPlayer->m_RealSkinName, sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
+	m_pPlayer->m_TeeInfos.m_UseCustomColor = m_pPlayer->m_RealUseCustomColor;
+
+	m_SpookyGhost = 0;
+
+	return;
+}
+
+void CCharacter::SaveRealInfos()
+{
+	if (!m_SpookyGhost)
+	{
+		str_copy(m_pPlayer->m_RealSkinName, m_pPlayer->m_TeeInfos.m_SkinName, sizeof(m_pPlayer->m_RealSkinName));
+		m_pPlayer->m_RealUseCustomColor = m_pPlayer->m_TeeInfos.m_UseCustomColor;
+		str_copy(m_pPlayer->m_RealClan, Server()->ClientClan(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealClan));
+		str_copy(m_pPlayer->m_RealName, Server()->ClientName(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealName));
+	}
 
 	return;
 }

@@ -367,6 +367,8 @@ private:
 	static void ConUnHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
+	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnSpookyGhost(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

@@ -287,8 +287,35 @@ void CPlayer::Snap(int SnappingClient)
 		return;
 
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
-	StrToInts(&pClientInfo->m_Clan0, 3, Server()->ClientClan(m_ClientID));
+	//StrToInts(&pClientInfo->m_Clan0, 3, Server()->ClientClan(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
+
+	//spooky ghost
+	const char *pClan;
+	if (GetCharacter()->m_SpookyGhost)
+	{
+		pClan = m_RealName;
+		StrToInts(&pClientInfo->m_Name0, 4, " ");
+	}
+	else
+	{
+		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
+		pClan = m_RealClan;
+	}
+	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
+
+	if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
+	{
+		//
+	}
+	else
+	{
+		if (GetCharacter())
+		{
+			GetCharacter()->m_TimesShot = 0;
+		}
+	}
+
 	if (m_StolenSkin && SnappingClient != m_ClientID && g_Config.m_SvSkinStealAction == 1)
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, "pinky");

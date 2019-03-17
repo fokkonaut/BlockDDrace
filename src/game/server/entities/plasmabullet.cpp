@@ -8,7 +8,7 @@
 #include "plasmabullet.h"
 
 CPlasmaBullet::CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, int ResponsibleTeam, float Lifetime, float Accel, float Speed) :
+		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, float Lifetime, float Accel, float Speed) :
 		CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Owner = Owner;
@@ -19,6 +19,7 @@ CPlasmaBullet::CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 D
 	m_Unfreeze = Unfreeze;
 	m_Bloody = Bloody;
 	m_Ghost = Ghost;
+	m_Spooky = Spooky;
 	m_EvalTick = Server()->Tick();
 	m_LifeTime = Server()->TickSpeed() * Lifetime;
 	m_ResponsibleTeam = ResponsibleTeam;
@@ -40,7 +41,7 @@ bool CPlasmaBullet::HitCharacter()
 	{
 		return false;
 	}
-	else
+	else if (m_Spooky)
 	{
 		Hit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
 		GameServer()->SendEmoticon(Hit->GetPlayer()->GetCID(), 7);		//emoticon ghost

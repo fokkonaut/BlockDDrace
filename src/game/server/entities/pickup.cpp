@@ -64,33 +64,45 @@ void CPickup::Tick()
 
 				case POWERUP_ARMOR:
 					if(pChr->Team() == TEAM_SUPER) continue;
-					for(int i = WEAPON_SHOTGUN; i < NUM_WEAPONS; i++)
+					if (pChr->m_SpookyGhost)
 					{
-						if(pChr->GetWeaponGot(i))
+						if (pChr->m_aSpookyGhostWeaponsBackupGot[2][1] || pChr->m_aSpookyGhostWeaponsBackupGot[3][1] || pChr->m_aSpookyGhostWeaponsBackupGot[4][1])
+							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
+
+						pChr->m_aSpookyGhostWeaponsBackup[2][1] = -1;
+						pChr->m_aSpookyGhostWeaponsBackup[3][1] = -1;
+						pChr->m_aSpookyGhostWeaponsBackup[4][1] = -1;
+					}
+					else
+					{
+						for (int i = WEAPON_SHOTGUN; i < NUM_WEAPONS; i++)
 						{
-							if(!(pChr->m_FreezeTime && i == WEAPON_NINJA))
+							if (pChr->GetWeaponGot(i))
 							{
-								pChr->SetWeaponGot(i, false);
-								pChr->SetWeaponAmmo(i, 0);
-								Sound = true;
+								if (!(pChr->m_FreezeTime && i == WEAPON_NINJA))
+								{
+									pChr->SetWeaponGot(i, false);
+									pChr->SetWeaponAmmo(i, 0);
+									Sound = true;
+								}
 							}
 						}
+						pChr->SetNinjaActivationDir(vec2(0, 0));
+						pChr->SetNinjaActivationTick(-500);
+						pChr->SetNinjaCurrentMoveTime(0);
+						if (Sound)
+						{
+							pChr->SetLastWeapon(WEAPON_GUN);
+							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
+						}
+						if (!pChr->m_FreezeTime && pChr->GetActiveWeapon() >= WEAPON_SHOTGUN)
+							pChr->SetActiveWeapon(WEAPON_HAMMER);
 					}
-					pChr->SetNinjaActivationDir(vec2(0,0));
-					pChr->SetNinjaActivationTick(-500);
-					pChr->SetNinjaCurrentMoveTime(0);
-					if (Sound)
-					{
-						pChr->SetLastWeapon(WEAPON_GUN);
-						GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
-					}
-					if(!pChr->m_FreezeTime && pChr->GetActiveWeapon() >= WEAPON_SHOTGUN)
-						pChr->SetActiveWeapon(WEAPON_HAMMER);
 					break;
 
 				case POWERUP_WEAPON:
 
-					if (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime)))
+					if (!pChr->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime))))
 					{
 						pChr->GiveWeapon(m_Subtype);
 
@@ -111,17 +123,20 @@ void CPickup::Tick()
 
 			case POWERUP_NINJA:
 				{
-					// activate ninja on target player
-					pChr->GiveNinja();
-					//RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
-
-					/*// loop through all players, setting their emotes
-					CCharacter *pC = static_cast<CCharacter *>(GameServer()->m_World.FindFirst(CGameWorld::ENTTYPE_CHARACTER));
-					for(; pC; pC = (CCharacter *)pC->TypeNext())
+					if (!pChr->m_SpookyGhost)
 					{
-						if (pC != pChr)
-							pC->SetEmote(EMOTE_SURPRISE, Server()->Tick() + Server()->TickSpeed());
-					}*/
+						// activate ninja on target player
+						pChr->GiveNinja();
+						//RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+
+						/*// loop through all players, setting their emotes
+						CCharacter *pC = static_cast<CCharacter *>(GameServer()->m_World.FindFirst(CGameWorld::ENTTYPE_CHARACTER));
+						for(; pC; pC = (CCharacter *)pC->TypeNext())
+						{
+							if (pC != pChr)
+								pC->SetEmote(EMOTE_SURPRISE, Server()->Tick() + Server()->TickSpeed());
+						}*/
+					}
 					break;
 				}
 				default:

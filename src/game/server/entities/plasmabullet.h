@@ -17,6 +17,7 @@ class CPlasmaBullet: public CEntity
 	int m_Unfreeze;
 	int m_Bloody;
 	int m_Ghost;
+	int m_Spooky;
 
 	int m_Owner;
 	float m_Accel;
@@ -30,7 +31,7 @@ class CPlasmaBullet: public CEntity
 public:
 
 	CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-			bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, int ResponsibleTeam, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
+			bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
 
 	virtual void Reset();
 	virtual void Tick();

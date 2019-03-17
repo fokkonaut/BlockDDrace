@@ -272,6 +272,20 @@ public:
 	bool m_PlasmaGun;
 	bool m_HeartGun;
 
+	//spooky ghost
+	bool m_SpookyGhost;
+	bool m_HasSpookyGhost; //replace later when account are there with enums and a saved player var like m_HasItem[SPOOKY_GHOST] or stuff like that
+	void SetSpookyGhost();
+	void UnsetSpookyGhost();
+	void SaveRealInfos();
+	bool m_CountSpookyGhostInputs;
+
+	int m_TimesShot;
+
+	int m_aSpookyGhostWeaponsBackup[NUM_WEAPONS][2];
+	bool m_SpookyGhostWeaponsBackupped;
+	int m_aSpookyGhostWeaponsBackupGot[NUM_WEAPONS][2];
+
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
 	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };

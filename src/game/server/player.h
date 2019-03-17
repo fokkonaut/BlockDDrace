@@ -183,6 +183,15 @@ public:
 
 	bool m_IsDummy;
 
+	//spooky ghost
+	int m_RealUseCustomColor;
+	char m_RealSkinName[64];
+	char m_RealName[64];
+	char m_RealClan[64];
+	int m_RealColorBody;
+	int m_RealColorFeet;
+
+
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
 	int64 m_LastPlaytime;
