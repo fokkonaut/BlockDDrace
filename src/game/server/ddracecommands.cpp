@@ -174,7 +174,22 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->m_Jetpack = true;
+	{
+		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
+		pChr->SetCosmetic(JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+	}
+}
+
+void CGameContext::ConInfJetpack(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
+		pChr->SetCosmetic(INF_JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+	}
 }
 
 void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
@@ -184,21 +199,8 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->m_PlasmaGun)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Plasma Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->m_PlasmaGun ^= true;
-		pChr->m_HeartGun = false;
-		pChr->GetPlayer()->m_InfHeartGun = false;
-		if (pChr->m_PlasmaGun)
-			pChr->GetPlayer()->m_InfPlasmaGun = false;
+		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
+		pChr->SetCosmetic(PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -209,21 +211,8 @@ void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_InfPlasmaGun)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Infinite Plasma Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_InfPlasmaGun ^= true;
-		pChr->m_HeartGun = false;
-		pChr->GetPlayer()->m_InfHeartGun = false;
-		if (pChr->GetPlayer()->m_InfPlasmaGun)
-			pChr->m_PlasmaGun = false;
+		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
+		pChr->SetCosmetic(INF_PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -234,21 +223,8 @@ void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->m_HeartGun)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Heart Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->m_HeartGun ^= true;
-		pChr->m_PlasmaGun = false;
-		pChr->GetPlayer()->m_InfPlasmaGun = false;
-		if (pChr->m_HeartGun)
-			pChr->GetPlayer()->m_InfHeartGun = false;
+		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
+		pChr->SetCosmetic(HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -259,21 +235,8 @@ void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_InfHeartGun)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Infinite Heart Gun was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_InfHeartGun ^= true;
-		pChr->m_PlasmaGun = false;
-		pChr->GetPlayer()->m_InfPlasmaGun = false;
-		if (pChr->GetPlayer()->m_InfHeartGun)
-			pChr->m_HeartGun = false;
+		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
+		pChr->SetCosmetic(INF_HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -284,19 +247,8 @@ void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->m_Rainbow)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Rainbow was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->m_Rainbow ^= true;
-		if (pChr->m_Rainbow)
-			pChr->GetPlayer()->m_InfRainbow = false;
+		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
+		pChr->SetCosmetic(RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -307,19 +259,8 @@ void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_InfRainbow)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Infinite Rainbow was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_InfRainbow ^= true;
-		if (pChr->GetPlayer()->m_InfRainbow)
-			pChr->m_Rainbow = false;
+		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
+		pChr->SetCosmetic(INF_RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -330,19 +271,8 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->m_Atom)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Atom was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->m_Atom ^= true;
-		if (pChr->m_Atom)
-			pChr->GetPlayer()->m_InfAtom = false;
+		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
+		pChr->SetCosmetic(ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -353,19 +283,8 @@ void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_InfAtom)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Infinite Atom was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_InfAtom ^= true;
-		if (pChr->GetPlayer()->m_InfAtom)
-			pChr->m_Atom = false;
+		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
+		pChr->SetCosmetic(INF_ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -376,19 +295,8 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->m_Trail)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Trail was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->m_Trail ^= true;
-		if (pChr->m_Trail)
-			pChr->GetPlayer()->m_InfTrail = false;
+		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
+		pChr->SetCosmetic(TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -399,19 +307,8 @@ void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_InfTrail)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Infinite Trail was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_InfTrail ^= true;
-		if (pChr->GetPlayer()->m_InfTrail)
-			pChr->m_Trail = false;
+		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
+		pChr->SetCosmetic(INF_TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -422,17 +319,8 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		char aMsg[64];
-		char aGiven[32];
-		if (pChr->GetPlayer()->m_HasSpookyGhost)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
-		str_format(aMsg, sizeof aMsg, "Spooky ghost was %s '%s' by '%s'", aGiven, pSelf->Server()->ClientName(pChr->GetPlayer()->GetCID()), pSelf->Server()->ClientName(pResult->m_ClientID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
-		if (pChr->GetPlayer()->GetCID() != pResult->m_ClientID)
-			pSelf->SendChatTarget(pChr->GetPlayer()->GetCID(), aMsg);
-		pChr->GetPlayer()->m_HasSpookyGhost ^= true;
+		bool Remove = pChr->GetPlayer()->m_HasSpookyGhost ? true : false;
+		pChr->SetCosmetic(SPOOKY_GHOST, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -522,15 +410,6 @@ void CGameContext::ConUnRifle(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, true);
-}
-
-void CGameContext::ConUnJetpack(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_Jetpack = false;
 }
 
 void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)

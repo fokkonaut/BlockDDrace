@@ -149,7 +149,7 @@ void CCharacter::HandleJetpack()
 	bool FullAuto = false;
 	if(m_Core.m_ActiveWeapon == WEAPON_GRENADE || m_Core.m_ActiveWeapon == WEAPON_SHOTGUN || m_Core.m_ActiveWeapon == WEAPON_RIFLE)
 		FullAuto = true;
-	if (m_Jetpack && m_Core.m_ActiveWeapon == WEAPON_GUN)
+	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && m_Core.m_ActiveWeapon == WEAPON_GUN)
 		FullAuto = true;
 
 	// check if we gonna fire
@@ -173,7 +173,7 @@ void CCharacter::HandleJetpack()
 	{
 		case WEAPON_GUN:
 		{
-			if (m_Jetpack)
+			if (m_Jetpack || m_pPlayer->m_InfJetpack)
 			{
 				float Strength;
 				if (!m_TuneZone)
@@ -352,7 +352,7 @@ void CCharacter::FireWeapon()
 	bool FullAuto = false;
 	if(m_Core.m_ActiveWeapon == WEAPON_GRENADE || m_Core.m_ActiveWeapon == WEAPON_SHOTGUN || m_Core.m_ActiveWeapon == WEAPON_RIFLE)
 		FullAuto = true;
-	if (m_Jetpack && m_Core.m_ActiveWeapon == WEAPON_GUN)
+	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && m_Core.m_ActiveWeapon == WEAPON_GUN)
 		FullAuto = true;
 
 	// don't fire non auto weapons when player is deep and sv_deepfly is disabled
@@ -507,7 +507,7 @@ void CCharacter::FireWeapon()
 				);
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 			}
-			else if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
+			else if ((!m_Jetpack && !m_pPlayer->m_InfJetpack) || !m_pPlayer->m_NinjaJetpack)
 			{
 				int Lifetime;
 				if (!m_TuneZone)
@@ -1366,7 +1366,7 @@ void CCharacter::Snap(int SnappingClient)
 	// jetpack and ninjajetpack prediction
 	if (m_pPlayer->GetCID() == SnappingClient)
 	{
-		if (m_Jetpack && pCharacter->m_Weapon != WEAPON_NINJA)
+		if ((m_Jetpack || m_pPlayer->m_InfJetpack) && pCharacter->m_Weapon != WEAPON_NINJA)
 		{
 			if (!(m_NeededFaketuning & FAKETUNE_JETPACK))
 			{
@@ -1385,7 +1385,7 @@ void CCharacter::Snap(int SnappingClient)
 	}
 
 	// change eyes, use ninja graphic and set ammo count if player has ninjajetpack
-	if (m_pPlayer->m_NinjaJetpack && m_Jetpack && m_Core.m_ActiveWeapon == WEAPON_GUN && !m_DeepFreeze && !(m_FreezeTime > 0 || m_FreezeTime == -1))
+	if (m_pPlayer->m_NinjaJetpack && (m_Jetpack || m_pPlayer->m_InfJetpack) && m_Core.m_ActiveWeapon == WEAPON_GUN && !m_DeepFreeze && !(m_FreezeTime > 0 || m_FreezeTime == -1))
 	{
 		if (pCharacter->m_Emote == EMOTE_NORMAL)
 			pCharacter->m_Emote = EMOTE_HAPPY;
@@ -1842,15 +1842,16 @@ void CCharacter::HandleTiles(int Index)
 	}
 
 	// jetpack gun
-	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack)
+	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack && !m_pPlayer->m_InfJetpack)
 	{
 		GameServer()->SendChatTarget(GetPlayer()->GetCID(),"You have a jetpack gun");
 		m_Jetpack = true;
 	}
-	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && m_Jetpack)
+	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && (m_Jetpack || m_pPlayer->m_InfJetpack))
 	{
 		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You lost your jetpack gun");
 		m_Jetpack = false;
+		m_pPlayer->m_InfJetpack = false;
 	}
 
 	// unlock team
@@ -2690,9 +2691,10 @@ void CCharacter::DropWeapon(int WeaponID)
 			m_CountWeapons++;
 	}
 
-	if (WeaponID == WEAPON_GUN && m_Jetpack)
+	if (WeaponID == WEAPON_GUN && (m_Jetpack || m_pPlayer->m_InfJetpack))
 	{
 		m_Jetpack = false;
+		m_pPlayer->m_InfJetpack = false;
 		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You lost your jetpack gun");
 
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -2768,6 +2770,188 @@ void CCharacter::SaveRealInfos()
 		str_copy(m_pPlayer->m_RealClan, Server()->ClientClan(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealClan));
 		str_copy(m_pPlayer->m_RealName, Server()->ClientName(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealName));
 	}
+
+	return;
+}
+
+void CCharacter::SetCosmetic(int Cosmetic, bool Remove, int FromID, int ToID)
+{
+	char aGiven[32];
+	char aItem[32];
+	char aMsg[64];
+
+	if (Remove)
+		str_format(aGiven, sizeof aGiven, "removed from");
+	else
+		str_format(aGiven, sizeof aGiven, "given to");
+
+	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
+	CPlayer* pPlayer = GameServer()->GetPlayerChar(ToID)->GetPlayer();
+
+
+	if (Cosmetic == JETPACK)
+	{
+		str_format(aItem, sizeof aItem, "Jetpack");
+		if (Remove)
+		{
+			pChr->m_Jetpack = false;
+			pPlayer->m_InfJetpack = false;
+		}
+		else
+			pChr->m_Jetpack = true;
+	}
+	else if (Cosmetic == INF_JETPACK)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Jetpack");
+		if (Remove)
+		{
+			pChr->m_Jetpack = false;
+			pPlayer->m_InfJetpack = false;
+		}
+		else
+			pPlayer->m_InfJetpack = true;
+	}
+	else if (Cosmetic == PLASMA_GUN)
+	{
+		str_format(aItem, sizeof aItem, "Plasma Gun");
+		if (Remove)
+		{
+			pChr->m_PlasmaGun = false;
+			pPlayer->m_InfPlasmaGun = false;
+		}
+		else
+		{
+			pChr->m_PlasmaGun = true;
+			pPlayer->m_InfPlasmaGun = false;
+			pChr->m_HeartGun = false;
+			pPlayer->m_InfHeartGun = false;
+		}
+	}
+	else if (Cosmetic == INF_PLASMA_GUN)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Plasma Gun");
+		if (Remove)
+		{
+			pPlayer->m_InfPlasmaGun = false;
+			pChr->m_PlasmaGun = false;
+		}
+		else
+		{
+			pPlayer->m_InfPlasmaGun = true;
+			pChr->m_PlasmaGun = false;
+			pPlayer->m_InfHeartGun = false;
+			pChr->m_HeartGun = false;
+		}
+	}
+	else if (Cosmetic == HEART_GUN)
+	{
+		str_format(aItem, sizeof aItem, "Heart Gun");
+		if (Remove)
+		{
+			pChr->m_HeartGun = false;
+			pPlayer->m_InfHeartGun = false;
+		}
+		else
+		{
+			pChr->m_HeartGun = true;
+			pPlayer->m_InfHeartGun = false;
+			pChr->m_PlasmaGun = false;
+			pPlayer->m_InfPlasmaGun = false;
+		}
+	}
+	else if (Cosmetic == INF_HEART_GUN)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Heart Gun");
+		if (Remove)
+		{
+			pPlayer->m_InfHeartGun = false;
+			pChr->m_HeartGun= false;
+		}
+		else
+		{
+			pPlayer->m_InfHeartGun = true;
+			pChr->m_HeartGun = false;
+			pPlayer->m_InfPlasmaGun = false;
+			pChr->m_PlasmaGun = false;
+		}
+	}
+	else if (Cosmetic == RAINBOW)
+	{
+		str_format(aItem, sizeof aItem, "Rainbow");
+		if (Remove)
+		{
+			pChr->m_Rainbow = false;
+			pPlayer->m_InfRainbow = false;
+		}
+		else
+			pChr->m_Rainbow = true;
+	}
+	else if (Cosmetic == INF_RAINBOW)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Rainbow");
+		if (Remove)
+		{
+			pPlayer->m_InfRainbow = false;
+			pChr->m_Rainbow = false;
+		}
+		else
+			pPlayer->m_InfRainbow = true;
+	}
+	else if (Cosmetic == ATOM)
+	{
+		str_format(aItem, sizeof aItem, "Atom");
+		if (Remove)
+		{
+			pChr->m_Atom = false;
+			pPlayer->m_InfAtom = false;
+		}
+		else
+			pChr->m_Atom = true;
+	}
+	else if (Cosmetic == INF_ATOM)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Atom");
+		if (Remove)
+		{
+			pPlayer->m_InfAtom = false;
+			pChr->m_Atom = false;
+		}
+		else
+			pPlayer->m_InfAtom = true;
+	}
+	else if (Cosmetic == TRAIL)
+	{
+		str_format(aItem, sizeof aItem, "Trail");
+		if (Remove)
+		{
+			pChr->m_Trail = false;
+			pPlayer->m_InfTrail = false;
+		}
+		else
+			pChr->m_Trail = true;
+	}
+	else if (Cosmetic == INF_TRAIL)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Trail");
+		if (Remove)
+		{
+			pPlayer->m_InfTrail = false;
+			pChr->m_Trail = false;
+		}
+		else
+			pPlayer->m_InfTrail = true;
+	}
+	else if (Cosmetic == SPOOKY_GHOST)
+	{
+		str_format(aItem, sizeof aItem, "Spooky Ghost");
+		pPlayer->m_HasSpookyGhost ^= true;
+	}
+
+	if (FromID != -1)
+	str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
+	GameServer()->SendChatTarget(FromID, aMsg);
+	if (pPlayer->GetCID() != GameServer()->GetPlayerChar(FromID)->GetPlayer()->GetCID())
+		GameServer()->SendChatTarget(pPlayer->GetCID(), aMsg);
 
 	return;
 }

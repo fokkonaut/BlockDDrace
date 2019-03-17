@@ -53,6 +53,24 @@ enum
 	NUM_TUNEZONES = 256
 };
 
+enum // use for pChr->SetCosmetic() and for pPlayer->m_aHasItem[ITEM_NAME]
+{
+	JETPACK = 1,
+	INF_JETPACK,
+	PLASMA_GUN,
+	INF_PLASMA_GUN,
+	HEART_GUN,
+	INF_HEART_GUN,
+	RAINBOW,
+	INF_RAINBOW,
+	ATOM,
+	INF_ATOM,
+	TRAIL,
+	INF_TRAIL,
+	SPOOKY_GHOST,
+};
+
+
 class IConsole;
 class IEngine;
 class IStorage;
@@ -284,12 +302,10 @@ private:
 	static void ConShotgun(IConsole::IResult *pResult, void *pUserData);
 	static void ConGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConRifle(IConsole::IResult *pResult, void *pUserData);
-	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConWeapons(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnShotgun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnRifle(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnWeapons(IConsole::IResult *pResult, void *pUserData);
 	static void ConAddWeapon(IConsole::IResult *pResult, void *pUserData);
 	static void ConRemoveWeapon(IConsole::IResult *pResult, void *pUserData);
@@ -364,6 +380,8 @@ private:
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
+	static void ConInfJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);

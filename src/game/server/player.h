@@ -194,6 +194,7 @@ public:
 
 	int m_RainbowColor;
 
+	bool m_InfJetpack;
 	bool m_InfPlasmaGun;
 	bool m_InfHeartGun;
 	bool m_InfRainbow;

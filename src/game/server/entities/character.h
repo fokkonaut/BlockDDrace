@@ -101,6 +101,9 @@ public:
 
 	void DropWeapon(int WeaponID);
 	bool SetWeaponThatChrHas();
+	
+
+	void SetCosmetic(int Cosmetic, bool Remove = false, int FromID = -1, int ToID = -1);
 
 private:
 	// player controlling this character
