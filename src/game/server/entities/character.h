@@ -103,7 +103,7 @@ public:
 	bool SetWeaponThatChrHas();
 	
 
-	void SetExtra(int Cosmetic, bool Remove = false, int FromID = -1, int ToID = -1);
+	void SetExtra(int Extra, bool Remove = false, int FromID = -1, int ToID = -1);
 
 private:
 	// player controlling this character

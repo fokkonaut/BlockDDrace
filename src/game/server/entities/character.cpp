@@ -2848,7 +2848,7 @@ void CCharacter::SaveRealInfos()
 	return;
 }
 
-void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
+void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 {
 	char aGiven[32];
 	char aItem[32];
@@ -2865,7 +2865,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 	vec2 Direction = normalize(vec2(pChr->m_LatestInput.m_TargetX, pChr->m_LatestInput.m_TargetY));
 	vec2 ProjStartPos = pChr->m_Pos + Direction * pChr->m_ProximityRadius*0.75f;
 
-	if (Cosmetic == JETPACK)
+	if (Extra == JETPACK)
 	{
 		str_format(aItem, sizeof aItem, "Jetpack");
 		if (Remove)
@@ -2876,7 +2876,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pChr->m_Jetpack = true;
 	}
-	else if (Cosmetic == INF_JETPACK)
+	else if (Extra == INF_JETPACK)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Jetpack");
 		if (Remove)
@@ -2887,7 +2887,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pPlayer->m_InfJetpack = true;
 	}
-	else if (Cosmetic == PLASMA_GUN)
+	else if (Extra == PLASMA_GUN)
 	{
 		str_format(aItem, sizeof aItem, "Plasma Gun");
 		if (Remove)
@@ -2903,7 +2903,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 			pPlayer->m_InfHeartGun = false;
 		}
 	}
-	else if (Cosmetic == INF_PLASMA_GUN)
+	else if (Extra == INF_PLASMA_GUN)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Plasma Gun");
 		if (Remove)
@@ -2919,7 +2919,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 			pChr->m_HeartGun = false;
 		}
 	}
-	else if (Cosmetic == HEART_GUN)
+	else if (Extra == HEART_GUN)
 	{
 		str_format(aItem, sizeof aItem, "Heart Gun");
 		if (Remove)
@@ -2935,7 +2935,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 			pPlayer->m_InfPlasmaGun = false;
 		}
 	}
-	else if (Cosmetic == INF_HEART_GUN)
+	else if (Extra == INF_HEART_GUN)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Heart Gun");
 		if (Remove)
@@ -2951,7 +2951,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 			pChr->m_PlasmaGun = false;
 		}
 	}
-	else if (Cosmetic == RAINBOW)
+	else if (Extra == RAINBOW)
 	{
 		str_format(aItem, sizeof aItem, "Rainbow");
 		if (Remove)
@@ -2962,7 +2962,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pChr->m_Rainbow = true;
 	}
-	else if (Cosmetic == INF_RAINBOW)
+	else if (Extra == INF_RAINBOW)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Rainbow");
 		if (Remove)
@@ -2973,7 +2973,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pPlayer->m_InfRainbow = true;
 	}
-	else if (Cosmetic == ATOM)
+	else if (Extra == ATOM)
 	{
 		str_format(aItem, sizeof aItem, "Atom");
 		if (Remove)
@@ -2984,7 +2984,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pChr->m_Atom = true;
 	}
-	else if (Cosmetic == INF_ATOM)
+	else if (Extra == INF_ATOM)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Atom");
 		if (Remove)
@@ -2995,7 +2995,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pPlayer->m_InfAtom = true;
 	}
-	else if (Cosmetic == TRAIL)
+	else if (Extra == TRAIL)
 	{
 		str_format(aItem, sizeof aItem, "Trail");
 		if (Remove)
@@ -3006,7 +3006,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pChr->m_Trail = true;
 	}
-	else if (Cosmetic == INF_TRAIL)
+	else if (Extra == INF_TRAIL)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Trail");
 		if (Remove)
@@ -3017,12 +3017,12 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 		else
 			pPlayer->m_InfTrail = true;
 	}
-	else if (Cosmetic == SPOOKY_GHOST)
+	else if (Extra == SPOOKY_GHOST)
 	{
 		str_format(aItem, sizeof aItem, "Spooky Ghost");
 		pPlayer->m_HasSpookyGhost ^= true;
 	}
-	else if (Cosmetic == METEOR)
+	else if (Extra == METEOR)
 	{
 		str_format(aItem, sizeof aItem, "Meteor");
 		if (Remove)
@@ -3036,7 +3036,7 @@ void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), false);
 		}
 	}
-	else if (Cosmetic == INF_METEOR)
+	else if (Extra == INF_METEOR)
 	{
 		str_format(aItem, sizeof aItem, "Infinite Meteor");
 		if (Remove)
