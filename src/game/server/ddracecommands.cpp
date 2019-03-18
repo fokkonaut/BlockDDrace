@@ -515,7 +515,7 @@ void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserDat
 		}
 		pSelf->SendChatTarget(pResult->m_ClientID, "All bots have been removed.");
 	}
-	else if (pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
+	else if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
 	{
 		pSelf->Server()->BotLeave(ID);
 	}
