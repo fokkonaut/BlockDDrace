@@ -313,6 +313,7 @@ void CServer::BotJoin(int BotID)
 
 	m_NetServer.BotInit(BotID);
 	m_aClients[BotID].m_State = CClient::STATE_BOT;
+	m_aClients[BotID].m_IsClientDummy = true;
 
 	m_aClients[BotID].m_Authed = AUTHED_NO;	//crashfix, the server crashed because the bot was trying to receive rcon commands for auto completing but he couldnt get it
 
@@ -1427,26 +1428,6 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 				Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
 				m_aClients[ClientID].m_State = CClient::STATE_READY;
 				m_aClients[ClientID].m_IsDummy = false;
-				char aIP[32];
-				char aCheckIP[32];
-				net_addr_str(m_NetServer.ClientAddr(ClientID), aCheckIP, sizeof(aCheckIP), false);
-				for (int i = 0; i < MAX_CLIENTS; i++)
-				{
-					if (i != ClientID && (m_aClients[i].m_State == CClient::STATE_READY || m_aClients[i].m_State == CClient::STATE_INGAME))
-					{
-						net_addr_str(m_NetServer.ClientAddr(i), aIP, sizeof(aIP), false);
-						if (g_Config.m_EcBindaddr[0] && m_aClients[i].m_State == CClient::STATE_BOT)
-						{
-							m_aClients[ClientID].m_IsClientDummy = true;
-							break;
-						}
-						else if (!str_comp(aIP, aCheckIP))
-						{
-							m_aClients[ClientID].m_IsClientDummy = true;
-							break;
-						}
-					}
-				}
 				GameServer()->OnClientConnected(ClientID);
 			}
 
