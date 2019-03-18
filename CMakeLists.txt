@@ -996,26 +996,26 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/flag.h
   entities/gun.cpp
   entities/gun.h
+  entities/heartprojectile.cpp
+  entities/heartprojectile.h
   entities/laser.cpp
   entities/laser.h
   entities/light.cpp
   entities/light.h
+  entities/meteor.cpp
+  entities/meteor.h
   entities/pickup.cpp
   entities/pickup.h
   entities/plasma.cpp
   entities/plasma.h
-  entities/projectile.cpp
-  entities/projectile.h
-  entities/weapon.cpp
-  entities/weapon.h
   entities/plasmabullet.cpp
   entities/plasmabullet.h
-  entities/heartprojectile.cpp
-  entities/heartprojectile.h
+  entities/projectile.cpp
+  entities/projectile.h
   entities/stable_projectile.cpp
   entities/stable_projectile.h
-  entities/meteor.cpp
-  entities/meteor.h
+  entities/weapon.cpp
+  entities/weapon.h
   entity.cpp
   entity.h
   eventhandler.cpp
