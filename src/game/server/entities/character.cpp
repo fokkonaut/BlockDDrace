@@ -365,7 +365,7 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 	{
 		WillFire = true;
-		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_pPlayer->m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN)
+		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_Core.m_ActiveWeapon == WEAPON_GUN)
 		{
 			m_CountSpookyGhostInputs = true;
 		}
@@ -545,15 +545,15 @@ void CCharacter::FireWeapon()
 			}
 
 			//spooky ghost
-			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_pPlayer->m_HasSpookyGhost && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
+			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
 			{
 				m_TimesShot++;
-				if ((m_TimesShot == 2) && !m_SpookyGhost)
+				if (m_pPlayer->m_HasSpookyGhost && (m_TimesShot == 2) && !m_SpookyGhost)
 				{
 					SetSpookyGhost();
 					m_TimesShot = 0;
 				}
-				else if ((m_TimesShot == 2) && m_SpookyGhost)
+				else if (m_TimesShot == 2 && m_SpookyGhost)
 				{
 					UnsetSpookyGhost();
 					m_TimesShot = 0;
