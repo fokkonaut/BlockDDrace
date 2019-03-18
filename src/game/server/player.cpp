@@ -237,7 +237,7 @@ void CPlayer::Tick()
 
 	if (m_IsDummy && g_Config.m_SvHideBots == 2)
 		m_Team = TEAM_BLUE;
-	else
+	else if (m_IsDummy)
 		m_Team = TEAM_RED;
 }
 
