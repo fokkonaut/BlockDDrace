@@ -2776,7 +2776,7 @@ void CCharacter::SaveRealInfos()
 	return;
 }
 
-void CCharacter::SetCosmetic(int Cosmetic, bool Remove, int FromID, int ToID)
+void CCharacter::SetExtra(int Cosmetic, bool Remove, int FromID, int ToID)
 {
 	char aGiven[32];
 	char aItem[32];

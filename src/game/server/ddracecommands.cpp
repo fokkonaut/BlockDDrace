@@ -176,7 +176,7 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
-		pChr->SetCosmetic(JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -188,7 +188,7 @@ void CGameContext::ConInfJetpack(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
-		pChr->SetCosmetic(INF_JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_JETPACK, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -200,7 +200,7 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
-		pChr->SetCosmetic(PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -212,7 +212,7 @@ void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
-		pChr->SetCosmetic(INF_PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_PLASMA_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -224,7 +224,7 @@ void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
-		pChr->SetCosmetic(HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -236,7 +236,7 @@ void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
-		pChr->SetCosmetic(INF_HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_HEART_GUN, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -248,7 +248,7 @@ void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
-		pChr->SetCosmetic(RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -260,7 +260,7 @@ void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
-		pChr->SetCosmetic(INF_RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_RAINBOW, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -272,7 +272,7 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
-		pChr->SetCosmetic(ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -284,7 +284,7 @@ void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
-		pChr->SetCosmetic(INF_ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_ATOM, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -296,7 +296,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
-		pChr->SetCosmetic(TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -308,7 +308,7 @@ void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
-		pChr->SetCosmetic(INF_TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_TRAIL, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -320,7 +320,7 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = pChr->GetPlayer()->m_HasSpookyGhost ? true : false;
-		pChr->SetCosmetic(SPOOKY_GHOST, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(SPOOKY_GHOST, Remove, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -331,7 +331,7 @@ void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		pChr->SetCosmetic(METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -342,7 +342,7 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
-		pChr->SetCosmetic(INF_METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+		pChr->SetExtra(INF_METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
 	}
 }
 
@@ -357,13 +357,13 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 		{
 			CCharacter* pChr = pSelf->GetPlayerChar(i);
 			if (pChr)
-				pChr->SetCosmetic(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
+				pChr->SetExtra(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
 		}
 	}
 	else
 	{
 		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-		pChr->SetCosmetic(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
+		pChr->SetExtra(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
 	}
 }
 

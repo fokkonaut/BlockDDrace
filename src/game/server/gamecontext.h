@@ -53,7 +53,7 @@ enum
 	NUM_TUNEZONES = 256
 };
 
-enum // use for pChr->SetCosmetic() and for pPlayer->m_aHasItem[ITEM_NAME]
+enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 {
 	JETPACK = 1,
 	INF_JETPACK,
