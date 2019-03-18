@@ -201,6 +201,7 @@ public:
 	bool m_InfAtom;
 	bool m_InfTrail;
 	bool m_HasSpookyGhost;
+	int m_InfMeteors;
 
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);

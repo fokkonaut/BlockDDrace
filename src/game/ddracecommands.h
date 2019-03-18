@@ -30,8 +30,8 @@ CONSOLE_COMMAND("right", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoRight, this, "Mak
 CONSOLE_COMMAND("up", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoUp, this, "Makes you move 1 tile up")
 CONSOLE_COMMAND("down", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoDown, this, "Makes you move 1 tile down")
 
-CONSOLE_COMMAND("connectdummy", "?s[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
-CONSOLE_COMMAND("disconnectdummy", "s[id/all]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy s/all")
+CONSOLE_COMMAND("connectdummy", "?i[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
+CONSOLE_COMMAND("disconnectdummy", "s[id/all]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v/all")
 
 CONSOLE_COMMAND("jetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConJetpack, this, "Toggles jetpack for player v")
 CONSOLE_COMMAND("infjetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInfJetpack, this, "Toggles infinite jetpack for player v")
@@ -46,6 +46,9 @@ CONSOLE_COMMAND("infatom", "?v[id]", CFGFLAG_SERVER, ConInfAtom, this, "Toggles 
 CONSOLE_COMMAND("trail", "?v[id]", CFGFLAG_SERVER, ConTrail, this, "Toggles trail for player v")
 CONSOLE_COMMAND("inftrail", "?v[id]", CFGFLAG_SERVER, ConInfTrail, this, "Toggles infinite for player v")
 CONSOLE_COMMAND("spookyghost", "?v[id]", CFGFLAG_SERVER, ConSpookyGhost, this, "Toggles spooky ghost for player v")
+CONSOLE_COMMAND("addmeteor", "?v[id]", CFGFLAG_SERVER, ConAddMeteor, this, "Adds a meteors to player v")
+CONSOLE_COMMAND("addinfmeteor", "?v[id]", CFGFLAG_SERVER, ConAddInfMeteor, this, "Adds an infinite meteors to player v")
+CONSOLE_COMMAND("removemeteors", "?s[id/all]", CFGFLAG_SERVER, ConRemoveMeteors, this, "Removes all meteors from player v/all")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

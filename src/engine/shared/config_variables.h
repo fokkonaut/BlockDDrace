@@ -203,9 +203,15 @@ MACRO_CONFIG_INT(SvEmotionalTees, sv_emotional_tees, 1, -1, 1, CFGFLAG_SERVER, "
 MACRO_CONFIG_INT(SvEmoticonDelay, sv_emoticon_delay, 3, 0, 9999, CFGFLAG_SERVER, "The time in seconds between over-head emoticons")
 MACRO_CONFIG_INT(SvEyeEmoteChangeDelay, sv_eye_emote_change_delay, 1, 0, 9999, CFGFLAG_SERVER, "The time in seconds between eye emoticons change")
 
+
 MACRO_CONFIG_INT(SvFlagSounds, sv_flag_sounds, 0, 0, 1, CFGFLAG_SERVER, "Whether flags create a public sound on drop/pickup/respawn or not")
 MACRO_CONFIG_INT(SvAllowDroppingWeapons, sv_allow_dropping_weapons, 1, 0, 1, CFGFLAG_SERVER, "0=off, 1=all")
 MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "0=Show bots in scoreboard/master, 1=show in sb , 2=hide completely")
+
+// meteor
+MACRO_CONFIG_INT(SvMeteorFriction, sv_meteor_friction, 5000, 0, 1000000, CFGFLAG_SERVER, "Meteor friction")
+MACRO_CONFIG_INT(SvMeteorMaxAccel, sv_meteor_max_accel, 2000, 0, 1000000, CFGFLAG_SERVER, "Max meteor acceleration per player in pixel/tick^2")
+MACRO_CONFIG_INT(SvMeteorAccelPreserve, sv_meteor_accel_preserve, 100000, 0, 1000000, CFGFLAG_SERVER, "How much acceleration is preserved with growing distance to the player")
 
 MACRO_CONFIG_INT(SvChatDelay, sv_chat_delay, 1, 0, 9999, CFGFLAG_SERVER, "The time in seconds between chat messages")
 MACRO_CONFIG_INT(SvTeamChangeDelay, sv_team_change_delay, 3, 0, 9999, CFGFLAG_SERVER, "The time in seconds between team changes (spectator/in game)")

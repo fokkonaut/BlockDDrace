@@ -68,6 +68,8 @@ enum // use for pChr->SetCosmetic() and for pPlayer->m_aHasItem[ITEM_NAME]
 	TRAIL,
 	INF_TRAIL,
 	SPOOKY_GHOST,
+	METEOR,
+	INF_METEOR,
 };
 
 
@@ -393,6 +395,9 @@ private:
 	static void ConInfAtom(IConsole::IResult *pResult, void *pUserData);
 	static void ConTrail(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfTrail(IConsole::IResult *pResult, void *pUserData);
+	static void ConAddMeteor(IConsole::IResult *pResult, void *pUserData);
+	static void ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData);
+	static void ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

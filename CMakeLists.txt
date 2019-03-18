@@ -1014,6 +1014,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/heartprojectile.h
   entities/stable_projectile.cpp
   entities/stable_projectile.h
+  entities/meteor.cpp
+  entities/meteor.h
   entity.cpp
   entity.h
   eventhandler.cpp

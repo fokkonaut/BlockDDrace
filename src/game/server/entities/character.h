@@ -103,7 +103,7 @@ public:
 	bool SetWeaponThatChrHas();
 	
 
-	void SetCosmetic(int Cosmetic, bool Remove = false, int FromID = -1, int ToID = -1);
+	void SetCosmetic(int Cosmetic, bool Remove = false,  int FromID = -1, int ToID = -1);
 
 private:
 	// player controlling this character
@@ -298,6 +298,7 @@ public:
 	bool m_Rainbow;
 	bool m_Atom;
 	bool m_Trail;
+	int m_Meteors;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;

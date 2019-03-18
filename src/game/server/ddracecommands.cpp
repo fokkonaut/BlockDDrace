@@ -324,11 +324,54 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		pChr->SetCosmetic(METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+	}
+}
+
+void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		pChr->SetCosmetic(INF_METEOR, false, pResult->m_ClientID, pChr->GetPlayer()->GetCID());
+	}
+}
+
+void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
+
+	if (!str_comp_nocase(pResult->GetString(0), "all"))
+	{
+		for (int i = 0; i < MAX_CLIENTS; i++)
+		{
+			CCharacter* pChr = pSelf->GetPlayerChar(i);
+			if (pChr)
+				pChr->SetCosmetic(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
+		}
+	}
+	else
+	{
+		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+		pChr->SetCosmetic(METEOR, true, pResult->m_ClientID, pChr->GetPlayer()->GetCID()); // includes infinite meteors
+	}
+}
+
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	
-	int Amount = str_toint(pResult->GetString(0));
+	int Amount = (pResult->GetInteger(0));
 	if (!Amount)
 		Amount = 1;
 	for (int i = 0; i < Amount; i++)
@@ -503,7 +546,7 @@ void CGameContext::ConToCheckTeleporter(IConsole::IResult *pResult, void *pUserD
 void CGameContext::ConTeleport(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
-	int Tele = pResult->NumArguments() == 2 ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Tele = pResult->NumArguments() == 2 ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
 	int TeleTo = pResult->NumArguments() ? pResult->GetInteger(pResult->NumArguments() - 1) : pResult->m_ClientID;
 
 	if (!str_comp_nocase(pResult->GetString(0), "all"))

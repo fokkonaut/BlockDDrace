@@ -14,6 +14,7 @@
 #include "flag.h"
 #include "plasmabullet.h"
 #include "heartprojectile.h"
+#include "meteor.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -496,7 +497,7 @@ void CCharacter::FireWeapon()
 					Direction,				//dir
 					0,						//freeze
 					0,						//explosive
-					1,						//unfreeze
+					0,						//unfreeze
 					0,						//bloody
 					SpookyGhost,			//ghost
 					SpookyGhost,			//spooky
@@ -2595,6 +2596,7 @@ void CCharacter::DDRaceInit()
 	m_Rainbow = false;
 	m_Atom = false;
 	m_Trail = false;
+	m_Meteors = 0;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -2788,6 +2790,8 @@ void CCharacter::SetCosmetic(int Cosmetic, bool Remove, int FromID, int ToID)
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->GetPlayerChar(ToID)->GetPlayer();
 
+	vec2 Direction = normalize(vec2(pChr->m_LatestInput.m_TargetX, pChr->m_LatestInput.m_TargetY));
+	vec2 ProjStartPos = pChr->m_Pos + Direction * pChr->m_ProximityRadius*0.75f;
 
 	if (Cosmetic == JETPACK)
 	{
@@ -2945,6 +2949,34 @@ void CCharacter::SetCosmetic(int Cosmetic, bool Remove, int FromID, int ToID)
 	{
 		str_format(aItem, sizeof aItem, "Spooky Ghost");
 		pPlayer->m_HasSpookyGhost ^= true;
+	}
+	else if (Cosmetic == METEOR)
+	{
+		str_format(aItem, sizeof aItem, "Meteor");
+		if (Remove)
+		{
+			pChr->m_Meteors = 0;
+			pPlayer->m_InfMeteors = 0;
+		}
+		else
+		{
+			pChr->m_Meteors++;
+			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), false);
+		}
+	}
+	else if (Cosmetic == INF_METEOR)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Meteor");
+		if (Remove)
+		{
+			pPlayer->m_InfMeteors = 0;
+			pChr->m_Meteors = 0;
+		}
+		else
+		{
+			pPlayer->m_InfMeteors++;
+			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), true);
+		}
 	}
 
 	if (FromID != -1)
