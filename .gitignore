@@ -49,14 +49,12 @@ map_extract
 map_replace_image
 map_resave
 map_version
-mastersrv
 packetgen
 testrunner
 tileset_borderadd
 tileset_borderfix
 tileset_borderrem
 tileset_borderset
-twping
 unicode_confusables
 uuid
 versionsrv
@@ -75,7 +73,6 @@ cscope.out
 /objs
 
 *.cmd
-*.dll
 *.dmg
 *.dtb
 *.exe
