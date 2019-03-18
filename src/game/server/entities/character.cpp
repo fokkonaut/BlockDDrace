@@ -1199,7 +1199,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
 	// send the kill message
-	if (!m_pPlayer->m_ShowName || (Killer >= 0 && !GameServer()->m_apPlayers[Killer]->m_ShowName))
+	if (!m_pPlayer->m_ShowName || (Killer >= 0 && GameServer()->m_apPlayers[Killer] && !GameServer()->m_apPlayers[Killer]->m_ShowName))
 	{
 		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
 			GameServer()->m_apPlayers[Killer]->FixForNoName(0);
