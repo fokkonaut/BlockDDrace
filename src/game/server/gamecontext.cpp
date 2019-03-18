@@ -3720,3 +3720,20 @@ int CGameContext::GetNextClientID()
 
 	return ClientID;
 }
+
+int CGameContext::GetCIDByName(const char * pName)
+{
+	int ClientID = -1;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (m_apPlayers[i])
+		{
+			if (!str_comp(pName, Server()->ClientName(i)))
+			{
+				ClientID = i;
+				break;
+			}
+		}
+	}
+	return ClientID;
+}

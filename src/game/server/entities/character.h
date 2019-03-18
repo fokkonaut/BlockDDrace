@@ -278,9 +278,6 @@ public:
 	bool m_TeleGunTeleport;
 	bool m_IsBlueTeleGunTeleport;
 
-	bool m_PlasmaGun;
-	bool m_HeartGun;
-
 	//spooky ghost
 	bool m_SpookyGhost;
 	void SetSpookyGhost();
@@ -299,6 +296,8 @@ public:
 	bool m_Atom;
 	bool m_Trail;
 	int m_Meteors;
+	bool m_PlasmaGun;
+	bool m_HeartGun;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;

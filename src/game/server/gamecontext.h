@@ -285,6 +285,8 @@ public:
 
 	bool m_ClientLeftServer[MAX_CLIENTS];
 
+	int GetCIDByName(const char *pName);
+
 private:
 
 	bool m_VoteWillPass;
@@ -381,6 +383,8 @@ private:
 
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfJetpack(IConsole::IResult *pResult, void *pUserData);

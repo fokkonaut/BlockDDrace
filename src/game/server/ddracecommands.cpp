@@ -367,6 +367,98 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int ID = pSelf->GetCIDByName(pResult->GetString(0));
+
+	if (ID < 0)
+		return;
+
+	CPlayer* pPlayer = pSelf->GetPlayerChar(ID)->GetPlayer();
+
+	char aBuf[64];
+	str_format(aBuf, sizeof(aBuf), "==== [PLAYER INFO] '%s' ====", pResult->GetString(0));
+	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	if (pPlayer->GetTeam() == TEAM_SPECTATORS)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
+	if (pSelf->Server()->GetAuthedState(pPlayer->GetCID()) != AUTHED_NO)
+	{
+		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(pPlayer->GetCID()));
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	if (pPlayer->m_AccountID > 0)
+	{
+		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pPlayer->m_AccountName);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		str_format(aBuf, sizeof(aBuf), "AccountID: %d", pPlayer->m_AccountID);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Account: Not logged in");
+	if (pPlayer->m_InfJetpack)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Jetpack: True");
+	if (pPlayer->m_InfPlasmaGun)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Plasma Gun: True");
+	if (pPlayer->m_InfHeartGun)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Heart Gun: True");
+	if (pPlayer->m_InfRainbow)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Rainbow: True");
+	if (pPlayer->m_InfAtom)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Atom: True");
+	if (pPlayer->m_InfTrail)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Trail: True");
+	if (pPlayer->m_InfMeteors > 0)
+	{
+		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	if (!pPlayer->GetCharacter())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Character: Dead");
+	}
+	else
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Character: Alive");
+		if (pPlayer->GetCharacter()->m_DeepFreeze)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
+		else if (pPlayer->GetCharacter()->isFreezed)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
+		else if (pPlayer->GetCharacter()->m_FreezeTime)
+		{
+			str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pPlayer->GetCharacter()->m_FreezeTime);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		else
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: False");
+		if (pPlayer->GetCharacter()->m_SuperJump)
+			pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
+		if (pPlayer->GetCharacter()->m_EndlessHook)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
+		if (pPlayer->GetCharacter()->m_Jetpack)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
+		if (pPlayer->GetCharacter()->m_PlasmaGun)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Plasma Gun: True");
+		if (pPlayer->GetCharacter()->m_HeartGun)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Heart Gun: True");
+		if (pPlayer->GetCharacter()->m_Rainbow)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
+		if (pPlayer->GetCharacter()->m_Atom)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
+		if (pPlayer->GetCharacter()->m_Trail)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
+		if (pPlayer->GetCharacter()->m_Meteors > 0)
+		{
+			str_format(aBuf, sizeof(aBuf), "Meteors: %d", pPlayer->GetCharacter()->m_Meteors);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pPlayer->GetCharacter()->m_Pos.x / 32, pPlayer->GetCharacter()->m_Pos.y / 32);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+}
+
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

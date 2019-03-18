@@ -203,6 +203,12 @@ public:
 	bool m_HasSpookyGhost;
 	int m_InfMeteors;
 
+	int m_AccountID;
+	char m_AccountName[32];
+	char m_AccountPassword[32];
+
+
+
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
 	int64 m_LastPlaytime;
