@@ -235,11 +235,44 @@ void CPlayer::Tick()
 		GameServer()->SendTuningParams(m_ClientID, m_TuneZone);
 	}
 
-	if (m_IsDummy && g_Config.m_SvHideBots == 2)
-		m_Team = TEAM_BLUE;
-	else if (m_IsDummy)
-		m_Team = TEAM_RED;
+	if (m_Team != TEAM_SPECTATORS)
+	{
+		if (m_IsDummy && g_Config.m_SvHideBots == 2)
+			m_Team = TEAM_BLUE;
+		else if (m_IsDummy)
+			m_Team = TEAM_RED;
+	}
+
+	if (m_SetRealName)
+	{
+		if (m_SetRealNameTick < Server()->Tick())
+		{
+			if (m_FixNameID == 1)
+				GameServer()->SendChat(m_ClientID, m_ChatTeam, m_ChatText, m_ClientID);
+			else if (m_FixNameID == 2)
+			{
+				CNetMsg_Sv_KillMsg Msg;
+				Msg.m_Killer = m_MsgKiller;
+				Msg.m_Victim = GetCID();
+				Msg.m_Weapon = m_MsgWeapon;
+				Msg.m_ModeSpecial = m_MsgModeSpecial;
+				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+			}
+
+			m_SetRealName = false;
+		}
+	}
 }
+
+void CPlayer::FixForNoName(int ID)
+{
+	m_FixNameID = ID;
+	m_SetRealName = true;
+	m_SetRealNameTick = Server()->Tick() + Server()->TickSpeed() / 20;
+
+	return;
+}
+
 
 void CPlayer::PostTick()
 {
@@ -290,19 +323,33 @@ void CPlayer::Snap(int SnappingClient)
 	//StrToInts(&pClientInfo->m_Clan0, 3, Server()->ClientClan(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
+	m_ShowName = true;
+
+	CPlayer *pSnapping = GameServer()->m_apPlayers[SnappingClient];
+
 	//spooky ghost
 	const char *pClan;
-	if (GetCharacter() && GetCharacter()->m_SpookyGhost)
-	{
+	if (m_SpookyGhost)
 		pClan = m_RealName;
-		StrToInts(&pClientInfo->m_Name0, 4, " ");
-	}
 	else
-	{
-		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 		pClan = m_RealClan;
-	}
 	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
+
+	if (m_SpookyGhost)
+		m_ShowName = false;
+
+	if (pSnapping)
+	{
+		if (pSnapping->GetTeam() == TEAM_SPECTATORS)
+		{
+			m_ShowName = true;
+		}
+	}
+
+	if (m_SetRealName || m_ShowName)
+		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
+	else
+		StrToInts(&pClientInfo->m_Name0, 4, " ");
 
 	if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 	{
@@ -569,7 +616,6 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 		return;
 
 	char aBuf[512];
-	DoChatMsg = false;
 	if(DoChatMsg)
 	{
 		str_format(aBuf, sizeof(aBuf), "'%s' joined the %s", Server()->ClientName(m_ClientID), GameServer()->m_pController->GetTeamName(Team));

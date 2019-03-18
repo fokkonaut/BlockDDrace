@@ -64,7 +64,7 @@ void CPickup::Tick()
 
 				case POWERUP_ARMOR:
 					if(pChr->Team() == TEAM_SUPER) continue;
-					if (pChr->m_SpookyGhost)
+					if (pChr->GetPlayer()->m_SpookyGhost)
 					{
 						if (pChr->m_aSpookyGhostWeaponsBackupGot[2][1] || pChr->m_aSpookyGhostWeaponsBackupGot[3][1] || pChr->m_aSpookyGhostWeaponsBackupGot[4][1])
 							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
@@ -102,7 +102,7 @@ void CPickup::Tick()
 
 				case POWERUP_WEAPON:
 
-					if (!pChr->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime))))
+					if (!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime))))
 					{
 						pChr->GiveWeapon(m_Subtype);
 
@@ -123,7 +123,7 @@ void CPickup::Tick()
 
 			case POWERUP_NINJA:
 				{
-					if (!pChr->m_SpookyGhost)
+					if (!pChr->GetPlayer()->m_SpookyGhost)
 					{
 						// activate ninja on target player
 						pChr->GiveNinja();

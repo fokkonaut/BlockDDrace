@@ -109,6 +109,11 @@ public:
 		Arguments:
 			entity - Entity to add
 	*/
+
+
+	class CCharacter *ClosestCharType(vec2 Pos, bool Human = true, CCharacter *pNotThis = 0, bool SeeAll = true);
+
+
 	void InsertEntity(CEntity *pEntity);
 
 	/*

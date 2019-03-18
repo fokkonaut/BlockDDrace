@@ -184,6 +184,7 @@ public:
 	bool m_IsDummy;
 
 	//spooky ghost
+	bool m_SpookyGhost;
 	int m_RealUseCustomColor;
 	char m_RealSkinName[64];
 	char m_RealName[64];
@@ -191,6 +192,19 @@ public:
 	int m_RealColorBody;
 	int m_RealColorFeet;
 
+	//no name chat fix
+	void FixForNoName(int ID);
+	int m_FixNameID;
+	bool m_ShowName;
+	bool m_SetRealName;
+	int64 m_SetRealNameTick;
+	//ID == 1 // chat message
+	int m_ChatTeam;
+	char m_ChatText[256];
+	//ID == 2 // kill message
+	int m_MsgKiller;
+	int m_MsgWeapon;
+	int m_MsgModeSpecial;
 
 	int m_RainbowColor;
 

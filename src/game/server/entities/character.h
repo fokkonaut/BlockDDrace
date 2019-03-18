@@ -279,7 +279,6 @@ public:
 	bool m_IsBlueTeleGunTeleport;
 
 	//spooky ghost
-	bool m_SpookyGhost;
 	void SetSpookyGhost();
 	void UnsetSpookyGhost();
 	void SaveRealInfos();

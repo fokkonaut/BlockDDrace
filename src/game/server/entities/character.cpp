@@ -465,7 +465,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_GUN:
 		{
-			int SpookyGhost = m_SpookyGhost ? 1 : 0;
+			int SpookyGhost = m_pPlayer->m_SpookyGhost ? 1 : 0;
 			if (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun)
 			{
 				new CPlasmaBullet
@@ -548,12 +548,12 @@ void CCharacter::FireWeapon()
 			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
 			{
 				m_TimesShot++;
-				if (m_pPlayer->m_HasSpookyGhost && (m_TimesShot == 2) && !m_SpookyGhost)
+				if (m_pPlayer->m_HasSpookyGhost && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
 				{
 					SetSpookyGhost();
 					m_TimesShot = 0;
 				}
-				else if (m_TimesShot == 2 && m_SpookyGhost)
+				else if (m_TimesShot == 2 && m_pPlayer->m_SpookyGhost)
 				{
 					UnsetSpookyGhost();
 					m_TimesShot = 0;
@@ -1148,12 +1148,25 @@ void CCharacter::Die(int Killer, int Weapon)
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
 	// send the kill message
-	CNetMsg_Sv_KillMsg Msg;
-	Msg.m_Killer = Killer;
-	Msg.m_Victim = m_pPlayer->GetCID();
-	Msg.m_Weapon = Weapon;
-	Msg.m_ModeSpecial = ModeSpecial;
-	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+	if (!m_pPlayer->m_ShowName || (Killer >= 0 && !GameServer()->m_apPlayers[Killer]->m_ShowName))
+	{
+		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
+			GameServer()->m_apPlayers[Killer]->FixForNoName(0);
+
+		m_pPlayer->m_MsgKiller = Killer;
+		m_pPlayer->m_MsgWeapon = Weapon;
+		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
+		m_pPlayer->FixForNoName(2);
+	}
+	else
+	{
+		CNetMsg_Sv_KillMsg Msg;
+		Msg.m_Killer = Killer;
+		Msg.m_Victim = m_pPlayer->GetCID();
+		Msg.m_Weapon = Weapon;
+		Msg.m_ModeSpecial = ModeSpecial;
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+	}
 
 	// a nice sound
 	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -1256,7 +1269,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	else
 		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);*/
 
-	if ((From != -1) && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->GetCharacter()->m_SpookyGhost)
+	if ((From != -1) && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
@@ -2592,7 +2605,6 @@ void CCharacter::DDRaceInit()
 	m_Jetpack = false;
 	m_Core.m_Jumps = 2;
 	m_FreezeHammer = false;
-	m_SpookyGhost = false;
 	m_Rainbow = false;
 	m_Atom = false;
 	m_Trail = false;
@@ -2738,7 +2750,7 @@ void CCharacter::SetSpookyGhost()
 	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, "ghost", sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = 0;
 
-	m_SpookyGhost = 1;
+	m_pPlayer->m_SpookyGhost = true;
 
 	return;
 }
@@ -2758,14 +2770,14 @@ void CCharacter::UnsetSpookyGhost()
 	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, m_pPlayer->m_RealSkinName, sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = m_pPlayer->m_RealUseCustomColor;
 
-	m_SpookyGhost = 0;
+	m_pPlayer->m_SpookyGhost = false;
 
 	return;
 }
 
 void CCharacter::SaveRealInfos()
 {
-	if (!m_SpookyGhost)
+	if (!m_pPlayer->m_SpookyGhost)
 	{
 		str_copy(m_pPlayer->m_RealSkinName, m_pPlayer->m_TeeInfos.m_SkinName, sizeof(m_pPlayer->m_RealSkinName));
 		m_pPlayer->m_RealUseCustomColor = m_pPlayer->m_TeeInfos.m_UseCustomColor;

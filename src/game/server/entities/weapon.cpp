@@ -93,7 +93,7 @@ void CWeapon::Pickup()
 	{
 		CCharacter* pChar = GameServer()->GetPlayerChar(CharID);
 
-		if (pChar->m_SpookyGhost && m_Type != WEAPON_GUN)
+		if (pChar->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
 			return;
 
 		if (pChar->GetWeaponGot(m_Type) && !m_Jetpack)

@@ -404,7 +404,7 @@ void CGameContext::SendEmoticon(int ClientID, int Emoticon)
 {
 	CNetMsg_Sv_Emoticon Msg;
 	Msg.m_ClientID = ClientID;
-	if (m_apPlayers[ClientID]->GetCharacter()->m_SpookyGhost)
+	if (m_apPlayers[ClientID]->m_SpookyGhost)
 		Msg.m_Emoticon = 7; // ghost emote only
 	else
 		Msg.m_Emoticon = Emoticon;
@@ -1357,6 +1357,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					Server()->RestrictRconOutput(-1);
 				}
 			}
+			else if (!pPlayer->m_ShowName)
+			{
+				str_copy(pPlayer->m_ChatText, pMsg->m_pMessage, sizeof(pPlayer->m_ChatText));
+				pPlayer->m_ChatTeam = Team;
+				pPlayer->FixForNoName(1);
+			}
 			else
 				SendChat(ClientID, Team, pMsg->m_pMessage, ClientID);
 		}
@@ -1882,7 +1888,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if (MsgID == NETMSGTYPE_CL_CHANGEINFO)
 		{
-			if (!pPlayer->GetCharacter()->m_SpookyGhost)
+			if (!pPlayer->m_SpookyGhost)
 			{
 				if (g_Config.m_SvSpamprotection && pPlayer->m_LastChangeInfo && pPlayer->m_LastChangeInfo + Server()->TickSpeed()*g_Config.m_SvInfoChangeDelay > Server()->Tick())
 					return;
@@ -1982,7 +1988,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						pChr->SetEmoteType(EMOTE_NORMAL);
 						break;
 				}
-				if (pPlayer->GetCharacter()->m_SpookyGhost)
+				if (pPlayer->m_SpookyGhost)
 				{
 					pChr->SetEmoteType(EMOTE_SURPRISE);
 				}
