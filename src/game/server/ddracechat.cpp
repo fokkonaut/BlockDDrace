@@ -277,14 +277,60 @@ void ToggleSpecPause(IConsole::IResult *pResult, void *pUserData, int PauseType)
 	}
 }
 
+void ToggleSpecPauseVoted(IConsole::IResult *pResult, void *pUserData, int PauseType)
+{
+	if (!CheckClientID(pResult->m_ClientID))
+		return;
+
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
+
+	int PauseState = pPlayer->IsPaused();
+	if (PauseState > 0)
+	{
+		IServer* pServ = pSelf->Server();
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "You are force-paused for %d seconds.", (PauseState - pServ->Tick()) / pServ->TickSpeed());
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "spec", aBuf);
+		return;
+	}
+
+	bool IsPlayerBeingVoted = pSelf->m_VoteCloseTime &&
+		(pSelf->m_VoteKick || pSelf->m_VoteSpec) &&
+		pResult->m_ClientID != pSelf->m_VoteVictim;
+	if ((!IsPlayerBeingVoted && -PauseState == PauseType) ||
+		(IsPlayerBeingVoted && PauseState && pPlayer->m_SpectatorID == pSelf->m_VoteVictim))
+	{
+		pPlayer->Pause(CPlayer::PAUSE_NONE, false);
+	}
+	else
+	{
+		pPlayer->Pause(PauseType, false);
+		if (IsPlayerBeingVoted)
+			pPlayer->m_SpectatorID = pSelf->m_VoteVictim;
+	}
+}
+
 void CGameContext::ConToggleSpec(IConsole::IResult *pResult, void *pUserData)
 {
 	ToggleSpecPause(pResult, pUserData, g_Config.m_SvPauseable ? CPlayer::PAUSE_SPEC : CPlayer::PAUSE_PAUSED);
 }
 
+void CGameContext::ConToggleSpecVoted(IConsole::IResult *pResult, void *pUserData)
+{
+	ToggleSpecPauseVoted(pResult, pUserData, g_Config.m_SvPauseable ? CPlayer::PAUSE_SPEC : CPlayer::PAUSE_PAUSED);
+}
+
 void CGameContext::ConTogglePause(IConsole::IResult *pResult, void *pUserData)
 {
 	ToggleSpecPause(pResult, pUserData, CPlayer::PAUSE_PAUSED);
+}
+
+void CGameContext::ConTogglePauseVoted(IConsole::IResult *pResult, void *pUserData)
+{
+	ToggleSpecPauseVoted(pResult, pUserData, CPlayer::PAUSE_PAUSED);
 }
 
 void CGameContext::ConTeamTop5(IConsole::IResult *pResult, void *pUserData)
