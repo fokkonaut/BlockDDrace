@@ -128,6 +128,8 @@ void CProjectile::Tick()
 	if(m_LifeSpan > -1)
 		m_LifeSpan--;
 
+	if (pTargetChr)
+		pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[m_Weapon].m_Damage, m_Owner, m_Weapon);
 	int64_t TeamMask = -1LL;
 	bool IsWeaponCollide = false;
 	if

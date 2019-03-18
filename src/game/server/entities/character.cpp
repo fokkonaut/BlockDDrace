@@ -88,6 +88,9 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	SaveRealInfos();
 	UnsetSpookyGhost();
 
+	m_LastHitWeapon = -1;
+	m_LastToucherID = -1;
+
 	return true;
 }
 
@@ -931,6 +934,7 @@ void CCharacter::Tick()
 		m_TrailProjs.clear();
 	}
 
+	BlockDDraceTick();
 	DDRaceTick();
 
 	m_Core.m_Input = m_Input;
@@ -974,6 +978,42 @@ void CCharacter::Tick()
 
 	m_PrevPos = m_Core.m_Pos;
 	return;
+}
+
+void CCharacter::BlockDDraceTick()
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		CCharacter *pChar = GameServer()->GetPlayerChar(i);
+
+		if (!pChar || !pChar->IsAlive() || pChar == this)
+			continue;
+		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
+		{
+			m_LastToucherID = i;
+		}
+	}
+
+	CCharacter *pChr = GameServer()->m_World.ClosestCharType(m_Pos, true, this);
+	if (pChr && pChr->IsAlive())
+	{
+		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
+		{
+			if (pChr->m_FreezeTime == 0)
+			{
+				m_LastToucherID = pChr->GetPlayer()->GetCID();
+			}
+		}
+	}
+
+	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
+	{
+		m_LastHitWeapon = -1;
+	}
+	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
+
+	if (!GameServer()->m_apPlayers[m_LastToucherID])
+		m_LastToucherID = -1;
 }
 
 void CCharacter::TickDefered()
@@ -1139,6 +1179,17 @@ void CCharacter::Die(int Killer, int Weapon)
 	if(Server()->IsRecording(m_pPlayer->GetCID()))
 		Server()->StopRecord(m_pPlayer->GetCID());
 
+	if (!m_FreezeTime && !m_DeepFreeze)
+	{
+		m_LastToucherID = -1;
+		m_LastHitWeapon = -1;
+	}
+
+	if (m_LastToucherID == -1)
+		m_LastToucherID = m_pPlayer->GetCID();
+	Weapon = m_LastHitWeapon;
+	Killer = m_LastToucherID;
+
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
 	char aBuf[256];
@@ -1153,17 +1204,17 @@ void CCharacter::Die(int Killer, int Weapon)
 		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
 			GameServer()->m_apPlayers[Killer]->FixForNoName(0);
 
-		m_pPlayer->m_MsgKiller = Killer;
-		m_pPlayer->m_MsgWeapon = Weapon;
+		m_pPlayer->m_MsgKiller = m_LastToucherID;
+		m_pPlayer->m_MsgWeapon = m_LastHitWeapon;
 		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
 		m_pPlayer->FixForNoName(2);
 	}
 	else
 	{
 		CNetMsg_Sv_KillMsg Msg;
-		Msg.m_Killer = Killer;
+		Msg.m_Killer = m_LastToucherID;
 		Msg.m_Victim = m_pPlayer->GetCID();
-		Msg.m_Weapon = Weapon;
+		Msg.m_Weapon = m_LastHitWeapon;
 		Msg.m_ModeSpecial = ModeSpecial;
 		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 	}
@@ -1183,91 +1234,100 @@ void CCharacter::Die(int Killer, int Weapon)
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 {
-	/*m_Core.m_Vel += Force;
-
-	if(GameServer()->m_pController->IsFriendlyFire(m_pPlayer->GetCID(), From) && !g_Config.m_SvTeamdamage)
-		return false;
-
-	// m_pPlayer only inflicts half damage on self
-	if(From == m_pPlayer->GetCID())
-		Dmg = max(1, Dmg/2);
-
-	m_DamageTaken++;
-
-	// create healthmod indicator
-	if(Server()->Tick() < m_DamageTakenTick+25)
+	if (GameServer()->m_apPlayers[From])
 	{
-		// make sure that the damage indicators doesn't group together
-		GameServer()->CreateDamageInd(m_Pos, m_DamageTaken*0.25f, Dmg);
-	}
-	else
-	{
-		m_DamageTaken = 0;
-		GameServer()->CreateDamageInd(m_Pos, 0, Dmg);
-	}
-
-	if(Dmg)
-	{
-		if(m_Armor)
+		if (From != m_pPlayer->GetCID())
 		{
-			if(Dmg > 1)
-			{
-				m_Health--;
-				Dmg--;
-			}
+			m_LastToucherID = From;
+			m_LastHitWeapon = Weapon;
+		}
+	}
 
-			if(Dmg > m_Armor)
-			{
-				Dmg -= m_Armor;
-				m_Armor = 0;
-			}
-			else
-			{
-				m_Armor -= Dmg;
-				Dmg = 0;
-			}
+	if (m_pPlayer->m_VanillaDamage)
+	{
+		m_Core.m_Vel += Force;
+
+		// m_pPlayer only inflicts half damage on self
+		if(From == m_pPlayer->GetCID())
+			Dmg = max(1, Dmg/2);
+
+		m_DamageTaken++;
+
+		// create healthmod indicator
+		if(Server()->Tick() < m_DamageTakenTick+25)
+		{
+			// make sure that the damage indicators doesn't group together
+			GameServer()->CreateDamageInd(m_Pos, m_DamageTaken*0.25f, Dmg);
+		}
+		else
+		{
+			m_DamageTaken = 0;
+			GameServer()->CreateDamageInd(m_Pos, 0, Dmg);
 		}
 
-		m_Health -= Dmg;
-	}
-
-	m_DamageTakenTick = Server()->Tick();
-
-	// do damage Hit sound
-	if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
-	{
-		int64_t Mask = CmaskOne(From);
-		for(int i = 0; i < MAX_CLIENTS; i++)
+		if(Dmg)
 		{
-			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS && GameServer()->m_apPlayers[i]->m_SpectatorID == From)
-				Mask |= CmaskOne(i);
-		}
-		GameServer()->CreateSound(GameServer()->m_apPlayers[From]->m_ViewPos, SOUND_HIT, Mask);
-	}
-
-	// check for death
-	if(m_Health <= 0)
-	{
-		Die(From, Weapon);
-
-		// set attacker's face to happy (taunt!)
-		if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
-		{
-			CCharacter *pChr = GameServer()->m_apPlayers[From]->GetCharacter();
-			if (pChr)
+			if(m_Armor)
 			{
-				pChr->m_EmoteType = EMOTE_HAPPY;
-				pChr->m_EmoteStop = Server()->Tick() + Server()->TickSpeed();
+				if(Dmg > 1)
+				{
+					m_Health--;
+					Dmg--;
+				}
+
+				if(Dmg > m_Armor)
+				{
+					Dmg -= m_Armor;
+					m_Armor = 0;
+				}
+				else
+				{
+					m_Armor -= Dmg;
+					Dmg = 0;
+				}
 			}
+
+			m_Health -= Dmg;
 		}
 
-		return false;
-	}
+		m_DamageTakenTick = Server()->Tick();
 
-	if (Dmg > 2)
-		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_LONG);
-	else
-		GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);*/
+		// do damage Hit sound
+		if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
+		{
+			int64_t Mask = CmaskOne(From);
+			for(int i = 0; i < MAX_CLIENTS; i++)
+			{
+				if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS && GameServer()->m_apPlayers[i]->m_SpectatorID == From)
+					Mask |= CmaskOne(i);
+			}
+			GameServer()->CreateSound(GameServer()->m_apPlayers[From]->m_ViewPos, SOUND_HIT, Mask);
+		}
+
+		// check for death
+		if(m_Health <= 0)
+		{
+			Die(From, Weapon);
+
+			// set attacker's face to happy (taunt!)
+			if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
+			{
+				CCharacter *pChr = GameServer()->m_apPlayers[From]->GetCharacter();
+				if (pChr)
+				{
+					pChr->m_EmoteType = EMOTE_HAPPY;
+					pChr->m_EmoteStop = Server()->Tick() + Server()->TickSpeed();
+				}
+			}
+
+			return false;
+		}
+
+		if (Dmg > 2)
+			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_LONG);
+		else
+			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);
+	}
 
 	if ((From != -1) && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
 	{

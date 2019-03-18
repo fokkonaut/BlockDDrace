@@ -76,6 +76,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 	{
 		pHit->UnFreeze();
 	}
+	pHit->TakeDamage(vec2(0.f, 0.f), g_pData->m_Weapons.m_aId[m_Type].m_Damage, m_Owner, m_Type);
 	return true;
 }
 

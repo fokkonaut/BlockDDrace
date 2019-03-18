@@ -194,6 +194,8 @@ private:
 	bool m_SetSavePos;
 	vec2 m_PrevSavePos;
 
+	void BlockDDraceTick();
+
 public:
 	CGameTeams* Teams();
 	void Pause(bool Pause);
@@ -277,6 +279,10 @@ public:
 	vec2 m_TeleGunPos;
 	bool m_TeleGunTeleport;
 	bool m_IsBlueTeleGunTeleport;
+
+	int m_LastHitWeapon;
+	int m_LastToucherID;
+	int m_OldLastHookedPlayer;
 
 	//spooky ghost
 	void SetSpookyGhost();

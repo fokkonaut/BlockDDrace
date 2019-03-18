@@ -183,6 +183,8 @@ public:
 
 	bool m_IsDummy;
 
+	bool m_VanillaDamage;
+
 	//spooky ghost
 	bool m_SpookyGhost;
 	int m_RealUseCustomColor;
