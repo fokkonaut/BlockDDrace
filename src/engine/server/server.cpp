@@ -1435,7 +1435,12 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 					if (i != ClientID && (m_aClients[i].m_State == CClient::STATE_READY || m_aClients[i].m_State == CClient::STATE_INGAME))
 					{
 						net_addr_str(m_NetServer.ClientAddr(i), aIP, sizeof(aIP), false);
-						if (!str_comp(aIP, aCheckIP))
+						if (g_Config.m_EcBindaddr[0] && m_aClients[i].m_State == CClient::STATE_BOT)
+						{
+							m_aClients[ClientID].m_IsClientDummy = true;
+							break;
+						}
+						else if (!str_comp(aIP, aCheckIP))
 						{
 							m_aClients[ClientID].m_IsClientDummy = true;
 							break;
