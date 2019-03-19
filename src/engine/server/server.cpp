@@ -1737,7 +1737,25 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 			p.AddString(aBuf, 64);
 		}
 	}
-	p.AddString(GetMapName(), 32);
+
+	char aIP[32];
+	char aCheckIP[32];
+	bool Ingame = false;
+	net_addr_str(pAddr, aCheckIP, sizeof(aCheckIP), false);
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		net_addr_str(m_NetServer.ClientAddr(i), aIP, sizeof(aIP), false);
+		if (!str_comp(aIP, aCheckIP))
+		{
+			if (m_aClients[i].m_State == CClient::STATE_INGAME)
+				Ingame = true;
+		}
+	}
+
+	if (Ingame || !g_Config.m_SvHideServerInfo)
+		p.AddString(GetMapName(), 32);
+	else
+		p.AddString("", 32);
 
 	if(Type == SERVERINFO_EXTENDED)
 	{
@@ -1746,7 +1764,10 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 	}
 
 	// gametype
-	p.AddString(GameServer()->GameType(), 16);
+	if (Ingame || !g_Config.m_SvHideServerInfo)
+		p.AddString(GameServer()->GameType(), 16);
+	else
+		p.AddString("", 16);
 
 	// flags
 	ADD_INT(p, g_Config.m_Password[0] ? SERVER_FLAG_PASSWORD : 0);
