@@ -2848,16 +2848,22 @@ void CCharacter::SaveRealInfos()
 	return;
 }
 
-void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
+void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID)
 {
 	char aGiven[32];
 	char aItem[32];
 	char aMsg[64];
+	char aInfinite[16];
 
 	if (Remove)
 		str_format(aGiven, sizeof aGiven, "removed from");
 	else
 		str_format(aGiven, sizeof aGiven, "given to");
+
+	if (Infinite && !Remove)
+		str_format(aInfinite, sizeof aInfinite, "Infinite ");
+	else
+		str_format(aInfinite, sizeof aInfinite, "");
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->GetPlayerChar(ToID)->GetPlayer();
@@ -2867,29 +2873,20 @@ void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 
 	if (Extra == JETPACK)
 	{
-		str_format(aItem, sizeof aItem, "Jetpack");
+		str_format(aItem, sizeof aItem, "%sJetpack", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Jetpack = false;
 			pPlayer->m_InfJetpack = false;
 		}
+		else if (Infinite)
+			pPlayer->m_InfJetpack = true;
 		else
 			pChr->m_Jetpack = true;
 	}
-	else if (Extra == INF_JETPACK)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Jetpack");
-		if (Remove)
-		{
-			pChr->m_Jetpack = false;
-			pPlayer->m_InfJetpack = false;
-		}
-		else
-			pPlayer->m_InfJetpack = true;
-	}
 	else if (Extra == PLASMA_GUN)
 	{
-		str_format(aItem, sizeof aItem, "Plasma Gun");
+		str_format(aItem, sizeof aItem, "%sPlasma Gun", aInfinite);
 		if (Remove)
 		{
 			pChr->m_PlasmaGun = false;
@@ -2897,31 +2894,17 @@ void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 		}
 		else
 		{
-			pChr->m_PlasmaGun = true;
-			pPlayer->m_InfPlasmaGun = false;
 			pChr->m_HeartGun = false;
 			pPlayer->m_InfHeartGun = false;
-		}
-	}
-	else if (Extra == INF_PLASMA_GUN)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Plasma Gun");
-		if (Remove)
-		{
-			pPlayer->m_InfPlasmaGun = false;
-			pChr->m_PlasmaGun = false;
-		}
-		else
-		{
-			pPlayer->m_InfPlasmaGun = true;
-			pChr->m_PlasmaGun = false;
-			pPlayer->m_InfHeartGun = false;
-			pChr->m_HeartGun = false;
+			if (Infinite)
+				pPlayer->m_InfPlasmaGun = true;
+			else
+				pChr->m_PlasmaGun = true;
 		}
 	}
 	else if (Extra == HEART_GUN)
 	{
-		str_format(aItem, sizeof aItem, "Heart Gun");
+		str_format(aItem, sizeof aItem, "%sHeart Gun", aInfinite);
 		if (Remove)
 		{
 			pChr->m_HeartGun = false;
@@ -2929,93 +2912,52 @@ void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 		}
 		else
 		{
-			pChr->m_HeartGun = true;
-			pPlayer->m_InfHeartGun = false;
 			pChr->m_PlasmaGun = false;
 			pPlayer->m_InfPlasmaGun = false;
-		}
-	}
-	else if (Extra == INF_HEART_GUN)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Heart Gun");
-		if (Remove)
-		{
-			pPlayer->m_InfHeartGun = false;
-			pChr->m_HeartGun= false;
-		}
-		else
-		{
-			pPlayer->m_InfHeartGun = true;
-			pChr->m_HeartGun = false;
-			pPlayer->m_InfPlasmaGun = false;
-			pChr->m_PlasmaGun = false;
+			if (Infinite)
+				pPlayer->m_InfHeartGun = true;
+			else
+				pChr->m_HeartGun = true;
 		}
 	}
 	else if (Extra == RAINBOW)
 	{
-		str_format(aItem, sizeof aItem, "Rainbow");
+		str_format(aItem, sizeof aItem, "%sRainbow", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Rainbow = false;
 			pPlayer->m_InfRainbow = false;
 		}
+		else if (Infinite)
+			pPlayer->m_InfRainbow = true;
 		else
 			pChr->m_Rainbow = true;
 	}
-	else if (Extra == INF_RAINBOW)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Rainbow");
-		if (Remove)
-		{
-			pPlayer->m_InfRainbow = false;
-			pChr->m_Rainbow = false;
-		}
-		else
-			pPlayer->m_InfRainbow = true;
-	}
 	else if (Extra == ATOM)
 	{
-		str_format(aItem, sizeof aItem, "Atom");
+		str_format(aItem, sizeof aItem, "%sAtom", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Atom = false;
 			pPlayer->m_InfAtom = false;
 		}
+		else if (Infinite)
+			pPlayer->m_InfAtom = true;
 		else
 			pChr->m_Atom = true;
 	}
-	else if (Extra == INF_ATOM)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Atom");
-		if (Remove)
-		{
-			pPlayer->m_InfAtom = false;
-			pChr->m_Atom = false;
-		}
-		else
-			pPlayer->m_InfAtom = true;
-	}
 	else if (Extra == TRAIL)
 	{
-		str_format(aItem, sizeof aItem, "Trail");
+		str_format(aItem, sizeof aItem, "%sTrail", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Trail = false;
 			pPlayer->m_InfTrail = false;
 		}
+		else if (Infinite)
+			pPlayer->m_InfTrail = true;
 		else
 			pChr->m_Trail = true;
-	}
-	else if (Extra == INF_TRAIL)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Trail");
-		if (Remove)
-		{
-			pPlayer->m_InfTrail = false;
-			pChr->m_Trail = false;
-		}
-		else
-			pPlayer->m_InfTrail = true;
 	}
 	else if (Extra == SPOOKY_GHOST)
 	{
@@ -3024,7 +2966,7 @@ void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 	}
 	else if (Extra == METEOR)
 	{
-		str_format(aItem, sizeof aItem, "Meteor");
+		str_format(aItem, sizeof aItem, "%sMeteor", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Meteors = 0;
@@ -3032,30 +2974,23 @@ void CCharacter::SetExtra(int Extra, bool Remove, int FromID, int ToID)
 		}
 		else
 		{
-			pChr->m_Meteors++;
-			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), false);
-		}
-	}
-	else if (Extra == INF_METEOR)
-	{
-		str_format(aItem, sizeof aItem, "Infinite Meteor");
-		if (Remove)
-		{
-			pPlayer->m_InfMeteors = 0;
-			pChr->m_Meteors = 0;
-		}
-		else
-		{
-			pPlayer->m_InfMeteors++;
-			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), true);
+			if (Infinite)
+				pPlayer->m_InfMeteors++;
+			else
+				pChr->m_Meteors++;
+			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
 		}
 	}
 
-	if (FromID != -1)
-	str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
-	GameServer()->SendChatTarget(FromID, aMsg);
-	if (pPlayer->GetCID() != GameServer()->GetPlayerChar(FromID)->GetPlayer()->GetCID())
-		GameServer()->SendChatTarget(pPlayer->GetCID(), aMsg);
+	if (FromID == -2)
+		str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+	else if (FromID != -1)
+	{
+		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
+		if (FromID != ToID)
+			GameServer()->SendChatTarget(FromID, aMsg);
+	}
+	GameServer()->SendChatTarget(ToID, aMsg);
 
 	return;
 }

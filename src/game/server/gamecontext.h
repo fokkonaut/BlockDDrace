@@ -56,20 +56,13 @@ enum
 enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 {
 	JETPACK = 1,
-	INF_JETPACK,
 	PLASMA_GUN,
-	INF_PLASMA_GUN,
 	HEART_GUN,
-	INF_HEART_GUN,
 	RAINBOW,
-	INF_RAINBOW,
 	ATOM,
-	INF_ATOM,
 	TRAIL,
-	INF_TRAIL,
 	SPOOKY_GHOST,
 	METEOR,
-	INF_METEOR,
 	NUM_ITEMS,
 };
 
