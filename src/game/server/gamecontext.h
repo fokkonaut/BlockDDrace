@@ -398,6 +398,7 @@ private:
 	static void ConAddMeteor(IConsole::IResult *pResult, void *pUserData);
 	static void ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData);
 	static void ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData);
+	static void ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

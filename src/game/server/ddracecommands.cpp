@@ -367,6 +367,15 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	
+	g_Config.m_SvMeteorFriction = 5000;
+	g_Config.m_SvMeteorMaxAccel = 2000;
+	g_Config.m_SvMeteorAccelPreserve = 100000;
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
