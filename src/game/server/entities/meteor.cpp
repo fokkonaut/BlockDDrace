@@ -12,6 +12,11 @@ CMeteor::CMeteor(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
 
 void CMeteor::Reset()
 {
+	CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
+	if (m_Infinite && pChr)
+		pChr->GetPlayer()->m_InfMeteors--;
+	else if (!m_Infinite && pChr)
+		pChr->m_Meteors--;
 	GameServer()->m_World.DestroyEntity(this);
 }
 

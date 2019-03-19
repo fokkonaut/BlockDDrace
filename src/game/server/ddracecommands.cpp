@@ -330,9 +330,7 @@ void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-	{
 		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
-	}
 }
 
 void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
@@ -341,9 +339,7 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-	{
 		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), true, false, pResult->m_ClientID);
-	}
 }
 
 void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
@@ -363,7 +359,8 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 	else
 	{
 		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
+		if (pChr)
+			pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
 	}
 }
 
