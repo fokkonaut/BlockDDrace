@@ -2969,8 +2969,16 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		str_format(aItem, sizeof aItem, "%sMeteor", aInfinite);
 		if (Remove)
 		{
-			pChr->m_Meteors = 0;
-			pPlayer->m_InfMeteors = 0;
+			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
+			{
+				ToID = -1;
+				FromID = -1;
+			}
+			else
+			{
+				pChr->m_Meteors = 0;
+				pPlayer->m_InfMeteors = 0;
+			}
 		}
 		else
 		{
@@ -2983,14 +2991,20 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 
 	if (FromID == -2)
-		str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+	{
+		if (Remove)
+			str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
+		else
+			str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+	}
 	else if (FromID != -1)
 	{
 		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
 		if (FromID != ToID)
 			GameServer()->SendChatTarget(FromID, aMsg);
 	}
-	GameServer()->SendChatTarget(ToID, aMsg);
+	if (ToID != -1)
+		GameServer()->SendChatTarget(ToID, aMsg);
 
 	return;
 }
