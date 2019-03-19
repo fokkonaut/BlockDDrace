@@ -832,9 +832,9 @@ int CServer::DistinctClientCount()
 	return ClientCount;
 }
 
-int CServer::SendMsg(CMsgPacker *pMsg, int Flags, int ClientID)
+int CServer::SendMsg(CMsgPacker *pMsg, int Flags, int ClientID, bool System)
 {
-	return SendMsgEx(pMsg, Flags, ClientID, false);
+	return SendMsgEx(pMsg, Flags, ClientID, System);
 }
 
 int CServer::SendMsgEx(CMsgPacker *pMsg, int Flags, int ClientID, bool System)

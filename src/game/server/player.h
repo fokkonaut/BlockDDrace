@@ -222,8 +222,10 @@ public:
 	int m_AccountID;
 	char m_AccountName[32];
 	char m_AccountPassword[32];
+	int m_Level;
 
-
+	int m_AllowTimeScore;
+	int m_DisplayScore;
 
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);

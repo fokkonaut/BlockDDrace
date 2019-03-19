@@ -1225,3 +1225,39 @@ void CGameContext::ConProtectedKill(IConsole::IResult *pResult, void *pUserData)
 			//pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
 }
+
+void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	bool ChangedScore = true;
+
+	if (!str_comp_nocase(pResult->GetString(0), "time"))
+	{
+		pPlayer->m_AllowTimeScore = 1;
+		pPlayer->m_DisplayScore = 0;
+		pSelf->SendChatTarget(pResult->m_ClientID, "Changed displayed score to 'time'.");
+	}
+	else if (!str_comp_nocase(pResult->GetString(0), "level"))
+	{
+		pPlayer->m_AllowTimeScore = 0;
+		pPlayer->m_DisplayScore = 1;
+		pSelf->SendChatTarget(pResult->m_ClientID, "Changed displayed score to 'level'.");
+	}
+	else
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "You can choose what the player score will display:");
+		pSelf->SendChatTarget(pResult->m_ClientID, "time, level");
+		ChangedScore = false;
+	}
+
+	if (ChangedScore)
+	{
+		CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
+		ScoreMsg.AddInt(pPlayer->m_AllowTimeScore);
+		pSelf->Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL, pResult->m_ClientID, true);
+	}
+
+	return;
+}
