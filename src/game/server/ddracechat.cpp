@@ -19,7 +19,7 @@ void CGameContext::ConCredits(IConsole::IResult *pResult, void *pUserData)
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "credits",
 		"BlockDDrace is a mod by fokkonaut");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "credits",
-		"Based on DDNet based on DDRace by the DDRace developers,");
+		"Based on DDNet 11.9 based on DDRace by the DDRace developers, ");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "credits",
 		"which is a mod of Teeworlds by the Teeworlds developers.");
 }
@@ -29,12 +29,6 @@ void CGameContext::ConInfo(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
 			"BlockDDrace Mod. Version: " GAME_VERSION);
-	if(GIT_SHORTREV_HASH)
-	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "Git revision hash: %s", GIT_SHORTREV_HASH);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info", aBuf);
-	}
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
 			"BlockDDrace is a mod, based on DDNet 11.9.");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
