@@ -102,7 +102,7 @@ void CWeapon::Pickup()
 		if (m_Jetpack && !pChar->GetWeaponGot(WEAPON_GUN))
 			return;
 
-		if (m_Jetpack && pChar->m_Jetpack && pChar->GetPlayer()->m_InfJetpack)
+		if (m_Jetpack && (pChar->m_Jetpack || pChar->GetPlayer()->m_InfJetpack))
 			return;
 
 		pChar->GiveWeapon(m_Type, false, m_Bullets);
