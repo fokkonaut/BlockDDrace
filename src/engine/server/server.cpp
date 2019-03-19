@@ -634,6 +634,13 @@ void CServer::SetClientScore(int ClientID, int Score)
 	m_aClients[ClientID].m_Score = Score;
 }
 
+void CServer::SetClientLevel(int ClientID, int Level)
+{
+	if (ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State < CClient::STATE_READY)
+		return;
+	m_aClients[ClientID].m_Level = Level;
+}
+
 void CServer::Kick(int ClientID, const char *pReason)
 {
 	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CClient::STATE_EMPTY)
@@ -1853,7 +1860,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 			pp.AddString(ClientClan(i), MAX_CLAN_LENGTH); // client clan
 
 			ADD_INT(pp, m_aClients[i].m_Country); // client country
-			ADD_INT(pp, m_aClients[i].m_Score); // client score
+			ADD_INT(pp, m_aClients[i].m_Level); // client score //replaced m_Score with m_Level to show the level, and not the time in the browser
 			ADD_INT(pp, GameServer()->IsClientPlayer(i) ? 1 : 0); // is player?
 			if(Type == SERVERINFO_EXTENDED)
 				pp.AddString("", 0); // extra info, reserved

@@ -157,6 +157,7 @@ void CPlayer::Tick()
 		m_ChatScore--;
 
 	Server()->SetClientScore(m_ClientID, m_Score);
+	Server()->SetClientLevel(m_ClientID, m_Level);
 
 	if (m_Moderating && m_Afk)
 	{
