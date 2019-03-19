@@ -70,6 +70,7 @@ enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 	SPOOKY_GHOST,
 	METEOR,
 	INF_METEOR,
+	NUM_ITEMS,
 };
 
 
