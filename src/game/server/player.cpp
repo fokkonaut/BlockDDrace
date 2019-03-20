@@ -156,8 +156,7 @@ void CPlayer::Tick()
 	if (m_ChatScore > 0)
 		m_ChatScore--;
 
-	Server()->SetClientScore(m_ClientID, m_Score);
-	Server()->SetClientLevel(m_ClientID, m_Level);
+	Server()->SetClientScore(m_ClientID, -9999);	//replace m_Score with -9999 to show no score from browser
 
 	if (m_Moderating && m_Afk)
 	{

@@ -169,7 +169,6 @@ public:
 		int m_AuthKey;
 		int m_AuthTries;
 		int m_NextMapChunk;
-		int m_Level;
 
 		const IConsole::CCommandInfo *m_pRconCmdToSend;
 
@@ -242,7 +241,6 @@ public:
 	virtual void SetClientClan(int ClientID, char const *pClan);
 	virtual void SetClientCountry(int ClientID, int Country);
 	virtual void SetClientScore(int ClientID, int Score);
-	virtual void SetClientLevel(int ClientID, int Level);
 
 	void Kick(int ClientID, const char *pReason);
 	void Ban(int ClientID, int Seconds, const char *pReason);
