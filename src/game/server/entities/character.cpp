@@ -2567,6 +2567,8 @@ bool CCharacter::UnFreeze()
 				if (m_aWeapons[i].m_Got)
 				{
 					m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
+					if (i == WEAPON_NINJA)
+						m_aWeapons[i].m_Ammo = -1;
 				}
 			}
 			m_WeaponsBackupped = false;
