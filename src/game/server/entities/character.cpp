@@ -15,6 +15,7 @@
 #include "plasmabullet.h"
 #include "heartprojectile.h"
 #include "meteor.h"
+#include "pickup.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -418,6 +419,9 @@ void CCharacter::FireWeapon()
 
 				//if ((pTarget == this) || GameServer()->Collision()->IntersectLine(ProjStartPos, pTarget->m_Pos, NULL, NULL))
 				if((pTarget == this || (pTarget->IsAlive() && !CanCollide(pTarget->GetPlayer()->GetCID()))))
+					continue;
+
+				if (pTarget->m_Passive)
 					continue;
 
 				// set his velocity to fast upward (for now)
@@ -2991,15 +2995,44 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
 		}
 	}
+	else if (Extra == PASSIVE)
+	{
+		str_format(aItem, sizeof aItem, "Passive Mode");
+		if (Remove)
+		{
+			pChr->m_Passive = false;
+			pChr->m_Core.m_Passive = false;
+			pChr->m_Core.m_Collision = true;
+			pChr->m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+			pChr->m_Hit = HIT_ALL;
+			pChr->m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
+			pChr->m_Core.m_Hook = true;
+			pChr->m_NeededFaketuning &= ~FAKETUNE_NOHOOK;
+			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
+		}
+		else
+		{
+			pChr->m_Passive = true;
+			pChr->m_Core.m_Passive = true;
+			pChr->m_Core.m_Collision = false;
+			pChr->m_NeededFaketuning |= FAKETUNE_NOCOLL;
+			pChr->m_Hit = DISABLE_HIT_GRENADE | DISABLE_HIT_HAMMER | DISABLE_HIT_RIFLE | DISABLE_HIT_SHOTGUN;
+			pChr->m_NeededFaketuning |= FAKETUNE_NOHAMMER;
+			pChr->m_Core.m_Hook = false;
+			pChr->m_NeededFaketuning |= FAKETUNE_NOHOOK;
+			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
+			CPickup *pPickup = new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
+		}
+	}
 
-	if (FromID == -2)
+	if (FromID == -1)
 	{
 		if (Remove)
 			str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
 		else
 			str_format(aMsg, sizeof aMsg, "You have %s", aItem);
 	}
-	else if (FromID != -1)
+	else if (FromID >= 0)
 	{
 		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
 		if (FromID != ToID)

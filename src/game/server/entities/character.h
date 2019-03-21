@@ -103,7 +103,7 @@ public:
 	bool SetWeaponThatChrHas();
 	
 
-	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = false);
+	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1);
 
 private:
 	// player controlling this character
@@ -279,6 +279,8 @@ public:
 	vec2 m_TeleGunPos;
 	bool m_TeleGunTeleport;
 	bool m_IsBlueTeleGunTeleport;
+
+	bool m_Passive;
 
 	int m_LastHitWeapon;
 	int m_LastToucherID;

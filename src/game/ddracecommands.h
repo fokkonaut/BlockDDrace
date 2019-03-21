@@ -52,6 +52,7 @@ CONSOLE_COMMAND("addmeteor", "?v[id]", CFGFLAG_SERVER, ConAddMeteor, this, "Adds
 CONSOLE_COMMAND("addinfmeteor", "?v[id]", CFGFLAG_SERVER, ConAddInfMeteor, this, "Adds an infinite meteors to player v")
 CONSOLE_COMMAND("removemeteors", "?s[id/all]", CFGFLAG_SERVER, ConRemoveMeteors, this, "Removes all meteors from player v/all")
 CONSOLE_COMMAND("resetmeteorvars", "", CFGFLAG_SERVER, ConResetMeteorVars, this, "Resets the meteor variables")
+CONSOLE_COMMAND("passive", "?v[id]", CFGFLAG_SERVER, ConPassive, this, "Toggles passive mode for player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

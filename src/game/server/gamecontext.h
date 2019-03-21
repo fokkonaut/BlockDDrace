@@ -63,6 +63,7 @@ enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 	TRAIL,
 	SPOOKY_GHOST,
 	METEOR,
+	PASSIVE,
 	NUM_ITEMS,
 };
 
@@ -402,6 +403,7 @@ private:
 	static void ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData);
 	static void ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData);
 	static void ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData);
+	static void ConPassive(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

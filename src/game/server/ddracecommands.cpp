@@ -373,6 +373,18 @@ void CGameContext::ConResetMeteorVars(IConsole::IResult *pResult, void *pUserDat
 	g_Config.m_SvMeteorAccelPreserve = 100000;
 }
 
+void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		bool Remove = pChr->m_Passive ? true : false;
+		pChr->SetExtra(PASSIVE, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
+	}
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

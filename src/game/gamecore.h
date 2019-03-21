@@ -191,6 +191,8 @@ public:
 	bool m_Hook;
 	bool m_Collision;
 
+	bool m_Passive;
+
 	vec2 m_HookPos;
 	vec2 m_HookDir;
 	vec2 m_HookTeleBase;

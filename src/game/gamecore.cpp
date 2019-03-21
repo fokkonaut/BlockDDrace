@@ -326,7 +326,7 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 			for(int i = 0; i < MAX_CLIENTS; i++)
 			{
 				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
-				if(!pCharCore || pCharCore == this || !m_pTeams->CanCollide(i, m_Id))
+				if(!pCharCore || pCharCore == this || !m_pTeams->CanCollide(i, m_Id) || pCharCore->m_Passive)
 					continue;
 
 				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pCharCore->m_Pos);
