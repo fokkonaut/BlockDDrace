@@ -171,7 +171,7 @@ void CGameControllerDDRace::Tick()
 			continue;
 
 		// flag hits death-tile or left the game layer, reset it
-		if (GameServer()->Collision()->GetCollisionAt(F->m_Pos.x, F->m_Pos.y) == TILE_DEATH || F->GameLayerClipped(F->m_Pos))
+		if (GameServer()->Collision()->GetCollisionAt(F->m_Pos.x, F->m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(F->m_Pos.x, F->m_Pos.y) == TILE_DEATH || F->GameLayerClipped(F->m_Pos))
 		{
 			GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
 			if (g_Config.m_SvFlagSounds)
