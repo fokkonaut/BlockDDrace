@@ -126,7 +126,7 @@ private:
 
 	} m_aWeapons[NUM_WEAPONS];
 
-	int m_aWeaponsBackup[NUM_WEAPONS][2];
+	int m_aWeaponsBackup[NUM_WEAPONS+1][2];
 	bool m_WeaponsBackupped;
 
 	int m_LastWeapon;

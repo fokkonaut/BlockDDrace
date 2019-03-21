@@ -64,6 +64,7 @@ enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 	SPOOKY_GHOST,
 	METEOR,
 	PASSIVE,
+	VANILLA_MODE,
 	NUM_ITEMS,
 };
 
@@ -404,6 +405,8 @@ private:
 	static void ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData);
 	static void ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData);
 	static void ConPassive(IConsole::IResult *pResult, void *pUserData);
+	static void ConVanillaMode(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

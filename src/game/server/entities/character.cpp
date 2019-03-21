@@ -92,6 +92,11 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
 
+	if (m_pPlayer->m_VanillaMode)
+		m_Armor = 0;
+	else
+		m_Armor = 10;
+
 	return true;
 }
 
@@ -384,14 +389,21 @@ void CCharacter::FireWeapon()
 	// check for ammo
 	if(!m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo)
 	{
-		/*// 125ms is a magical limit of how fast a human can click
-		m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
-		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);*/
-		// Timer stuff to avoid shrieking orchestra caused by unfreeze-plasma
-		if(m_PainSoundTimer<=0)
+		if (m_FreezeTime)
 		{
+			if (m_PainSoundTimer <= 0)
+			{
 				m_PainSoundTimer = 1 * Server()->TickSpeed();
 				GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_LONG, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			}
+		}
+		else
+		{
+			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
+			/*// 125ms is a magical limit of how fast a human can click
+			m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
+			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);*/
+			// Timer stuff to avoid shrieking orchestra caused by unfreeze-plasma
 		}
 		return;
 	}
@@ -707,10 +719,10 @@ void CCharacter::HandleWeapons()
 
 	// fire Weapon, if wanted
 	FireWeapon();
-/*
+
 	// ammo regen
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[m_Core.m_ActiveWeapon].m_Ammoregentime;
-	if(AmmoRegenTime)
+	if(AmmoRegenTime && m_pPlayer->m_VanillaMode)
 	{
 		// If equipped and not active, regen ammo?
 		if (m_ReloadTimer <= 0)
@@ -729,7 +741,7 @@ void CCharacter::HandleWeapons()
 		{
 			m_aWeapons[m_Core.m_ActiveWeapon].m_AmmoRegenStart = -1;
 		}
-	}*/
+	}
 
 	return;
 }
@@ -1130,9 +1142,15 @@ bool CCharacter::IncreaseHealth(int Amount)
 
 bool CCharacter::IncreaseArmor(int Amount)
 {
-	if(m_Armor >= 10)
+	if(m_Armor >= 10 && !m_FreezeTime)
 		return false;
-	m_Armor = clamp(m_Armor+Amount, 0, 10);
+	if (m_aWeaponsBackup[NUM_WEAPONS][1] >= 10 && m_FreezeTime)
+		return false;
+
+	if (!m_FreezeTime)
+		m_Armor = clamp(m_Armor+Amount, 0, 10);
+	else
+		m_aWeaponsBackup[NUM_WEAPONS][1] = clamp(m_aWeaponsBackup[NUM_WEAPONS][1] + Amount, 0, 10);
 	return true;
 }
 
@@ -1247,9 +1265,9 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		}
 	}
 
-	if (m_pPlayer->m_VanillaDamage)
+	if (m_pPlayer->m_VanillaMode)
 	{
-		m_Core.m_Vel += Force;
+		//m_Core.m_Vel += Force;
 
 		// m_pPlayer only inflicts half damage on self
 		if(From == m_pPlayer->GetCID())
@@ -1337,7 +1355,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if (Dmg && m_pPlayer->m_VanillaDamage)
+	else if (Dmg && m_pPlayer->m_VanillaMode)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -2421,12 +2439,12 @@ void CCharacter::SendZoneMsgs()
 void CCharacter::DDRaceTick()
 {
 	mem_copy(&m_Input, &m_SavedInput, sizeof(m_Input));
-	m_Armor=(m_FreezeTime >= 0)?10-(m_FreezeTime/15):0;
 	if(m_Input.m_Direction != 0 || m_Input.m_Jump != 0)
 		m_LastMove = Server()->Tick();
 
 	if(m_FreezeTime > 0 || m_FreezeTime == -1)
 	{
+		m_Armor = (m_FreezeTime >= 0) ? 10 - (m_FreezeTime / 15) : 0;
 		if (m_FreezeTime % Server()->TickSpeed() == Server()->TickSpeed() - 1 || m_FreezeTime == -1)
 		{
 			GameServer()->CreateDamageInd(m_Pos, 0, (m_FreezeTime + 1) / Server()->TickSpeed(), Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -2531,9 +2549,11 @@ bool CCharacter::Freeze(int Seconds)
 	{
 		if (!m_WeaponsBackupped)
 		{
-			for (int i = 0; i < NUM_WEAPONS; i++)
+			for (int i = 0; i < NUM_WEAPONS+1; i++)
 			{
-				if (m_aWeapons[i].m_Got)
+				if (i == NUM_WEAPONS)
+					m_aWeaponsBackup[i][1] = m_Armor;
+				else if (m_aWeapons[i].m_Got)
 				{
 					m_aWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo; 
 					m_aWeapons[i].m_Ammo = 0;
@@ -2541,7 +2561,6 @@ bool CCharacter::Freeze(int Seconds)
 			}
 			m_WeaponsBackupped = true;
 		}
-		m_Armor = 0;
 
 		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
 		{
@@ -2566,9 +2585,11 @@ bool CCharacter::UnFreeze()
 	{
 		if (m_WeaponsBackupped)
 		{
-			for (int i = 0; i < NUM_WEAPONS; i++)
+			for (int i = 0; i < NUM_WEAPONS+1; i++)
 			{
-				if (m_aWeapons[i].m_Got)
+				if (i == NUM_WEAPONS)
+					m_Armor = m_aWeaponsBackup[i][1];
+				else if (m_aWeapons[i].m_Got)
 				{
 					m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
 					if (i == WEAPON_NINJA)
@@ -2577,7 +2598,6 @@ bool CCharacter::UnFreeze()
 			}
 			m_WeaponsBackupped = false;
 		}
-		m_Armor=10;
 		if(!m_aWeapons[m_Core.m_ActiveWeapon].m_Got)
 			m_Core.m_ActiveWeapon = WEAPON_GUN;
 		m_FreezeTime = 0;
@@ -3022,6 +3042,57 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_NeededFaketuning |= FAKETUNE_NOHOOK;
 			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
 			CPickup *pPickup = new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
+		}
+	}
+	else if (Extra == VANILLA_MODE)
+	{
+		str_format(aItem, sizeof aItem, "Vanilla Mode");
+		if (Remove)
+		{
+			if (!pPlayer->m_VanillaMode)
+			{
+				ToID = -1;
+				FromID = -1;
+			}
+			else
+			{
+				pPlayer->m_VanillaMode = false;
+				pChr->m_Health = 10;
+				pChr->m_Armor = 10;
+				for (int i = 0; i < NUM_WEAPONS + 1; i++)
+				{
+					if (i == NUM_WEAPONS)
+						pChr->m_aWeaponsBackup[NUM_WEAPONS][1] = 10;
+					else if (pChr->m_aWeapons[i].m_Got)
+					{
+						pChr->m_aWeaponsBackup[i][1] = -1;
+						pChr->m_aWeapons[i].m_Ammo = -1;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (pPlayer->m_VanillaMode)
+			{
+				ToID = -1;
+				FromID = -1;
+			}
+			else
+			{
+				pPlayer->m_VanillaMode = true;
+				pChr->m_Armor = 0;
+				for (int i = 0; i < NUM_WEAPONS + 1; i++)
+				{
+					if (i == NUM_WEAPONS)
+						pChr->m_aWeaponsBackup[NUM_WEAPONS][1] = 0;
+					else if (pChr->m_aWeapons[i].m_Got && pChr->GetWeaponAmmo(i))
+					{
+						pChr->m_aWeaponsBackup[i][1] = 10;
+						pChr->m_aWeapons[i].m_Ammo = 10;
+					}
+				}
+			}
 		}
 	}
 

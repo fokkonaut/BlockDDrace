@@ -385,6 +385,50 @@ void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
+
+	if (!str_comp_nocase(pResult->GetString(0), "all"))
+	{
+		for (int i = 0; i < MAX_CLIENTS; i++)
+		{
+			CCharacter* pChr = pSelf->GetPlayerChar(i);
+			if (pChr)
+				pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
+		}
+	}
+	else
+	{
+		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+		if (pChr)
+			pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
+	}
+}
+
+void CGameContext::ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
+
+	if (!str_comp_nocase(pResult->GetString(0), "all"))
+	{
+		for (int i = 0; i < MAX_CLIENTS; i++)
+		{
+			CCharacter* pChr = pSelf->GetPlayerChar(i);
+			if (pChr)
+				pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
+		}
+	}
+	else
+	{
+		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+		if (pChr)
+			pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
+	}
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -587,7 +631,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		int Weapon, bool Remove)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	CCharacter* pChr = GetPlayerChar(pResult->m_ClientID);
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = GetPlayerChar(Victim);
 	if (!pChr)
 		return;
 
@@ -598,15 +643,17 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		return;
 	}
 
+	int Amount = pChr->GetPlayer()->m_VanillaMode ? 10 : -1;
+
 	if (Weapon == -1)
 	{
-		pChr->GiveWeapon(WEAPON_SHOTGUN, Remove);
-		pChr->GiveWeapon(WEAPON_GRENADE, Remove);
-		pChr->GiveWeapon(WEAPON_RIFLE, Remove);
+		pChr->GiveWeapon(WEAPON_SHOTGUN, Remove, Amount);
+		pChr->GiveWeapon(WEAPON_GRENADE, Remove, Amount);
+		pChr->GiveWeapon(WEAPON_RIFLE, Remove, Amount);
 	}
 	else
 	{
-		pChr->GiveWeapon(Weapon, Remove);
+		pChr->GiveWeapon(Weapon, Remove, Amount);
 	}
 
 	pChr->m_DDRaceState = DDRACE_CHEAT;

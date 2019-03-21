@@ -183,7 +183,7 @@ public:
 
 	bool m_IsDummy;
 
-	bool m_VanillaDamage;
+	bool m_VanillaMode;
 
 	//spooky ghost
 	bool m_SpookyGhost;
