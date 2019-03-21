@@ -92,8 +92,16 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
 
+	if (g_Config.m_SvVanillaModeStart)
+		m_pPlayer->m_VanillaMode = true;
+	else
+		m_pPlayer->m_VanillaMode = false;
+
 	if (m_pPlayer->m_VanillaMode)
+	{
 		m_Armor = 0;
+		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
+	}
 	else
 		m_Armor = 10;
 
