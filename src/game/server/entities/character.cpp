@@ -506,8 +506,9 @@ void CCharacter::FireWeapon()
 					0,						//unfreeze
 					1,						//bloody
 					SpookyGhost,			//ghost
-					SpookyGhost,						//spooky
+					SpookyGhost,			//spooky
 					Team(),					//responibleteam
+					Direction,				//direction
 					6,						//lifetime
 					1.0f,					//accel
 					10.0f					//speed
@@ -529,6 +530,7 @@ void CCharacter::FireWeapon()
 					SpookyGhost,			//ghost
 					SpookyGhost,			//spooky
 					Team(),					//responibleteam
+					Direction,				//direction
 					6,						//lifetime
 					1.0f,					//accel
 					10.0f					//speed
@@ -591,43 +593,47 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			/*int ShotSpread = 2;
-
-			CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
-			Msg.AddInt(ShotSpread*2+1);
-
-			for(int i = -ShotSpread; i <= ShotSpread; ++i)
+			/*if (m_pPlayer->m_VanillaMode)
 			{
-				float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
-				float a = GetAngle(Direction);
-				a += Spreading[i+2];
-				float v = 1-(absolute(i)/(float)ShotSpread);
-				float Speed = mix((float)GameServer()->Tuning()->m_ShotgunSpeeddiff, 1.0f, v);
-				CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_SHOTGUN,
-					m_pPlayer->GetCID(),
-					ProjStartPos,
-					vec2(cosf(a), sinf(a))*Speed,
-					(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_ShotgunLifetime),
-					1, 0, 0, -1, WEAPON_SHOTGUN);
+				int ShotSpread = 2;
 
-				// pack the Projectile and send it to the client Directly
-				CNetObj_Projectile p;
-				pProj->FillInfo(&p);
+				CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
+				Msg.AddInt(ShotSpread * 2 + 1);
 
-				for(unsigned i = 0; i < sizeof(CNetObj_Projectile)/sizeof(int); i++)
-					Msg.AddInt(((int *)&p)[i]);
+				for (int i = -ShotSpread; i <= ShotSpread; ++i)
+				{
+					float Spreading[] = { -0.185f, -0.070f, 0, 0.070f, 0.185f };
+					float a = GetAngle(Direction);
+					a += Spreading[i + 2];
+					float v = 1 - (absolute(i) / (float)ShotSpread);
+					float Speed = mix((float)GameServer()->Tuning()->m_ShotgunSpeeddiff, 1.0f, v);
+					CProjectile *pProj = new CProjectile(GameWorld(), WEAPON_SHOTGUN,
+						m_pPlayer->GetCID(),
+						ProjStartPos,
+						vec2(cosf(a), sinf(a))*Speed,
+						(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_ShotgunLifetime),
+						0, 0, 0, -1, WEAPON_SHOTGUN);
+
+					// pack the Projectile and send it to the client Directly
+					CNetObj_Projectile p;
+					pProj->FillInfo(&p);
+
+					for (unsigned i = 0; i < sizeof(CNetObj_Projectile) / sizeof(int); i++)
+						Msg.AddInt(((int *)&p)[i]);
+				}
+
+				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 			}
-
-			Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
-
-			GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE);*/
-			float LaserReach;
-			if (!m_TuneZone)
-				LaserReach = GameServer()->Tuning()->m_LaserReach;
 			else
-				LaserReach = GameServer()->TuningList()[m_TuneZone].m_LaserReach;
+			{*/
+				float LaserReach;
+				if (!m_TuneZone)
+					LaserReach = GameServer()->Tuning()->m_LaserReach;
+				else
+					LaserReach = GameServer()->TuningList()[m_TuneZone].m_LaserReach;
 
-			new CLaser(&GameServer()->m_World, m_Pos, Direction, LaserReach, m_pPlayer->GetCID(), WEAPON_SHOTGUN);
+				new CLaser(&GameServer()->m_World, m_Pos, Direction, LaserReach, m_pPlayer->GetCID(), WEAPON_SHOTGUN);
+			//}
 			GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
@@ -730,7 +736,7 @@ void CCharacter::HandleWeapons()
 
 	// ammo regen
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[m_Core.m_ActiveWeapon].m_Ammoregentime;
-	if(AmmoRegenTime && m_pPlayer->m_VanillaMode)
+	if(AmmoRegenTime && m_pPlayer->m_VanillaMode && !m_FreezeTime)
 	{
 		// If equipped and not active, regen ammo?
 		if (m_ReloadTimer <= 0)
@@ -1209,7 +1215,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	if(Server()->IsRecording(m_pPlayer->GetCID()))
 		Server()->StopRecord(m_pPlayer->GetCID());
 
-	if (!m_FreezeTime && !m_DeepFreeze)
+	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon == -1))
 	{
 		m_LastToucherID = -1;
 		m_LastHitWeapon = -1;
@@ -1218,7 +1224,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	if (m_LastToucherID == -1)
 		m_LastToucherID = m_pPlayer->GetCID();
 	Weapon = m_LastHitWeapon;
-	Killer = m_LastToucherID;
+	Killer = m_LastToucherID;	
 
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
@@ -1234,17 +1240,17 @@ void CCharacter::Die(int Killer, int Weapon)
 		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
 			GameServer()->m_apPlayers[Killer]->FixForNoName(0);
 
-		m_pPlayer->m_MsgKiller = m_LastToucherID;
-		m_pPlayer->m_MsgWeapon = m_LastHitWeapon;
+		m_pPlayer->m_MsgKiller = Killer;
+		m_pPlayer->m_MsgWeapon = Weapon;
 		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
 		m_pPlayer->FixForNoName(2);
 	}
 	else
 	{
 		CNetMsg_Sv_KillMsg Msg;
-		Msg.m_Killer = m_LastToucherID;
+		Msg.m_Killer = Killer;
 		Msg.m_Victim = m_pPlayer->GetCID();
-		Msg.m_Weapon = m_LastHitWeapon;
+		Msg.m_Weapon = Weapon;
 		Msg.m_ModeSpecial = ModeSpecial;
 		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 	}

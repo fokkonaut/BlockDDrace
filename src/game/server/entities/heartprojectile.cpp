@@ -8,7 +8,7 @@
 #include "heartprojectile.h"
 
 CHeartProjectile::CHeartProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, float Lifetime, float Accel, float Speed) :
+		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, vec2 Direction, float Lifetime, float Accel, float Speed) :
 		CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_Owner = Owner;
@@ -20,6 +20,7 @@ CHeartProjectile::CHeartProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, 
 	m_Bloody = Bloody;
 	m_Ghost = Ghost;
 	m_Spooky = Spooky;
+	m_Direction = Direction;
 	m_EvalTick = Server()->Tick();
 	m_LifeTime = Server()->TickSpeed() * Lifetime;
 	m_ResponsibleTeam = ResponsibleTeam;
@@ -59,6 +60,9 @@ bool CHeartProjectile::HitCharacter()
 	if (m_Explosive)
 		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_GRENADE, true,
 				m_ResponsibleTeam, Hit->Teams()->TeamMask(m_ResponsibleTeam));
+
+	Hit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Damage, m_Owner, WEAPON_GUN);
+
 	GameServer()->m_World.DestroyEntity(this);
 	return true;
 }
