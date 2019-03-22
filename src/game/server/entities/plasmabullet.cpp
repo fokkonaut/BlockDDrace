@@ -8,7 +8,7 @@
 #include "plasmabullet.h"
 
 CPlasmaBullet::CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, vec2 Direction, float Lifetime, float Accel, float Speed) :
+		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, float Lifetime, float Accel, float Speed) :
 		CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Owner = Owner;
@@ -20,7 +20,7 @@ CPlasmaBullet::CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 D
 	m_Bloody = Bloody;
 	m_Ghost = Ghost;
 	m_Spooky = Spooky;
-	m_Direction = Direction;
+	m_Direction = Dir;
 	m_EvalTick = Server()->Tick();
 	m_LifeTime = Server()->TickSpeed() * Lifetime;
 	m_ResponsibleTeam = ResponsibleTeam;

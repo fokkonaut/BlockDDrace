@@ -96,7 +96,7 @@ void CWeapon::Pickup()
 		if (pChar->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
 			return;
 
-		if (pChar->GetWeaponGot(m_Type) && !m_Jetpack)
+		if (pChar->GetWeaponGot(m_Type) && !m_Jetpack && !pChar->GetPlayer()->m_VanillaMode)
 			return;
 
 		if (m_Jetpack && !pChar->GetWeaponGot(WEAPON_GUN))
@@ -105,7 +105,11 @@ void CWeapon::Pickup()
 		if (m_Jetpack && (pChar->m_Jetpack || pChar->GetPlayer()->m_InfJetpack))
 			return;
 
-		pChar->GiveWeapon(m_Type, false, m_Bullets);
+		if (pChar->GetPlayer()->m_VanillaMode && pChar->GetWeaponAmmo(m_Type) >= m_Bullets)
+			return;
+
+		int Ammo = pChar->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
+		pChar->GiveWeapon(m_Type, false, Ammo);
 		if (pChar->GetPlayer())
 			GameServer()->SendWeaponPickup(pChar->GetPlayer()->GetCID(), m_Type);
 

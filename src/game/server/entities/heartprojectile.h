@@ -33,7 +33,7 @@ class CHeartProjectile: public CEntity
 public:
 
 	CHeartProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-			bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, vec2 Direction, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
+			bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int ResponsibleTeam, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
 
 	virtual void Reset();
 	virtual void Tick();

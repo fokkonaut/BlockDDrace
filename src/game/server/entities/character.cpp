@@ -508,7 +508,6 @@ void CCharacter::FireWeapon()
 					SpookyGhost,			//ghost
 					SpookyGhost,			//spooky
 					Team(),					//responibleteam
-					Direction,				//direction
 					6,						//lifetime
 					1.0f,					//accel
 					10.0f					//speed
@@ -530,7 +529,6 @@ void CCharacter::FireWeapon()
 					SpookyGhost,			//ghost
 					SpookyGhost,			//spooky
 					Team(),					//responibleteam
-					Direction,				//direction
 					6,						//lifetime
 					1.0f,					//accel
 					10.0f					//speed
