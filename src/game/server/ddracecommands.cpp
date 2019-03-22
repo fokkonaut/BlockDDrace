@@ -477,6 +477,8 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
+	if (pPlayer->m_VanillaMode)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Vanilla Mode: True");
 	if (!pPlayer->GetCharacter())
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Character: Dead");
@@ -516,6 +518,8 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 			str_format(aBuf, sizeof(aBuf), "Meteors: %d", pPlayer->GetCharacter()->m_Meteors);
 			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 		}
+		if (pPlayer->GetCharacter()->m_Passive)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
 		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pPlayer->GetCharacter()->m_Pos.x / 32, pPlayer->GetCharacter()->m_Pos.y / 32);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
