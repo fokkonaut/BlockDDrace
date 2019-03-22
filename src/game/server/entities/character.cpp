@@ -1329,7 +1329,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		m_DamageTakenTick = Server()->Tick();
 
 		// do damage Hit sound
-		if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
+		if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From] && !m_Passive)
 		{
 			int64_t Mask = CmaskOne(From);
 			for(int i = 0; i < MAX_CLIENTS; i++)
