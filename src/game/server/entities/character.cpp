@@ -1044,6 +1044,21 @@ void CCharacter::BlockDDraceTick()
 
 	if (!GameServer()->m_apPlayers[m_LastToucherID])
 		m_LastToucherID = -1;
+
+
+	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
+	if (pChr && pChr->m_Passive)
+	{
+		m_Core.m_Collision = false;
+		m_NeededFaketuning |= FAKETUNE_NOCOLL;
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+	}
+	else if (!m_Passive)
+	{
+		m_Core.m_Collision = true;
+		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+	}
 }
 
 void CCharacter::TickDefered()
