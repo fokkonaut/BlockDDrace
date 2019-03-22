@@ -184,6 +184,7 @@ public:
 	bool m_IsDummy;
 
 	bool m_VanillaMode;
+	bool m_InfVanillaMode;
 
 	//spooky ghost
 	bool m_SpookyGhost;

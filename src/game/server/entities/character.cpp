@@ -92,7 +92,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
 
-	if (g_Config.m_SvVanillaModeStart)
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_InfVanillaMode)
 		m_pPlayer->m_VanillaMode = true;
 	else
 		m_pPlayer->m_VanillaMode = false;
@@ -3079,6 +3079,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			}
 			else
 			{
+				pPlayer->m_InfVanillaMode = false;
 				pPlayer->m_VanillaMode = false;
 				pChr->m_Health = 10;
 				pChr->m_Armor = 10;
@@ -3103,6 +3104,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			}
 			else
 			{
+				pPlayer->m_InfVanillaMode = true;
 				pPlayer->m_VanillaMode = true;
 				pChr->m_Armor = 0;
 				for (int i = 0; i < NUM_WEAPONS + 1; i++)
