@@ -3055,8 +3055,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
 			pChr->m_Hit = HIT_ALL;
 			pChr->m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
-			pChr->m_Core.m_Hook = true;
-			pChr->m_NeededFaketuning &= ~FAKETUNE_NOHOOK;
 			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
 		}
 		else
@@ -3067,8 +3065,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_NeededFaketuning |= FAKETUNE_NOCOLL;
 			pChr->m_Hit = DISABLE_HIT_GRENADE | DISABLE_HIT_HAMMER | DISABLE_HIT_RIFLE | DISABLE_HIT_SHOTGUN;
 			pChr->m_NeededFaketuning |= FAKETUNE_NOHAMMER;
-			pChr->m_Core.m_Hook = false;
-			pChr->m_NeededFaketuning |= FAKETUNE_NOHOOK;
 			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
 			CPickup *pPickup = new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
 		}
