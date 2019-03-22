@@ -1170,28 +1170,6 @@ bool CCharacter::IncreaseArmor(int Amount)
 
 void CCharacter::Die(int Killer, int Weapon)
 {
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
-		{
-			if (m_Core.m_LastHookedPlayer != -1)
-			{
-				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(0, m_Core.m_LastHookedPlayer);
-			}
-		}
-	}
-
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this)
-		{
-			if (m_Core.m_LastHookedPlayer != -1)
-			{
-				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(1, m_Core.m_LastHookedPlayer);
-			}
-		}
-	}
-
 	// remove atom projectiles on death
 	if (!m_AtomProjs.empty())
 	{
@@ -1225,6 +1203,28 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_LastToucherID = m_pPlayer->GetCID();
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastToucherID;	
+
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
+		{
+			if (Killer >= 0 && Killer != m_pPlayer->GetCID())
+			{
+				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(0, Killer);
+			}
+		}
+	}
+
+	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
+	{
+		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this)
+		{
+			if (Killer >= 0 && Killer != m_pPlayer->GetCID())
+			{
+				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(1, Killer);
+			}
+		}
+	}
 
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
