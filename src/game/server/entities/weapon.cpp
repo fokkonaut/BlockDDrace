@@ -174,9 +174,9 @@ void CWeapon::Tick()
 
 	//Friction
 	bool Grounded = false;
-	if (GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize / 2, m_Pos.y + ms_PhysSize / 2 + 5))
+	if (GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
 		Grounded = true;
-	if (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize / 2, m_Pos.y + ms_PhysSize / 2 + 5))
+	if (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
 		Grounded = true;
 
 	if (Grounded == true)
@@ -246,8 +246,29 @@ void CWeapon::Tick()
 		}
 		m_Vel = TempVel;
 	}
-
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
+
+	//stopper
+	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
+	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_Pos, m_Pos);
+	if (!Indices.empty())
+		for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
+			HandleTiles(*i);
+	else
+	{
+		HandleTiles(CurrentIndex);
+	}
+
+	vec2 Temp = m_Vel;
+	if (Temp.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
+		Temp.x = 0;
+	if (Temp.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
+		Temp.x = 0;
+	if (Temp.y < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_180) || (m_TileIndexB == TILE_STOP && m_TileFlagsB == ROTATION_180) || (m_TileIndexB == TILE_STOPS && (m_TileFlagsB == ROTATION_0 || m_TileFlagsB == ROTATION_180)) || (m_TileIndexB == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_180) || (m_TileFIndexB == TILE_STOP && m_TileFFlagsB == ROTATION_180) || (m_TileFIndexB == TILE_STOPS && (m_TileFFlagsB == ROTATION_0 || m_TileFFlagsB == ROTATION_180)) || (m_TileFIndexB == TILE_STOPA)))
+		Temp.y = 0;
+	if (Temp.y > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_0) || (m_TileIndexT == TILE_STOP && m_TileFlagsT == ROTATION_0) || (m_TileIndexT == TILE_STOPS && (m_TileFlagsT == ROTATION_0 || m_TileFlagsT == ROTATION_180)) || (m_TileIndexT == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_0) || (m_TileFIndexT == TILE_STOP && m_TileFFlagsT == ROTATION_0) || (m_TileFIndexT == TILE_STOPS && (m_TileFFlagsT == ROTATION_0 || m_TileFFlagsT == ROTATION_180)) || (m_TileFIndexT == TILE_STOPA)))
+		Temp.y = 0;
+	m_Vel = Temp;
 }
 
 void CWeapon::Snap(int SnappingClient)
@@ -275,4 +296,35 @@ void CWeapon::Snap(int SnappingClient)
 			pJetpackIndicator->m_StartTick = Server()->Tick();
 		}
 	}
+}
+
+void CWeapon::HandleTiles(int Index)
+{
+
+	int MapIndex = Index;
+	float Offset = 4.0f;
+	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));
+	int MapIndexR = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x - ms_PhysSize - Offset, m_Pos.y));
+	int MapIndexT = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + ms_PhysSize + Offset));
+	int MapIndexB = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y - ms_PhysSize - Offset));
+	m_TileIndex = GameServer()->Collision()->GetTileIndex(MapIndex);
+	m_TileFlags = GameServer()->Collision()->GetTileFlags(MapIndex);
+	m_TileIndexL = GameServer()->Collision()->GetTileIndex(MapIndexL);
+	m_TileFlagsL = GameServer()->Collision()->GetTileFlags(MapIndexL);
+	m_TileIndexR = GameServer()->Collision()->GetTileIndex(MapIndexR);
+	m_TileFlagsR = GameServer()->Collision()->GetTileFlags(MapIndexR);
+	m_TileIndexB = GameServer()->Collision()->GetTileIndex(MapIndexB);
+	m_TileFlagsB = GameServer()->Collision()->GetTileFlags(MapIndexB);
+	m_TileIndexT = GameServer()->Collision()->GetTileIndex(MapIndexT);
+	m_TileFlagsT = GameServer()->Collision()->GetTileFlags(MapIndexT);
+	m_TileFIndex = GameServer()->Collision()->GetFTileIndex(MapIndex);
+	m_TileFFlags = GameServer()->Collision()->GetFTileFlags(MapIndex);
+	m_TileFIndexL = GameServer()->Collision()->GetFTileIndex(MapIndexL);
+	m_TileFFlagsL = GameServer()->Collision()->GetFTileFlags(MapIndexL);
+	m_TileFIndexR = GameServer()->Collision()->GetFTileIndex(MapIndexR);
+	m_TileFFlagsR = GameServer()->Collision()->GetFTileFlags(MapIndexR);
+	m_TileFIndexB = GameServer()->Collision()->GetFTileIndex(MapIndexB);
+	m_TileFFlagsB = GameServer()->Collision()->GetFTileFlags(MapIndexB);
+	m_TileFIndexT = GameServer()->Collision()->GetFTileIndex(MapIndexT);
+	m_TileFFlagsT = GameServer()->Collision()->GetFTileFlags(MapIndexT);
 }
