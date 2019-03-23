@@ -280,6 +280,10 @@ public:
 	bool m_TeleGunTeleport;
 	bool m_IsBlueTeleGunTeleport;
 
+	int m_LastIndexTile;
+	int m_LastIndexFrontTile;
+
+
 	bool m_Passive;
 
 	int m_LastHitWeapon;

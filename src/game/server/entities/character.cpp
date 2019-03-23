@@ -1995,6 +1995,132 @@ void CCharacter::HandleTiles(int Index)
 				GameServer()->SendChatTarget(i, "Your team was unlocked by an unlock team tile");
 	}
 
+	//jetpack toggle
+	if ((m_TileIndex == TILE_JETPACK) || (m_TileFIndex == TILE_JETPACK))
+	{
+		if ((m_LastIndexTile == TILE_JETPACK) || (m_LastIndexFrontTile == TILE_JETPACK))
+			return;
+
+		bool Remove = (m_Jetpack || m_pPlayer->m_InfJetpack) ? true : false;
+		SetExtra(JETPACK, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//plasma gun toggle
+	if ((m_TileIndex == TILE_PLASMA_GUN) || (m_TileFIndex == TILE_PLASMA_GUN))
+	{
+		if ((m_LastIndexTile == TILE_PLASMA_GUN) || (m_LastIndexFrontTile == TILE_PLASMA_GUN))
+			return;
+
+		bool Remove = (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun) ? true : false;
+		SetExtra(PLASMA_GUN, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//heart gun toggle
+	if ((m_TileIndex == TILE_HEART_GUN) || (m_TileFIndex == TILE_HEART_GUN))
+	{
+		if ((m_LastIndexTile == TILE_HEART_GUN) || (m_LastIndexFrontTile == TILE_HEART_GUN))
+			return;
+
+		bool Remove = (m_HeartGun || m_pPlayer->m_InfHeartGun) ? true : false;
+		SetExtra(HEART_GUN, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//rainbow toggle
+	if ((m_TileIndex == TILE_RAINBOW) || (m_TileFIndex == TILE_RAINBOW))
+	{
+		if ((m_LastIndexTile == TILE_RAINBOW) || (m_LastIndexFrontTile == TILE_RAINBOW))
+			return;
+
+		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) ? true : false;
+		SetExtra(RAINBOW, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//atom toggle
+	if ((m_TileIndex == TILE_ATOM) || (m_TileFIndex == TILE_ATOM))
+	{
+		if ((m_LastIndexTile == TILE_ATOM) || (m_LastIndexFrontTile == TILE_ATOM))
+			return;
+
+		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) ? true : false;
+		SetExtra(ATOM, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//trail toggle
+	if ((m_TileIndex == TILE_TRAIL) || (m_TileFIndex == TILE_TRAIL))
+	{
+		if ((m_LastIndexTile == TILE_TRAIL) || (m_LastIndexFrontTile == TILE_TRAIL))
+			return;
+
+		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) ? true : false;
+		SetExtra(TRAIL, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//spooky ghost toggle
+	if ((m_TileIndex == TILE_SPOOKY_GHOST) || (m_TileFIndex == TILE_SPOOKY_GHOST))
+	{
+		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST))
+			return;
+
+		SetExtra(SPOOKY_GHOST, m_pPlayer->GetCID(), false, m_pPlayer->m_HasSpookyGhost);
+	}
+
+	//add meteor
+	if ((m_TileIndex == TILE_ADD_METEOR) || (m_TileFIndex == TILE_ADD_METEOR))
+	{
+		if ((m_LastIndexTile == TILE_ADD_METEOR) || (m_LastIndexFrontTile == TILE_ADD_METEOR))
+			return;
+
+		SetExtra(METEOR, m_pPlayer->GetCID(), false);
+	}
+
+	//remove meteors
+	if ((m_TileIndex == TILE_REMOVE_METEORS) || (m_TileFIndex == TILE_REMOVE_METEORS))
+	{
+		if ((m_LastIndexTile == TILE_REMOVE_METEORS) || (m_LastIndexFrontTile == TILE_REMOVE_METEORS))
+			return;
+
+		SetExtra(METEOR, m_pPlayer->GetCID(), false, true);
+	}
+
+	//passive toggle
+	if ((m_TileIndex == TILE_PASSIVE) || (m_TileFIndex == TILE_PASSIVE))
+	{
+		if ((m_LastIndexTile == TILE_PASSIVE) || (m_LastIndexFrontTile == TILE_PASSIVE))
+			return;
+
+		SetExtra(PASSIVE, m_pPlayer->GetCID(), false, m_Passive);
+	}
+
+	//vanilla mode
+	if ((m_TileIndex == TILE_VANILLA_MODE) || (m_TileFIndex == TILE_VANILLA_MODE))
+	{
+		if ((m_LastIndexTile == TILE_VANILLA_MODE) || (m_LastIndexFrontTile == TILE_VANILLA_MODE))
+			return;
+
+		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), false);
+	}
+
+	//ddrace mode
+	if ((m_TileIndex == TILE_DDRACE_MODE) || (m_TileFIndex == TILE_DDRACE_MODE))
+	{
+		if ((m_LastIndexTile == TILE_DDRACE_MODE) || (m_LastIndexFrontTile == TILE_DDRACE_MODE))
+			return;
+
+		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), false, true);
+	}
+
+	//straight grenade toggle
+	if ((m_TileIndex == TILE_STRAIGHT_GRENADE) || (m_TileFIndex == TILE_STRAIGHT_GRENADE))
+	{
+		if ((m_LastIndexTile == TILE_STRAIGHT_GRENADE) || (m_LastIndexFrontTile == TILE_STRAIGHT_GRENADE))
+			return;
+
+		SetExtra(STRAIGHT_GRENADE, m_pPlayer->GetCID(), false, m_StraightGrenade);
+	}
+
+	m_LastIndexTile = m_TileIndex;
+	m_LastIndexFrontTile = m_TileFIndex;
+
 	// solo part
 	if(((m_TileIndex == TILE_SOLO_START) || (m_TileFIndex == TILE_SOLO_START)) && !Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
 	{
@@ -2551,6 +2677,8 @@ void CCharacter::DDRacePostCoreTick()
 	else
 	{
 		HandleTiles(CurrentIndex);
+		m_LastIndexTile = 0;
+		m_LastIndexFrontTile = 0;
 	}
 
 	// teleport gun
@@ -2927,7 +3055,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		str_format(aInfinite, sizeof aInfinite, "");
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
-	CPlayer* pPlayer = GameServer()->GetPlayerChar(ToID)->GetPlayer();
+	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
 
 	vec2 Direction = normalize(vec2(pChr->m_LatestInput.m_TargetX, pChr->m_LatestInput.m_TargetY));
 	vec2 ProjStartPos = pChr->m_Pos + Direction * pChr->m_ProximityRadius*0.75f;
@@ -3079,9 +3207,9 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (Extra == VANILLA_MODE)
 	{
-		str_format(aItem, sizeof aItem, "Vanilla Mode");
 		if (Remove)
 		{
+			str_format(aItem, sizeof aItem, "DDrace Mode");
 			if (!pPlayer->m_VanillaMode)
 				return;
 			else
@@ -3104,6 +3232,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		}
 		else
 		{
+			str_format(aItem, sizeof aItem, "Vanilla Mode");
 			if (pPlayer->m_VanillaMode)
 				return;
 			else
@@ -3135,10 +3264,31 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 
 	if (FromID == -1)
 	{
-		if (Remove)
-			str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
+		if (Extra == JETPACK || Extra == PLASMA_GUN || Extra == HEART_GUN || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == STRAIGHT_GRENADE)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof aMsg, "You lost your %s", aItem);
+			else
+				str_format(aMsg, sizeof aMsg, "You have a %s", aItem);
+		}
+		else if (Extra == VANILLA_MODE)
+		{
+			str_format(aMsg, sizeof aMsg, "You are now in %s", aItem);
+		}
+		else if (Extra == PASSIVE)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof aMsg, "You are no longer in %s", aItem);
+			else
+				str_format(aMsg, sizeof aMsg, "You are now in %s", aItem);
+		}
 		else
-			str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+		{
+			if (Remove)
+				str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
+			else
+				str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+		}
 	}
 	else if (FromID >= 0)
 	{
@@ -3146,8 +3296,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		if (FromID != ToID)
 			GameServer()->SendChatTarget(FromID, aMsg);
 	}
-	if (ToID != -1)
-		GameServer()->SendChatTarget(ToID, aMsg);
+	GameServer()->SendChatTarget(ToID, aMsg);
 
 	return;
 }
