@@ -429,6 +429,18 @@ void CGameContext::ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+	{
+		bool Remove = pChr->m_StraightGrenade ? true : false;
+		pChr->SetExtra(STRAIGHT_GRENADE, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
+	}
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

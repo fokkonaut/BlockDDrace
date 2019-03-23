@@ -305,6 +305,7 @@ public:
 	int m_Meteors;
 	bool m_PlasmaGun;
 	bool m_HeartGun;
+	bool m_StraightGrenade;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;

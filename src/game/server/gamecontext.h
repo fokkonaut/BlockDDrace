@@ -65,6 +65,7 @@ enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 	METEOR,
 	PASSIVE,
 	VANILLA_MODE,
+	STRAIGHT_GRENADE,
 	NUM_ITEMS,
 };
 
@@ -407,6 +408,7 @@ private:
 	static void ConPassive(IConsole::IResult *pResult, void *pUserData);
 	static void ConVanillaMode(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData);
+	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

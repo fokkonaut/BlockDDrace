@@ -55,6 +55,7 @@ CONSOLE_COMMAND("resetmeteorvars", "", CFGFLAG_SERVER, ConResetMeteorVars, this,
 CONSOLE_COMMAND("passive", "?v[id]", CFGFLAG_SERVER, ConPassive, this, "Toggles passive mode for player v")
 CONSOLE_COMMAND("vanillamode", "?s[id/all]", CFGFLAG_SERVER, ConVanillaMode, this, "Activates vanilla mode for player v/all")
 CONSOLE_COMMAND("unvanillamode", "?s[id/all]", CFGFLAG_SERVER, ConUnVanillaMode, this, "Deactivates vanilla mode for player v/all")
+CONSOLE_COMMAND("straightgrenade", "?v[id]", CFGFLAG_SERVER, ConStraightGrenade, this, "Toggles straight grenade for player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
 CONSOLE_COMMAND("move_raw", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMoveRaw, this, "Moves to the point with x/y-coordinates ii")

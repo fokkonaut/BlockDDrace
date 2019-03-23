@@ -1014,6 +1014,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/projectile.h
   entities/stable_projectile.cpp
   entities/stable_projectile.h
+  entities/straight_grenade.cpp
+  entities/straight_grenade.h
   entities/weapon.cpp
   entities/weapon.h
   entity.cpp

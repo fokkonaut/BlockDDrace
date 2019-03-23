@@ -16,6 +16,7 @@
 #include "heartprojectile.h"
 #include "meteor.h"
 #include "pickup.h"
+#include "straight_grenade.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -643,30 +644,37 @@ void CCharacter::FireWeapon()
 			else
 				Lifetime = (int)(Server()->TickSpeed()*GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime);
 
-			CProjectile *pProj = new CProjectile
-					(
-					GameWorld(),
-					WEAPON_GRENADE,//Type
-					m_pPlayer->GetCID(),//Owner
-					ProjStartPos,//Pos
-					Direction,//Dir
-					Lifetime,//Span
-					0,//Freeze
-					true,//Explosive
-					0,//Force
-					SOUND_GRENADE_EXPLODE,//SoundImpact
-					WEAPON_GRENADE//Weapon
-					);//SoundImpact
+			if (m_StraightGrenade)
+			{
+				CStraightGrenade *pProj = new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
+			}
+			else
+			{
+				CProjectile *pProj = new CProjectile
+						(
+						GameWorld(),
+						WEAPON_GRENADE,//Type
+						m_pPlayer->GetCID(),//Owner
+						ProjStartPos,//Pos
+						Direction,//Dir
+						Lifetime,//Span
+						0,//Freeze
+						true,//Explosive
+						0,//Force
+						SOUND_GRENADE_EXPLODE,//SoundImpact
+						WEAPON_GRENADE//Weapon
+						);//SoundImpact
 
-			// pack the Projectile and send it to the client Directly
-			CNetObj_Projectile p;
-			pProj->FillInfo(&p);
+				// pack the Projectile and send it to the client Directly
+				CNetObj_Projectile p;
+				pProj->FillInfo(&p);
 
-			CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
-			Msg.AddInt(1);
-			for(unsigned i = 0; i < sizeof(CNetObj_Projectile)/sizeof(int); i++)
-				Msg.AddInt(((int *)&p)[i]);
-			Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
+				CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
+				Msg.AddInt(1);
+				for(unsigned i = 0; i < sizeof(CNetObj_Projectile)/sizeof(int); i++)
+					Msg.AddInt(((int *)&p)[i]);
+				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
+			}
 
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
@@ -3119,6 +3127,14 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 				}
 			}
 		}
+	}
+	else if (Extra == STRAIGHT_GRENADE)
+	{
+		str_format(aItem, sizeof aItem, "Straight Grenade");
+		if (Remove)
+			pChr->m_StraightGrenade = false;
+		else
+			pChr->m_StraightGrenade = true;
 	}
 
 	if (FromID == -1)
