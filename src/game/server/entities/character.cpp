@@ -2001,7 +2001,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_JETPACK) || (m_LastIndexFrontTile == TILE_JETPACK))
 			return;
 
-		bool Remove = (m_Jetpack || m_pPlayer->m_InfJetpack) ? true : false;
+		bool Remove = (m_Jetpack || m_pPlayer->m_InfJetpack) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(JETPACK, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2011,7 +2011,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_PLASMA_GUN) || (m_LastIndexFrontTile == TILE_PLASMA_GUN))
 			return;
 
-		bool Remove = (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun) ? true : false;
+		bool Remove = (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(PLASMA_GUN, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2021,7 +2021,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_HEART_GUN) || (m_LastIndexFrontTile == TILE_HEART_GUN))
 			return;
 
-		bool Remove = (m_HeartGun || m_pPlayer->m_InfHeartGun) ? true : false;
+		bool Remove = (m_HeartGun || m_pPlayer->m_InfHeartGun) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(HEART_GUN, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2031,7 +2031,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_RAINBOW) || (m_LastIndexFrontTile == TILE_RAINBOW))
 			return;
 
-		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) ? true : false;
+		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(RAINBOW, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2041,7 +2041,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_ATOM) || (m_LastIndexFrontTile == TILE_ATOM))
 			return;
 
-		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) ? true : false;
+		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(ATOM, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2051,7 +2051,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_TRAIL) || (m_LastIndexFrontTile == TILE_TRAIL))
 			return;
 
-		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) ? true : false;
+		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(TRAIL, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -2061,7 +2061,8 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST))
 			return;
 
-		SetExtra(SPOOKY_GHOST, m_pPlayer->GetCID(), false, m_pPlayer->m_HasSpookyGhost);
+		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
+		SetExtra(SPOOKY_GHOST, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	//add meteor
@@ -2088,7 +2089,8 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_PASSIVE) || (m_LastIndexFrontTile == TILE_PASSIVE))
 			return;
 
-		SetExtra(PASSIVE, m_pPlayer->GetCID(), false, m_Passive);
+		bool Remove = m_Passive && g_Config.m_SvExtraTilesToggle ? true : false;
+		SetExtra(PASSIVE, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	//vanilla mode
@@ -2115,7 +2117,8 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_STRAIGHT_GRENADE) || (m_LastIndexFrontTile == TILE_STRAIGHT_GRENADE))
 			return;
 
-		SetExtra(STRAIGHT_GRENADE, m_pPlayer->GetCID(), false, m_StraightGrenade);
+		bool Remove = m_StraightGrenade && g_Config.m_SvExtraTilesToggle ? true : false;
+		SetExtra(STRAIGHT_GRENADE, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	m_LastIndexTile = m_TileIndex;

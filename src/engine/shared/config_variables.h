@@ -210,6 +210,7 @@ MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "Whether to 
 MACRO_CONFIG_INT(SvHideServerInfo, sv_hide_server_info, 0, 0, 1, CFGFLAG_SERVER, "Whether to hide server info like map and gametype from the browser")
 MACRO_CONFIG_INT(SvBlockDDraceBrowserScoreFix, sv_block_ddrace_browser_score_fix, 0, 0, 1, CFGFLAG_SERVER, "Wether to show level or time as score in browser")
 MACRO_CONFIG_INT(SvVanillaModeStart, sv_vanilla_mode_start, 0, 0, 1, CFGFLAG_SERVER, "Whether to set the players mode to vanilla on spawn or ddrace")
+MACRO_CONFIG_INT(SvExtraTilesToggle, sv_extra_tiles_toggle, 1, 0, 1, CFGFLAG_SERVER, "Whether the extra tiles toggle the extra or only activate it")
 
 // meteor
 MACRO_CONFIG_INT(SvMeteorFriction, sv_meteor_friction, 5000, 0, 1000000, CFGFLAG_SERVER, "Meteor friction")
