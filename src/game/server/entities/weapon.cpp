@@ -185,7 +185,7 @@ void CWeapon::Tick()
 		m_Vel.x *= 0.98f;
 
 
-	//Speedups
+	//Speedups // WAY TO FAST, FIX IT PLEASE
 	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
 	{
 		int Force, MaxSpeed = 0;
@@ -201,7 +201,6 @@ void CWeapon::Tick()
 		else
 		{
 			if (MaxSpeed > 0 && MaxSpeed < 5) MaxSpeed = 5;
-			//dbg_msg("speedup tile start", "Direction %f %f, Force %d, Max Speed %d", (Direction).x, (Direction).y, Force, MaxSpeed);
 			if (MaxSpeed > 0)
 			{
 				if (Direction.x > 0.0000001f)
@@ -232,7 +231,6 @@ void CWeapon::Tick()
 
 				DiffAngle = SpeederAngle - TeeAngle;
 				SpeedLeft = MaxSpeed / 5.0f - cos(DiffAngle) * TeeSpeed;
-				//dbg_msg("speedup tile debug", "MaxSpeed %i, TeeSpeed %f, SpeedLeft %f, SpeederAngle %f, TeeAngle %f", MaxSpeed, TeeSpeed, SpeedLeft, SpeederAngle, TeeAngle);
 				if (abs(SpeedLeft) > Force && SpeedLeft > 0.0000001f)
 					TempVel += Direction * Force;
 				else if (abs(SpeedLeft) > Force)
@@ -248,7 +246,7 @@ void CWeapon::Tick()
 	}
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
 
-	//stopper
+	//stopper // SINKING THROUGH THE STOPAS SLOWLY, SO JUST HALFLY WORKING, FIX IT PLEASE
 	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
 	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_Pos, m_Pos);
 	if (!Indices.empty())
@@ -300,7 +298,6 @@ void CWeapon::Snap(int SnappingClient)
 
 void CWeapon::HandleTiles(int Index)
 {
-
 	int MapIndex = Index;
 	float Offset = 4.0f;
 	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));

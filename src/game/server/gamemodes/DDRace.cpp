@@ -299,7 +299,7 @@ void CGameControllerDDRace::Tick()
 				//Gravity
 				F->m_Vel.y += 0.5f;
 
-				//Speedups
+				//Speedups // WAY TO FAST, FIX IT PLEASE
 				if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(F->m_Pos))) {
 					int Force, MaxSpeed = 0;
 					vec2 Direction, MaxVel, TempVel = F->m_Vel;
@@ -359,7 +359,7 @@ void CGameControllerDDRace::Tick()
 				}
 				GameServer()->Collision()->MoveBox(&F->m_Pos, &F->m_Vel, vec2(F->ms_PhysSize, F->ms_PhysSize), 0.5f);
 
-				//stopper
+				//stopper // SINKING THROUGH THE STOPAS SLOWLY, SO JUST HALFLY WORKING, FIX IT PLEASE
 				int CurrentIndex = GameServer()->Collision()->GetMapIndex(F->m_Pos);
 				std::list < int > Indices = GameServer()->Collision()->GetMapIndices(F->m_Pos, F->m_Pos);
 				if (!Indices.empty())
