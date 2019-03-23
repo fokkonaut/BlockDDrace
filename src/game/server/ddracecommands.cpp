@@ -101,7 +101,7 @@ void CGameContext::ConSuper(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	if (!CheckClientID(pResult->m_ClientID))
 		return;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr && !pChr->m_Super)
 	{
@@ -118,7 +118,7 @@ void CGameContext::ConUnSuper(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	if (!CheckClientID(pResult->m_ClientID))
 		return;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr && pChr->m_Super)
 	{
@@ -133,7 +133,7 @@ void CGameContext::ConUnSolo(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	if (!CheckClientID(pResult->m_ClientID))
 		return;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->SetSolo(false);
@@ -144,7 +144,7 @@ void CGameContext::ConUnDeep(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	if (!CheckClientID(pResult->m_ClientID))
 		return;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->m_DeepFreeze = false;
@@ -171,7 +171,7 @@ void CGameContext::ConRifle(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -183,7 +183,7 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfJetpack(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -195,7 +195,7 @@ void CGameContext::ConInfJetpack(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -207,7 +207,7 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -219,7 +219,7 @@ void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -231,7 +231,7 @@ void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -243,7 +243,7 @@ void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -255,7 +255,7 @@ void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -267,7 +267,7 @@ void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -279,7 +279,7 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -291,7 +291,7 @@ void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -303,7 +303,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -315,7 +315,7 @@ void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -327,7 +327,7 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
@@ -336,7 +336,7 @@ void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), true, false, pResult->m_ClientID);
@@ -345,23 +345,10 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
-
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
-	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CCharacter* pChr = pSelf->GetPlayerChar(i);
-			if (pChr)
-				pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
-		}
-	}
-	else
-	{
-		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-		if (pChr)
-			pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
-	}
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(METEOR, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
 }
 
 void CGameContext::ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData)
@@ -376,7 +363,7 @@ void CGameContext::ConResetMeteorVars(IConsole::IResult *pResult, void *pUserDat
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -388,51 +375,25 @@ void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
-
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
-	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CCharacter* pChr = pSelf->GetPlayerChar(i);
-			if (pChr)
-				pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
-		}
-	}
-	else
-	{
-		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-		if (pChr)
-			pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
-	}
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, false, pResult->m_ClientID);
 }
 
 void CGameContext::ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
-
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
-	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CCharacter* pChr = pSelf->GetPlayerChar(i);
-			if (pChr)
-				pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
-		}
-	}
-	else
-	{
-		CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-		if (pChr)
-			pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
-	}
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(VANILLA_MODE, pChr->GetPlayer()->GetCID(), false, true, pResult->m_ClientID);
 }
 
 void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
@@ -578,19 +539,8 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int ID = pResult->GetString(0) ? str_toint(pResult->GetString(0)) : -1;
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
-	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			if (pSelf->m_apPlayers[i] && pSelf->m_apPlayers[i]->m_IsDummy)
-			{
-				pSelf->Server()->BotLeave(i);
-			}
-		}
-		pSelf->SendChatTarget(pResult->m_ClientID, "All bots have been removed.");
-	}
-	else if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
+	int ID = pResult->NumArguments() ? pResult->GetVictim() : -1;
+	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
 	{
 		pSelf->Server()->BotLeave(ID);
 	}
@@ -644,7 +594,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		int Weapon, bool Remove)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetInteger(0) : pResult->m_ClientID;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = GetPlayerChar(Victim);
 	if (!pChr)
 		return;
@@ -716,33 +666,16 @@ void CGameContext::ConToCheckTeleporter(IConsole::IResult *pResult, void *pUserD
 void CGameContext::ConTeleport(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
-	int Tele = pResult->NumArguments() == 2 ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
+	int Tele = pResult->NumArguments() == 2 ? pResult->GetVictim() : pResult->m_ClientID;
 	int TeleTo = pResult->NumArguments() ? pResult->GetInteger(pResult->NumArguments() - 1) : pResult->m_ClientID;
 
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
+	CCharacter *pChr = pSelf->GetPlayerChar(Tele);
+	if (pChr && pSelf->GetPlayerChar(TeleTo))
 	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CCharacter *pChr = pSelf->GetPlayerChar(i);
-			if (pChr && pSelf->GetPlayerChar(TeleTo))
-			{
-				pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_DDRaceState = DDRACE_CHEAT;
-			}
-		}
-	}
-	else
-	{
-		CCharacter *pChr = pSelf->GetPlayerChar(Tele);
-		if (pChr && pSelf->GetPlayerChar(TeleTo))
-		{
-			pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_DDRaceState = DDRACE_CHEAT;
-		}
+		pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_DDRaceState = DDRACE_CHEAT;
 	}
 }
 

@@ -9,7 +9,7 @@
 CONSOLE_COMMAND("kill_pl", "v[id]", CFGFLAG_SERVER, ConKillPlayer, this, "Kills player v and announces the kill")
 CONSOLE_COMMAND("totele", "i[number]", CFGFLAG_SERVER|CMDFLAG_TEST, ConToTeleporter, this, "Teleports you to teleporter v")
 CONSOLE_COMMAND("totelecp", "i[number]", CFGFLAG_SERVER|CMDFLAG_TEST, ConToCheckTeleporter, this, "Teleports you to checkpoint teleporter v")
-CONSOLE_COMMAND("tele", "?s[id/all] ?i[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConTeleport, this, "Teleports player i (or you) to player i (or you to where you look at)")
+CONSOLE_COMMAND("tele", "?i[id] ?i[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConTeleport, this, "Teleports player i (or you) to player i (or you to where you look at)")
 CONSOLE_COMMAND("addweapon", "i[weapon-id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConAddWeapon, this, "Gives weapon with id i to you (all = -1, hammer = 0, gun = 1, shotgun = 2, grenade = 3, rifle = 4, ninja = 5)")
 CONSOLE_COMMAND("removeweapon", "i[weapon-id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConRemoveWeapon, this, "removes weapon with id i from you (all = -1, hammer = 0, gun = 1, shotgun = 2, grenade = 3, rifle = 4, ninja = 5)")
 CONSOLE_COMMAND("shotgun", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConShotgun, this, "Gives a shotgun to player v")
@@ -31,7 +31,7 @@ CONSOLE_COMMAND("up", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoUp, this, "Makes you
 CONSOLE_COMMAND("down", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoDown, this, "Makes you move 1 tile down")
 
 CONSOLE_COMMAND("connectdummy", "?i[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
-CONSOLE_COMMAND("disconnectdummy", "s[id/all]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v/all")
+CONSOLE_COMMAND("disconnectdummy", "v[id]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v")
 
 CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER, ConPlayerInfo, this, "Shows information about the player s")
 
@@ -53,8 +53,8 @@ CONSOLE_COMMAND("addinfmeteor", "?v[id]", CFGFLAG_SERVER, ConAddInfMeteor, this,
 CONSOLE_COMMAND("removemeteors", "?s[id/all]", CFGFLAG_SERVER, ConRemoveMeteors, this, "Removes all meteors from player v/all")
 CONSOLE_COMMAND("resetmeteorvars", "", CFGFLAG_SERVER, ConResetMeteorVars, this, "Resets the meteor variables")
 CONSOLE_COMMAND("passive", "?v[id]", CFGFLAG_SERVER, ConPassive, this, "Toggles passive mode for player v")
-CONSOLE_COMMAND("vanillamode", "?s[id/all]", CFGFLAG_SERVER, ConVanillaMode, this, "Activates vanilla mode for player v/all")
-CONSOLE_COMMAND("unvanillamode", "?s[id/all]", CFGFLAG_SERVER, ConUnVanillaMode, this, "Deactivates vanilla mode for player v/all")
+CONSOLE_COMMAND("vanillamode", "?v[id]", CFGFLAG_SERVER, ConVanillaMode, this, "Activates vanilla mode for player v")
+CONSOLE_COMMAND("unvanillamode", "?v[id]", CFGFLAG_SERVER, ConUnVanillaMode, this, "Deactivates vanilla mode for player v")
 CONSOLE_COMMAND("straightgrenade", "?v[id]", CFGFLAG_SERVER, ConStraightGrenade, this, "Toggles straight grenade for player v")
 
 CONSOLE_COMMAND("move", "i[x] i[y]", CFGFLAG_SERVER|CMDFLAG_TEST, ConMove, this, "Moves to the tile with x/y-number ii")
