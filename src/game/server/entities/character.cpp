@@ -93,7 +93,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
 
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_InfVanillaMode)
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_VanillaModeStart)
 		m_pPlayer->m_VanillaMode = true;
 	else
 		m_pPlayer->m_VanillaMode = false;
@@ -3031,10 +3031,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		if (Remove)
 		{
 			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
-			{
-				ToID = -1;
-				FromID = -1;
-			}
+				return;
 			else
 			{
 				pChr->m_Meteors = 0;
@@ -3043,11 +3040,16 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		}
 		else
 		{
-			if (Infinite)
-				pPlayer->m_InfMeteors++;
+			if (pPlayer->m_InfMeteors + pChr->m_Meteors <= 50)
+			{
+				if (Infinite)
+					pPlayer->m_InfMeteors++;
+				else
+					pChr->m_Meteors++;
+				CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
+			}
 			else
-				pChr->m_Meteors++;
-			CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
+				return;
 		}
 	}
 	else if (Extra == PASSIVE)
@@ -3081,13 +3083,10 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		if (Remove)
 		{
 			if (!pPlayer->m_VanillaMode)
-			{
-				ToID = -1;
-				FromID = -1;
-			}
+				return;
 			else
 			{
-				pPlayer->m_InfVanillaMode = false;
+				pPlayer->m_VanillaModeStart = false;
 				pPlayer->m_VanillaMode = false;
 				pChr->m_Health = 10;
 				pChr->m_Armor = 10;
@@ -3106,13 +3105,10 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		else
 		{
 			if (pPlayer->m_VanillaMode)
-			{
-				ToID = -1;
-				FromID = -1;
-			}
+				return;
 			else
 			{
-				pPlayer->m_InfVanillaMode = true;
+				pPlayer->m_VanillaModeStart = true;
 				pPlayer->m_VanillaMode = true;
 				pChr->m_Armor = 0;
 				for (int i = 0; i < NUM_WEAPONS + 1; i++)
