@@ -30,7 +30,7 @@ void CGameContext::ConInfo(IConsole::IResult *pResult, void *pUserData)
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
 			"BlockDDrace Mod. Version: " GAME_VERSION);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
-			"BlockDDrace is a mod, based on DDNet 11.9.");
+			"BlockDDrace is a mod by fokkonaut, based on DDNet 11.9.");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
 		"It contains many new featurs, including block and city elements.");
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",

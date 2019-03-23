@@ -1102,6 +1102,7 @@ void CGameContext::OnClientEnter(int ClientID)
 		str_format(aBuf, sizeof(aBuf), "'%s' entered and joined the %s", Server()->ClientName(ClientID), m_pController->GetTeamName(m_apPlayers[ClientID]->GetTeam()));
 		SendChat(-1, CGameContext::CHAT_ALL, aBuf);
 
+		SendChatTarget(ClientID, "Welcome to fokkonaut's Block Mod!");
 		SendChatTarget(ClientID, "BlockDDrace Mod. Version: " GAME_VERSION);
 		SendChatTarget(ClientID, "for more info, say '/info'");
 
