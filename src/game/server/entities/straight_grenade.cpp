@@ -130,16 +130,14 @@ CCharacter* CStraightGrenade::CharacterNear()
 	return 0x0;
 }
 
-
 bool CStraightGrenade::Hit(CCharacter* pHitTarget)
 {
 	vec2 TargetPos = pHitTarget->m_Pos;
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if(distance(m_Pos, TargetPos) < 20.f)
+	if(distance(m_Pos, TargetPos) < 40.f && !pHitTarget->m_Passive && (pOwner && !pOwner->m_Passive))
 	{
 		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_GRENADE);
-
-		CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
 
 		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_GRENADE, true, 0, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);

@@ -31,8 +31,7 @@ CPlasmaBullet::CPlasmaBullet(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 D
 bool CPlasmaBullet::HitCharacter()
 {
 	vec2 To2;
-	CCharacter *Hit = GameServer()->m_World.IntersectCharacter(m_Pos,
-			m_Pos + m_Core, 0.0f, To2);
+	CCharacter *Hit = GameServer()->m_World.IntersectCharacter(m_Pos, m_Pos + m_Core, 0.0f, To2);
 	if (!Hit)
 		return false;
 	if (Hit->Team() != m_ResponsibleTeam)
@@ -42,7 +41,12 @@ bool CPlasmaBullet::HitCharacter()
 	{
 		return false;
 	}
-	else if (m_Spooky)
+	else if (Hit->m_Passive || (GameServer()->GetPlayerChar(m_Owner) && GameServer()->GetPlayerChar(m_Owner)->m_Passive))
+	{
+		return false;
+	}
+
+	if (m_Spooky)
 	{
 		Hit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
 		GameServer()->SendEmoticon(Hit->GetPlayer()->GetCID(), 7);		//emoticon ghost
@@ -89,9 +93,8 @@ void CPlasmaBullet::Tick()
 	Move();
 	HitCharacter();
 
-	int Res = 0;
-	Res = GameServer()->Collision()->IntersectNoLaser(m_Pos, m_Pos + m_Core, 0,
-			0);
+	bool Res;
+	Res = GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y);
 	if (Res)
 	{
 		if (m_Explosive)
@@ -106,34 +109,20 @@ void CPlasmaBullet::Tick()
 
 		if (m_Bloody)
 		{
-			if (m_IsInsideWall == 1)
-			{
-				if (Server()->Tick() % 5 == 0)
-				{
-					GameServer()->CreateDeath(m_Pos, m_Owner);
-				}
-			}
-			else
-			{
+			if (m_IsInsideWall == 1 && Server()->Tick() % 5 == 0)
 				GameServer()->CreateDeath(m_Pos, m_Owner);
-			}
+			else
+				GameServer()->CreateDeath(m_Pos, m_Owner);
 		}
-
-
 
 		if (m_Ghost && m_IsInsideWall == 0)
 			m_IsInsideWall = 1; // enteres the wall, collides the first time
 
-
-
 		if (m_IsInsideWall == 2 || !m_Ghost) // collides second time with a wall
 			Reset();
 	}
-	else
-	{
-		if (m_Ghost && m_IsInsideWall == 1)
-			m_IsInsideWall = 2; // leaves the wall
-	}
+	else if(m_Ghost && m_IsInsideWall == 1)
+		m_IsInsideWall = 2; // leaves the wall
 }
 
 void CPlasmaBullet::Snap(int SnappingClient)

@@ -105,7 +105,7 @@ void CWeapon::Pickup()
 		if (m_Jetpack && (pChar->m_Jetpack || pChar->GetPlayer()->m_InfJetpack))
 			return;
 
-		if (pChar->GetPlayer()->m_VanillaMode && pChar->GetWeaponAmmo(m_Type) >= m_Bullets)
+		if (pChar->GetPlayer()->m_VanillaMode && pChar->GetWeaponGot(m_Type) && pChar->GetWeaponAmmo(m_Type) >= m_Bullets)
 			return;
 
 		int Ammo = pChar->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
