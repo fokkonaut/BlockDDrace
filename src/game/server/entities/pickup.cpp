@@ -6,6 +6,8 @@
 
 #include <game/server/teams.h>
 
+#include <engine/shared/config.h>
+
 CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int Number, int Owner)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
@@ -25,7 +27,7 @@ CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int N
 
 void CPickup::Reset()
 {
-	if (g_pData->m_aPickups[m_Type].m_Spawndelay > 0)
+	if (g_pData->m_aPickups[m_Type].m_Spawndelay > 0 && g_Config.m_SvVanillaModeStart)
 		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * g_pData->m_aPickups[m_Type].m_Spawndelay;
 	else
 		m_SpawnTick = -1;
