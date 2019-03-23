@@ -33,7 +33,7 @@ CONSOLE_COMMAND("down", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoDown, this, "Makes
 CONSOLE_COMMAND("connectdummy", "?i[amount]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
 CONSOLE_COMMAND("disconnectdummy", "v[id]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v")
 
-CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER, ConPlayerInfo, this, "Shows information about the player s")
+CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER|CFGFLAG_CHAT, ConPlayerInfo, this, "Shows information about the player s")
 
 CONSOLE_COMMAND("jetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConJetpack, this, "Toggles jetpack for player v")
 CONSOLE_COMMAND("infjetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInfJetpack, this, "Toggles infinite jetpack for player v")

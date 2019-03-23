@@ -3301,5 +3301,8 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	GameServer()->SendChatTarget(ToID, aMsg);
 
+	if (Extra == SPOOKY_GHOST && !Remove)
+		GameServer()->SendChatTarget(ToID, "For more info, say '/spookyghost help'");
+
 	return;
 }
