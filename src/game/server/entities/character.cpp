@@ -3047,7 +3047,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	char aMsg[64];
 	char aInfinite[16];
 
-	if (Remove)
+	if (Remove && Extra != VANILLA_MODE)
 		str_format(aGiven, sizeof aGiven, "removed from");
 	else
 		str_format(aGiven, sizeof aGiven, "given to");

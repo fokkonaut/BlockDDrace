@@ -1170,9 +1170,12 @@ void CGameContext::OnClientConnected(int ClientID)
 	}
 #endif
 
+	char aMotd[256];
+	str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
+
 	// send motd
 	CNetMsg_Sv_Motd Msg;
-	Msg.m_pMessage = g_Config.m_SvMotd;
+	Msg.m_pMessage = aMotd;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
 }
 
@@ -2691,8 +2694,11 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{
+		char aMotd[256];
+		str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
+
 		CNetMsg_Sv_Motd Msg;
-		Msg.m_pMessage = g_Config.m_SvMotd;
+		Msg.m_pMessage = aMotd;
 		CGameContext *pSelf = (CGameContext *)pUserData;
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 			if(pSelf->m_apPlayers[i])
