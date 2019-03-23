@@ -50,7 +50,7 @@ CONSOLE_COMMAND("inftrail", "?v[id]", CFGFLAG_SERVER, ConInfTrail, this, "Toggle
 CONSOLE_COMMAND("spookyghost", "?v[id]", CFGFLAG_SERVER, ConSpookyGhost, this, "Toggles spooky ghost for player v")
 CONSOLE_COMMAND("addmeteor", "?v[id]", CFGFLAG_SERVER, ConAddMeteor, this, "Adds a meteors to player v")
 CONSOLE_COMMAND("addinfmeteor", "?v[id]", CFGFLAG_SERVER, ConAddInfMeteor, this, "Adds an infinite meteors to player v")
-CONSOLE_COMMAND("removemeteors", "?s[id/all]", CFGFLAG_SERVER, ConRemoveMeteors, this, "Removes all meteors from player v/all")
+CONSOLE_COMMAND("removemeteors", "?v[id", CFGFLAG_SERVER, ConRemoveMeteors, this, "Removes all meteors from player v")
 CONSOLE_COMMAND("resetmeteorvars", "", CFGFLAG_SERVER, ConResetMeteorVars, this, "Resets the meteor variables")
 CONSOLE_COMMAND("passive", "?v[id]", CFGFLAG_SERVER, ConPassive, this, "Toggles passive mode for player v")
 CONSOLE_COMMAND("vanillamode", "?v[id]", CFGFLAG_SERVER, ConVanillaMode, this, "Activates vanilla mode for player v")
