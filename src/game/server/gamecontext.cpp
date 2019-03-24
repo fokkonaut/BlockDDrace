@@ -1172,7 +1172,10 @@ void CGameContext::OnClientConnected(int ClientID)
 #endif
 
 	char aMotd[256];
-	str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
+	if (g_Config.m_SvMotd[0])
+		str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
+	else
+		str_format(aMotd, sizeof(aMotd), "");
 
 	// send motd
 	CNetMsg_Sv_Motd Msg;
