@@ -284,6 +284,9 @@ public:
 
 	int GetCIDByName(const char *pName);
 
+	void FixMotd();
+	char m_aMotd[900];
+
 private:
 
 	bool m_VoteWillPass;

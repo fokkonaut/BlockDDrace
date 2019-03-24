@@ -1171,15 +1171,11 @@ void CGameContext::OnClientConnected(int ClientID)
 	}
 #endif
 
-	char aMotd[256];
-	if (g_Config.m_SvMotd[0])
-		str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
-	else
-		str_format(aMotd, sizeof(aMotd), "");
+	FixMotd();
 
 	// send motd
 	CNetMsg_Sv_Motd Msg;
-	Msg.m_pMessage = aMotd;
+	Msg.m_pMessage = m_aMotd;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
 }
 
@@ -2695,14 +2691,14 @@ void CGameContext::ConVote(IConsole::IResult *pResult, void *pUserData)
 
 void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
+	CGameContext *pSelf = (CGameContext *)pUserData;
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{
-		char aMotd[256];
-		str_format(aMotd, sizeof(aMotd), "%s\n\n\nBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, GAME_VERSION);
+		pSelf->FixMotd();
 
 		CNetMsg_Sv_Motd Msg;
-		Msg.m_pMessage = aMotd;
+		Msg.m_pMessage = pSelf->m_aMotd;
 		CGameContext *pSelf = (CGameContext *)pUserData;
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 			if(pSelf->m_apPlayers[i])
@@ -3759,4 +3755,38 @@ int CGameContext::GetCIDByName(const char * pName)
 		}
 	}
 	return ClientID;
+}
+
+void CGameContext::FixMotd()
+{
+	char aTemp[64];
+	char aTemp2[64];
+	if (g_Config.m_SvMotd[0])
+	{
+		int count = 0;
+		int MotdLen = str_length(g_Config.m_SvMotd) + 1;
+		for (int i = 0, k = 0; i < MotdLen && k < (int)sizeof(g_Config.m_SvMotd); i++, k++)
+		{
+			if (g_Config.m_SvMotd[i] == '\\' && g_Config.m_SvMotd[i + 1] == 'n')
+			{
+				i++;
+				count++;
+			}
+			if (count > 20)
+				count = 20;
+		}
+
+		str_format(aTemp, sizeof(aTemp), "");
+		for (int i = 0; i < 22 - count; i++)
+		{
+			str_format(aTemp2, sizeof(aTemp2), "%s", aTemp);
+			str_format(aTemp, sizeof(aTemp), "%s%s", aTemp2, "\n");
+
+		}
+		str_format(m_aMotd, sizeof(m_aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, aTemp, GAME_VERSION);
+	}
+	else
+		str_format(m_aMotd, sizeof(m_aMotd), "");
+
+	return;
 }
