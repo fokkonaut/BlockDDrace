@@ -156,7 +156,7 @@ void CPlayer::Tick()
 	if (m_ChatScore > 0)
 		m_ChatScore--;
 
-	int Score = g_Config.m_SvBlockDDraceBrowserFix ? m_Level : m_Score;
+	int Score = g_Config.m_SvBlockDDraceBrowserFix ? m_Level : 0;
 	Server()->SetClientScore(m_ClientID, Score);
 
 	if (m_Moderating && m_Afk)
