@@ -53,7 +53,7 @@ enum
 	NUM_TUNEZONES = 256
 };
 
-enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
+enum // use for pChr->SetExtra()
 {
 	JETPACK = 1,
 	PLASMA_GUN,
@@ -66,7 +66,7 @@ enum // use for pChr->SetExtra() and for pPlayer->m_aHasItem[ITEM_NAME]
 	PASSIVE,
 	VANILLA_MODE,
 	STRAIGHT_GRENADE,
-	NUM_ITEMS,
+	NUM_EXTRAS,
 };
 
 

@@ -211,6 +211,7 @@ public:
 
 	int m_RainbowColor;
 
+	//extras
 	bool m_InfJetpack;
 	bool m_InfPlasmaGun;
 	bool m_InfHeartGun;

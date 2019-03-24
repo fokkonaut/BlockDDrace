@@ -302,7 +302,7 @@ public:
 	bool m_SpookyGhostWeaponsBackupped;
 	int m_aSpookyGhostWeaponsBackupGot[NUM_WEAPONS][2];
 
-	//cosmetics
+	//extras
 	bool m_Rainbow;
 	bool m_Atom;
 	bool m_Trail;

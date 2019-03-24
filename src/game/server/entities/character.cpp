@@ -3047,11 +3047,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	char aMsg[64];
 	char aInfinite[16];
 
-	if (Remove && Extra != VANILLA_MODE)
-		str_format(aGiven, sizeof aGiven, "removed from");
-	else
-		str_format(aGiven, sizeof aGiven, "given to");
-
 	if (Infinite && !Remove)
 		str_format(aInfinite, sizeof aInfinite, "Infinite ");
 	else
@@ -3295,6 +3290,11 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (FromID >= 0)
 	{
+		if (Remove && Extra != VANILLA_MODE)
+			str_format(aGiven, sizeof aGiven, "removed from");
+		else
+			str_format(aGiven, sizeof aGiven, "given to");
+
 		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
 		if (FromID != ToID)
 			GameServer()->SendChatTarget(FromID, aMsg);
