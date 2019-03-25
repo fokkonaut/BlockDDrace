@@ -238,7 +238,7 @@ void CPlayer::Tick()
 
 	if (m_Team != TEAM_SPECTATORS)
 	{
-		if (m_IsDummy && g_Config.m_SvHideBots == 2)
+		if (m_IsDummy && g_Config.m_SvHideBots == 2 && ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(GetCharacter()) == -1)
 			m_Team = TEAM_BLUE;
 		else if (m_IsDummy)
 			m_Team = TEAM_RED;
