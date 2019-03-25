@@ -3765,16 +3765,35 @@ void CGameContext::FixMotd()
 	{
 		int count = 0;
 		int MotdLen = str_length(g_Config.m_SvMotd) + 1;
-		for (int i = 0, k = 0; i < MotdLen && k < (int)sizeof(g_Config.m_SvMotd); i++, k++)
+		for (int i = 0, k = 0, s = 0; i < MotdLen && k < (int)sizeof(g_Config.m_SvMotd); i++, k++)
 		{
+			s++;
 			if (g_Config.m_SvMotd[i] == '\\' && g_Config.m_SvMotd[i + 1] == 'n')
 			{
 				i++;
 				count++;
+				s = 0;
 			}
-			if (count > 20)
-				count = 20;
+			if (s == 35)
+			{
+				count++;
+				s = 0;
+			}
 		}
+
+		for (int i = MotdLen; i > 0; i--)
+		{
+			if (g_Config.m_SvMotd[i-1] == '\\' && g_Config.m_SvMotd[i] == 'n' || count > 20)
+			{
+				g_Config.m_SvMotd[i] = '\0';
+				g_Config.m_SvMotd[i-1] = '\0';
+			}
+			else
+				break;
+		}
+
+		if (count > 20)
+			count = 20;
 
 		str_format(aTemp, sizeof(aTemp), "");
 		for (int i = 0; i < 22 - count; i++)
