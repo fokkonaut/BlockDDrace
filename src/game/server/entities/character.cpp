@@ -592,7 +592,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			/*if (m_pPlayer->m_VanillaMode)
+			if (m_pPlayer->m_VanillaMode && g_Config.m_SvVanillaShotgun)
 			{
 				int ShotSpread = 2;
 
@@ -624,7 +624,7 @@ void CCharacter::FireWeapon()
 				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 			}
 			else
-			{*/
+			{
 				float LaserReach;
 				if (!m_TuneZone)
 					LaserReach = GameServer()->Tuning()->m_LaserReach;
@@ -632,7 +632,7 @@ void CCharacter::FireWeapon()
 					LaserReach = GameServer()->TuningList()[m_TuneZone].m_LaserReach;
 
 				new CLaser(&GameServer()->m_World, m_Pos, Direction, LaserReach, m_pPlayer->GetCID(), WEAPON_SHOTGUN);
-			//}
+			}
 			GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
