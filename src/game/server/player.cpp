@@ -12,6 +12,12 @@
 #include "gamemodes/DDRace.h"
 #include <time.h>
 
+#include <fstream>
+#include <limits>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
 
@@ -263,6 +269,9 @@ void CPlayer::Tick()
 			m_SetRealName = false;
 		}
 	}
+
+	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
+		SaveAccountStats(true);
 }
 
 void CPlayer::FixForNoName(int ID)
@@ -420,7 +429,7 @@ void CPlayer::Snap(int SnappingClient)
 	{
 		if (pSnapping->m_DisplayScore == 1) // level
 		{
-			if (m_AccountID > 0)
+			if (m_IsLoggedIn)
 			{
 				pPlayerInfo->m_Score = m_Level;
 			}
@@ -891,4 +900,71 @@ void CPlayer::SpectatePlayerName(const char *pName)
 			return;
 		}
 	}
+}
+
+void CPlayer::Logout()
+{
+	if (!m_IsLoggedIn)
+		return;
+
+	std::string data;
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, m_AccountName);
+	std::ofstream AccFile(aBuf);
+
+	if (AccFile.is_open())
+	{
+		dbg_msg("acc", "saved acc '%s'", m_AccountName);
+
+		SaveAccountStats(false);
+
+		m_IsLoggedIn = false;
+		str_copy(m_AccountName, "", sizeof(m_AccountName));
+		str_copy(m_AccountPassword, "", sizeof(m_AccountPassword));
+
+		GameServer()->SendChatTarget(m_ClientID, "Successfully logged out");
+	}
+	else
+	{
+		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #102");
+		dbg_msg("acc", "error #102 account '%s' (%s) failed to save", m_AccountName, aBuf);
+	}
+	AccFile.close();
+}
+
+void CPlayer::SaveAccountStats(bool SetLoggedIn)
+{
+	if (!m_IsLoggedIn)
+		return;
+
+	std::string data;
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, m_AccountName);
+	std::ofstream AccFile(aBuf);
+
+	if (!std::ifstream(aBuf))
+	{
+		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #103");
+		dbg_msg("acc", "error #103 account '%s' (%s) failed to save", m_AccountName, aBuf);
+		AccFile.close();
+		return;
+	}
+
+	if (AccFile.is_open())
+	{
+		dbg_msg("acc", "saved acc '%s'", m_AccountName);
+
+		AccFile << m_AccountPassword << "\n";			//password
+		AccFile << SetLoggedIn << "\n";					//login state
+		AccFile << m_AccountDisabled << "\n";			//is disabled account
+		AccFile << m_Level << "\n";						//level
+		AccFile << m_XP << "\n";						//xp
+		AccFile << m_Money << "\n";						//money
+	}
+	else
+	{
+		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #102");
+		dbg_msg("acc", "error #102 account '%s' (%s) failed to save", m_AccountName, aBuf);
+	}
+	AccFile.close();
 }

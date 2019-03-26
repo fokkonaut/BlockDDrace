@@ -427,11 +427,9 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(pChr->GetPlayer()->GetCID()));
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	if (pChr->GetPlayer()->m_AccountID > 0)
+	if (pChr->GetPlayer()->m_IsLoggedIn)
 	{
 		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pChr->GetPlayer()->m_AccountName);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-		str_format(aBuf, sizeof(aBuf), "AccountID: %d", pChr->GetPlayer()->m_AccountID);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
 	else

@@ -6,6 +6,13 @@
 #include <game/server/teams.h>
 #include <game/server/gamemodes/DDRace.h>
 #include <game/version.h>
+
+#include <fstream>
+#include <limits>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+
 #if defined(CONF_SQL)
 #include <game/server/score/sql_score.h>
 #endif
@@ -1262,4 +1269,194 @@ void CGameContext::ConSpookyGhostChat(IConsole::IResult * pResult, void * pUserD
 	pSelf->SendChatTarget(pResult->m_ClientID, "The Spooky Ghost is an extra, that can be toggled like this:");
 	pSelf->SendChatTarget(pResult->m_ClientID, "Hold TAB (or other scoreboard key) and shoot two times with your gun.");
 	return;
+}
+
+void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	char aBuf[512];
+	char aUsername[32];
+	char aPassword[32];
+	char aPassword2[32];
+	str_copy(aUsername, pResult->GetString(0), sizeof(aUsername));
+	str_copy(aPassword, pResult->GetString(1), sizeof(aPassword));
+	str_copy(aPassword2, pResult->GetString(2), sizeof(aPassword2));
+
+	if (str_length(aUsername) > 20 || str_length(aUsername) < 3)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "The username is too long or too short");
+		return;
+	}
+
+	char aAllowedCharSet[64] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	bool UnallowedChar = false;
+
+	for (int i = 0; i < str_length(aUsername); i++)
+	{
+		bool NoUnallowedChars = false;
+
+		for (int j = 0; j < str_length(aAllowedCharSet); j++)
+		{
+			if (aUsername[i] == aAllowedCharSet[j])
+			{
+				NoUnallowedChars = true;
+				break;
+			}
+		}
+
+		if (!NoUnallowedChars)
+		{
+			UnallowedChar = true;
+			break;
+		}
+	}
+	if (UnallowedChar)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Your username can only consist of letters and numbers");
+		return;
+	}
+
+	if (str_comp_nocase(aPassword, aPassword2) != 0)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "The passwords need to be identical");
+		return;
+	}
+
+	if ((str_length(aPassword) > 20 || str_length(aPassword) < 3) || (str_length(aPassword2) > 20 || str_length(aPassword2) < 3))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "The password is too long or too short");
+		return;
+	}
+
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
+	if (std::ifstream(aBuf))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
+		return;
+	}
+	std::ofstream AccFile(aBuf);
+	if (!AccFile)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "An error occured, please report this error code to an admin: #100");
+		dbg_msg("acc", "error #100 writing file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
+		AccFile.close();
+		return;
+	}
+
+	if (AccFile.is_open())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Successfully registered an account, you can login now");
+
+		AccFile << aPassword << "\n";				//password
+		AccFile << 0 << "\n";						//login state
+		AccFile << 0 << "\n";						//is disabled account
+		AccFile << 0 << "\n";						//level
+		AccFile << 0 << "\n";						//xp
+		AccFile << 0 << "\n";						//money
+	}
+	else
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "An error occured, pls report this error code to an admin: #101");
+		dbg_msg("acc", "error #101 writing the file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
+	}
+
+	AccFile.close();
+}
+
+void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	char aUsername[32];
+	char aPassword[128];
+	str_copy(aUsername, pResult->GetString(0), sizeof(aUsername));
+	str_copy(aPassword, pResult->GetString(1), sizeof(aPassword));
+
+	if (pPlayer->m_IsLoggedIn)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "You are already logged in");
+		return;
+	}
+
+	std::string data;
+	char aData[32];
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
+	std::fstream AccFile(aBuf);
+
+	if (!std::ifstream(aBuf))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesnt exist, please register first");
+		AccFile.close();
+		return;
+	}
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	if (str_comp(aData, aPassword))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Wrong password");
+		AccFile.close();
+		return;
+	}
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "checked login state '%s'", aData);
+	if (aData[0] == '1')
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in");
+		AccFile.close();
+		return;
+	}
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "checked disabled state '%s'", aData);
+	if (aData[0] == '1')
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "This account is disabled");
+		AccFile.close();
+		return;
+	}
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded level '%d'", atoi(aData));
+	pPlayer->m_Level = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded xp '%d'", atoi(aData));
+	pPlayer->m_XP = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded money '%d'", atoi(aData));
+	pPlayer->m_Money = atoi(aData);
+
+
+	str_copy(pPlayer->m_AccountName, aUsername, sizeof(pPlayer->m_AccountName));
+	str_copy(pPlayer->m_AccountPassword, aPassword, sizeof(pPlayer->m_AccountPassword));
+	pPlayer->m_IsLoggedIn = true;
+	pPlayer->SaveAccountStats(true);
+	pSelf->SendChatTarget(pResult->m_ClientID, "Successfully logged in");
+	AccFile.close();
+}
+
+void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	if (!pPlayer->m_IsLoggedIn)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "You are not logged in");
+		return;
+	}
+
+	pPlayer->Logout();
 }

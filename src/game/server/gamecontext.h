@@ -199,9 +199,6 @@ public:
 	void CreateSound(vec2 Pos, int Sound, int64_t Mask=-1);
 	void CreateSoundGlobal(int Sound, int Target=-1);
 
-	int GetNextClientID();
-
-
 	enum
 	{
 		CHAT_ALL=-2,
@@ -282,6 +279,7 @@ public:
 
 	bool m_ClientLeftServer[MAX_CLIENTS];
 
+	int GetNextClientID();
 	int GetCIDByName(const char *pName);
 
 	void FixMotd();
@@ -371,6 +369,10 @@ private:
 
 	static void ConScore(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhostChat(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConLogin(IConsole::IResult *pResult, void *pUserData);
+	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
+	static void ConRegister(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConVoteMute(IConsole::IResult *pResult, void *pUserData);
 	static void ConMute(IConsole::IResult *pResult, void *pUserData);

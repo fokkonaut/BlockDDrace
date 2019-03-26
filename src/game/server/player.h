@@ -221,10 +221,16 @@ public:
 	bool m_HasSpookyGhost;
 	int m_InfMeteors;
 
-	int m_AccountID;
+	bool m_IsLoggedIn;
+	bool m_AccountDisabled;
 	char m_AccountName[32];
 	char m_AccountPassword[32];
 	int m_Level;
+	int m_XP;
+	int m_Money;
+
+	void SaveAccountStats(bool SetLoggedIn);
+	void Logout();
 
 	int m_AllowTimeScore;
 	int m_DisplayScore;
