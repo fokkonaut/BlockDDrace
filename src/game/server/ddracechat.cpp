@@ -1354,6 +1354,7 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		AccFile << 0 << "\n";						//is disabled account
 		AccFile << 0 << "\n";						//level
 		AccFile << 0 << "\n";						//xp
+		AccFile << 3 << "\n";						//needed xp
 		AccFile << 0 << "\n";						//money
 	}
 	else
@@ -1432,6 +1433,11 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	str_copy(aData, data.c_str(), sizeof(aData));
 	dbg_msg("acc", "loaded xp '%d'", atoi(aData));
 	pPlayer->m_XP = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded needed xp '%d'", atoi(aData));
+	pPlayer->m_NeededXP = atoi(aData);
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));

@@ -227,10 +227,13 @@ public:
 	char m_AccountPassword[32];
 	int m_Level;
 	int m_XP;
+	int m_NeededXP;
 	int m_Money;
 
 	void SaveAccountStats(bool SetLoggedIn);
 	void Logout();
+
+	void CheckLevel();
 
 	int m_AllowTimeScore;
 	int m_DisplayScore;

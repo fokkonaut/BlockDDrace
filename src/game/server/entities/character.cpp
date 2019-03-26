@@ -1247,6 +1247,9 @@ void CCharacter::Die(int Killer, int Weapon)
 		}
 	}
 
+	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
+		GameServer()->m_apPlayers[Killer]->m_XP++;
+
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
 	char aBuf[256];

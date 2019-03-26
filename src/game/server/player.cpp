@@ -270,6 +270,8 @@ void CPlayer::Tick()
 		}
 	}
 
+	CheckLevel();
+
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
 		SaveAccountStats(true);
 }
@@ -921,6 +923,11 @@ void CPlayer::Logout()
 		m_IsLoggedIn = false;
 		str_copy(m_AccountName, "", sizeof(m_AccountName));
 		str_copy(m_AccountPassword, "", sizeof(m_AccountPassword));
+		m_AccountDisabled = false;
+		m_Level = 0;
+		m_XP = 0;
+		m_NeededXP = 0;
+		m_Money = 0;
 
 		GameServer()->SendChatTarget(m_ClientID, "Successfully logged out");
 	}
@@ -959,6 +966,7 @@ void CPlayer::SaveAccountStats(bool SetLoggedIn)
 		AccFile << m_AccountDisabled << "\n";			//is disabled account
 		AccFile << m_Level << "\n";						//level
 		AccFile << m_XP << "\n";						//xp
+		AccFile << m_NeededXP << "\n";					//needed xp
 		AccFile << m_Money << "\n";						//money
 	}
 	else
@@ -967,4 +975,25 @@ void CPlayer::SaveAccountStats(bool SetLoggedIn)
 		dbg_msg("acc", "error #102 account '%s' (%s) failed to save", m_AccountName, aBuf);
 	}
 	AccFile.close();
+}
+
+void CPlayer::CheckLevel()
+{
+	if (!m_IsLoggedIn)
+		return;
+
+	if (m_XP >= m_NeededXP)
+	{
+		m_Level++;
+
+		char aBuf[256];
+		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", m_Level);
+		GameServer()->SendChatTarget(m_ClientID, aBuf);
+
+		int NewXP = m_NeededXP+m_Level;
+		double temp = NewXP/10;
+		round(temp);
+		m_NeededXP = temp*10+10;
+		dbg_msg("acc", "Level: %d, NeededXP: %d", m_Level, m_NeededXP);
+	}
 }
