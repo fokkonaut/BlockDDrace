@@ -213,6 +213,7 @@ MACRO_CONFIG_INT(SvBlockDDraceBrowserFix, sv_block_ddrace_browser_fix, 0, 0, 1, 
 MACRO_CONFIG_INT(SvVanillaModeStart, sv_vanilla_mode_start, 0, 0, 1, CFGFLAG_SERVER, "Whether to set the players mode to vanilla on spawn or ddrace")
 MACRO_CONFIG_INT(SvExtraTilesToggle, sv_extra_tiles_toggle, 1, 0, 1, CFGFLAG_SERVER, "Whether the extra tiles toggle the extra or only activate it")
 MACRO_CONFIG_INT(SvVanillaShotgun, sv_vanilla_shotgun, 0, 0, 1, CFGFLAG_SERVER, "Whether the shotgun speed is fast for vanilla or not (breaks bullet tiles)")
+MACRO_CONFIG_INT(SvAccounts, sv_accounts, 0, 0, 1, CFGFLAG_SERVER, "Whether accounts are activated or deactivated")
 
 // meteor
 MACRO_CONFIG_INT(SvMeteorFriction, sv_meteor_friction, 5000, 0, 1000000, CFGFLAG_SERVER, "Meteor friction")

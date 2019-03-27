@@ -916,8 +916,6 @@ void CPlayer::Logout()
 
 	if (AccFile.is_open())
 	{
-		dbg_msg("acc", "saved acc '%s'", m_AccountName);
-
 		SaveAccountStats(false);
 
 		m_IsLoggedIn = false;
@@ -928,6 +926,8 @@ void CPlayer::Logout()
 		m_XP = 0;
 		m_NeededXP = 0;
 		m_Money = 0;
+		m_Kills = 0;
+		m_Deaths = 0;
 
 		GameServer()->SendChatTarget(m_ClientID, "Successfully logged out");
 	}
@@ -961,13 +961,16 @@ void CPlayer::SaveAccountStats(bool SetLoggedIn)
 	{
 		dbg_msg("acc", "saved acc '%s'", m_AccountName);
 
-		AccFile << m_AccountPassword << "\n";			//password
-		AccFile << SetLoggedIn << "\n";					//login state
-		AccFile << m_AccountDisabled << "\n";			//is disabled account
-		AccFile << m_Level << "\n";						//level
-		AccFile << m_XP << "\n";						//xp
-		AccFile << m_NeededXP << "\n";					//needed xp
-		AccFile << m_Money << "\n";						//money
+		AccFile << g_Config.m_SvPort << "\n";
+		AccFile << SetLoggedIn << "\n";
+		AccFile << m_AccountDisabled << "\n";
+		AccFile << m_AccountPassword << "\n";
+		AccFile << m_Level << "\n";
+		AccFile << m_XP << "\n";
+		AccFile << m_NeededXP << "\n";
+		AccFile << m_Money << "\n";
+		AccFile << m_Kills << "\n";
+		AccFile << m_Deaths << "\n";
 	}
 	else
 	{
@@ -982,6 +985,8 @@ void CPlayer::CheckLevel()
 	if (!m_IsLoggedIn)
 		return;
 
+	m_NeededXP = 1;
+
 	if (m_XP >= m_NeededXP)
 	{
 		m_Level++;
@@ -990,10 +995,6 @@ void CPlayer::CheckLevel()
 		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", m_Level);
 		GameServer()->SendChatTarget(m_ClientID, aBuf);
 
-		int NewXP = m_NeededXP+m_Level;
-		double temp = NewXP/10;
-		round(temp);
-		m_NeededXP = temp*10+10;
 		dbg_msg("acc", "Level: %d, NeededXP: %d", m_Level, m_NeededXP);
 	}
 }

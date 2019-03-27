@@ -229,6 +229,8 @@ public:
 	int m_XP;
 	int m_NeededXP;
 	int m_Money;
+	int m_Kills;
+	int m_Deaths;
 
 	void SaveAccountStats(bool SetLoggedIn);
 	void Logout();

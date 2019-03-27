@@ -1049,7 +1049,10 @@ void CCharacter::BlockDDraceTick()
 	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
 
 	if (!GameServer()->m_apPlayers[m_LastToucherID])
+	{
 		m_LastToucherID = -1;
+		m_LastHitWeapon = -1;
+	}
 
 
 	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
@@ -1248,7 +1251,10 @@ void CCharacter::Die(int Killer, int Weapon)
 	}
 
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
-		GameServer()->m_apPlayers[Killer]->m_XP++;
+	{
+		GameServer()->m_apPlayers[Killer]->m_Kills++;
+		m_pPlayer->m_Deaths++;
+	}
 
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 

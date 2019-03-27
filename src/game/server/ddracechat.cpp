@@ -1276,6 +1276,12 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
 
+	if (!g_Config.m_SvAccounts)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Accounts are not supported on this server");
+		return;
+	}
+
 	char aBuf[512];
 	char aUsername[32];
 	char aPassword[32];
@@ -1348,14 +1354,8 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 	if (AccFile.is_open())
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Successfully registered an account, you can login now");
-
-		AccFile << aPassword << "\n";				//password
-		AccFile << 0 << "\n";						//login state
-		AccFile << 0 << "\n";						//is disabled account
-		AccFile << 0 << "\n";						//level
-		AccFile << 0 << "\n";						//xp
-		AccFile << 3 << "\n";						//needed xp
-		AccFile << 0 << "\n";						//money
+		AccFile << "\n\n\n" << aPassword << "\n";	//password is in line 4
+		dbg_msg("acc", "account created file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
 	}
 	else
 	{
@@ -1370,6 +1370,12 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	if (!g_Config.m_SvAccounts)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Accounts are not supported on this server");
+		return;
+	}
 
 	char aUsername[32];
 	char aPassword[128];
@@ -1397,12 +1403,7 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
-	if (str_comp(aData, aPassword))
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "Wrong password");
-		AccFile.close();
-		return;
-	}
+	dbg_msg("acc", "checked port '%s'", aData);
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
@@ -1420,6 +1421,15 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	if (aData[0] == '1')
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is disabled");
+		AccFile.close();
+		return;
+	}
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	if (str_comp(aData, aPassword))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Wrong password");
 		AccFile.close();
 		return;
 	}
@@ -1444,6 +1454,16 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	dbg_msg("acc", "loaded money '%d'", atoi(aData));
 	pPlayer->m_Money = atoi(aData);
 
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded kills '%d'", atoi(aData));
+	pPlayer->m_Kills = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded deaths '%d'", atoi(aData));
+	pPlayer->m_Deaths = atoi(aData);
+
 
 	str_copy(pPlayer->m_AccountName, aUsername, sizeof(pPlayer->m_AccountName));
 	str_copy(pPlayer->m_AccountPassword, aPassword, sizeof(pPlayer->m_AccountPassword));
@@ -1457,6 +1477,12 @@ void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+
+	if (!g_Config.m_SvAccounts && !pPlayer->m_IsLoggedIn)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Accounts are not supported on this server");
+		return;
+	}
 
 	if (!pPlayer->m_IsLoggedIn)
 	{
