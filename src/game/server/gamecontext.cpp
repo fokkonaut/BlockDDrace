@@ -1872,7 +1872,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			if (Version >= VERSION_DDNET_EXTRATUNES)
 				SendTuningParams(ClientID, pPlayer->m_TuneZone);
 
-			//tell old clients to update
+			/*//tell old clients to update
 			if (Version < VERSION_DDNET_UPDATER_FIXED && g_Config.m_SvClientSuggestionOld[0] != '\0')
 				SendBroadcast(g_Config.m_SvClientSuggestionOld, ClientID);
 			//tell known bot clients that they're botting and we know it
@@ -1882,7 +1882,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			if(g_Config.m_SvBannedVersions[0] != '\0' && IsVersionBanned(Version))
 			{
 				Server()->Kick(ClientID, "unsupported client");
-			}
+			}*/
 		}
 		else if (MsgID == NETMSGTYPE_CL_SHOWOTHERS)
 		{
