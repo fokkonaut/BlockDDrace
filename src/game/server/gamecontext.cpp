@@ -1196,7 +1196,7 @@ void CGameContext::OnClientConnected(int ClientID)
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
-	if (m_apPlayers[ClientID]->m_IsLoggedIn)
+	if (m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_IsLoggedIn)
 		m_apPlayers[ClientID]->Logout();
 	m_ClientLeftServer[ClientID] = true;
 	AbortVoteKickOnDisconnect(ClientID);
@@ -3242,7 +3242,10 @@ void CGameContext::OnShutdown(bool FullShutdown)
 	}
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
-		m_apPlayers[i]->Logout();
+	{
+		if (m_apPlayers[i])
+			m_apPlayers[i]->Logout();
+	}
 
 	DeleteTempfile();
 	Console()->ResetServerGameSettings();

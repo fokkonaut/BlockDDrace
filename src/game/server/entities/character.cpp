@@ -1252,7 +1252,8 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
-		GameServer()->m_apPlayers[Killer]->m_Kills++;
+		if (GameServer()->m_apPlayers[Killer])
+			GameServer()->m_apPlayers[Killer]->m_Kills++;
 		m_pPlayer->m_Deaths++;
 	}
 
