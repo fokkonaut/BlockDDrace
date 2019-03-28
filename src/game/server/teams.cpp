@@ -487,6 +487,7 @@ void CGameTeams::OnFinish(CPlayer* Player, float Time)
 {
 	if (!Player || !Player->IsPlaying())
 		return;
+	bool SetScore = false;
 	//TODO:DDRace:btd: this ugly
 	CPlayerData *pData = GameServer()->Score()->PlayerData(Player->GetCID());
 	char aBuf[128];
@@ -517,6 +518,7 @@ void CGameTeams::OnFinish(CPlayer* Player, float Time)
 			GameServer()->SendChatTarget(Player->GetCID(), aBuf);
 		else
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		SetScore = true;
 	}
 	else if (pData->m_BestTime != 0) // tee has already finished?
 	{
@@ -549,7 +551,7 @@ void CGameTeams::OnFinish(CPlayer* Player, float Time)
 	CallSaveScore = g_Config.m_SvUseSQL && g_Config.m_SvSaveWorseScores;
 #endif
 
-	if (!pData->m_BestTime || Time < pData->m_BestTime)
+	if (!pData->m_BestTime || Time < pData->m_BestTime || SetScore)
 	{
 		// update the score
 		pData->Set(Time, GetCpCurrent(Player));
