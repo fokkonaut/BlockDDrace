@@ -446,7 +446,10 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pAuthInfo)
 		return;
 
-	pAuthInfo->m_AuthLevel = Server()->GetAuthedState(id);
+	if (g_Config.m_SvAuthedPlayersColored)
+		pAuthInfo->m_AuthLevel = Server()->GetAuthedState(id);
+	else
+		pAuthInfo->m_AuthLevel = AUTHED_NO;
 }
 
 void CPlayer::FakeSnap()
