@@ -1282,6 +1282,12 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
+	if (pResult->NumArguments() != 3)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Usage: register s[name] s[password] s[password]");
+		return;
+	}
+
 	char aBuf[512];
 	char aUsername[32];
 	char aPassword[32];
@@ -1385,6 +1391,12 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	if (pPlayer->m_IsLoggedIn)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You are already logged in");
+		return;
+	}
+
+	if (pResult->NumArguments() != 2)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Usage: login s[name] s[password]");
 		return;
 	}
 
