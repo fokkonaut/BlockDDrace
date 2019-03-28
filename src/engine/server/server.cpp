@@ -2658,6 +2658,7 @@ void CServer::ConNameBan(IConsole::IResult *pResult, void *pUser)
 			pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "name_ban", aBuf);
 			pBan->m_Distance = Distance;
 			pBan->m_IsSubstring = IsSubstring;
+			str_copy(pBan->m_aReason, pReason, sizeof(pBan->m_aReason));
 			return;
 		}
 	}
