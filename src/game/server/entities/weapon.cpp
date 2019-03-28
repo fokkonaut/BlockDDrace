@@ -80,7 +80,7 @@ int CWeapon::IsCharacterNear()
 		CCharacter * pChr = apEnts[i];
 
 		if (pChr && pChr->IsAlive())
-			return pChr->GetPlayer()->GetCID(); 
+			return pChr->GetPlayer()->GetCID();
 	}
 
 	return -1;
@@ -113,7 +113,7 @@ void CWeapon::Pickup()
 		if (pChar->GetPlayer())
 			GameServer()->SendWeaponPickup(pChar->GetPlayer()->GetCID(), m_Type);
 
-		if (m_Jetpack && !pChar->m_Jetpack)
+		if (m_Jetpack)
 		{
 			pChar->m_Jetpack = true;
 			GameServer()->SendChatTarget(pChar->GetPlayer()->GetCID(), "You have a jetpack gun");

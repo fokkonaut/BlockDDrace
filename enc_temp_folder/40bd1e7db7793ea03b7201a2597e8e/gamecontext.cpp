@@ -1965,7 +1965,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				//m_pController->OnPlayerInfoChange(pPlayer);
 
 				if (pPlayer->GetCharacter())
+				{
 					pPlayer->GetCharacter()->SaveRealInfos();
+				}
 			}
 		}
 		else if (MsgID == NETMSGTYPE_CL_EMOTICON && !m_World.m_Paused)
