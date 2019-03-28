@@ -1084,13 +1084,11 @@ void CGameContext::OnClientEnter(int ClientID)
 	Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL, ClientID, true);
 	m_apPlayers[ClientID]->m_DisplayScore = 1;						//-> level score instead
 
-
+	m_apPlayers[ClientID]->m_Score = (Score()->PlayerData(ClientID)->m_BestTime) ? Score()->PlayerData(ClientID)->m_BestTime : -9999;
 	// Can't set score here as LoadScore() is threaded, run it in
 	// LoadScoreThreaded() instead
 #if defined(CONF_SQL)
 	Score()->LoadScore(ClientID);
-#else
-	m_apPlayers[ClientID]->m_Score = (Score()->PlayerData(ClientID)->m_BestTime) ? Score()->PlayerData(ClientID)->m_BestTime : -9999;
 #endif
 
 	Score()->CheckBirthday(ClientID);
