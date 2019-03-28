@@ -1087,9 +1087,11 @@ void CGameContext::OnClientEnter(int ClientID)
 
 	// Can't set score here as LoadScore() is threaded, run it in
 	// LoadScoreThreaded() instead
+#if defined(CONF_SQL)
 	Score()->LoadScore(ClientID);
-
+#else
 	m_apPlayers[ClientID]->m_Score = (Score()->PlayerData(ClientID)->m_BestTime) ? Score()->PlayerData(ClientID)->m_BestTime : -9999;
+#endif
 
 	Score()->CheckBirthday(ClientID);
 
