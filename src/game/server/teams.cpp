@@ -579,7 +579,7 @@ void CGameTeams::OnFinish(CPlayer* Player, float Time)
 
 	SetDDRaceState(Player, DDRACE_FINISHED);
 	// set player score
-	if (!pData->m_CurrentTime || pData->m_CurrentTime > Time)
+	if (!pData->m_CurrentTime || pData->m_CurrentTime > Time || SetScore)
 	{
 		pData->m_CurrentTime = Time;
 		NeedToSendNewRecord = true;
