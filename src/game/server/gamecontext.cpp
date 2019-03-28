@@ -1078,7 +1078,6 @@ void CGameContext::OnClientEnter(int ClientID)
 	// init the player
 	Score()->PlayerData(ClientID)->Reset();
 	//m_apPlayers[ClientID]->m_Score = -9999;
-	m_apPlayers[ClientID]->m_Score = (Score()->PlayerData(ClientID)->m_BestTime) ? Score()->PlayerData(ClientID)->m_BestTime : -9999;
 
 	CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
 	ScoreMsg.AddInt(m_apPlayers[ClientID]->m_AllowTimeScore);		//disallow time score when joining
@@ -1089,6 +1088,9 @@ void CGameContext::OnClientEnter(int ClientID)
 	// Can't set score here as LoadScore() is threaded, run it in
 	// LoadScoreThreaded() instead
 	Score()->LoadScore(ClientID);
+
+	m_apPlayers[ClientID]->m_Score = (Score()->PlayerData(ClientID)->m_BestTime) ? Score()->PlayerData(ClientID)->m_BestTime : -9999;
+
 	Score()->CheckBirthday(ClientID);
 
 	{
