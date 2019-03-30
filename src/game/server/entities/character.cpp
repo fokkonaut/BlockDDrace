@@ -60,6 +60,13 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
 
+	if (m_pPlayer->m_Dummymode == 99)
+	{
+		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomTile(TILE_SHOP_BOT_SPAWN);
+		if (ShopBotSpawn != vec2(-1, -1))
+			m_Pos = ShopBotSpawn;
+	}
+
 	m_Core.Reset();
 	m_Core.Init(&GameServer()->m_World.m_Core, GameServer()->Collision(), &((CGameControllerDDRace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts);
 	m_Core.m_ActiveWeapon = WEAPON_GUN;
@@ -980,6 +987,7 @@ void CCharacter::Tick()
 	}
 
 	BlockDDraceTick();
+	DummyTick();
 	DDRaceTick();
 
 	m_Core.m_Input = m_Input;
@@ -3618,4 +3626,36 @@ void CCharacter::BuyItem(int ItemID)
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Invalid shop item. Choose another one.");
 
 	return;
+}
+
+void CCharacter::DummyTick()
+{
+	if (!m_pPlayer->m_IsDummy)
+		return;
+
+	if (m_pPlayer->m_Dummymode == 99) // default
+	{
+		m_Input.m_Jump = 0;
+		m_Input.m_Fire = 0;
+		m_LatestInput.m_Fire = 0;
+		m_Input.m_Hook = 0;
+		m_Input.m_Direction = 0;
+	}
+	else if (m_pPlayer->m_Dummymode == 99) // shop bot
+	{
+		m_Input.m_Jump = 0;
+		m_Input.m_Fire = 0;
+		m_LatestInput.m_Fire = 0;
+		m_Input.m_Hook = 0;
+		m_Input.m_Direction = 0;
+
+		CCharacter *pChr = GameServer()->m_World.ClosestCharType(m_Pos, false, this);
+		if (pChr && pChr->IsAlive() && pChr->m_InShop)
+		{
+			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
+			m_Input.m_TargetY = pChr->m_Pos.y - m_Pos.y;
+			m_LatestInput.m_TargetX = pChr->m_Pos.x - m_Pos.x;
+			m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
+		}
+	}
 }

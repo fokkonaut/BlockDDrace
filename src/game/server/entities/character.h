@@ -195,6 +195,7 @@ private:
 	vec2 m_PrevSavePos;
 
 	void BlockDDraceTick();
+	void DummyTick();
 
 public:
 	CGameTeams* Teams();

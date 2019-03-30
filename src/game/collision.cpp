@@ -178,7 +178,7 @@ vec2 CCollision::GetRandomTile(int Tile)
 		int Rand = rand() % i;
 		return ReturnValue[Rand];
 	}
-
+	
 	return vec2(-1, -1);
 }
 

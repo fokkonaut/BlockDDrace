@@ -3931,13 +3931,6 @@ void CGameContext::ConnectDummy(int Dummymode, int Amount)
 
 		m_apPlayers[DummyID]->m_Dummymode = Dummymode;
 		OnClientEnter(DummyID);
-
-		if (Dummymode == 99)
-		{
-			/*vec2 ShopBotSpawn = Collision()->GetRandomTile(TILE_SHOP_BOT_SPAWN);
-			if (ShopBotSpawn != vec2(-1, -1))
-				m_apPlayers[DummyID]->GetCharacter()->m_Pos = ShopBotSpawn;*/
-		}
 	}
 }
 
