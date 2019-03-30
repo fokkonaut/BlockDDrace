@@ -996,30 +996,22 @@ void CCharacter::Tick()
 	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
 	{
 		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == NULL)
-		{
 			carry1 = 0;
-		}
 		m_Core.setFlagPos(0, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel, carry1);
 	}
 	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
 	{
 		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == NULL)
-		{
 			carry2 = 0;
-		}
 		m_Core.setFlagPos(1, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel, carry2);
 	}
 
 	m_Core.Tick(true, false);
 
 	if (m_Core.m_updateFlagVel == 129)
-	{
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel = m_Core.m_UFlagVel;
-	}
 	else if (m_Core.m_updateFlagVel == 130)
-	{
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel = m_Core.m_UFlagVel;
-	}
 
 	// handle Weapons
 	HandleWeapons();
@@ -3629,22 +3621,15 @@ void CCharacter::DummyTick()
 	if (!m_pPlayer->m_IsDummy)
 		return;
 
+	ResetInput();
+	m_Input.m_Hook = 0; // for some reason commented out in ResetInput(), dont wanna mess up with something
+
 	if (m_pPlayer->m_Dummymode == 0) // default
 	{
-		m_Input.m_Jump = 0;
-		m_Input.m_Fire = 0;
-		m_LatestInput.m_Fire = 0;
-		m_Input.m_Hook = 0;
-		m_Input.m_Direction = 0;
+		// do nothing
 	}
 	else if (m_pPlayer->m_Dummymode == 99) // shop bot
 	{
-		m_Input.m_Jump = 0;
-		m_Input.m_Fire = 0;
-		m_LatestInput.m_Fire = 0;
-		m_Input.m_Hook = 0;
-		m_Input.m_Direction = 0;
-		
 		CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, this);
 		if (pChr && pChr->m_InShop)
 		{
