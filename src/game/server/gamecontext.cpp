@@ -1210,11 +1210,7 @@ void CGameContext::OnClientConnected(int ClientID)
 #endif
 
 	FixMotd();
-
-	// send motd
-	CNetMsg_Sv_Motd Msg;
-	Msg.m_pMessage = m_aMotd;
-	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+	SendMotd(m_aMotd, ClientID);
 }
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
@@ -2757,13 +2753,9 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	if(pResult->NumArguments())
 	{
 		pSelf->FixMotd();
-
-		CNetMsg_Sv_Motd Msg;
-		Msg.m_pMessage = pSelf->m_aMotd;
-		CGameContext *pSelf = (CGameContext *)pUserData;
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 			if(pSelf->m_apPlayers[i])
-				pSelf->Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
+				pSelf->SendMotd(pSelf->m_aMotd, i);
 	}
 }
 
