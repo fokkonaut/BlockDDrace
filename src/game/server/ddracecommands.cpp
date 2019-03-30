@@ -320,7 +320,7 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = pChr->GetPlayer()->m_HasSpookyGhost ? true : false;
-		pChr->SetExtra(SPOOKY_GHOST, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
+		pChr->SetExtra(EXTRA_SPOOKY_GHOST, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
 	}
 }
 
@@ -497,39 +497,15 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	
-	int Amount = (pResult->GetInteger(0));
-	if (!Amount)
-		Amount = 1;
-	for (int i = 0; i < Amount; i++)
+	if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
 	{
-		int DummyID = pSelf->GetNextClientID();
-		if (DummyID < 0)
-		{
-			dbg_msg("dummy", "can't get ClientID, server might be full");
-			return;
-		}
-
-		if (pSelf->m_apPlayers[DummyID])
-		{
-			pSelf->m_apPlayers[DummyID]->OnDisconnect("");
-			delete pSelf->m_apPlayers[DummyID];
-			pSelf->m_apPlayers[DummyID] = 0;
-		}
-
-		pSelf->m_apPlayers[DummyID] = new(DummyID) CPlayer(pSelf, DummyID, TEAM_RED);
-
-		pSelf->m_apPlayers[DummyID]->m_IsDummy = true;
-		pSelf->Server()->BotJoin(DummyID);
-
-		str_copy(pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
-		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
-		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
-		pSelf->m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
-
-		dbg_msg("dummy", "Dummy connected: %d", DummyID);
-
-		pSelf->OnClientEnter(DummyID);
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		return;
 	}
+	else
+		pSelf->ConnectDummy(pResult->GetInteger(1), pResult->GetInteger(0));
 
 	return;
 }
@@ -539,11 +515,23 @@ void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserDat
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int ID = pResult->NumArguments() ? pResult->GetVictim() : -1;
 	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
-	{
 		pSelf->Server()->BotLeave(ID);
-	}
+}
 
-	return;
+void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CCharacter* pChr = pSelf->GetPlayerChar(pResult->GetInteger(0));
+
+	if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+	{
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		return;
+	}
+	else if (pChr && pChr->GetPlayer()->m_IsDummy)
+		pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
 }
 
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)

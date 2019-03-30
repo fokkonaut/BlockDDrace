@@ -324,7 +324,7 @@ void CGameContext::SendChatTeam(int Team, const char *pText)
 			SendChatTarget(i, pText);
 }
 
-void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, int SpamProtectionClientID)
+void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, int SpamProtectionClientID, int ToClientID)
 {
 	if(SpamProtectionClientID >= 0 && SpamProtectionClientID < MAX_CLIENTS)
 	{
@@ -369,6 +369,21 @@ void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, in
 					Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, i);
 			}
 		}
+	}
+	else if (Team == CHAT_TO_ONE_CLIENT)
+	{
+		CNetMsg_Sv_Chat Msg;
+		Msg.m_Team = 0;
+		Msg.m_ClientID = ChatterClientID;
+		Msg.m_pMessage = aText;
+
+		// pack one for the recording only
+		if (g_Config.m_SvDemoChat)
+			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NOSEND, -1);
+
+		// send to the clients
+		if (!m_apPlayers[ToClientID]->m_DND)
+			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, ToClientID);
 	}
 	else
 	{
@@ -1726,28 +1741,51 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			{
 				if (pChr)
 				{
-					IGameController* ControllerDDrace = pChr->GameServer()->m_pController;
-					if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0])
+					if (pChr->m_InShop)
 					{
-						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0]->m_pCarryingCharacter == pChr)
+						if (pChr->m_PurchaseState == 2)
+							pChr->PurchaseEnd(false);
+						else if (pChr->m_PurchaseState == 1)
 						{
-							((CGameControllerDDRace*)ControllerDDrace)->DropFlag(0, pChr->GetAimDir()); //red
+							if ((pChr->m_ShopWindowPage != -1) && (pChr->m_ShopWindowPage != 0))
+								pChr->ConfirmPurchase();
 						}
 					}
-					if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1])
+					else
 					{
-						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1]->m_pCarryingCharacter == pChr)
+						IGameController* ControllerDDrace = pChr->GameServer()->m_pController;
+						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0])
 						{
-							((CGameControllerDDRace*)ControllerDDrace)->DropFlag(1, pChr->GetAimDir()); //blue
+							if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0]->m_pCarryingCharacter == pChr)
+								((CGameControllerDDRace*)ControllerDDrace)->DropFlag(0, pChr->GetAimDir()); //red
+						}
+						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1])
+						{
+							if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1]->m_pCarryingCharacter == pChr)
+								((CGameControllerDDRace*)ControllerDDrace)->DropFlag(1, pChr->GetAimDir()); //blue
 						}
 					}
 				}
 			}
 			else if (pMsg->m_Vote == -1) //vote no (f4)
 			{
-				if (g_Config.m_SvAllowDroppingWeapons)
+				if (pChr)
 				{
-					pChr->DropWeapon(pChr->GetActiveWeapon()); // drop the weapon youre holding
+					if (pChr->m_InShop)
+					{
+						if (pChr->m_PurchaseState == 2)
+							pChr->PurchaseEnd(true);
+						else if(pChr->m_ShopWindowPage == -1)
+						{
+							pChr->ShopWindow(0);
+							pChr->m_PurchaseState = 1;
+						}
+					}
+					else
+					{
+						if (g_Config.m_SvAllowDroppingWeapons)
+							pChr->DropWeapon(pChr->GetActiveWeapon()); // drop the weapon youre holding
+					}
 				}
 			}
 
@@ -3024,6 +3062,10 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 				m_Tuning.Set("player_hooking", 0);
 				dbg_msg("game layer", "found no player hooking tile");
 			}
+			else if (Index == TILE_SHOP_BOT_SPAWN)
+			{
+				ConnectDummy(99);
+			}
 
 			if(Index >= ENTITY_OFFSET)
 			{
@@ -3864,4 +3906,66 @@ void CGameContext::FixMotd()
 		str_format(m_aMotd, sizeof(m_aMotd), "");
 
 	return;
+}
+
+void CGameContext::ConnectDummy(int Dummymode, int Amount)
+{
+	if (!Amount)
+		Amount = 1;
+	for (int i = 0; i < Amount; i++)
+	{
+		int DummyID = GetNextClientID();
+		if (DummyID < 0)
+			return;
+
+		if (m_apPlayers[DummyID])
+		{
+			m_apPlayers[DummyID]->OnDisconnect("");
+			delete m_apPlayers[DummyID];
+			m_apPlayers[DummyID] = 0;
+		}
+
+		m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
+
+		m_apPlayers[DummyID]->m_IsDummy = true;
+		Server()->BotJoin(DummyID);
+
+		str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
+		m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
+		m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
+		m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+
+		dbg_msg("dummy", "Dummy connected: %d", DummyID);
+
+		m_apPlayers[DummyID]->m_Dummymode = Dummymode;
+		OnClientEnter(DummyID);
+
+		if (Dummymode == 99)
+		{
+			/*vec2 ShopBotSpawn = Collision()->GetRandomTile(TILE_SHOP_BOT_SPAWN);
+			if (ShopBotSpawn != vec2(-1, -1))
+				m_apPlayers[DummyID]->GetCharacter()->m_Pos = ShopBotSpawn;*/
+		}
+	}
+}
+
+int CGameContext::GetShopBot()
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (m_apPlayers[i])
+		{
+			if (m_apPlayers[i]->m_Dummymode == 99)
+				return i;
+		}
+	}
+	return -1;
+}
+
+void CGameContext::SendMotd(const char * pMsg, int ClientID)
+{
+	// send motd
+	CNetMsg_Sv_Motd Msg;
+	Msg.m_pMessage = pMsg;
+	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
 }

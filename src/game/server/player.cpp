@@ -365,7 +365,10 @@ void CPlayer::Snap(int SnappingClient)
 
 	if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 	{
-		//
+		if (GetCharacter())
+		{
+			GetCharacter()->m_ShopMotdTick = 0;
+		}
 	}
 	else
 	{
@@ -1000,4 +1003,20 @@ void CPlayer::CheckLevel()
 
 		dbg_msg("acc", "Level: %d, NeededXP: %d", m_Level, m_NeededXP);
 	}
+}
+
+void CPlayer::MoneyTransaction(int Amount, const char *Description)
+{
+	m_Money += Amount;
+
+	str_format(m_aLastMoneyTransaction[9], sizeof(m_aLastMoneyTransaction[9]), "%s", m_aLastMoneyTransaction[8]);
+	str_format(m_aLastMoneyTransaction[8], sizeof(m_aLastMoneyTransaction[8]), "%s", m_aLastMoneyTransaction[7]);
+	str_format(m_aLastMoneyTransaction[7], sizeof(m_aLastMoneyTransaction[7]), "%s", m_aLastMoneyTransaction[6]);
+	str_format(m_aLastMoneyTransaction[6], sizeof(m_aLastMoneyTransaction[6]), "%s", m_aLastMoneyTransaction[5]);
+	str_format(m_aLastMoneyTransaction[5], sizeof(m_aLastMoneyTransaction[5]), "%s", m_aLastMoneyTransaction[4]);
+	str_format(m_aLastMoneyTransaction[4], sizeof(m_aLastMoneyTransaction[4]), "%s", m_aLastMoneyTransaction[3]);
+	str_format(m_aLastMoneyTransaction[3], sizeof(m_aLastMoneyTransaction[3]), "%s", m_aLastMoneyTransaction[2]);
+	str_format(m_aLastMoneyTransaction[2], sizeof(m_aLastMoneyTransaction[2]), "%s", m_aLastMoneyTransaction[1]);
+	str_format(m_aLastMoneyTransaction[1], sizeof(m_aLastMoneyTransaction[1]), "%s", m_aLastMoneyTransaction[0]);
+	str_format(m_aLastMoneyTransaction[0], sizeof(m_aLastMoneyTransaction[0]), Description);
 }

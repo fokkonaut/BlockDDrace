@@ -384,9 +384,18 @@ void CCharacter::FireWeapon()
 	{
 		WillFire = true;
 		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_Core.m_ActiveWeapon == WEAPON_GUN)
-		{
 			m_CountSpookyGhostInputs = true;
-		}
+
+		if (m_ShopWindowPage != -1 && m_PurchaseState == 1)
+			m_ChangeShopPage = true;
+	}
+
+	// shop window
+	if (m_ChangeShopPage && m_ShopWindowPage != -1 && m_PurchaseState == 1)
+	{
+		ShopWindow(GetAimDir());
+		m_ChangeShopPage = false;
+		return;
 	}
 
 	if(FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[m_Core.m_ActiveWeapon].m_Ammo)
@@ -1067,6 +1076,42 @@ void CCharacter::BlockDDraceTick()
 		m_Core.m_Collision = true;
 		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
 		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+	}
+
+	if (m_ShopMotdTick < Server()->Tick())
+	{
+		m_ShopWindowPage = -1;
+		m_PurchaseState = 0;
+	}
+
+	if (m_InShop)
+	{
+		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
+		{
+			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
+			{
+				//
+			}
+			else
+			{
+				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
+
+				m_pPlayer->m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
+			}
+
+			if (m_ShopWindowPage != -1)
+			{
+				GameServer()->SendMotd("", GetPlayer()->GetCID());
+			}
+
+			GameServer()->SendBroadcast("", m_pPlayer->GetCID(), 0);
+
+			m_PurchaseState = 0;
+			m_ShopWindowPage = -1;
+
+			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, true, -1, true);
+			m_InShop = false;
+		}
 	}
 }
 
@@ -2075,7 +2120,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(SPOOKY_GHOST, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	//add meteor
@@ -2136,6 +2181,31 @@ void CCharacter::HandleTiles(int Index)
 
 	m_LastIndexTile = m_TileIndex;
 	m_LastIndexFrontTile = m_TileFIndex;
+
+	if (m_TileIndex == TILE_SHOP || m_TileFIndex == TILE_SHOP) // SHOP
+	{
+		if (!m_InShop)
+		{
+			m_EnteredShop = true;
+			m_InShop = true;
+		}
+		if (m_EnteredShop)
+		{
+			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, false, -1, true);
+			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
+				m_EnteredShop = false;
+			else if (m_EnteredShop)
+			{
+				char aBuf[256];
+				str_format(aBuf, sizeof(aBuf), "Welcome to the shop, %s! Press f4 to start shopping.", Server()->ClientName(m_pPlayer->GetCID()));
+				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, aBuf, -1, m_pPlayer->GetCID());
+				m_EnteredShop = false;
+			}
+		}
+
+		if (Server()->Tick() % 50 == 0)
+			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), 0);
+	}
 
 	// solo part
 	if(((m_TileIndex == TILE_SOLO_START) || (m_TileFIndex == TILE_SOLO_START)) && !Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
@@ -3053,7 +3123,7 @@ void CCharacter::SaveRealInfos()
 	return;
 }
 
-void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID)
+void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID, bool Silent)
 {
 	char aGiven[32];
 	char aItem[32];
@@ -3159,7 +3229,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		else
 			pChr->m_Trail = true;
 	}
-	else if (Extra == SPOOKY_GHOST)
+	else if (Extra == EXTRA_SPOOKY_GHOST)
 	{
 		str_format(aItem, sizeof aItem, "Spooky Ghost");
 		pPlayer->m_HasSpookyGhost ^= true;
@@ -3309,13 +3379,243 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			str_format(aGiven, sizeof aGiven, "given to");
 
 		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
-		if (FromID != ToID)
+		if (FromID != ToID && !Silent)
 			GameServer()->SendChatTarget(FromID, aMsg);
 	}
-	GameServer()->SendChatTarget(ToID, aMsg);
+	if (!Silent)
+		GameServer()->SendChatTarget(ToID, aMsg);
 
-	if (Extra == SPOOKY_GHOST && !Remove)
+	if (Extra == EXTRA_SPOOKY_GHOST && !Remove && !Silent)
 		GameServer()->SendChatTarget(ToID, "For more info, say '/spookyghost help'");
+
+	return;
+}
+
+void CCharacter::ShopWindow(int Dir)
+{
+	m_ShopMotdTick = 0;
+	int m_MaxShopPage = 3; // UPDATE THIS WITH EVERY PAGE YOU ADD!!!!!
+
+	if (Dir == 0)
+		m_ShopWindowPage = 0;
+	else if (Dir == 1)
+	{
+		m_ShopWindowPage++;
+		if (m_ShopWindowPage > m_MaxShopPage)
+			m_ShopWindowPage = 0;
+	}
+	else if (Dir == -1)
+	{
+		m_ShopWindowPage--;
+		if (m_ShopWindowPage < 0)
+			m_ShopWindowPage = m_MaxShopPage;
+	}
+
+	char aItem[256];
+	char aLevelTmp[128];
+	char aPriceTmp[16];
+	char aTimeTmp[256];
+	char aInfo[1028];
+
+	if (m_ShopWindowPage == 0)
+	{
+		str_format(aItem, sizeof(aItem), "Welcome to the shop! If you need help, use '/shop help'.\n\n"
+			"By shooting to the right you go one site forward,\n"
+			"and by shooting left you go one site backwards.\n\n"
+			"If you need more help, visit '/shop help'.");
+	}
+	else if (m_ShopWindowPage == 1)
+	{
+		str_format(aItem, sizeof(aItem), "        ~  R A I N B O W  ~      ");
+		str_format(aLevelTmp, sizeof(aLevelTmp), "5");
+		str_format(aPriceTmp, sizeof(aPriceTmp), "1.500");
+		str_format(aTimeTmp, sizeof(aTimeTmp), "You own this item until you're dead.");
+		str_format(aInfo, sizeof(aInfo), "Rainbow will make your tee change the color very fast.");
+	}
+	else if (m_ShopWindowPage == 2)
+	{
+		str_format(aItem, sizeof(aItem), "        ~  B L O O D Y  ~      ");
+		str_format(aLevelTmp, sizeof(aLevelTmp), "15");
+		str_format(aPriceTmp, sizeof(aPriceTmp), "3.500");
+		str_format(aTimeTmp, sizeof(aTimeTmp), "You own this item until you're dead.");
+		str_format(aInfo, sizeof(aInfo), "Bloody will give your tee a permanent kill effect.");
+	}
+	else if (m_ShopWindowPage == 3)
+	{
+		str_format(aItem, sizeof(aItem), "       ~  S P O O K Y G H O S T  ~     ");
+		str_format(aLevelTmp, sizeof(aLevelTmp), "1");
+		str_format(aPriceTmp, sizeof(aPriceTmp), "1.000.000");
+		str_format(aTimeTmp, sizeof(aTimeTmp), "You own this item forever.");
+		str_format(aInfo, sizeof(aInfo), "Using this item you can hide from other players behind bushes.\n"
+			"If your ghost is activated you won't have a name\n"
+			"For more information please visit '/spookyghost help'.");
+	}
+	else
+	{
+		str_format(aItem, sizeof(aItem), "");
+	}
+	//////////////////// UPDATE m_MaxShopPage ON TOP OF THIS FUNCTION!!! /////////////////////////
+
+	char aLevel[128];
+	str_format(aLevel, sizeof(aLevel), "Needed level: %s", aLevelTmp);
+	char aPrice[16];
+	str_format(aPrice, sizeof(aPrice), "Price: %s", aPriceTmp);
+	char aTime[256];
+	str_format(aTime, sizeof(aTime), "Time: %s", aTimeTmp);
+
+	char aBase[512];
+	if (m_ShopWindowPage > 0)
+	{
+		str_format(aBase, sizeof(aBase),
+			"***************************\n"
+			"        ~  S H O P  ~      \n"
+			"***************************\n\n"
+			"%s\n\n"
+			"%s\n"
+			"%s\n"
+			"%s\n\n"
+			"%s\n\n"
+			"***************************\n"
+			"If you want to buy an item press f3.\n\n\n"
+			"              ~ %d ~              ", aItem, aLevel, aPrice, aTime, aInfo, m_ShopWindowPage);
+	}
+	else
+	{
+		str_format(aBase, sizeof(aBase),
+			"***************************\n"
+			"        ~  S H O P  ~      \n"
+			"***************************\n\n"
+			"%s\n\n"
+			"***************************\n"
+			"If you want to buy an item press f3.", aItem);
+	}
+
+	GameServer()->SendMotd(aBase, GetPlayer()->GetCID());
+	m_ShopMotdTick = Server()->Tick() + Server()->TickSpeed() * 10; // motd is there for 10 sec
+
+	return;
+}
+
+void CCharacter::ConfirmPurchase()
+{
+	char aBuf[256];
+	str_format(aBuf, sizeof(aBuf),
+		"***************************\n"
+		"        ~  S H O P  ~      \n"
+		"***************************\n\n"
+		"Are you sure you want to buy this item?\n\n"
+		"f3 - yes\n"
+		"f4 - no\n\n"
+		"***************************\n");
+
+	GameServer()->SendMotd(aBuf, GetPlayer()->GetCID());
+	m_PurchaseState = 2;
+
+	return;
+}
+
+void CCharacter::PurchaseEnd(bool canceled)
+{
+	char aResult[256];
+	if (canceled)
+	{
+		char aBuf[256];
+		str_format(aResult, sizeof(aResult), "You canceled the purchase.");
+		str_format(aBuf, sizeof(aBuf),
+			"***************************\n"
+			"        ~  S H O P  ~      \n"
+			"***************************\n\n"
+			"%s\n\n"
+			"***************************\n", aResult);
+
+		GameServer()->SendMotd(aBuf, GetPlayer()->GetCID());
+	}
+	else
+	{
+		BuyItem(m_ShopWindowPage);
+		ShopWindow(0);
+	}
+
+	m_PurchaseState = 1;
+
+	return;
+}
+
+void CCharacter::BuyItem(int ItemID)
+{
+	if (!m_InShop)
+	{
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You have to be in the shop to buy some items.");
+		return;
+	}
+
+	char aBuf[256];
+
+	if (ItemID == 1)
+	{
+		if (m_Rainbow || m_pPlayer->m_InfRainbow)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already own rainbow.");
+			return;
+		}
+
+		if (m_pPlayer->m_Level < 5)
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be Lv.5 to buy rainbow.");
+		else
+		{
+			if (m_pPlayer->m_Money >= 1500)
+			{
+				m_pPlayer->MoneyTransaction(-1500, "-1.500 money. (bought 'rainbow')");
+				m_Rainbow = true;
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought rainbow until death.");
+			}
+			else
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 1.500 money.");
+		}
+	}
+	else if (ItemID == 2)
+	{
+		if (m_Bloody || m_pPlayer->m_InfBloody)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already own bloody.");
+			return;
+		}
+
+		if (m_pPlayer->m_Level < 15)
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be Lv.15 to buy bloody.");
+		else
+		{
+			if (m_pPlayer->m_Money >= 3500)
+			{
+				m_pPlayer->MoneyTransaction(-3500, "-3.500 money. (bought 'bloody')");
+				m_Bloody = true;
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought bloody until death.");
+			}
+			else
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 3 500.");
+		}
+	}
+	else if (ItemID == 3)
+	{
+		if (m_pPlayer->m_Level < 1)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Level is too low! You need lvl 1 to buy the spooky ghost.");
+			return;
+		}
+		else if (m_pPlayer->m_aHasItem[SPOOKY_GHOST])
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the spooky ghost.");
+		else if (m_pPlayer->m_Money >= 1000000)
+		{
+			m_pPlayer->MoneyTransaction(-1000000, "-1000000 money. (bought 'spooky_ghost')");
+
+			m_pPlayer->m_SpookyGhost = 1;
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought the spooky ghost. For more infos check '/spookyghostinfo'.");
+		}
+		else
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money!");
+	}
+	else
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Invalid shop item. Choose another one.");
 
 	return;
 }

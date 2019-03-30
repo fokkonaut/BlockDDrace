@@ -3,6 +3,12 @@
 #ifndef GAME_SERVER_GAMECONTEXT_H
 #define GAME_SERVER_GAMECONTEXT_H
 
+enum ITEMS
+{
+	SPOOKY_GHOST,
+	NUM_ITEMS
+};
+
 #include <engine/server.h>
 #include <engine/console.h>
 #include <engine/shared/memheap.h>
@@ -53,7 +59,7 @@ enum
 	NUM_TUNEZONES = 256
 };
 
-enum // use for pChr->SetExtra()
+enum EXTRAS
 {
 	JETPACK = 1,
 	PLASMA_GUN,
@@ -61,12 +67,12 @@ enum // use for pChr->SetExtra()
 	RAINBOW,
 	ATOM,
 	TRAIL,
-	SPOOKY_GHOST,
+	EXTRA_SPOOKY_GHOST,
 	METEOR,
 	PASSIVE,
 	VANILLA_MODE,
 	STRAIGHT_GRENADE,
-	NUM_EXTRAS,
+	NUM_EXTRAS
 };
 
 
@@ -206,14 +212,15 @@ public:
 		CHAT_RED=0,
 		CHAT_BLUE=1,
 		CHAT_WHISPER_SEND=2,
-		CHAT_WHISPER_RECV=3
+		CHAT_WHISPER_RECV=3,
+		CHAT_TO_ONE_CLIENT=4
 	};
 
 	// network
 	void CallVote(int ClientID, const char *aDesc, const char *aCmd, const char *pReason, const char *aChatmsg);
 	void SendChatTarget(int To, const char *pText);
 	void SendChatTeam(int Team, const char *pText);
-	void SendChat(int ClientID, int Team, const char *pText, int SpamProtectionClientID = -1);
+	void SendChat(int ClientID, int Team, const char *pText, int SpamProtectionClientID = -1, int ToClientID = -1);
 	void SendEmoticon(int ClientID, int Emoticon);
 	void SendWeaponPickup(int ClientID, int Weapon);
 	void SendBroadcast(const char *pText, int ClientID, bool IsImportant = true);
@@ -279,11 +286,15 @@ public:
 
 	bool m_ClientLeftServer[MAX_CLIENTS];
 
-	int GetNextClientID();
-	int GetCIDByName(const char *pName);
-
 	void FixMotd();
 	char m_aMotd[900];
+
+	void ConnectDummy(int Dummymode = 0, int Amount = 1);
+	int GetShopBot();
+
+	int GetNextClientID();
+	int GetCIDByName(const char *pName);
+	void SendMotd(const char *pMsg, int ClientID);
 
 private:
 
@@ -392,6 +403,7 @@ private:
 
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
+	static void ConDummymode(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 

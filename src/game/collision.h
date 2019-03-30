@@ -90,6 +90,9 @@ public:
 
 	vec2 CpSpeed(int index, int Flags = 0);
 
+	int GetCustTile(int x, int y);
+	vec2 GetRandomTile(int Tile);
+
 	class CTeleTile *TeleLayer() { return m_pTele; }
 	class CSwitchTile *SwitchLayer() { return m_pSwitch; }
 	class CTuneTile *TuneLayer() { return m_pTune; }

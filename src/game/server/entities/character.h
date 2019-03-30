@@ -103,7 +103,7 @@ public:
 	bool SetWeaponThatChrHas();
 	
 
-	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1);
+	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1, bool Silent = false);
 
 private:
 	// player controlling this character
@@ -310,6 +310,7 @@ public:
 	bool m_PlasmaGun;
 	bool m_HeartGun;
 	bool m_StraightGrenade;
+	bool m_Bloody;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
@@ -326,6 +327,21 @@ public:
 	};
 	std::deque<HistoryPoint> m_TrailHistory;
 	float m_TrailHistoryLength;
+
+	// shop
+	bool m_InShop;
+	bool m_EnteredShop;
+	bool m_LeftShop;
+
+	void ShopWindow(int Dir);
+	int m_ShopWindowPage;
+	int64 m_ShopMotdTick;
+	void BuyItem(int ItemID);
+	void ConfirmPurchase();
+	int m_PurchaseState;
+	void PurchaseEnd(bool canceled);
+	bool m_ChangeShopPage;
+
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };

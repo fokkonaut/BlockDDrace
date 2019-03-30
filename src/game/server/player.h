@@ -182,6 +182,7 @@ public:
 	bool m_Moderating;
 
 	bool m_IsDummy;
+	int m_Dummymode;
 
 	bool m_VanillaMode;
 	bool m_VanillaModeStart;
@@ -220,6 +221,7 @@ public:
 	bool m_InfTrail;
 	bool m_HasSpookyGhost;
 	int m_InfMeteors;
+	bool m_InfBloody;
 
 	bool m_IsLoggedIn;
 	bool m_AccountDisabled;
@@ -232,10 +234,16 @@ public:
 	int m_Kills;
 	int m_Deaths;
 
+	bool m_aHasItem[NUM_ITEMS];
+
 	void SaveAccountStats(bool SetLoggedIn);
 	void Logout();
 
 	void CheckLevel();
+	void MoneyTransaction(int Amount, const char *Description);
+	char m_aLastMoneyTransaction[10][256];
+
+	int64 m_ShopBotAntiSpamTick;
 
 	int m_AllowTimeScore;
 	int m_DisplayScore;
