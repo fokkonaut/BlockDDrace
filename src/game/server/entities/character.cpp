@@ -1047,8 +1047,8 @@ void CCharacter::BlockDDraceTick()
 		}
 	}
 
-	CCharacter *pChr = GameServer()->m_World.ClosestCharType(m_Pos, true, this);
-	if (pChr && pChr->IsAlive())
+	CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
+	if (pChr)
 	{
 		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
 		{
@@ -3629,7 +3629,7 @@ void CCharacter::DummyTick()
 	if (!m_pPlayer->m_IsDummy)
 		return;
 
-	if (m_pPlayer->m_Dummymode == 99) // default
+	if (m_pPlayer->m_Dummymode == 0) // default
 	{
 		m_Input.m_Jump = 0;
 		m_Input.m_Fire = 0;
@@ -3644,9 +3644,9 @@ void CCharacter::DummyTick()
 		m_LatestInput.m_Fire = 0;
 		m_Input.m_Hook = 0;
 		m_Input.m_Direction = 0;
-
-		CCharacter *pChr = GameServer()->m_World.ClosestCharType(m_Pos, false, this);
-		if (pChr && pChr->IsAlive() && pChr->m_InShop)
+		
+		CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, this);
+		if (pChr && pChr->m_InShop)
 		{
 			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
 			m_Input.m_TargetY = pChr->m_Pos.y - m_Pos.y;

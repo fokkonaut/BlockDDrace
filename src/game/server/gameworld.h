@@ -111,7 +111,7 @@ public:
 	*/
 
 
-	class CCharacter *ClosestCharType(vec2 Pos, bool Human = true, CCharacter *pNotThis = 0, bool SeeAll = true);
+	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis);
 
 
 	void InsertEntity(CEntity *pEntity);
