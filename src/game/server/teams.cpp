@@ -139,8 +139,12 @@ void CGameTeams::OnCharacterFinish(int ClientID)
 		{
 			float Time = (float)(Server()->Tick() - GetStartTime(pPlayer))
 					/ ((float)Server()->TickSpeed());
+			dbg_msg("character", "Finish Time: %f", Time);
 			if (Time < 0.000001f)
+			{
+				dbg_msg("character", "returned");
 				return;
+			}
 			OnFinish(pPlayer, Time);
 		}
 	}
