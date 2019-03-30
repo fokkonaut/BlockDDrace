@@ -1096,11 +1096,7 @@ void CCharacter::BlockDDraceTick()
 	{
 		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
 		{
-			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
-			{
-				//
-			}
-			else
+			if (m_pPlayer->m_ShopBotAntiSpamTick < Server()->Tick())
 			{
 				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
 
