@@ -1052,10 +1052,8 @@ void CCharacter::BlockDDraceTick()
 	{
 		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
 		{
-			if (pChr->m_FreezeTime == 0)
-			{
+			if (pChr->m_FreezeTime == 0 && !pChr->m_Passive && !m_Passive)
 				m_LastToucherID = pChr->GetPlayer()->GetCID();
-			}
 		}
 	}
 
@@ -1275,7 +1273,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	if (m_LastToucherID == -1)
 		m_LastToucherID = m_pPlayer->GetCID();
 	Weapon = m_LastHitWeapon;
-	Killer = m_LastToucherID;	
+	Killer = m_LastToucherID;
 
 	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
 	{
@@ -2856,6 +2854,8 @@ bool CCharacter::UnFreeze()
 		m_FreezeTime = 0;
 		m_FreezeTick = 0;
 		m_FirstFreezeTick = 0;
+		m_LastHitWeapon = -1;
+		m_LastToucherID = -1;
 		if (m_Core.m_ActiveWeapon==WEAPON_HAMMER) m_ReloadTimer = 0;
 		return true;
 	}
