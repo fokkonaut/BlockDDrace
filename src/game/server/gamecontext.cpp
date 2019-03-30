@@ -968,7 +968,7 @@ void CGameContext::OnTick()
 		Tuning()->Set("shotgun_speed", 500);
 		Tuning()->Set("shotgun_speeddiff", 0);
 		Tuning()->Set("shotgun_curvature", 0);
-		}
+	}
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -3055,9 +3055,7 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 				dbg_msg("game layer", "found no player hooking tile");
 			}
 			else if (Index == TILE_SHOP_BOT_SPAWN)
-			{
-				ConnectDummy(99);
-			}
+				m_SpawnShopBot = true;
 
 			if(Index >= ENTITY_OFFSET)
 			{
@@ -3114,6 +3112,9 @@ void CGameContext::OnInit(/*class IKernel *pKernel*/)
 			}
 		}
 	}
+
+	if (g_Config.m_SvDefaultBots)
+		ConnectDefaultBots();
 
 	//game.world.insert_entity(game.Controller);
 
@@ -3900,38 +3901,32 @@ void CGameContext::FixMotd()
 	return;
 }
 
-void CGameContext::ConnectDummy(int Dummymode, int Amount)
+void CGameContext::ConnectDummy(int Dummymode)
 {
-	if (!Amount)
-		Amount = 1;
-	for (int i = 0; i < Amount; i++)
+	int DummyID = GetNextClientID();
+	if (DummyID < 0)
+		return;
+
+	if (m_apPlayers[DummyID])
 	{
-		int DummyID = GetNextClientID();
-		if (DummyID < 0)
-			return;
-
-		if (m_apPlayers[DummyID])
-		{
-			m_apPlayers[DummyID]->OnDisconnect("");
-			delete m_apPlayers[DummyID];
-			m_apPlayers[DummyID] = 0;
-		}
-
-		m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
-
-		m_apPlayers[DummyID]->m_IsDummy = true;
-		Server()->BotJoin(DummyID);
-
-		str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
-		m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
-		m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
-		m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
-
-		dbg_msg("dummy", "Dummy connected: %d", DummyID);
-
-		m_apPlayers[DummyID]->m_Dummymode = Dummymode;
-		OnClientEnter(DummyID);
+		m_apPlayers[DummyID]->OnDisconnect("");
+		delete m_apPlayers[DummyID];
+		m_apPlayers[DummyID] = 0;
 	}
+
+	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
+
+	m_apPlayers[DummyID]->m_IsDummy = true;
+	Server()->BotJoin(DummyID);
+
+	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
+	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+
+	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
+	OnClientEnter(DummyID);
+	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", DummyID, Dummymode);
 }
 
 int CGameContext::GetShopBot()
@@ -3953,4 +3948,24 @@ void CGameContext::SendMotd(const char * pMsg, int ClientID)
 	CNetMsg_Sv_Motd Msg;
 	Msg.m_pMessage = pMsg;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+}
+
+void CGameContext::ConnectDefaultBots()
+{
+	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
+	{
+		ConnectDummy(31); //police
+		ConnectDummy(29); //blocker
+		ConnectDummy(29); //blocker 2
+		ConnectDummy(23); //racer
+		ConnectDummy(-6); //blocker dm v3
+	}
+	else if (!str_comp(g_Config.m_SvMap, "BlmapChill"))
+	{
+		ConnectDummy(32); //police
+	}
+
+	if (m_SpawnShopBot)
+		ConnectDummy(99); // shop bot
+
 }

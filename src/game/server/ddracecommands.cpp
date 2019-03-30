@@ -496,8 +496,13 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	
-	if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+	int Amount = pResult->GetInteger(0);
+	int Dummymode = pResult->GetInteger(1);
+
+	if (!Amount)
+		Amount = 1;
+
+	if (Dummymode == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
 	{
 		char aBuf[64];
 		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
@@ -505,7 +510,10 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 		return;
 	}
 	else
-		pSelf->ConnectDummy(pResult->GetInteger(1), pResult->GetInteger(0));
+	{
+		for (int i = 0; i < Amount; i++)
+			pSelf->ConnectDummy(Dummymode);
+	}
 
 	return;
 }

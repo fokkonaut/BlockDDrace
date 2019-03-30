@@ -289,8 +289,10 @@ public:
 	void FixMotd();
 	char m_aMotd[900];
 
-	void ConnectDummy(int Dummymode = 0, int Amount = 1);
+	void ConnectDummy(int Dummymode = 0);
 	int GetShopBot();
+	bool m_SpawnShopBot;
+	void ConnectDefaultBots();
 
 	int GetNextClientID();
 	int GetCIDByName(const char *pName);
