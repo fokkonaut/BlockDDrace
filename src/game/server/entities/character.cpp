@@ -1017,7 +1017,7 @@ void CCharacter::Tick()
 	HandleWeapons();
 
 	DDRacePostCoreTick();
-
+	
 	// Previnput
 	m_PrevInput = m_Input;
 
@@ -3556,7 +3556,7 @@ void CCharacter::BuyItem(int ItemID)
 		}
 
 		if (m_pPlayer->m_Level < 5)
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be Lv.5 to buy rainbow.");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 5 to buy rainbow.");
 		else
 		{
 			if (m_pPlayer->m_Money >= 1500)
@@ -3578,7 +3578,7 @@ void CCharacter::BuyItem(int ItemID)
 		}
 
 		if (m_pPlayer->m_Level < 15)
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be Lv.15 to buy bloody.");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 15 to buy bloody.");
 		else
 		{
 			if (m_pPlayer->m_Money >= 3500)
@@ -3595,7 +3595,7 @@ void CCharacter::BuyItem(int ItemID)
 	{
 		if (m_pPlayer->m_Level < 1)
 		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Level is too low! You need lvl 1 to buy the spooky ghost.");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 1 to buy the spooky ghost.");
 			return;
 		}
 		else if (m_pPlayer->m_aHasItem[SPOOKY_GHOST])
