@@ -592,7 +592,7 @@ void CCharacter::FireWeapon()
 			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && m_Core.m_ActiveWeapon == WEAPON_GUN && m_CountSpookyGhostInputs)
 			{
 				m_TimesShot++;
-				if (m_pPlayer->m_HasSpookyGhost && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
+				if ((m_pPlayer->m_HasSpookyGhost || m_pPlayer->m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
 				{
 					SetSpookyGhost();
 					m_TimesShot = 0;
@@ -1494,6 +1494,17 @@ void CCharacter::Snap(int SnappingClient)
 	if(!pCharacter)
 		return;
 
+	if (m_StrongBloody)
+	{
+		for (int i = 0; i < 3; i++)
+			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+	}
+	else if (m_Bloody)
+	{
+		if (Server()->Tick() % 3 == 0)
+			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
+	}
+
 	// write down the m_Core
 	if(!m_ReckoningTick || GameServer()->m_World.m_Paused)
 	{
@@ -2110,7 +2121,7 @@ void CCharacter::HandleTiles(int Index)
 	//spooky ghost toggle
 	if ((m_TileIndex == TILE_SPOOKY_GHOST) || (m_TileFIndex == TILE_SPOOKY_GHOST))
 	{
-		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST))
+		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST) || m_pPlayer->m_aHasItem[SPOOKY_GHOST])
 			return;
 
 		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
@@ -2171,6 +2182,16 @@ void CCharacter::HandleTiles(int Index)
 
 		bool Remove = m_StraightGrenade && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(STRAIGHT_GRENADE, m_pPlayer->GetCID(), false, Remove);
+	}
+
+	//bloody toggle
+	if ((m_TileIndex == TILE_BLOODY) || (m_TileFIndex == TILE_BLOODY))
+	{
+		if ((m_LastIndexTile == TILE_BLOODY) || (m_LastIndexFrontTile == TILE_BLOODY))
+			return;
+
+		bool Remove = m_Bloody && g_Config.m_SvExtraTilesToggle ? true : false;
+		SetExtra(BLOODY, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	m_LastIndexTile = m_TileIndex;
@@ -3338,6 +3359,28 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		else
 			pChr->m_StraightGrenade = true;
 	}
+	else if (Extra == BLOODY)
+	{
+		str_format(aItem, sizeof aItem, "Bloody");
+		if (Remove)
+		{
+			pChr->m_Bloody = false;
+			pChr->m_StrongBloody = false;
+		}
+		else
+			pChr->m_Bloody = true;
+	}
+	else if (Extra == STRONG_BLOODY)
+	{
+		str_format(aItem, sizeof aItem, "Strong Bloody");
+		if (Remove)
+		{
+			pChr->m_Bloody = false;
+			pChr->m_StrongBloody = false;
+		}
+		else
+			pChr->m_StrongBloody = true;
+	}
 
 	if (FromID == -1)
 	{
@@ -3562,7 +3605,7 @@ void CCharacter::BuyItem(int ItemID)
 			if (m_pPlayer->m_Money >= 1500)
 			{
 				m_pPlayer->MoneyTransaction(-1500, "-1.500 money. (bought 'rainbow')");
-				m_Rainbow = true;
+				SetExtra(RAINBOW, m_pPlayer->GetCID(), false, false, -1, true);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought rainbow until death.");
 			}
 			else
@@ -3571,7 +3614,7 @@ void CCharacter::BuyItem(int ItemID)
 	}
 	else if (ItemID == 2)
 	{
-		if (m_Bloody || m_pPlayer->m_InfBloody)
+		if (m_Bloody)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already own bloody.");
 			return;
@@ -3584,7 +3627,7 @@ void CCharacter::BuyItem(int ItemID)
 			if (m_pPlayer->m_Money >= 3500)
 			{
 				m_pPlayer->MoneyTransaction(-3500, "-3.500 money. (bought 'bloody')");
-				m_Bloody = true;
+				SetExtra(BLOODY, m_pPlayer->GetCID(), false, false, -1, true);
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought bloody until death.");
 			}
 			else
@@ -3603,8 +3646,7 @@ void CCharacter::BuyItem(int ItemID)
 		else if (m_pPlayer->m_Money >= 1000000)
 		{
 			m_pPlayer->MoneyTransaction(-1000000, "-1000000 money. (bought 'spooky_ghost')");
-
-			m_pPlayer->m_SpookyGhost = 1;
+			m_pPlayer->m_aHasItem[SPOOKY_GHOST] = true;
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought the spooky ghost. For more infos check '/spookyghostinfo'.");
 		}
 		else

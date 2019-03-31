@@ -402,6 +402,24 @@ void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserDat
 	}
 }
 
+void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(BLOODY, pChr->GetPlayer()->GetCID(), false, pChr->m_Bloody, pResult->m_ClientID);
+}
+
+void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(STRONG_BLOODY, pChr->GetPlayer()->GetCID(), false, pChr->m_StrongBloody, pResult->m_ClientID);
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

@@ -72,6 +72,8 @@ enum EXTRAS
 	PASSIVE,
 	VANILLA_MODE,
 	STRAIGHT_GRENADE,
+	BLOODY,
+	STRONG_BLOODY,
 	NUM_EXTRAS
 };
 
@@ -430,6 +432,8 @@ private:
 	static void ConVanillaMode(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData);
 	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
+	static void ConBloody(IConsole::IResult *pResult, void *pUserData);
+	static void ConStrongBloody(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{

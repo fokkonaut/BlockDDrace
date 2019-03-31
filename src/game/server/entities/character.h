@@ -312,6 +312,7 @@ public:
 	bool m_HeartGun;
 	bool m_StraightGrenade;
 	bool m_Bloody;
+	bool m_StrongBloody;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;

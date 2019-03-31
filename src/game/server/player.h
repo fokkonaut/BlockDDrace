@@ -221,7 +221,6 @@ public:
 	bool m_InfTrail;
 	bool m_HasSpookyGhost;
 	int m_InfMeteors;
-	bool m_InfBloody;
 
 	bool m_IsLoggedIn;
 	bool m_AccountDisabled;
