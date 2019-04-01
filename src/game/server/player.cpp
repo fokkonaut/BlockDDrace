@@ -327,17 +327,16 @@ void CPlayer::Snap(int SnappingClient)
 	if (SnappingClient > -1 && !Server()->Translate(id, SnappingClient)) return;
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, id, sizeof(CNetObj_ClientInfo)));
-
 	if(!pClientInfo)
 		return;
+
+	CPlayer *pSnapping = GameServer()->m_apPlayers[SnappingClient];
 
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	//StrToInts(&pClientInfo->m_Clan0, 3, Server()->ClientClan(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
 	m_ShowName = true;
-
-	CPlayer *pSnapping = GameServer()->m_apPlayers[SnappingClient];
 
 	//spooky ghost
 	const char *pClan;
@@ -353,9 +352,7 @@ void CPlayer::Snap(int SnappingClient)
 	if (pSnapping)
 	{
 		if (pSnapping->GetTeam() == TEAM_SPECTATORS)
-		{
 			m_ShowName = true;
-		}
 	}
 
 	if (m_SetRealName || m_ShowName)
@@ -363,19 +360,12 @@ void CPlayer::Snap(int SnappingClient)
 	else
 		StrToInts(&pClientInfo->m_Name0, 4, " ");
 
-	if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
+	if (GetCharacter())
 	{
-		if (GetCharacter())
-		{
+		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 			GetCharacter()->m_ShopMotdTick = 0;
-		}
-	}
-	else
-	{
-		if (GetCharacter())
-		{
+		else
 			GetCharacter()->m_TimesShot = 0;
-		}
 	}
 
 	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow)
@@ -435,9 +425,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (pSnapping->m_DisplayScore == 1) // level
 		{
 			if (m_IsLoggedIn)
-			{
 				pPlayerInfo->m_Score = m_Level;
-			}
 			else
 				pPlayerInfo->m_Score = 0;
 		}
