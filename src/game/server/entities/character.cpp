@@ -3019,7 +3019,7 @@ int CCharacter::GetAimDir()
 	return 0;
 }
 
-bool CCharacter::SetWeaponThatChrHas()
+void CCharacter::SetWeaponThatChrHas()
 {
 	if (m_aWeapons[WEAPON_GUN].m_Got)
 		SetWeapon(WEAPON_GUN);
@@ -3031,10 +3031,6 @@ bool CCharacter::SetWeaponThatChrHas()
 		SetWeapon(WEAPON_GRENADE);
 	else if (m_aWeapons[WEAPON_RIFLE].m_Got)
 		SetWeapon(WEAPON_RIFLE);
-	else
-		return false;
-
-	return true;
 }
 
 void CCharacter::DropWeapon(int WeaponID)

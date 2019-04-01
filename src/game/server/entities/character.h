@@ -58,7 +58,6 @@ public:
 	virtual int NetworkClipped(int SnappingClient);
 	virtual int NetworkClipped(int SnappingClient, vec2 CheckPos);
 
-	int GetAimDir();
 	bool IsGrounded();
 
 	void SetWeapon(int W);
@@ -100,8 +99,8 @@ public:
 	bool isFreezed;
 
 	void DropWeapon(int WeaponID);
-	bool SetWeaponThatChrHas();
-	
+	void SetWeaponThatChrHas();
+	int GetAimDir();
 
 	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1, bool Silent = false);
 
