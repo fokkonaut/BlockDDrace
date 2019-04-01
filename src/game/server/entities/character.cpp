@@ -3136,7 +3136,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	if (Infinite && !Remove)
 		str_format(aInfinite, sizeof aInfinite, "Infinite ");
 	else
-		str_format(aInfinite, sizeof aInfinite, '\0');
+		str_format(aInfinite, sizeof aInfinite, "\0");
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
@@ -3477,7 +3477,7 @@ void CCharacter::ShopWindow(int Dir)
 	}
 	else
 	{
-		str_format(aItem, sizeof(aItem), '\0');
+		str_format(aItem, sizeof(aItem), "\0");
 	}
 	//////////////////// UPDATE m_MaxShopPage ON TOP OF THIS FUNCTION!!! /////////////////////////
 
