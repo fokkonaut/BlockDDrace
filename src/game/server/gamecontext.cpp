@@ -3886,7 +3886,7 @@ void CGameContext::FixMotd()
 		if (count > 20)
 			count = 20;
 
-		str_format(aTemp, sizeof(aTemp), "\0");
+		str_format(aTemp, sizeof(aTemp), "");
 		for (int i = 0; i < 22 - count; i++)
 		{
 			str_format(aTemp2, sizeof(aTemp2), "%s", aTemp);
@@ -3896,7 +3896,7 @@ void CGameContext::FixMotd()
 		str_format(m_aMotd, sizeof(m_aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, aTemp, GAME_VERSION);
 	}
 	else
-		str_format(m_aMotd, sizeof(m_aMotd), "\0");
+		str_format(m_aMotd, sizeof(m_aMotd), "");
 }
 
 void CGameContext::ConnectDummy(int Dummymode)
