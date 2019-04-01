@@ -499,6 +499,10 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
 	if (pChr->m_Trail)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
+	if (pChr->m_Bloody)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Bloody: True");
+	if (pChr->m_StrongBloody)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Strong Bloody: True");
 	if (pChr->m_Meteors > 0)
 	{
 		str_format(aBuf, sizeof(aBuf), "Meteors: %d", pChr->m_Meteors);

@@ -3367,7 +3367,10 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_StrongBloody = false;
 		}
 		else
+		{
 			pChr->m_StrongBloody = true;
+			pChr->m_Bloody = false;
+		}
 	}
 
 	if (FromID == -1)
