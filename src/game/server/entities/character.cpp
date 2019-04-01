@@ -3348,7 +3348,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	else if (Extra == BLOODY)
 	{
 		str_format(aItem, sizeof aItem, "Bloody");
-		if (Remove)
+		if (Remove || pChr->m_StrongBloody)
 		{
 			pChr->m_Bloody = false;
 			pChr->m_StrongBloody = false;
@@ -3393,7 +3393,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		}
 		else
 		{
-			if (Remove)
+			if (Remove || (Extra == BLOODY && pChr->m_StrongBloody))
 				str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
 			else
 				str_format(aMsg, sizeof aMsg, "You have %s", aItem);
@@ -3401,7 +3401,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (FromID >= 0)
 	{
-		if (Remove && Extra != VANILLA_MODE)
+		if ((Remove && Extra != VANILLA_MODE) || (Extra == BLOODY && pChr->m_StrongBloody))
 			str_format(aGiven, sizeof aGiven, "removed from");
 		else
 			str_format(aGiven, sizeof aGiven, "given to");
