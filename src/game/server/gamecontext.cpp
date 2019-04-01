@@ -3821,7 +3821,7 @@ int CGameContext::GetNextClientID()
 	int ClientID = -1;
 	for (int i = 0; i < g_Config.m_SvMaxClients; i++)
 	{
-		if (m_apPlayers[i])
+		if (((CServer*)Server())->m_aClients[i].m_State != CServer::CClient::STATE_EMPTY)
 			continue;
 
 		ClientID = i;
