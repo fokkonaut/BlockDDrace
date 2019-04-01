@@ -508,7 +508,6 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
 	str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
 	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	return;
 }
 
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
@@ -532,8 +531,6 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 		for (int i = 0; i < Amount; i++)
 			pSelf->ConnectDummy(Dummymode);
 	}
-
-	return;
 }
 
 void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)

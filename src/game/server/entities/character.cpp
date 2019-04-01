@@ -3075,8 +3075,6 @@ void CCharacter::DropWeapon(int WeaponID)
 	}
 
 	SetWeaponThatChrHas();
-
-	return;
 }
 
 void CCharacter::SetSpookyGhost()
@@ -3099,8 +3097,6 @@ void CCharacter::SetSpookyGhost()
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = 0;
 
 	m_pPlayer->m_SpookyGhost = true;
-
-	return;
 }
 
 void CCharacter::UnsetSpookyGhost()
@@ -3119,8 +3115,6 @@ void CCharacter::UnsetSpookyGhost()
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = m_pPlayer->m_RealUseCustomColor;
 
 	m_pPlayer->m_SpookyGhost = false;
-
-	return;
 }
 
 void CCharacter::SaveRealInfos()
@@ -3132,8 +3126,6 @@ void CCharacter::SaveRealInfos()
 		str_copy(m_pPlayer->m_RealClan, Server()->ClientClan(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealClan));
 		str_copy(m_pPlayer->m_RealName, Server()->ClientName(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealName));
 	}
-
-	return;
 }
 
 void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID, bool Silent)
@@ -3422,8 +3414,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 
 	if (Extra == EXTRA_SPOOKY_GHOST && !Remove && !Silent)
 		GameServer()->SendChatTarget(ToID, "For more info, say '/spookyghost help'");
-
-	return;
 }
 
 void CCharacter::ShopWindow(int Dir)
@@ -3526,8 +3516,6 @@ void CCharacter::ShopWindow(int Dir)
 
 	GameServer()->SendMotd(aBase, GetPlayer()->GetCID());
 	m_ShopMotdTick = Server()->Tick() + Server()->TickSpeed() * 10; // motd is there for 10 sec
-
-	return;
 }
 
 void CCharacter::ConfirmPurchase()
@@ -3544,8 +3532,6 @@ void CCharacter::ConfirmPurchase()
 
 	GameServer()->SendMotd(aBuf, GetPlayer()->GetCID());
 	m_PurchaseState = 2;
-
-	return;
 }
 
 void CCharacter::PurchaseEnd(bool canceled)
@@ -3571,8 +3557,6 @@ void CCharacter::PurchaseEnd(bool canceled)
 	}
 
 	m_PurchaseState = 1;
-
-	return;
 }
 
 void CCharacter::BuyItem(int ItemID)
@@ -3649,8 +3633,6 @@ void CCharacter::BuyItem(int ItemID)
 	}
 	else
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Invalid shop item. Choose another one.");
-
-	return;
 }
 
 void CCharacter::DummyTick()

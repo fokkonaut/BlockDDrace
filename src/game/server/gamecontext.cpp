@@ -3897,8 +3897,6 @@ void CGameContext::FixMotd()
 	}
 	else
 		str_format(m_aMotd, sizeof(m_aMotd), "");
-
-	return;
 }
 
 void CGameContext::ConnectDummy(int Dummymode)
@@ -3967,5 +3965,4 @@ void CGameContext::ConnectDefaultBots()
 
 	if (m_SpawnShopBot)
 		ConnectDummy(99); // shop bot
-
 }

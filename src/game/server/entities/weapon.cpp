@@ -66,8 +66,6 @@ void CWeapon::IsShieldNear()
 			Reset();
 		}
 	}
-
-	return;
 }
 
 int CWeapon::IsCharacterNear()
@@ -82,7 +80,6 @@ int CWeapon::IsCharacterNear()
 		if (pChr && pChr->IsAlive())
 			return pChr->GetPlayer()->GetCID();
 	}
-
 	return -1;
 }
 
