@@ -2188,7 +2188,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_BLOODY) || (m_LastIndexFrontTile == TILE_BLOODY))
 			return;
 
-		bool Remove = m_Bloody && g_Config.m_SvExtraTilesToggle ? true : false;
+		bool Remove = (m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle ? true : false;
 		SetExtra(BLOODY, m_pPlayer->GetCID(), false, Remove);
 	}
 
@@ -3348,7 +3348,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	else if (Extra == BLOODY)
 	{
 		str_format(aItem, sizeof aItem, "Bloody");
-		if (Remove || pChr->m_StrongBloody)
+		if (Remove)
 		{
 			pChr->m_Bloody = false;
 			pChr->m_StrongBloody = false;
@@ -3393,7 +3393,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		}
 		else
 		{
-			if (Remove || (Extra == BLOODY && pChr->m_StrongBloody))
+			if (Remove)
 				str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
 			else
 				str_format(aMsg, sizeof aMsg, "You have %s", aItem);
@@ -3401,7 +3401,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (FromID >= 0)
 	{
-		if ((Remove && Extra != VANILLA_MODE) || (Extra == BLOODY && pChr->m_StrongBloody))
+		if (Remove && Extra != VANILLA_MODE)
 			str_format(aGiven, sizeof aGiven, "removed from");
 		else
 			str_format(aGiven, sizeof aGiven, "given to");

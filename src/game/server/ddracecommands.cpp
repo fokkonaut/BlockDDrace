@@ -396,10 +396,7 @@ void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserDat
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-	{
-		bool Remove = pChr->m_StraightGrenade ? true : false;
-		pChr->SetExtra(STRAIGHT_GRENADE, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
-	}
+		pChr->SetExtra(STRAIGHT_GRENADE, pChr->GetPlayer()->GetCID(), false, pChr->m_StraightGrenade, pResult->m_ClientID);
 }
 
 void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
@@ -408,7 +405,10 @@ void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(BLOODY, pChr->GetPlayer()->GetCID(), false, pChr->m_Bloody, pResult->m_ClientID);
+	{
+		bool Remove = pChr->m_Bloody || pChr->m_StrongBloody ? true : false;
+		pChr->SetExtra(BLOODY, pChr->GetPlayer()->GetCID(), false, Remove, pResult->m_ClientID);
+	}
 }
 
 void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
