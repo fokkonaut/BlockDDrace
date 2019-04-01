@@ -3664,9 +3664,9 @@ void CCharacter::DummyTick()
 		return;
 
 	ResetInput();
-	m_Input.m_Hook = 0; // for some reason commented out in ResetInput(), dont wanna mess up with something
+	m_Input.m_Hook = 0;
 
-	if (m_pPlayer->m_Dummymode == 0) // default
+	if (m_pPlayer->m_Dummymode == 0)
 	{
 		// do nothing
 	}
