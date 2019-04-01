@@ -682,7 +682,6 @@ void CGameContext::ConTeleport(IConsole::IResult *pResult, void *pUserData)
 	int Tele = pResult->NumArguments() == 2 ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
 	int TeleTo = pResult->NumArguments() ? pResult->GetInteger(pResult->NumArguments() - 1) : pResult->m_ClientID;
 
-	CCharacter *pChr = pSelf->GetPlayerChar(Tele);
 	if (!str_comp_nocase(pResult->GetString(0), "all"))
 	{
 		for (int i = 0; i < MAX_CLIENTS; i++)

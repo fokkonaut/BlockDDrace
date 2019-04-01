@@ -661,9 +661,7 @@ void CCharacter::FireWeapon()
 				Lifetime = (int)(Server()->TickSpeed()*GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime);
 
 			if (m_StraightGrenade)
-			{
-				CStraightGrenade *pProj = new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
-			}
+				new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
 			else
 			{
 				CProjectile *pProj = new CProjectile
@@ -1063,7 +1061,7 @@ void CCharacter::BlockDDraceTick()
 
 
 	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
-	if (pChr && pChr->m_Passive)
+	if (pPas && pPas->m_Passive)
 	{
 		m_Core.m_Collision = false;
 		m_NeededFaketuning |= FAKETUNE_NOCOLL;
@@ -3138,7 +3136,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	if (Infinite && !Remove)
 		str_format(aInfinite, sizeof aInfinite, "Infinite ");
 	else
-		str_format(aInfinite, sizeof aInfinite, "");
+		str_format(aInfinite, sizeof aInfinite, '\0');
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
@@ -3260,7 +3258,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 					pPlayer->m_InfMeteors++;
 				else
 					pChr->m_Meteors++;
-				CMeteor *pMeteor = new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
+				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
 			}
 			else
 				return;
@@ -3288,7 +3286,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_Hit = DISABLE_HIT_GRENADE | DISABLE_HIT_HAMMER | DISABLE_HIT_RIFLE | DISABLE_HIT_SHOTGUN;
 			pChr->m_NeededFaketuning |= FAKETUNE_NOHAMMER;
 			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
-			CPickup *pPickup = new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
+			new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
 		}
 	}
 	else if (Extra == VANILLA_MODE)
@@ -3479,7 +3477,7 @@ void CCharacter::ShopWindow(int Dir)
 	}
 	else
 	{
-		str_format(aItem, sizeof(aItem), "");
+		str_format(aItem, sizeof(aItem), '\0');
 	}
 	//////////////////// UPDATE m_MaxShopPage ON TOP OF THIS FUNCTION!!! /////////////////////////
 
@@ -3569,8 +3567,6 @@ void CCharacter::BuyItem(int ItemID)
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You have to be in the shop to buy some items.");
 		return;
 	}
-
-	char aBuf[256];
 
 	if (ItemID == 1)
 	{
