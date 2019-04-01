@@ -3458,10 +3458,9 @@ void CCharacter::ShopWindow(int Dir)
 
 	if (m_ShopWindowPage == 0)
 	{
-		str_format(aItem, sizeof(aItem), "Welcome to the shop! If you need help, use '/shop help'.\n\n"
+		str_format(aItem, sizeof(aItem), "Welcome to the shop!\n\n"
 			"By shooting to the right you go one site forward,\n"
-			"and by shooting left you go one site backwards.\n\n"
-			"If you need more help, visit '/shop help'.");
+			"and by shooting left you go one site backwards.");
 	}
 	else if (m_ShopWindowPage == 1)
 	{
