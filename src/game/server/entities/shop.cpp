@@ -4,7 +4,7 @@
 void CCharacter::ShopWindow(int Dir)
 {
 	m_ShopMotdTick = 0;
-	int m_MaxShopPage = 3; // UPDATE THIS WITH EVERY PAGE YOU ADD!!!!!
+	int m_MaxShopPage = 4; // UPDATE THIS WITH EVERY PAGE YOU ADD!!!!!
 
 	if (Dir == 0)
 		m_ShopWindowPage = 0;
@@ -58,6 +58,16 @@ void CCharacter::ShopWindow(int Dir)
 		str_format(aInfo, sizeof(aInfo), "Using this item you can hide from other players behind bushes.\n"
 			"If your ghost is activated you won't have a name\n"
 			"For more information please visit '/spookyghost help'.");
+	}
+	else if (m_ShopWindowPage == 4)
+	{
+		str_format(aItem, sizeof(aItem), "        ~  P O L I C E  ~      ");
+		str_format(aLevelTmp, sizeof(aLevelTmp), "18");
+		str_format(aPriceTmp, sizeof(aPriceTmp), "100.000");
+		str_format(aTimeTmp, sizeof(aTimeTmp), "You own this item forever.");
+		str_format(aInfo, sizeof(aInfo), "Police officers get help from the police bot.\n"
+			"For more information about the specific police ranks\n"
+			"please say '/policeinfo'.");
 	}
 	else
 	{
@@ -152,6 +162,8 @@ void CCharacter::BuyItem(int ItemID)
 		return;
 	}
 
+	char aBuf[256];
+
 	if (ItemID == 1)
 	{
 		if (m_Rainbow || m_pPlayer->m_InfRainbow)
@@ -193,7 +205,7 @@ void CCharacter::BuyItem(int ItemID)
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought bloody until death.");
 			}
 			else
-				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 3 500.");
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 3.500 money.");
 		}
 	}
 	else if (ItemID == 3)
@@ -212,7 +224,64 @@ void CCharacter::BuyItem(int ItemID)
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought the spooky ghost. For more infos check '/spookyghostinfo'.");
 		}
 		else
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money!");
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 1.000.000 money.");
+	}
+	else if (ItemID == 4)
+	{
+		if (!m_pPlayer->m_aHasItem[POLICE])
+		{
+			if (m_pPlayer->m_Level < 18)
+			{
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 18 to buy police.");
+				return;
+			}
+		}
+		else if (m_pPlayer->m_PoliceLevel == 1)
+		{
+			if (m_pPlayer->m_Level < 25)
+			{
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 25 to upgrade to police rank 2.");
+				return;
+			}
+		}
+		else if (m_pPlayer->m_PoliceLevel == 2)
+		{
+			if (m_pPlayer->m_Level < 30)
+			{
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 30 to upgrade to police rank 3.");
+				return;
+			}
+		}
+		else if (m_pPlayer->m_PoliceLevel == 3)
+		{
+			if (m_pPlayer->m_Level < 40)
+			{
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 40 to upgrade to police rank 4.");
+				return;
+			}
+		}
+		else if (m_pPlayer->m_PoliceLevel == 4)
+		{
+			if (m_pPlayer->m_Level < 50)
+			{
+				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 50 to upgrade to police rank 5.");
+				return;
+			}
+		}
+		if (m_pPlayer->m_PoliceLevel >= 5)
+		{
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the highest police rank.");
+			return;
+		}
+		if (m_pPlayer->m_Money >= 100000)
+		{
+			m_pPlayer->MoneyTransaction(-100000, "-100.000 money. (bought 'police')");
+			m_pPlayer->m_PoliceLevel++;
+			str_format(aBuf, sizeof(aBuf), "You bought Police Level %d", m_pPlayer->m_PoliceLevel);
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
+		}
+		else
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 100.000 money.");
 	}
 	else
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Invalid shop item. Choose another one.");

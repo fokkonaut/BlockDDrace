@@ -386,6 +386,7 @@ private:
 
 	static void ConScore(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhostChat(IConsole::IResult *pResult, void *pUserData);
+	static void ConPoliceInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConLogin(IConsole::IResult *pResult, void *pUserData);
 	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
