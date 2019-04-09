@@ -232,6 +232,7 @@ public:
 	int m_Money;
 	int m_Kills;
 	int m_Deaths;
+	int m_PoliceLevel;
 
 	bool m_aHasItem[NUM_ITEMS];
 

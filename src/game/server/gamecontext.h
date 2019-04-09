@@ -6,6 +6,7 @@
 enum ITEMS
 {
 	SPOOKY_GHOST,
+	POLICE,
 	NUM_ITEMS
 };
 

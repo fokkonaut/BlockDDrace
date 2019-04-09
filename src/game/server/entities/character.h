@@ -283,6 +283,7 @@ public:
 	int m_LastIndexTile;
 	int m_LastIndexFrontTile;
 
+	bool m_PoliceHelper;
 
 	bool m_Passive;
 

@@ -922,6 +922,7 @@ void CPlayer::Logout()
 		m_Money = 0;
 		m_Kills = 0;
 		m_Deaths = 0;
+		m_PoliceLevel = 0;
 
 		for (int i = 0; i < NUM_ITEMS; i++)
 			m_aHasItem[i] = false;
@@ -969,6 +970,8 @@ void CPlayer::SaveAccountStats(bool SetLoggedIn)
 		AccFile << m_Kills << "\n";
 		AccFile << m_Deaths << "\n";
 		AccFile << m_aHasItem[SPOOKY_GHOST] << "\n";
+		AccFile << m_aHasItem[POLICE] << "\n";
+		AccFile << m_PoliceLevel << "\n";
 	}
 	else
 	{

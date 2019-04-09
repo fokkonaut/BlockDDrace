@@ -1487,6 +1487,16 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	dbg_msg("acc", "loaded spooky ghost '%d'", atoi(aData));
 	pPlayer->m_aHasItem[SPOOKY_GHOST] = atoi(aData);
 
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded police '%d'", atoi(aData));
+	pPlayer->m_aHasItem[POLICE] = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded police level '%d'", atoi(aData));
+	pPlayer->m_PoliceLevel = atoi(aData);
+
 	///////////ITEMS
 
 	str_copy(pPlayer->m_AccountName, aUsername, sizeof(pPlayer->m_AccountName));

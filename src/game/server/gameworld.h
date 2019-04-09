@@ -111,7 +111,7 @@ public:
 	*/
 
 
-	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis);
+	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int PoliceFreezeHole = 0);
 
 
 	void InsertEntity(CEntity *pEntity);

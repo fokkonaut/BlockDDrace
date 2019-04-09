@@ -993,6 +993,7 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/dragger.cpp
   entities/dragger.h
   entities/dummy.cpp
+  entities/dummy.h
   entities/flag.cpp
   entities/flag.h
   entities/gun.cpp
