@@ -3380,7 +3380,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_PoliceHelper = true;
 	}
 
-	if (FromID == -1)
+	if (FromID == -1 || FromID == ToID)
 	{
 		if (Extra == JETPACK || Extra == PLASMA_GUN || Extra == HEART_GUN || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == STRAIGHT_GRENADE)
 		{
