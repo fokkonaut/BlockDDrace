@@ -1013,6 +1013,7 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/plasmabullet.h
   entities/projectile.cpp
   entities/projectile.h
+  entities/shop.cpp
   entities/stable_projectile.cpp
   entities/stable_projectile.h
   entities/straight_grenade.cpp
