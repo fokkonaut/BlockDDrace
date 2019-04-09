@@ -14,6 +14,262 @@ void CCharacter::DummyTick()
 	{
 		// do nothing
 	}
+	else if (m_pPlayer->m_Dummymode == -6)  //ChillBlock5 blmapv3 1o1 mode
+	{
+		CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, this);
+		if (pChr && pChr->IsAlive())
+		{
+			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
+			m_Input.m_TargetY = pChr->m_Pos.y - m_Pos.y;
+			m_LatestInput.m_TargetX = pChr->m_Pos.x - m_Pos.x;
+			m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
+
+			/*************************************************
+			*                                                *
+			*                A T T A C K                     *
+			*                                                *
+			**************************************************/
+
+			//swing enemy up
+			if (m_Core.m_Pos.y < pChr->m_Pos.y - 20 && !IsGrounded() && !pChr->isFreezed)
+			{
+				m_Input.m_Hook = 1;
+				float dist = distance(pChr->m_Pos, m_Core.m_Pos);
+				if (dist < 250.f)
+				{
+					if (m_Core.m_Pos.x < pChr->m_Pos.x)
+						m_Input.m_Direction = -1;
+					else
+						m_Input.m_Direction = 1;
+					if (dist < 80.f) // hammer dist
+					{
+						if (absolute(pChr->m_Core.m_Vel.x) > 2.6f)
+						{
+							if (m_FreezeTime == 0)
+							{
+								m_LatestInput.m_Fire++;
+								m_Input.m_Fire++;
+							}
+						}
+					}
+				}
+			}
+
+			//attack in mid
+			if (pChr->m_Pos.x > 393 * 32 - 7 + V3_OFFSET_X && pChr->m_Pos.x < 396 * 32 + 7 + V3_OFFSET_X)
+			{
+				if (pChr->m_Pos.x < m_Core.m_Pos.x) // bot on the left
+				{
+					if (pChr->m_Core.m_Vel.x < 0.0f)
+						m_Input.m_Hook = 1;
+					else
+						m_Input.m_Hook = 0;
+				}
+				else // bot on the right
+				{
+					if (pChr->m_Core.m_Vel.x < 0.0f)
+						m_Input.m_Hook = 0;
+					else
+						m_Input.m_Hook = 1;
+				}
+				if (pChr->isFreezed)
+					m_Input.m_Hook = 0;
+			}
+
+			//attack bot in the middle and enemy in the air -> try to hook down
+			if (m_Core.m_Pos.y < 78 * 32 + V3_OFFSET_Y && m_Core.m_Pos.y > 70 * 32 + V3_OFFSET_Y && IsGrounded()) // if bot is in position
+			{
+				if (pChr->m_Pos.x < 389 * 32 + V3_OFFSET_X || pChr->m_Pos.x > 400 * 32 + V3_OFFSET_X) //enemy on the left side
+				{
+					if (pChr->m_Pos.y < 76 * 32 + V3_OFFSET_Y && pChr->m_Core.m_Vel.y > 4.2f)
+						m_Input.m_Hook = 1;
+				}
+
+				if (m_Core.m_HookState == HOOK_FLYING)
+					m_Input.m_Hook = 1;
+				else if (m_Core.m_HookState == HOOK_GRABBED)
+				{
+					m_Input.m_Hook = 1;
+					//stay strong and walk agianst hook pull
+					if (m_Core.m_Pos.x < 392 * 32 + V3_OFFSET_X) //left side
+						m_Input.m_Direction = 1;
+					else if (m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X) //right side
+						m_Input.m_Direction = -1;
+				}
+			}
+
+			// attack throw into left freeze wall
+			if (m_Core.m_Pos.x < 383 * 32 + V3_OFFSET_X)
+			{
+				if (pChr->m_Pos.y > m_Core.m_Pos.y + 190)
+					m_Input.m_Hook = 1;
+				else if (pChr->m_Pos.y < m_Core.m_Pos.y - 190)
+					m_Input.m_Hook = 1;
+				else
+				{
+					if (pChr->m_Core.m_Vel.x < -1.6f)
+					{
+						if (pChr->m_Pos.x < m_Core.m_Pos.x - 7 && pChr->m_Pos.x > m_Core.m_Pos.x - 90) //enemy on the left side
+						{
+							if (pChr->m_Pos.y < m_Core.m_Pos.y + 90 && pChr->m_Pos.y > m_Core.m_Pos.y - 90)
+							{
+								if (m_FreezeTime == 0)
+								{
+									m_LatestInput.m_Fire++;
+									m_Input.m_Fire++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// attack throw into right freeze wall
+			if (m_Core.m_Pos.x > 404 * 32 + V3_OFFSET_X)
+			{
+				if (pChr->m_Pos.y > m_Core.m_Pos.y + 190)
+					m_Input.m_Hook = 1;
+				else if (pChr->m_Pos.y < m_Core.m_Pos.y - 190)
+					m_Input.m_Hook = 1;
+				else
+				{
+					if (pChr->m_Core.m_Vel.x > 1.6f)
+					{
+						if (pChr->m_Pos.x > m_Core.m_Pos.x + 7 && pChr->m_Pos.x < m_Core.m_Pos.x + 90) //enemy on the right side
+						{
+							if (pChr->m_Pos.y > m_Core.m_Pos.y - 90 && pChr->m_Pos.y < m_Core.m_Pos.y + 90)
+							{
+								if (m_FreezeTime == 0)
+								{
+									m_LatestInput.m_Fire++;
+									m_Input.m_Fire++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			/*************************************************
+			*                                                *
+			*                D E F E N D (move)              *
+			*                                                *
+			**************************************************/
+
+			//########################################
+			//Worst hammer switch code eu west rofl! #
+			//########################################
+			//switch to hammer if enemy is near enough
+			if ((pChr->m_Pos.x > m_Core.m_Pos.x + 130) || (pChr->m_Pos.x < m_Core.m_Pos.x - 130)) //default is gun
+				SetWeapon(1);
+			else
+			{
+				//switch to hammer if enemy is near enough
+				if ((pChr->m_Pos.y > m_Core.m_Pos.y + 130) || (pChr->m_Pos.y < m_Core.m_Pos.y - 130)) //default is gun
+					SetWeapon(1);
+				else //near --> hammer
+					SetWeapon(0);
+			}
+
+			//Starty movement
+			if (m_Core.m_Pos.x < 389 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 79 * 32 + V3_OFFSET_Y && pChr->m_Pos.y > 79 * 32 + V3_OFFSET_Y && pChr->m_Pos.x > 398 * 32 + V3_OFFSET_X && IsGrounded() && pChr->IsGrounded())
+				m_Input.m_Jump = 1;
+			if (m_Core.m_Pos.x < 389 * 32 + V3_OFFSET_X && pChr->m_Pos.x > 307 * 32 + V3_OFFSET_X && pChr->m_Pos.x > 398 * 32 + V3_OFFSET_X)
+				m_Input.m_Direction = 1;
+
+			//important freeze doges leave them last!:
+
+			//freeze prevention mainpart down right
+			if (m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X && m_Core.m_Pos.x < 401 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 78 * 32 + V3_OFFSET_Y)
+			{
+				m_Input.m_Jump = 1;
+				m_Input.m_Hook = 1;
+				if (Server()->Tick() % 20 == 0)
+				{
+					m_Input.m_Hook = 0;
+					m_Input.m_Jump = 0;
+				}
+				m_Input.m_Direction = 1;
+				m_Input.m_TargetX = 200;
+				m_Input.m_TargetY = 80;
+			}
+
+			//freeze prevention mainpart down left
+			if (m_Core.m_Pos.x > 387 * 32 + V3_OFFSET_X && m_Core.m_Pos.x < 391 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 78 * 32 + V3_OFFSET_Y)
+			{
+				m_Input.m_Jump = 1;
+				m_Input.m_Hook = 1;
+				if (Server()->Tick() % 20 == 0)
+				{
+					m_Input.m_Hook = 0;
+					m_Input.m_Jump = 0;
+				}
+				m_Input.m_Direction = -1;
+				m_Input.m_TargetX = -200;
+				m_Input.m_TargetY = 80;
+			}
+
+			//Freeze prevention top left
+			if (m_Core.m_Pos.x < 391 * 32 + V3_OFFSET_X && m_Core.m_Pos.y < 71 * 32 + V3_OFFSET_Y && m_Core.m_Pos.x > 387 * 32 - 10 + V3_OFFSET_X)
+			{
+				m_Input.m_Direction = -1;
+				m_Input.m_Hook = 1;
+				if (Server()->Tick() % 20 == 0)
+					m_Input.m_Hook = 0;
+				m_Input.m_TargetX = -200;
+				m_Input.m_TargetY = -87;
+				if (m_Core.m_Pos.y > 19 * 32 + 20)
+				{
+					m_Input.m_TargetX = -200;
+					m_Input.m_TargetY = -210;
+				}
+			}
+
+			//Freeze prevention top right
+			if (m_Core.m_Pos.x < 402 * 32 + 10 + V3_OFFSET_X && m_Core.m_Pos.y < 71 * 32 + V3_OFFSET_Y && m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X)
+			{
+				m_Input.m_Direction = 1;
+				m_Input.m_Hook = 1;
+				if (Server()->Tick() % 20 == 0)
+					m_Input.m_Hook = 0;
+				m_Input.m_TargetX = 200;
+				m_Input.m_TargetY = -87;
+				if (m_Core.m_Pos.y > 67 * 32 + 20 + V3_OFFSET_Y)
+				{
+					m_Input.m_TargetX = 200;
+					m_Input.m_TargetY = -210;
+				}
+			}
+
+			//Freeze prevention mid
+			if (m_Core.m_Pos.x > 393 * 32 - 7 + V3_OFFSET_X && m_Core.m_Pos.x < 396 * 32 + 7 + V3_OFFSET_X)
+			{
+				if (m_Core.m_Vel.x < 0.0f)
+					m_Input.m_Direction = -1;
+				else
+					m_Input.m_Direction = 1;
+
+				if (m_Core.m_Pos.y > 77 * 32 - 1 + V3_OFFSET_Y && IsGrounded() == false)
+				{
+					m_Input.m_Jump = 1;
+					if (m_Core.m_Jumped > 2) //no jumps == rip   --> panic hook
+					{
+						m_Input.m_Hook = 1;
+						if (Server()->Tick() % 15 == 0)
+							m_Input.m_Hook = 0;
+					}
+				}
+			}
+
+			//Freeze prevention left 
+			if (m_Core.m_Pos.x < 380 * 32 + V3_OFFSET_X || (m_Core.m_Pos.x < 382 * 32 + V3_OFFSET_X && m_Core.m_Vel.x < -8.4f))
+				m_Input.m_Direction = 1;
+			//Freeze prevention right
+			if (m_Core.m_Pos.x > 408 * 32 + V3_OFFSET_X || (m_Core.m_Pos.x > 406 * 32 + V3_OFFSET_X && m_Core.m_Vel.x > 8.4f))
+				m_Input.m_Direction = -1;
+		}
+
+	}
 	else if (m_pPlayer->m_Dummymode == 32) //BlmapChill police bot
 	{
 		if (m_Core.m_Pos.x > 451 * 32 && m_Core.m_Pos.x < 472 * 32 && m_Core.m_Pos.y > 74 * 32 && m_Core.m_Pos.y < 85 * 32) //spawn area, walk into the left SPAWN teleporter

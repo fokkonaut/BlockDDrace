@@ -1,6 +1,9 @@
 #ifndef GAME_SERVER_ENTITIES_DUMMY_H
 #define GAME_SERVER_ENTITIES_DUMMY_H
 
+#define V3_OFFSET_X 0 * 32 //was 277
+#define V3_OFFSET_Y 0 * 32 //was 48
+
 //dummymode 32 vars (BlmapChill police guard)
 int m_LovedX;
 int m_LovedY;
