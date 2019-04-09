@@ -355,10 +355,10 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Pol
 		if (p == pNotThis)
 			continue;
 
-		//BlmapChill police freeze hole
-		if (PoliceFreezeHole == 1)
+		if (PoliceFreezeHole == 1) //BlmapChill police freeze hole
 		{
-			if ((!p->GetPlayer()->m_aHasItem[POLICE] && !p->m_PoliceHelper) || p->m_FreezeTime == 0 || p->m_Pos.y > 438 * 32 || p->m_Pos.x < 430 * 32 || p->m_Pos.x > 445 * 32 || p->m_Pos.y < 423 * 32) //only freezed tees in the hole coming from short entry into blmapchill police base
+			//only freezed tees in the hole coming from short entry into blmapchill police base
+			if ((!p->GetPlayer()->m_aHasItem[POLICE] && !p->m_PoliceHelper) || p->m_FreezeTime == 0 || p->m_Pos.y > 438 * 32 || p->m_Pos.x < 430 * 32 || p->m_Pos.x > 445 * 32 || p->m_Pos.y < 423 * 32)
 				continue;
 		}
 
