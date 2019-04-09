@@ -923,6 +923,9 @@ void CPlayer::Logout()
 		m_Kills = 0;
 		m_Deaths = 0;
 
+		for (int i = 0; i < NUM_ITEMS; i++)
+			m_aHasItem[i] = false;
+
 		GameServer()->SendChatTarget(m_ClientID, "Successfully logged out");
 	}
 	else
@@ -965,6 +968,7 @@ void CPlayer::SaveAccountStats(bool SetLoggedIn)
 		AccFile << m_Money << "\n";
 		AccFile << m_Kills << "\n";
 		AccFile << m_Deaths << "\n";
+		AccFile << m_aHasItem[SPOOKY_GHOST] << "\n";
 	}
 	else
 	{
@@ -988,6 +992,8 @@ void CPlayer::CheckLevel()
 		char aBuf[256];
 		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", m_Level);
 		GameServer()->SendChatTarget(m_ClientID, aBuf);
+
+		m_NeededXP += 2;
 
 		dbg_msg("acc", "Level: %d, NeededXP: %d", m_Level, m_NeededXP);
 	}

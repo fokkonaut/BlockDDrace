@@ -1402,6 +1402,8 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
 	std::fstream AccFile(aBuf);
 
+	///////////CHECKS
+
 	if (!std::ifstream(aBuf))
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesnt exist, please register first");
@@ -1442,6 +1444,10 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
+	///////////CHECKS
+
+	///////////STATS
+
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	dbg_msg("acc", "loaded level '%d'", atoi(aData));
@@ -1472,6 +1478,16 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	dbg_msg("acc", "loaded deaths '%d'", atoi(aData));
 	pPlayer->m_Deaths = atoi(aData);
 
+	///////////STATS
+
+	///////////ITEMS
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	dbg_msg("acc", "loaded spooky ghost '%d'", atoi(aData));
+	pPlayer->m_aHasItem[SPOOKY_GHOST] = atoi(aData);
+
+	///////////ITEMS
 
 	str_copy(pPlayer->m_AccountName, aUsername, sizeof(pPlayer->m_AccountName));
 	str_copy(pPlayer->m_AccountPassword, aPassword, sizeof(pPlayer->m_AccountPassword));
