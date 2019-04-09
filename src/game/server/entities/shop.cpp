@@ -1,5 +1,5 @@
 #include "character.h"
-#include <game\server\player.h>
+#include <game/server/player.h>
 
 void CCharacter::ShopWindow(int Dir)
 {
