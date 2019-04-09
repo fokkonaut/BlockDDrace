@@ -3371,6 +3371,14 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_Bloody = false;
 		}
 	}
+	else if (Extra == POLICE_HELPER)
+	{
+		str_format(aItem, sizeof aItem, "Police Helper");
+		if (Remove)
+			pChr->m_PoliceHelper = false;
+		else
+			pChr->m_PoliceHelper = true;
+	}
 
 	if (FromID == -1)
 	{
@@ -3391,6 +3399,13 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 				str_format(aMsg, sizeof aMsg, "You are no longer in %s", aItem);
 			else
 				str_format(aMsg, sizeof aMsg, "You are now in %s", aItem);
+		}
+		else if (Extra == POLICE_HELPER)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof aMsg, "You are no longer a %s", aItem);
+			else
+				str_format(aMsg, sizeof aMsg, "You are now a %s", aItem);
 		}
 		else
 		{

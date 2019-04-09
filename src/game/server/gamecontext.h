@@ -75,6 +75,7 @@ enum EXTRAS
 	STRAIGHT_GRENADE,
 	BLOODY,
 	STRONG_BLOODY,
+	POLICE_HELPER,
 	NUM_EXTRAS
 };
 
@@ -435,6 +436,7 @@ private:
 	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConBloody(IConsole::IResult *pResult, void *pUserData);
 	static void ConStrongBloody(IConsole::IResult *pResult, void *pUserData);
+	static void ConPoliceHelper(IConsole::IResult *pResult, void *pUserData);
 
 	enum
 	{
