@@ -2698,7 +2698,8 @@ void CCharacter::SendZoneMsgs()
 
 void CCharacter::DDRaceTick()
 {
-	mem_copy(&m_Input, &m_SavedInput, sizeof(m_Input));
+	if (!m_pPlayer->m_IsDummy)
+		mem_copy(&m_Input, &m_SavedInput, sizeof(m_Input));
 	if(m_Input.m_Direction != 0 || m_Input.m_Jump != 0)
 		m_LastMove = Server()->Tick();
 
