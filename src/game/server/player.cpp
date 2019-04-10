@@ -401,7 +401,7 @@ void CPlayer::Snap(int SnappingClient)
 		{
 			if (GameServer()->m_apPlayers[i] && !GameServer()->m_apPlayers[i]->m_IsDummy)
 			{
-				Ping += GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[i];
+				Ping += GameServer()->m_apPlayers[i]->m_Latency.m_Min;
 				c++;
 			}
 		}
