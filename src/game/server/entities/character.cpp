@@ -1437,7 +1437,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if (Dmg && m_pPlayer->m_VanillaMode)
+	else if ((Dmg && m_pPlayer->m_VanillaMode) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
