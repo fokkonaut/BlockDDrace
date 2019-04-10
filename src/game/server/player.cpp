@@ -396,7 +396,7 @@ void CPlayer::Snap(int SnappingClient)
 
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
-		int Ping, c;
+		int Ping = 0, c = 0;
 		for (int i = 0; i < MAX_CLIENTS; i++)
 		{
 			if (GameServer()->m_apPlayers[i] && !GameServer()->m_apPlayers[i]->m_IsDummy)
@@ -405,8 +405,8 @@ void CPlayer::Snap(int SnappingClient)
 				c++;
 			}
 		}
-		Ping = Ping / c;
-		pPlayerInfo->m_Latency = round(Ping + 3);
+		dbg_msg("ping", "ping: %d, c= %d", Ping, c);
+		pPlayerInfo->m_Latency = round(Ping / c + 3);
 	}
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
