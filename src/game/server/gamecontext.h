@@ -411,6 +411,7 @@ private:
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDummymode(IConsole::IResult *pResult, void *pUserData);
+	static void ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 

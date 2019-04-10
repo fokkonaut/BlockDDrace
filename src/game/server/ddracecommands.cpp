@@ -578,6 +578,12 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ConnectDefaultBots();
+}
+
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;

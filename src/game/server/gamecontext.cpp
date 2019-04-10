@@ -3963,6 +3963,6 @@ void CGameContext::ConnectDefaultBots()
 		ConnectDummy(32); //police
 	}
 
-	if (m_SpawnShopBot)
+	if (m_SpawnShopBot && GetShopBot() == -1)
 		ConnectDummy(99); // shop bot
 }
