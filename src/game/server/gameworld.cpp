@@ -385,6 +385,16 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Mod
 			if (p->m_Pos.y > 213 * 32 || p->m_Pos.x < 416 * 32 || p->m_Pos.x > 417 * 32 - 10 || p->m_Pos.y < 198 * 32)
 				continue;
 		}
+		if (Mode == 7) //for dummy 23
+		{
+			if (p->m_Pos.y > 200 * 32 || p->m_Pos.x < 466 * 32)
+				continue;
+		}
+		if (Mode == 8) //for dummy 23
+		{
+			if (p->m_FreezeTime == 0)
+				continue;
+		}
 
 		float Len = distance(Pos, p->m_Pos);
 		if (Len < ClosestRange || !ClosestRange)
