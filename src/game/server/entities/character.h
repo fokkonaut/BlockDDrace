@@ -347,6 +347,28 @@ public:
 	void PurchaseEnd(bool canceled);
 	bool m_ChangeShopPage;
 
+	// Setters/Getters because i don't want to modify vanilla vars access modifiers
+	int GetLastWeapon() { return m_LastWeapon; };
+	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
+	int GetActiveWeapon() { return m_Core.m_ActiveWeapon; };
+	void SetActiveWeapon(int ActiveWeap) {m_Core.m_ActiveWeapon = ActiveWeap; };
+	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
+	int GetArmor() { return m_Armor; };
+	void SetArmor(int Armor) {m_Armor = Armor; };
+	CCharacterCore GetCore() { return m_Core; };
+	void SetCore(CCharacterCore Core) {m_Core = Core; };
+	CCharacterCore* Core() { return &m_Core; };
+	bool GetWeaponGot(int Type) { return m_aWeapons[Type].m_Got; };
+	void SetWeaponGot(int Type, bool Value) { m_aWeapons[Type].m_Got = Value; };
+	int GetWeaponAmmo(int Type) { return m_aWeapons[Type].m_Ammo; };
+	void SetWeaponAmmo(int Type, int Value) { m_aWeapons[Type].m_Ammo = Value; };
+	bool IsAlive() { return m_Alive; };
+	void SetEmoteType(int EmoteType) { m_EmoteType = EmoteType; };
+	void SetEmoteStop(int EmoteStop) { m_EmoteStop = EmoteStop; };
+	void SetNinjaActivationDir(vec2 ActivationDir) { m_Ninja.m_ActivationDir = ActivationDir; };
+	void SetNinjaActivationTick(int ActivationTick) { m_Ninja.m_ActivationTick = ActivationTick; };
+	void SetNinjaCurrentMoveTime(int CurrentMoveTime) { m_Ninja.m_CurrentMoveTime = CurrentMoveTime; };
+
 
 	/////////dummymode variables
 
@@ -397,30 +419,40 @@ public:
 	int m_DummyBoredCounter;
 	int m_DummyBlockMode;
 
+	//dummymode 31 vars (ChillBlock5 police guard)
+	bool m_DummySpawnAnimation;
+	int m_DummySpawnAnimationDelay;
+	bool m_DummyPoliceGetSpeed;
+	bool m_DummyGotStuck;
+	bool m_DummyChillClosestPolice;
+	int m_DummyPoliceMode;
+	int m_DummyAttackMode;
+
+	//dummymode 23 vars
+	int m_DummyHelpBeforeHammerfly;
+	bool m_DummyHelpEmergency;
+	bool m_DummyHelpNoEmergency;
+	bool m_DummyHookAfterHammer;
+	bool m_DummyHelpBeforeFly;
+	bool m_DummyPanicWhileHelping;
+	bool m_DummyPanicBalance;
+	bool m_DummyMateFailed;
+	bool m_DummyHook;
+	bool m_DummyCollectedWeapons;
+	bool m_DummyMateCollectedWeapons;
+	bool m_DummyRocketJumped;
+	bool m_DummyRaceHelpHook;
+	bool m_DummyRaceHook;
+	int m_DummyRaceState;
+	int m_DummyRaceMode;
+	int m_DummyNothingHappensCounter;
+	int m_DummyPanicWeapon;
+	int m_DummyMateHelpMode;
+	int m_DummyMovementMode;
+	bool m_DummyFreezed;
+	int m_DummyEmoteTickNext;
+
 	/////////dummymode variables
-
-
-	// Setters/Getters because i don't want to modify vanilla vars access modifiers
-	int GetLastWeapon() { return m_LastWeapon; };
-	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
-	int GetActiveWeapon() { return m_Core.m_ActiveWeapon; };
-	void SetActiveWeapon(int ActiveWeap) {m_Core.m_ActiveWeapon = ActiveWeap; };
-	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
-	int GetArmor() { return m_Armor; };
-	void SetArmor(int Armor) {m_Armor = Armor; };
-	CCharacterCore GetCore() { return m_Core; };
-	void SetCore(CCharacterCore Core) {m_Core = Core; };
-	CCharacterCore* Core() { return &m_Core; };
-	bool GetWeaponGot(int Type) { return m_aWeapons[Type].m_Got; };
-	void SetWeaponGot(int Type, bool Value) { m_aWeapons[Type].m_Got = Value; };
-	int GetWeaponAmmo(int Type) { return m_aWeapons[Type].m_Ammo; };
-	void SetWeaponAmmo(int Type, int Value) { m_aWeapons[Type].m_Ammo = Value; };
-	bool IsAlive() { return m_Alive; };
-	void SetEmoteType(int EmoteType) { m_EmoteType = EmoteType; };
-	void SetEmoteStop(int EmoteStop) { m_EmoteStop = EmoteStop; };
-	void SetNinjaActivationDir(vec2 ActivationDir) { m_Ninja.m_ActivationDir = ActivationDir; };
-	void SetNinjaActivationTick(int ActivationTick) { m_Ninja.m_ActivationTick = ActivationTick; };
-	void SetNinjaCurrentMoveTime(int CurrentMoveTime) { m_Ninja.m_CurrentMoveTime = CurrentMoveTime; };
 };
 
 enum
