@@ -1060,7 +1060,7 @@ void CCharacter::BlockDDraceTick()
 	}
 
 
-	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 40.0f, this);
+	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
 	if (pPas && pPas->m_Passive)
 	{
 		m_Core.m_Collision = false;
