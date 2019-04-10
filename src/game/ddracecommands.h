@@ -32,7 +32,7 @@ CONSOLE_COMMAND("down", "", CFGFLAG_SERVER|CMDFLAG_TEST, ConGoDown, this, "Makes
 
 CONSOLE_COMMAND("connectdummy", "?i[amount] ?i[dummymode]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
 CONSOLE_COMMAND("disconnectdummy", "v[id]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v")
-CONSOLE_COMMAND("dummymode", "v[id] i[dummymode]", CFGFLAG_SERVER, ConDummymode, this, "Sets dummymode of dummy v")
+CONSOLE_COMMAND("dummymode", "v[id] ?i[dummymode]", CFGFLAG_SERVER, ConDummymode, this, "Sets or shows the dummymode of dummy v")
 
 CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER|CFGFLAG_CHAT, ConPlayerInfo, this, "Shows information about the player s")
 

@@ -559,15 +559,23 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CCharacter* pChr = pSelf->GetPlayerChar(pResult->GetInteger(0));
 
-	if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+	if (pResult->NumArguments() == 2)
 	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-		return;
+		if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+		{
+			char aBuf[64];
+			str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		else if (pChr && pChr->GetPlayer()->m_IsDummy)
+			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
 	}
 	else if (pChr && pChr->GetPlayer()->m_IsDummy)
-		pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
+	{
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
 }
 
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)
