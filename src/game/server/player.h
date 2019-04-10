@@ -183,6 +183,7 @@ public:
 
 	bool m_IsDummy;
 	int m_Dummymode;
+	int m_FakePing;
 
 	bool m_VanillaMode;
 	bool m_VanillaModeStart;
