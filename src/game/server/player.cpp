@@ -394,7 +394,22 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pPlayerInfo)
 		return;
 
-	pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
+	if (m_IsDummy && g_Config.m_SvFakeBotPing)
+	{
+		int Ping, c;
+		for (int i = 0; i < MAX_CLIENTS; i++)
+		{
+			if (GameServer()->m_apPlayers[i] && !GameServer()->m_apPlayers[i]->m_IsDummy)
+			{
+				Ping += GameServer()->m_apPlayers[i]->m_aActLatency[i];
+				c++;
+			}
+		}
+		Ping = Ping / c;
+		pPlayerInfo->m_Latency = Ping + 3;
+	}
+	else
+		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
