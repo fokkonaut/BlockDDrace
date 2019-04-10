@@ -406,7 +406,7 @@ void CPlayer::Snap(int SnappingClient)
 			}
 		}
 		Ping = Ping / c;
-		pPlayerInfo->m_Latency = Ping + 3;
+		pPlayerInfo->m_Latency = round(Ping + 3);
 	}
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
