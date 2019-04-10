@@ -1,6 +1,5 @@
 #include "character.h"
 #include <game/server/player.h>
-#include "dummy.h"
 
 void CCharacter::DummyTick()
 {
