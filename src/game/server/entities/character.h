@@ -351,21 +351,51 @@ public:
 	/////////dummymode variables
 
 	//dummymode 32 vars (BlmapChill police guard)
-	int m_LovedX;
-	int m_LovedY;
-	int m_LowerPanic;
+	int m_DummyLovedX;
+	int m_DummyLovedY;
+	int m_DummyLowerPanic;
 	int m_DummySpeed;
-	int m_HelpMode; //0=off 1=right side 2=right_side_extreme
-	bool m_HelpHook;
-	bool m_ClosestPolice;
+	int m_DummyHelpMode;
+	bool m_DummyHelpHook;
+	bool m_DummyClosestPolice;
 
 	int m_DummyGrenadeJump;
 	bool m_DummyTouchedGround;
 	bool m_DummyAlreadyBeenHere;
 	bool m_DummyStartGrenade;
 	bool m_DummyUsedDJ;
-	int m_DummySpawnTeleporter; // 1 = left, 2 = middle, 3 = right (the totele 9 at spawn)
-	bool m_ReachedCinemaEntrance;
+	int m_DummySpawnTeleporter;
+	bool m_DummyReachedCinemaEntrance;
+
+
+	//dummymode 29 vars (ChillBlock5 blocker)
+	int m_DummyFreezeBlockTrick;
+	int m_DummyPanicDelay;
+	bool m_DummyStartHook;
+	bool m_DummySpeedRight;
+	bool m_DummyTrick3Check;
+	bool m_DummyTrick3Panic;
+	bool m_DummyTrick3StartCount;
+	bool m_DummyTrick3PanicLeft;
+	bool m_DummyTrick4HasStartPos;
+	bool m_DummyLockBored;
+	bool m_DummyDoBalance;
+	bool m_DummyAttackedOnSpawn;
+	bool m_DummyMovementToBlockArea;
+	bool m_DummyPlannedMovement;
+	bool m_DummyJumped;
+	bool m_DummyHooked;
+	bool m_DummyMovedLeft;
+	bool m_DummyHookDelay;
+	bool m_DummyRuled;
+	bool m_DummyEmergency;
+	bool m_DummyLeftFreezeFull;
+	bool m_DummyGetSpeed;
+	bool m_DummyBored;
+	bool m_DummySpecialDefend;
+	bool m_DummySpecialDefendAttack;
+	int m_DummyBoredCounter;
+	int m_DummyBlockMode;
 
 	/////////dummymode variables
 

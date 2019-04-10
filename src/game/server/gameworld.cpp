@@ -343,7 +343,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, float Radius, CEntity *pNotTh
 	return pClosest;
 }
 
-CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int PoliceFreezeHole)
+CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Mode)
 {
 	// Find other players
 	float ClosestRange = 0.f;
@@ -355,10 +355,34 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Pol
 		if (p == pNotThis)
 			continue;
 
-		if (PoliceFreezeHole == 1) //BlmapChill police freeze hole
+		if (Mode == 1) //BlmapChill police freeze hole
 		{
-			//only freezed tees in the hole coming from short entry into blmapchill police base
 			if ((!p->GetPlayer()->m_aHasItem[POLICE] && !p->m_PoliceHelper) || p->m_FreezeTime == 0 || p->m_Pos.y > 438 * 32 || p->m_Pos.x < 430 * 32 || p->m_Pos.x > 445 * 32 || p->m_Pos.y < 423 * 32)
+				continue;
+		}
+		if (Mode == 2) //for dummy 29
+		{
+			if (p->m_Pos.y > 213 * 32 || p->m_Pos.x < 416 * 32 || p->m_Pos.x > 446 * 32 || p->m_Pos.y < 198 * 32)
+				continue;
+		}
+		if (Mode == 3) //for dummy 29
+		{
+			if (p->m_Pos.y > 213 * 32 || p->m_Pos.x < 434 * 32 || p->m_Pos.x > 441 * 32 || p->m_Pos.y < 198 * 32)
+				continue;
+		}
+		if (Mode == 4) //for dummy 29
+		{
+			if (p->m_Pos.y > 213 * 32 || p->m_Pos.x < 417 * 32 || p->m_Pos.x > 444 * 32 || p->m_Pos.y < 198 * 32)
+				continue;
+		}
+		if (Mode == 5) //for dummy 29
+		{
+			if (p->m_Pos.y < 213 * 32 || p->m_Pos.x > 429 * 32 || p->m_Pos.x < 419 * 32 || p->m_Pos.y > 218 * 32 + 60)
+				continue;
+		}
+		if (Mode == 6) //for dummy 29
+		{
+			if (p->m_Pos.y > 213 * 32 || p->m_Pos.x < 416 * 32 || p->m_Pos.x > 417 * 32 - 10 || p->m_Pos.y < 198 * 32)
 				continue;
 		}
 
