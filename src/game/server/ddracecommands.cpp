@@ -449,10 +449,6 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 	char aBuf[64];
 	str_format(aBuf, sizeof(aBuf), "==== [PLAYER INFO] '%s' ====", pResult->GetString(0));
 	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	if (pChr)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
-	else
-		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
 	if (pSelf->Server()->GetAuthedState(ID) != AUTHED_NO)
 	{
 		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(ID));
@@ -460,6 +456,12 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 	}
 	str_format(aBuf, sizeof(aBuf), "ClientID: %d", ID);
 	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	if (pChr)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
+	else if (pPlayer->GetTeam() == TEAM_SPECTATORS)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Dead");
 	if (pPlayer->m_IsLoggedIn)
 	{
 		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pPlayer->m_AccountName);
