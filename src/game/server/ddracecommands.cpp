@@ -432,12 +432,19 @@ void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int ID = pSelf->GetCIDByName(pResult->GetString(0));
 
+	if (pSelf->Server()->GetAuthedState(pResult->m_ClientID) != AUTHED_ADMIN)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Missing permission");
+		return;
+	}
+
+	int ID = pSelf->GetCIDByName(pResult->GetString(0));
 	if (ID < 0)
 		return;
 
 	CCharacter* pChr = pSelf->GetPlayerChar(ID);
+	CPlayer* pPlayer = pSelf->m_apPlayers[ID];
 
 	char aBuf[64];
 	str_format(aBuf, sizeof(aBuf), "==== [PLAYER INFO] '%s' ====", pResult->GetString(0));
@@ -445,82 +452,86 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
 	else
-	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
-		return;
-	}
-	if (pSelf->Server()->GetAuthedState(pChr->GetPlayer()->GetCID()) != AUTHED_NO)
+	if (pSelf->Server()->GetAuthedState(ID) != AUTHED_NO)
 	{
-		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(pChr->GetPlayer()->GetCID()));
+		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(ID));
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	if (pChr->GetPlayer()->m_IsLoggedIn)
+	str_format(aBuf, sizeof(aBuf), "ClientID: %d", ID);
+	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	if (pPlayer->m_IsLoggedIn)
 	{
-		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pChr->GetPlayer()->m_AccountName);
+		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pPlayer->m_AccountName);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
 	else
 		pSelf->SendChatTarget(pResult->m_ClientID, "Account: Not logged in");
-	if (pChr->GetPlayer()->m_InfJetpack)
+	if (pPlayer->m_InfJetpack)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Jetpack: True");
-	if (pChr->GetPlayer()->m_InfPlasmaGun)
+	if (pPlayer->m_InfPlasmaGun)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Plasma Gun: True");
-	if (pChr->GetPlayer()->m_InfHeartGun)
+	if (pPlayer->m_InfHeartGun)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Heart Gun: True");
-	if (pChr->GetPlayer()->m_InfRainbow)
+	if (pPlayer->m_InfRainbow)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Rainbow: True");
-	if (pChr->GetPlayer()->m_InfAtom)
+	if (pPlayer->m_InfAtom)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Atom: True");
-	if (pChr->GetPlayer()->m_InfTrail)
+	if (pPlayer->m_InfTrail)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Trail: True");
-	if (pChr->GetPlayer()->m_InfMeteors > 0)
+	if (pPlayer->m_InfMeteors > 0)
 	{
-		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pChr->GetPlayer()->m_InfMeteors);
+		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	if (pChr->GetPlayer()->m_VanillaMode)
+	if (pPlayer->m_VanillaMode)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Vanilla Mode: True");
 
-	if (pChr->GetPlayer()->GetCharacter()->m_DeepFreeze)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
-	else if (pChr->GetPlayer()->GetCharacter()->isFreezed)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
-	else if (pChr->GetPlayer()->GetCharacter()->m_FreezeTime)
+	if (pChr)
 	{
-		str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pChr->m_FreezeTime);
+		if (pChr->m_DeepFreeze)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
+		else if (pChr->isFreezed)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
+		else if (pChr->m_FreezeTime)
+		{
+			str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pChr->m_FreezeTime);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		else
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: False");
+		if (pChr->m_SuperJump)
+			pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
+		if (pChr->m_EndlessHook)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
+		if (pChr->m_Jetpack)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
+		if (pChr->m_PlasmaGun)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Plasma Gun: True");
+		if (pChr->m_HeartGun)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Heart Gun: True");
+		if (pChr->m_Rainbow)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
+		if (pChr->m_Atom)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
+		if (pChr->m_Trail)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
+		if (pChr->m_Bloody)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Bloody: True");
+		if (pChr->m_StrongBloody)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Strong Bloody: True");
+		if (pChr->m_Meteors > 0)
+		{
+			str_format(aBuf, sizeof(aBuf), "Meteors: %d", pChr->m_Meteors);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		if (pChr->m_Passive)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
+		if (pChr->m_PoliceHelper)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Police Helper: True");
+		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	else
-		pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: False");
-	if (pChr->m_SuperJump)
-		pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
-	if (pChr->m_EndlessHook)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
-	if (pChr->m_Jetpack)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
-	if (pChr->m_PlasmaGun)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Plasma Gun: True");
-	if (pChr->m_HeartGun)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Heart Gun: True");
-	if (pChr->m_Rainbow)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
-	if (pChr->m_Atom)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
-	if (pChr->m_Trail)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
-	if (pChr->m_Bloody)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Bloody: True");
-	if (pChr->m_StrongBloody)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Strong Bloody: True");
-	if (pChr->m_Meteors > 0)
-	{
-		str_format(aBuf, sizeof(aBuf), "Meteors: %d", pChr->m_Meteors);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	}
-	if (pChr->m_Passive)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
-	str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
-	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 }
 
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
