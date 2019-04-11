@@ -397,7 +397,7 @@ void CPlayer::Snap(int SnappingClient)
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
 		if (Server()->Tick() % 200 == 0)
-			m_FakePing = 32 + rand() % 9;
+			m_FakePing = 32 + rand() % 11;
 		pPlayerInfo->m_Latency = m_FakePing;
 	}
 	else
