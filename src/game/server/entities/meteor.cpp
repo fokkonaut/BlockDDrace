@@ -19,7 +19,7 @@ void CMeteor::Tick()
 {
 	CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
 	if (
-		GameServer()->m_ClientLeftServer[m_Owner]
+		!GameServer()->m_apPlayers[m_Owner]
 		|| (!pChr && !m_Infinite)
 		|| (m_Infinite && pChr && !pChr->GetPlayer()->m_InfMeteors)
 		|| (!m_Infinite && pChr && !pChr->m_Meteors)

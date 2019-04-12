@@ -124,7 +124,7 @@ void CPickup::Tick()
 
 						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime)))))
 						{
-							if (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponAmmo(m_Subtype) < 10)
+							if (pChr->GetPlayer()->m_VanillaMode && (pChr->GetWeaponAmmo(m_Subtype) < 10) || !pChr->GetWeaponGot(m_Subtype))
 								pChr->GiveWeapon(m_Subtype, false, 10);
 							else if (!pChr->GetPlayer()->m_VanillaMode)
 								pChr->GiveWeapon(m_Subtype);

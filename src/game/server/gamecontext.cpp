@@ -1095,12 +1095,10 @@ void CGameContext::ProgressVoteOptions(int ClientID)
 
 void CGameContext::OnClientEnter(int ClientID)
 {
-	m_ClientLeftServer[ClientID] = false;
 	//world.insert_entity(&players[client_id]);
 	m_apPlayers[ClientID]->Respawn();
 	// init the player
 	Score()->PlayerData(ClientID)->Reset();
-	//m_apPlayers[ClientID]->m_Score = -9999;
 
 	CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
 	ScoreMsg.AddInt(m_apPlayers[ClientID]->m_AllowTimeScore);		//disallow time score when joining
@@ -1217,7 +1215,6 @@ void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
 	if (m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_IsLoggedIn)
 		m_apPlayers[ClientID]->Logout();
-	m_ClientLeftServer[ClientID] = true;
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);
 	delete m_apPlayers[ClientID];

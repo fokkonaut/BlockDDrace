@@ -61,9 +61,12 @@ void CWeapon::IsShieldNear()
 
 		if (pShield->GetType() == POWERUP_ARMOR)
 		{
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
-			m_EreaseWeapon = true;
-			Reset();
+			if (m_Owner != -1 && !GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
+			{
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
+				m_EreaseWeapon = true;
+				Reset();
+			}
 		}
 	}
 }
@@ -131,10 +134,8 @@ void CWeapon::Pickup()
 
 void CWeapon::Tick()
 {
-	if (m_Owner != -1 && GameServer()->m_ClientLeftServer[m_Owner])
-	{
+	if (!GameServer()->m_apPlayers[m_Owner])
 		m_Owner = -1;
-	}
 
 	// weapon hits death-tile or left the game layer, reset it
 	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))

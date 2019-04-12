@@ -288,8 +288,6 @@ public:
 	bool PlayerModerating();
 	void ForceVote(int EnforcerID, bool Success);
 
-	bool m_ClientLeftServer[MAX_CLIENTS];
-
 	void FixMotd();
 	char m_aMotd[900];
 

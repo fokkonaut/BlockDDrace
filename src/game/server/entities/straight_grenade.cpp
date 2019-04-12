@@ -41,7 +41,7 @@ void CStraightGrenade::Tick()
 		return;
 	}
 
-	if (m_Owner != -1 && GameServer()->m_ClientLeftServer[m_Owner])
+	if (!GameServer()->m_apPlayers[m_Owner])
 	{
 		m_Owner = -1;
 
