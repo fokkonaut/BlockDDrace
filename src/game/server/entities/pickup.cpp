@@ -137,7 +137,7 @@ void CPickup::Tick()
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
 							else if (m_Subtype == WEAPON_SHOTGUN || m_Subtype == WEAPON_RIFLE)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
-							else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN)
+							else if (m_Subtype == WEAPON_HAMMER || m_Subtype == WEAPON_GUN)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 							if (pChr->GetPlayer())
