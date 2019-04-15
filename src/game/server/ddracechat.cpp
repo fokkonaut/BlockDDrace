@@ -1255,7 +1255,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 	{
 		CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
 		ScoreMsg.AddInt(pPlayer->m_AllowTimeScore);
-		pSelf->Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL, pResult->m_ClientID, true);
+		pSelf->Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL|MSGFLAG_RECORD, pResult->m_ClientID);
 	}
 
 	return;

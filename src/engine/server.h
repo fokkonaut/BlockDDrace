@@ -47,7 +47,7 @@ public:
 	virtual void BotJoin(int BotID) = 0;
 	virtual void BotLeave(int BotID) = 0;
 
-	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID, bool System = false) = 0;
+	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID) = 0;
 
 	template<class T>
 	int SendPackMsg(T *pMsg, int Flags, int ClientID)

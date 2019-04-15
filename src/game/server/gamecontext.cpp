@@ -1102,7 +1102,7 @@ void CGameContext::OnClientEnter(int ClientID)
 
 	CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
 	ScoreMsg.AddInt(m_apPlayers[ClientID]->m_AllowTimeScore);		//disallow time score when joining
-	Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL, ClientID, true);
+	Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL|MSGFLAG_RECORD, ClientID);
 	m_apPlayers[ClientID]->m_DisplayScore = 1;						//-> level score instead
 
 
