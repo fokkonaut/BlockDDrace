@@ -1230,8 +1230,6 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
 
-	bool ChangedScore = true;
-
 	if (!str_comp_nocase(pResult->GetString(0), "time"))
 	{
 		pPlayer->m_AllowTimeScore = 1;
@@ -1248,17 +1246,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You can choose what the player score will display:");
 		pSelf->SendChatTarget(pResult->m_ClientID, "time, level");
-		ChangedScore = false;
 	}
-
-	if (ChangedScore)
-	{
-		CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
-		ScoreMsg.AddInt(pPlayer->m_AllowTimeScore);
-		pSelf->Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL|MSGFLAG_RECORD, pResult->m_ClientID);
-	}
-
-	return;
 }
 
 void CGameContext::ConSpookyGhostChat(IConsole::IResult * pResult, void * pUserData)
@@ -1266,7 +1254,6 @@ void CGameContext::ConSpookyGhostChat(IConsole::IResult * pResult, void * pUserD
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SendChatTarget(pResult->m_ClientID, "The Spooky Ghost is an extra, that can be toggled like this:");
 	pSelf->SendChatTarget(pResult->m_ClientID, "Hold TAB (or other scoreboard key) and shoot two times with your gun.");
-	return;
 }
 
 void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)

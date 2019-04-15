@@ -124,6 +124,12 @@ void CCharacter::Destroy()
 
 void CCharacter::SetWeapon(int W)
 {
+	if (!GetWeaponGot(W))
+	{
+		SetAvailableWeapon();
+		return;
+	}
+
 	if(W == m_Core.m_ActiveWeapon)
 		return;
 
@@ -2887,8 +2893,8 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 
 	if (Remove)
 	{
-		if (GetActiveWeapon()== Weapon)
-			SetActiveWeapon(WEAPON_GUN);
+		if (GetActiveWeapon() == Weapon)
+			SetWeapon(WEAPON_GUN);
 	}
 	else
 	{
@@ -3018,18 +3024,15 @@ int CCharacter::GetAimDir()
 	return 0;
 }
 
-void CCharacter::SetWeaponThatChrHas()
+void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 {
-	if (m_aWeapons[WEAPON_GUN].m_Got)
-		SetWeapon(WEAPON_GUN);
-	else if (m_aWeapons[WEAPON_HAMMER].m_Got)
-		SetWeapon(WEAPON_HAMMER);
-	else if (m_aWeapons[WEAPON_SHOTGUN].m_Got)
-		SetWeapon(WEAPON_SHOTGUN);
-	else if (m_aWeapons[WEAPON_GRENADE].m_Got)
-		SetWeapon(WEAPON_GRENADE);
-	else if (m_aWeapons[WEAPON_RIFLE].m_Got)
-		SetWeapon(WEAPON_RIFLE);
+	if (GetWeaponGot(PreferedWeapon))
+		SetWeapon(PreferedWeapon);
+	else for (int i = NUM_WEAPONS-1; i>-1; i--)
+	{
+		if (GetWeaponGot(i))
+			SetWeapon(i);
+	}
 }
 
 void CCharacter::DropWeapon(int WeaponID)
@@ -3073,7 +3076,7 @@ void CCharacter::DropWeapon(int WeaponID)
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
 	}
 
-	SetWeaponThatChrHas();
+	SetWeapon(WEAPON_GUN);
 }
 
 void CCharacter::SetSpookyGhost()
@@ -3329,7 +3332,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 				{
 					if (i == NUM_WEAPONS)
 						pChr->m_aWeaponsBackup[NUM_WEAPONS][1] = 0;
-					else if (pChr->m_aWeapons[i].m_Got && pChr->GetWeaponAmmo(i))
+					else if (pChr->m_aWeapons[i].m_Got && pChr->GetWeaponAmmo(i) && i != WEAPON_HAMMER)
 					{
 						pChr->m_aWeaponsBackup[i][1] = 10;
 						pChr->m_aWeapons[i].m_Ammo = 10;

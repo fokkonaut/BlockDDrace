@@ -1100,11 +1100,8 @@ void CGameContext::OnClientEnter(int ClientID)
 	// init the player
 	Score()->PlayerData(ClientID)->Reset();
 
-	CMsgPacker ScoreMsg(NETMSG_TIME_SCORE);
-	ScoreMsg.AddInt(m_apPlayers[ClientID]->m_AllowTimeScore);		//disallow time score when joining
-	Server()->SendMsg(&ScoreMsg, MSGFLAG_VITAL|MSGFLAG_RECORD, ClientID);
-	m_apPlayers[ClientID]->m_DisplayScore = 1;						//-> level score instead
-
+	// level score is the default score
+	m_apPlayers[ClientID]->m_DisplayScore = 1;
 
 	// Can't set score here as LoadScore() is threaded, run it in
 	// LoadScoreThreaded() instead

@@ -406,6 +406,11 @@ private:
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConHammer(IConsole::IResult *pResult, void *pUserData);
+	static void ConGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnHammer(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnGun(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDummymode(IConsole::IResult *pResult, void *pUserData);

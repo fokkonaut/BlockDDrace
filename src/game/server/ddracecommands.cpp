@@ -168,6 +168,18 @@ void CGameContext::ConRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, false);
 }
 
+void CGameContext::ConHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, false);
+}
+
+void CGameContext::ConGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, false);
+}
+
 void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -621,6 +633,18 @@ void CGameContext::ConUnRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, true);
 }
 
+void CGameContext::ConUnHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, true);
+}
+
+void CGameContext::ConUnGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, true);
+}
+
 void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
@@ -655,13 +679,18 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		return;
 	}
 
-	int Amount = pChr->GetPlayer()->m_VanillaMode ? 10 : -1;
+	int Amount = (pChr->GetPlayer()->m_VanillaMode && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
 	if (Weapon == -1)
 	{
 		pChr->GiveWeapon(WEAPON_SHOTGUN, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_GRENADE, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_RIFLE, Remove, Amount);
+		if (!Remove)
+		{
+			pChr->GiveWeapon(WEAPON_HAMMER, Remove);
+			pChr->GiveWeapon(WEAPON_GUN, Remove, Amount);
+		}
 	}
 	else
 	{

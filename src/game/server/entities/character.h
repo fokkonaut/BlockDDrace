@@ -102,7 +102,7 @@ public:
 	bool isFreezed;
 
 	void DropWeapon(int WeaponID);
-	void SetWeaponThatChrHas();
+	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
 
 	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1, bool Silent = false);
