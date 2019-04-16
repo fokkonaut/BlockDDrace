@@ -329,20 +329,6 @@ void CCharacter::DoWeaponSwitch()
 	SetWeapon(m_QueuedWeapon);
 }
 
-void CCharacter::UpdateWeaponIndicator()
-{
-	if (!m_WeaponIndicator)
-		return;
-
-	char aBuf[256];
-	char aSpaces[128];
-	char aWeapon[32];
-	GetWeaponName(GetActiveWeapon(), aWeapon);
-	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
-	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", aWeapon, aSpaces);
-	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
-}
-
 void CCharacter::HandleWeaponSwitch()
 {
 	int WantedWeapon = GetActiveWeapon();
@@ -3150,6 +3136,20 @@ void CCharacter::SetActiveWeapon(int Weapon)
 		m_Core.m_ActiveWeapon = Weapon;
 
 	UpdateWeaponIndicator();
+}
+
+void CCharacter::UpdateWeaponIndicator()
+{
+	if (!m_WeaponIndicator)
+		return;
+
+	char aBuf[256];
+	char aSpaces[128];
+	char aWeapon[32];
+	GetWeaponName(GetActiveWeapon(), aWeapon);
+	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
+	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", aWeapon, aSpaces);
+	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
 void CCharacter::GetWeaponName(int Weapon, char* pWeaponName)
