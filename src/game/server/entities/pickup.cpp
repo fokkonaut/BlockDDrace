@@ -148,21 +148,21 @@ void CPickup::Tick()
 
 				case POWERUP_NINJA:
 					{
-						if (!pChr->GetPlayer()->m_SpookyGhost)
-						{
-							// activate ninja on target player
-							pChr->GiveNinja();
-							if (pChr->GetPlayer()->m_VanillaMode)
-							{
-								RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+						if (pChr->GetPlayer()->m_SpookyGhost)
+							continue;
 
-								// loop through all players, setting their emotes
-								CCharacter *pC = static_cast<CCharacter *>(GameServer()->m_World.FindFirst(CGameWorld::ENTTYPE_CHARACTER));
-								for (; pC; pC = (CCharacter *)pC->TypeNext())
-								{
-									if (pC != pChr)
-										pC->SetEmote(EMOTE_SURPRISE, Server()->Tick() + Server()->TickSpeed());
-								}
+						// activate ninja on target player
+						pChr->GiveNinja();
+						if (pChr->GetPlayer()->m_VanillaMode)
+						{
+							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+
+							// loop through all players, setting their emotes
+							CCharacter *pC = static_cast<CCharacter *>(GameServer()->m_World.FindFirst(CGameWorld::ENTTYPE_CHARACTER));
+							for (; pC; pC = (CCharacter *)pC->TypeNext())
+							{
+								if (pC != pChr)
+									pC->SetEmote(EMOTE_SURPRISE, Server()->Tick() + Server()->TickSpeed());
 							}
 						}
 						break;

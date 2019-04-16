@@ -76,6 +76,7 @@ enum EXTRAS
 	BLOODY,
 	STRONG_BLOODY,
 	POLICE_HELPER,
+	SCROLL_NINJA,
 	NUM_EXTRAS
 };
 
@@ -408,6 +409,7 @@ private:
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConScrollNinja(IConsole::IResult *pResult, void *pUserData);
 	static void ConHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnHammer(IConsole::IResult *pResult, void *pUserData);

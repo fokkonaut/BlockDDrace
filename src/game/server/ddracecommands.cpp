@@ -168,6 +168,7 @@ void CGameContext::ConRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, false);
 }
 
+
 void CGameContext::ConHammer(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -178,6 +179,15 @@ void CGameContext::ConGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, false);
+}
+
+void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SetExtra(SCROLL_NINJA, Victim, false, pChr->m_ScrollNinja, pResult->m_ClientID);
 }
 
 void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)

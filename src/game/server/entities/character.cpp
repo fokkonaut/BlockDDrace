@@ -223,24 +223,27 @@ void CCharacter::HandleNinja()
 	if(m_Core.m_ActiveWeapon != WEAPON_NINJA)
 		return;
 
-	if ((Server()->Tick() - m_Ninja.m_ActivationTick) > (g_pData->m_Weapons.m_Ninja.m_Duration * Server()->TickSpeed() / 1000))
+	if (!m_ScrollNinja)
 	{
-		// time's up, return
-		RemoveNinja();
-		return;
+		if ((Server()->Tick() - m_Ninja.m_ActivationTick) > (g_pData->m_Weapons.m_Ninja.m_Duration * Server()->TickSpeed() / 1000))
+		{
+			// time's up, return
+			RemoveNinja();
+			return;
+		}
+
+		int NinjaTime = m_Ninja.m_ActivationTick + (g_pData->m_Weapons.m_Ninja.m_Duration * Server()->TickSpeed() / 1000) - Server()->Tick();
+
+		if (NinjaTime % Server()->TickSpeed() == 0 && NinjaTime / Server()->TickSpeed() <= 5)
+		{
+			GameServer()->CreateDamageInd(m_Pos, 0, NinjaTime / Server()->TickSpeed(), Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+		}
+
+		//m_Armor = 10 - (NinjaTime / 15);
+
+		// force ninja Weapon
+		SetWeapon(WEAPON_NINJA);
 	}
-
-	int NinjaTime = m_Ninja.m_ActivationTick + (g_pData->m_Weapons.m_Ninja.m_Duration * Server()->TickSpeed() / 1000) - Server()->Tick();
-
-	if (NinjaTime % Server()->TickSpeed() == 0 && NinjaTime / Server()->TickSpeed() <= 5)
-	{
-		GameServer()->CreateDamageInd(m_Pos, 0, NinjaTime / Server()->TickSpeed(), Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-	}
-
-	m_Armor = 10 - (NinjaTime / 15);
-
-	// force ninja Weapon
-	SetWeapon(WEAPON_NINJA);
 
 	m_Ninja.m_CurrentMoveTime--;
 
@@ -319,7 +322,7 @@ void CCharacter::HandleNinja()
 void CCharacter::DoWeaponSwitch()
 {
 	// make sure we can switch
-	if(m_ReloadTimer != 0 || m_QueuedWeapon == -1 || m_aWeapons[WEAPON_NINJA].m_Got || !m_aWeapons[m_QueuedWeapon].m_Got)
+	if(m_ReloadTimer != 0 || m_QueuedWeapon == -1 || (m_aWeapons[WEAPON_NINJA].m_Got && !m_ScrollNinja) || !m_aWeapons[m_QueuedWeapon].m_Got)
 		return;
 
 	// switch Weapon
@@ -788,16 +791,19 @@ void CCharacter::HandleWeapons()
 
 void CCharacter::GiveNinja()
 {
-	m_Ninja.m_ActivationTick = Server()->Tick();
 	m_aWeapons[WEAPON_NINJA].m_Got = true;
 	if (!m_FreezeTime)
 		m_aWeapons[WEAPON_NINJA].m_Ammo = -1;
+	if (!m_aWeapons[WEAPON_NINJA].m_Got)
+		GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+
+	if (m_ScrollNinja)
+		return;
+
+	m_Ninja.m_ActivationTick = Server()->Tick();
 	if (m_Core.m_ActiveWeapon != WEAPON_NINJA)
 		m_LastWeapon = m_Core.m_ActiveWeapon;
 	m_Core.m_ActiveWeapon = WEAPON_NINJA;
-
-	if(!m_aWeapons[WEAPON_NINJA].m_Got)
-		GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 }
 
 void CCharacter::RemoveNinja()
@@ -805,8 +811,7 @@ void CCharacter::RemoveNinja()
 	m_Ninja.m_CurrentMoveTime = 0;
 	m_aWeapons[WEAPON_NINJA].m_Got = false;
 	m_Core.m_ActiveWeapon = m_LastWeapon;
-
-		SetWeapon(m_Core.m_ActiveWeapon);
+	SetWeapon(m_Core.m_ActiveWeapon);
 }
 
 void CCharacter::SetEmote(int Emote, int Tick)
@@ -2751,7 +2756,7 @@ void CCharacter::DDRacePostCoreTick()
 
 	if (m_pPlayer->m_DefEmoteReset >= 0 && m_pPlayer->m_DefEmoteReset <= Server()->Tick())
 	{
-	m_pPlayer->m_DefEmoteReset = -1;
+		m_pPlayer->m_DefEmoteReset = -1;
 		m_EmoteType = m_pPlayer->m_DefEmote = EMOTE_NORMAL;
 		m_EmoteStop = -1;
 	}
@@ -2809,6 +2814,43 @@ void CCharacter::DDRacePostCoreTick()
 	HandleBroadcast();
 }
 
+void CCharacter::BackupWeapons()
+{
+	if (!m_WeaponsBackupped)
+	{
+		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		{
+			if (i == NUM_WEAPONS)
+				m_aWeaponsBackup[i][1] = m_Armor;
+			else
+			{
+				m_aWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo;
+				m_aWeapons[i].m_Ammo = 0;
+			}
+		}
+		m_WeaponsBackupped = true;
+	}
+}
+
+void CCharacter::LoadWeaponBackup()
+{
+	if (m_WeaponsBackupped)
+	{
+		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		{
+			if (i == NUM_WEAPONS)
+				m_Armor = m_aWeaponsBackup[i][1];
+			else
+			{
+				m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
+				if (i == WEAPON_NINJA)
+					m_aWeapons[i].m_Ammo = -1;
+			}
+		}
+		m_WeaponsBackupped = false;
+	}
+}
+
 bool CCharacter::Freeze(int Seconds)
 {
 	isFreezed = true;
@@ -2816,20 +2858,7 @@ bool CCharacter::Freeze(int Seconds)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
 	{
-		if (!m_WeaponsBackupped)
-		{
-			for (int i = 0; i < NUM_WEAPONS+1; i++)
-			{
-				if (i == NUM_WEAPONS)
-					m_aWeaponsBackup[i][1] = m_Armor;
-				else if (m_aWeapons[i].m_Got)
-				{
-					m_aWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo; 
-					m_aWeapons[i].m_Ammo = 0;
-				}
-			}
-			m_WeaponsBackupped = true;
-		}
+		BackupWeapons();
 
 		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
 		{
@@ -2852,21 +2881,8 @@ bool CCharacter::UnFreeze()
 {
 	if (m_FreezeTime > 0)
 	{
-		if (m_WeaponsBackupped)
-		{
-			for (int i = 0; i < NUM_WEAPONS+1; i++)
-			{
-				if (i == NUM_WEAPONS)
-					m_Armor = m_aWeaponsBackup[i][1];
-				else if (m_aWeapons[i].m_Got)
-				{
-					m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
-					if (i == WEAPON_NINJA)
-						m_aWeapons[i].m_Ammo = -1;
-				}
-			}
-			m_WeaponsBackupped = false;
-		}
+		LoadWeaponBackup();
+
 		if(!m_aWeapons[m_Core.m_ActiveWeapon].m_Got)
 			m_Core.m_ActiveWeapon = WEAPON_GUN;
 		m_FreezeTime = 0;
@@ -2901,10 +2917,7 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 		if (!m_FreezeTime)
 			m_aWeapons[Weapon].m_Ammo = Ammo;
 		else
-		{
 			m_aWeaponsBackup[Weapon][1] = Ammo;
-			m_aWeapons[Weapon].m_Ammo = 0;	//needs to be here because somehow a weapon that was dropped and picked up while being freezed had ammo, no idea how
-		}
 	}
 
 	m_aWeapons[Weapon].m_Got = !Remove;
@@ -3382,10 +3395,24 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		else
 			pChr->m_PoliceHelper = true;
 	}
+	else if (Extra == SCROLL_NINJA)
+	{
+		str_format(aItem, sizeof aItem, "Scroll Ninja");
+		if (Remove)
+		{
+			pChr->m_ScrollNinja = false;
+			pChr->RemoveNinja();
+		}
+		else
+		{
+			pChr->m_ScrollNinja = true;
+			pChr->GiveNinja();
+		}
+	}
 
 	if (FromID == -1 || FromID == ToID)
 	{
-		if (Extra == JETPACK || Extra == PLASMA_GUN || Extra == HEART_GUN || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == STRAIGHT_GRENADE)
+		if (Extra == JETPACK || Extra == PLASMA_GUN || Extra == HEART_GUN || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == STRAIGHT_GRENADE || Extra == SCROLL_NINJA)
 		{
 			if (Remove)
 				str_format(aMsg, sizeof aMsg, "You lost your %s", aItem);

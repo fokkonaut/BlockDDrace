@@ -128,6 +128,8 @@ private:
 
 	} m_aWeapons[NUM_WEAPONS];
 
+	void BackupWeapons();
+	void LoadWeaponBackup();
 	int m_aWeaponsBackup[NUM_WEAPONS+1][2];
 	bool m_WeaponsBackupped;
 
@@ -316,6 +318,8 @@ public:
 	bool m_StraightGrenade;
 	bool m_Bloody;
 	bool m_StrongBloody;
+
+	bool m_ScrollNinja;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
