@@ -409,6 +409,8 @@ private:
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
 	static void ConScrollNinja(IConsole::IResult *pResult, void *pUserData);
 	static void ConHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConGun(IConsole::IResult *pResult, void *pUserData);

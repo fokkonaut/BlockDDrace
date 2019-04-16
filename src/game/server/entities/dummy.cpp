@@ -688,7 +688,7 @@ void CCharacter::DummyTick()
 					{
 						if (pChr->m_Pos.x > m_Core.m_Pos.x - 60 && pChr->m_Pos.x < m_Core.m_Pos.x + 60)
 						{
-							if (m_Core.m_ActiveWeapon == WEAPON_HAMMER && m_FreezeTime == 0)
+							if (GetActiveWeapon() == WEAPON_HAMMER && m_FreezeTime == 0)
 							{
 								m_Input.m_Fire++;
 								m_LatestInput.m_Fire++;
@@ -1187,7 +1187,7 @@ void CCharacter::DummyTick()
 									if (Server()->Tick() % 50 == 0)
 										SetWeapon(2);
 
-									if (m_Core.m_ActiveWeapon == WEAPON_SHOTGUN && m_FreezeTime == 0)
+									if (GetActiveWeapon() == WEAPON_SHOTGUN && m_FreezeTime == 0)
 									{
 										if (pChr->m_Pos.y < 198 * 32 && (m_DummyMateHelpMode != 3)) //if mate is high enough and not in yolo hook help mode
 										{
@@ -1272,7 +1272,7 @@ void CCharacter::DummyTick()
 
 														if (m_Core.m_Pos.y < 192 * 32 - 30) //shoot
 														{
-															if (m_FreezeTime == 0 && m_Core.m_ActiveWeapon == WEAPON_SHOTGUN && m_Core.m_Vel.y < -0.5f)
+															if (m_FreezeTime == 0 && GetActiveWeapon() == WEAPON_SHOTGUN && m_Core.m_Vel.y < -0.5f)
 															{
 																m_Input.m_Fire++;
 																m_LatestInput.m_Fire++;

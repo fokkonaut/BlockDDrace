@@ -180,6 +180,12 @@ void CGameContext::ConGun(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, false);
 }
 
+void CGameContext::ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, false);
+}
+
 void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -652,6 +658,12 @@ void CGameContext::ConUnGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, true);
+}
+
+void CGameContext::ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, true);
 }
 
 void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)
