@@ -8,6 +8,8 @@ CMeteor::CMeteor(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
 	m_Vel = vec2(0.1f, 0.1f);
 	m_Owner = Owner;
 	m_Infinite = Infinite;
+
+	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
 }
 
 void CMeteor::Reset()
@@ -28,9 +30,21 @@ void CMeteor::Tick()
 		Reset();
 	}
 
-	float Friction = GameServer()->Tuning()->m_MeteorFriction / 1000000.f;
-	float MaxAccel = GameServer()->Tuning()->m_MeteorMaxAccel / 1000.f;
-	float AccelPreserve = GameServer()->Tuning()->m_MeteorAccelPreserve / 1000.f;
+	float Friction;
+	float MaxAccel;
+	float AccelPreserve;
+	if (!m_TuneZone)
+	{
+		Friction = GameServer()->Tuning()->m_MeteorFriction / 1000000.f;
+		MaxAccel = GameServer()->Tuning()->m_MeteorMaxAccel / 1000.f;
+		AccelPreserve = GameServer()->Tuning()->m_MeteorAccelPreserve / 1000.f;
+	}
+	else
+	{
+		Friction = GameServer()->TuningList()[m_TuneZone].m_MeteorFriction / 1000000.f;
+		MaxAccel = GameServer()->TuningList()[m_TuneZone].m_MeteorMaxAccel / 1000.f;
+		AccelPreserve = GameServer()->TuningList()[m_TuneZone].m_MeteorAccelPreserve / 1000.f;
+	}
 
 	if(pChr)
 	{
