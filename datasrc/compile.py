@@ -127,7 +127,7 @@ if gen_network_header:
 	EmitEnum(["WEAPON_%s"%i.name.value.upper() for i in content.container.weapons.id.items]+[
 																								"WEAPON_PLASMA_RIFLE",
 																								"WEAPON_HEART_GUN",
-																								"WEAPON_STRAIGHT_GRENADE",
+																								"WEAPON_STRAIGHT_GRENADE"
 																								], "NUM_WEAPONS")
 
 	print("""
