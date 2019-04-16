@@ -353,6 +353,9 @@ public:
 	void PurchaseEnd(bool canceled);
 	bool m_ChangeShopPage;
 
+	bool m_WeaponIndicator;
+	void GetWeaponName(int Weapon, char* pWeaponName);
+
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
 	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };

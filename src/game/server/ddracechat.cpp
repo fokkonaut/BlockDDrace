@@ -1256,6 +1256,21 @@ void CGameContext::ConSpookyGhostChat(IConsole::IResult * pResult, void * pUserD
 	pSelf->SendChatTarget(pResult->m_ClientID, "Hold TAB (or other scoreboard key) and shoot two times with your gun.");
 }
 
+void CGameContext::ConWeaponIndicator(IConsole::IResult * pResult, void * pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CCharacter *pChr = pSelf->GetPlayerChar(pResult->m_ClientID);
+	if (!pChr)
+		return;
+
+	pChr->m_WeaponIndicator ^= true;
+
+	if (pChr->m_WeaponIndicator)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Weapon indicator enabled");
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Weapon indicator disabled");
+}
+
 void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

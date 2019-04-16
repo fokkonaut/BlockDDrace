@@ -219,6 +219,8 @@ MACRO_CONFIG_INT(SvAuthedPlayersColored, sv_authed_players_colored, 1, 0, 1, CFG
 MACRO_CONFIG_INT(SvDefaultBots, sv_default_bots, 0, 0, 1, CFGFLAG_SERVER, "Whether to create default bots for specific maps when the server starts")
 MACRO_CONFIG_INT(SvFakeBotPing, sv_fake_bot_ping, 0, 0, 1, CFGFLAG_SERVER, "Whether ping of server-side bots are more natural or 1000")
 
+MACRO_CONFIG_INT(SvWeaponIndicatorDefault, sv_weapon_indicator_default, 0, 0, 1, CFGFLAG_SERVER, "Whether the weapon names are displayed under the health and armor bars")
+
 // meteor
 MACRO_CONFIG_INT(SvMeteorFriction, sv_meteor_friction, 5000, 0, 1000000, CFGFLAG_SERVER, "Meteor friction")
 MACRO_CONFIG_INT(SvMeteorMaxAccel, sv_meteor_max_accel, 2000, 0, 1000000, CFGFLAG_SERVER, "Max meteor acceleration per player in pixel/tick^2")

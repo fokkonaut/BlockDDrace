@@ -113,6 +113,8 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	else
 		m_Armor = 10;
 
+	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
+
 	return true;
 }
 
@@ -327,6 +329,17 @@ void CCharacter::DoWeaponSwitch()
 
 	// switch Weapon
 	SetWeapon(m_QueuedWeapon);
+
+	if (!m_WeaponIndicator)
+		return;
+
+	char aBuf[256];
+	char aSpaces[128];
+	char aWeapon[32];
+	GetWeaponName(GetActiveWeapon(), aWeapon);
+	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
+	str_format(aBuf, sizeof(aBuf), "Active weapon: %s%s", aWeapon, aSpaces);
+	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
 void CCharacter::HandleWeaponSwitch()
@@ -3175,6 +3188,31 @@ void CCharacter::SetActiveWeapon(int ActiveWeap)
 		m_RealActiveWeapon = ActiveWeap;
 		m_Core.m_ActiveWeapon = ActiveWeap;
 	}
+}
+
+void CCharacter::GetWeaponName(int Weapon, char* pWeaponName)
+{
+	char aName[32];
+
+	if (Weapon == WEAPON_HAMMER)
+		str_format(aName, sizeof(aName), "Hammer");
+	else if (Weapon == WEAPON_GUN)
+		str_format(aName, sizeof(aName), "Gun");
+	else if (Weapon == WEAPON_SHOTGUN)
+		str_format(aName, sizeof(aName), "Shotgun");
+	else if (Weapon == WEAPON_GRENADE)
+		str_format(aName, sizeof(aName), "Grenade");
+	else if (Weapon == WEAPON_RIFLE)
+		str_format(aName, sizeof(aName), "Rifle");
+	else if (Weapon == WEAPON_NINJA)
+		str_format(aName, sizeof(aName), "Ninja");
+	else if (Weapon == WEAPON_PLASMA_RIFLE)
+		str_format(aName, sizeof(aName), "Plasma Rifle");
+	else
+		str_format(aName, sizeof(aName), "Unknown");
+
+	for (int i = 0; i < 32; i++)
+		pWeaponName[i] = aName[i];
 }
 
 void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID, bool Silent)
