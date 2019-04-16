@@ -1952,57 +1952,57 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		else if (MsgID == NETMSGTYPE_CL_CHANGEINFO)
 		{
 			if (!pPlayer->m_SpookyGhost)
+				return;
+
+			if (g_Config.m_SvSpamprotection && pPlayer->m_LastChangeInfo && pPlayer->m_LastChangeInfo + Server()->TickSpeed()*g_Config.m_SvInfoChangeDelay > Server()->Tick())
+				return;
+
+			CNetMsg_Cl_ChangeInfo *pMsg = (CNetMsg_Cl_ChangeInfo *)pRawMsg;
+			if (!str_utf8_check(pMsg->m_pName)
+				|| !str_utf8_check(pMsg->m_pClan)
+				|| !str_utf8_check(pMsg->m_pSkin))
 			{
-				if (g_Config.m_SvSpamprotection && pPlayer->m_LastChangeInfo && pPlayer->m_LastChangeInfo + Server()->TickSpeed()*g_Config.m_SvInfoChangeDelay > Server()->Tick())
-					return;
-
-				CNetMsg_Cl_ChangeInfo *pMsg = (CNetMsg_Cl_ChangeInfo *)pRawMsg;
-				if (!str_utf8_check(pMsg->m_pName)
-					|| !str_utf8_check(pMsg->m_pClan)
-					|| !str_utf8_check(pMsg->m_pSkin))
-				{
-					return;
-				}
-				pPlayer->m_LastChangeInfo = Server()->Tick();
-
-				// set infos
-				char aOldName[MAX_NAME_LENGTH];
-				str_copy(aOldName, Server()->ClientName(ClientID), sizeof(aOldName));
-				Server()->SetClientName(ClientID, pMsg->m_pName);
-				if (str_comp(aOldName, Server()->ClientName(ClientID)) != 0)
-				{
-					char aChatText[256];
-					str_format(aChatText, sizeof(aChatText), "'%s' changed name to '%s'", aOldName, Server()->ClientName(ClientID));
-					SendChat(-1, CGameContext::CHAT_ALL, aChatText);
-
-					// reload scores
-
-					Score()->PlayerData(ClientID)->Reset();
-					Score()->LoadScore(ClientID);
-					Score()->PlayerData(ClientID)->m_CurrentTime = Score()->PlayerData(ClientID)->m_BestTime;
-
-					// -9999 stands for no time and isn't displayed in scoreboard, so
-					// shift the time by a second if the player actually took 9999
-					// seconds to finish the map.
-					if (!Score()->PlayerData(ClientID)->m_BestTime)
-						m_apPlayers[ClientID]->m_Score = -9999;
-					else if ((int)Score()->PlayerData(ClientID)->m_BestTime == -9999)
-						m_apPlayers[ClientID]->m_Score = -10000;
-					else
-						m_apPlayers[ClientID]->m_Score = Score()->PlayerData(ClientID)->m_BestTime;
-				}
-				Server()->SetClientClan(ClientID, pMsg->m_pClan);
-				Server()->SetClientCountry(ClientID, pMsg->m_Country);
-				str_copy(pPlayer->m_TeeInfos.m_SkinName, pMsg->m_pSkin, sizeof(pPlayer->m_TeeInfos.m_SkinName));
-				pPlayer->m_TeeInfos.m_UseCustomColor = pMsg->m_UseCustomColor;
-				pPlayer->m_TeeInfos.m_ColorBody = pMsg->m_ColorBody;
-				pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
-				pPlayer->FindDuplicateSkins();
-				//m_pController->OnPlayerInfoChange(pPlayer);
-
-				if (pPlayer->GetCharacter())
-					pPlayer->GetCharacter()->SaveRealInfos();
+				return;
 			}
+			pPlayer->m_LastChangeInfo = Server()->Tick();
+
+			// set infos
+			char aOldName[MAX_NAME_LENGTH];
+			str_copy(aOldName, Server()->ClientName(ClientID), sizeof(aOldName));
+			Server()->SetClientName(ClientID, pMsg->m_pName);
+			if (str_comp(aOldName, Server()->ClientName(ClientID)) != 0)
+			{
+				char aChatText[256];
+				str_format(aChatText, sizeof(aChatText), "'%s' changed name to '%s'", aOldName, Server()->ClientName(ClientID));
+				SendChat(-1, CGameContext::CHAT_ALL, aChatText);
+
+				// reload scores
+
+				Score()->PlayerData(ClientID)->Reset();
+				Score()->LoadScore(ClientID);
+				Score()->PlayerData(ClientID)->m_CurrentTime = Score()->PlayerData(ClientID)->m_BestTime;
+
+				// -9999 stands for no time and isn't displayed in scoreboard, so
+				// shift the time by a second if the player actually took 9999
+				// seconds to finish the map.
+				if (!Score()->PlayerData(ClientID)->m_BestTime)
+					m_apPlayers[ClientID]->m_Score = -9999;
+				else if ((int)Score()->PlayerData(ClientID)->m_BestTime == -9999)
+					m_apPlayers[ClientID]->m_Score = -10000;
+				else
+					m_apPlayers[ClientID]->m_Score = Score()->PlayerData(ClientID)->m_BestTime;
+			}
+			Server()->SetClientClan(ClientID, pMsg->m_pClan);
+			Server()->SetClientCountry(ClientID, pMsg->m_Country);
+			str_copy(pPlayer->m_TeeInfos.m_SkinName, pMsg->m_pSkin, sizeof(pPlayer->m_TeeInfos.m_SkinName));
+			pPlayer->m_TeeInfos.m_UseCustomColor = pMsg->m_UseCustomColor;
+			pPlayer->m_TeeInfos.m_ColorBody = pMsg->m_ColorBody;
+			pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
+			pPlayer->FindDuplicateSkins();
+			//m_pController->OnPlayerInfoChange(pPlayer);
+
+			if (pPlayer->GetCharacter())
+				pPlayer->GetCharacter()->SaveRealInfos();
 		}
 		else if (MsgID == NETMSGTYPE_CL_EMOTICON && !m_World.m_Paused)
 		{
