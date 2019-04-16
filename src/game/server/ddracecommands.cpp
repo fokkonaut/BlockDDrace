@@ -663,20 +663,22 @@ void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConAddWeapon(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, pResult->GetInteger(0), false);
+	pSelf->ModifyWeapons(pResult, pUserData, pResult->GetInteger(0), false, true);
 }
 
 void CGameContext::ConRemoveWeapon(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, pResult->GetInteger(0), true);
+	pSelf->ModifyWeapons(pResult, pUserData, pResult->GetInteger(0), true, true);
 }
 
 void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
-		int Weapon, bool Remove)
+		int Weapon, bool Remove, bool AddRemoveCommand)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	if (AddRemoveCommand)
+		Victim = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : pResult->m_ClientID;
 	CCharacter* pChr = GetPlayerChar(Victim);
 	if (!pChr)
 		return;

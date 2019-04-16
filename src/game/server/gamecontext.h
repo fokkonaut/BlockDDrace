@@ -330,7 +330,7 @@ private:
 	static void ConAddWeapon(IConsole::IResult *pResult, void *pUserData);
 	static void ConRemoveWeapon(IConsole::IResult *pResult, void *pUserData);
 
-	void ModifyWeapons(IConsole::IResult *pResult, void *pUserData, int Weapon, bool Remove);
+	void ModifyWeapons(IConsole::IResult *pResult, void *pUserData, int Weapon, bool Remove, bool AddRemoveCommand = false);
 	void MoveCharacter(int ClientID, int X, int Y, bool Raw = false);
 	static void ConGoLeft(IConsole::IResult *pResult, void *pUserData);
 	static void ConGoRight(IConsole::IResult *pResult, void *pUserData);
