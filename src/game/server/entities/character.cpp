@@ -181,8 +181,6 @@ void CCharacter::HandleJetpack()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if(GetActiveWeapon() == WEAPON_GRENADE || GetActiveWeapon() == WEAPON_SHOTGUN || GetActiveWeapon() == WEAPON_RIFLE || GetActiveWeapon() == WEAPON_PLASMA_RIFLE)
-		FullAuto = true;
 	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && GetActiveWeapon() == WEAPON_GUN)
 		FullAuto = true;
 
