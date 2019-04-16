@@ -957,19 +957,6 @@ void CGameContext::OnTick()
 			}
 		}
 
-	if (g_Config.m_SvVanillaShotgun)
-	{
-		Tuning()->Set("shotgun_curvature", 1.25);
-		Tuning()->Set("shotgun_speed", 2750);
-		Tuning()->Set("shotgun_speeddiff", 0.8);
-	}
-	else
-	{
-		Tuning()->Set("shotgun_speed", 500);
-		Tuning()->Set("shotgun_speeddiff", 0);
-		Tuning()->Set("shotgun_curvature", 0);
-	}
-
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
 	{
@@ -2753,6 +2740,27 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	}
 }
 
+void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pfnCallback(pResult, pCallbackUserData);
+	if (pResult->NumArguments())
+	{
+		if (g_Config.m_SvVanillaShotgun)
+		{
+			pSelf->Tuning()->Set("shotgun_curvature", 1.25);
+			pSelf->Tuning()->Set("shotgun_speed", 2750);
+			pSelf->Tuning()->Set("shotgun_speeddiff", 0.8);
+		}
+		else
+		{
+			pSelf->Tuning()->Set("shotgun_speed", 500);
+			pSelf->Tuning()->Set("shotgun_speeddiff", 0);
+			pSelf->Tuning()->Set("shotgun_curvature", 0);
+		}
+	}
+}
+
 void CGameContext::OnConsoleInit()
 {
 	m_pServer = Kernel()->RequestInterface<IServer>();
@@ -2790,6 +2798,8 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("vote", "r['yes'|'no']", CFGFLAG_SERVER, ConVote, this, "Force a vote to yes/no");
 
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
+
+	Console()->Chain("sv_vanilla_shotgun", ConchainVanillaShotgun, this);
 
 	#define CONSOLE_COMMAND(name, params, flags, callback, userdata, help) m_pConsole->Register(name, params, flags, callback, userdata, help);
 	#include <game/ddracecommands.h>
