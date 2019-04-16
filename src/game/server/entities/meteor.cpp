@@ -28,9 +28,9 @@ void CMeteor::Tick()
 		Reset();
 	}
 
-	float Friction = g_Config.m_SvMeteorFriction / 1000000.f;
-	float MaxAccel = g_Config.m_SvMeteorMaxAccel / 1000.f;
-	float AccelPreserve = g_Config.m_SvMeteorAccelPreserve / 1000.f;
+	float Friction = GameServer()->Tuning()->m_MeteorFriction / 1000000.f;
+	float MaxAccel = GameServer()->Tuning()->m_MeteorMaxAccel / 1000.f;
+	float AccelPreserve = GameServer()->Tuning()->m_MeteorAccelPreserve / 1000.f;
 
 	if(pChr)
 	{

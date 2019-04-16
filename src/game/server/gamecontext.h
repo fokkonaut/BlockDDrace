@@ -426,11 +426,8 @@ private:
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
-	static void ConInfJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConInfHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
 	static void ConRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfRainbow(IConsole::IResult *pResult, void *pUserData);
@@ -441,10 +438,9 @@ private:
 	static void ConAddMeteor(IConsole::IResult *pResult, void *pUserData);
 	static void ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData);
 	static void ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData);
-	static void ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData);
 	static void ConPassive(IConsole::IResult *pResult, void *pUserData);
 	static void ConVanillaMode(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData);
+	static void ConDDraceMode(IConsole::IResult *pResult, void *pUserData);
 	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConBloody(IConsole::IResult *pResult, void *pUserData);
 	static void ConStrongBloody(IConsole::IResult *pResult, void *pUserData);

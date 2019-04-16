@@ -207,18 +207,6 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
-void CGameContext::ConInfJetpack(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-	{
-		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
-		pChr->SetExtra(JETPACK, Victim, true, Remove, pResult->m_ClientID);
-	}
-}
-
 void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -231,18 +219,6 @@ void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
-void CGameContext::ConInfPlasmaGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-	{
-		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
-		pChr->SetExtra(PLASMA_GUN, Victim, true, Remove, pResult->m_ClientID);
-	}
-}
-
 void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -252,18 +228,6 @@ void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
 	{
 		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
 		pChr->SetExtra(HEART_GUN, Victim, false, Remove, pResult->m_ClientID);
-	}
-}
-
-void CGameContext::ConInfHeartGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-	{
-		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
-		pChr->SetExtra(HEART_GUN, Victim, true, Remove, pResult->m_ClientID);
 	}
 }
 
@@ -378,15 +342,6 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 		pChr->SetExtra(METEOR, Victim, false, true, pResult->m_ClientID);
 }
 
-void CGameContext::ConResetMeteorVars(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	
-	g_Config.m_SvMeteorFriction = 5000;
-	g_Config.m_SvMeteorMaxAccel = 2000;
-	g_Config.m_SvMeteorAccelPreserve = 100000;
-}
-
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -408,7 +363,7 @@ void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
 		pChr->SetExtra(VANILLA_MODE, Victim, false, false, pResult->m_ClientID);
 }
 
-void CGameContext::ConUnVanillaMode(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;

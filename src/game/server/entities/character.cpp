@@ -3233,51 +3233,32 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 
 	if (Extra == JETPACK)
 	{
-		str_format(aItem, sizeof aItem, "%sJetpack", aInfinite);
+		str_format(aItem, sizeof aItem, "Jetpack");
 		if (Remove)
-		{
 			pChr->m_Jetpack = false;
-			pPlayer->m_InfJetpack = false;
-		}
-		else if (Infinite)
-			pPlayer->m_InfJetpack = true;
 		else
 			pChr->m_Jetpack = true;
 	}
 	else if (Extra == PLASMA_GUN)
 	{
-		str_format(aItem, sizeof aItem, "%sPlasma Gun", aInfinite);
+		str_format(aItem, sizeof aItem, "Plasma Gun");
 		if (Remove)
-		{
 			pChr->m_PlasmaGun = false;
-			pPlayer->m_InfPlasmaGun = false;
-		}
 		else
 		{
 			pChr->m_HeartGun = false;
-			pPlayer->m_InfHeartGun = false;
-			if (Infinite)
-				pPlayer->m_InfPlasmaGun = true;
-			else
-				pChr->m_PlasmaGun = true;
+			pChr->m_PlasmaGun = true;
 		}
 	}
 	else if (Extra == HEART_GUN)
 	{
-		str_format(aItem, sizeof aItem, "%sHeart Gun", aInfinite);
+		str_format(aItem, sizeof aItem, "Heart Gun");
 		if (Remove)
-		{
 			pChr->m_HeartGun = false;
-			pPlayer->m_InfHeartGun = false;
-		}
 		else
 		{
 			pChr->m_PlasmaGun = false;
-			pPlayer->m_InfPlasmaGun = false;
-			if (Infinite)
-				pPlayer->m_InfHeartGun = true;
-			else
-				pChr->m_HeartGun = true;
+			pChr->m_HeartGun = true;
 		}
 	}
 	else if (Extra == RAINBOW)
