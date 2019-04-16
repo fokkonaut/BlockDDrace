@@ -338,7 +338,7 @@ void CCharacter::DoWeaponSwitch()
 	char aWeapon[32];
 	GetWeaponName(GetActiveWeapon(), aWeapon);
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
-	str_format(aBuf, sizeof(aBuf), "Active weapon: %s%s", aWeapon, aSpaces);
+	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", aWeapon, aSpaces);
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
