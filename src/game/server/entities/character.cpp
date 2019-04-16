@@ -327,7 +327,10 @@ void CCharacter::DoWeaponSwitch()
 
 	// switch Weapon
 	SetWeapon(m_QueuedWeapon);
+}
 
+void CCharacter::UpdateWeaponIndicator()
+{
 	if (!m_WeaponIndicator)
 		return;
 
@@ -396,7 +399,14 @@ void CCharacter::FireWeapon()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if(GetActiveWeapon() == WEAPON_GRENADE || GetActiveWeapon() == WEAPON_SHOTGUN || GetActiveWeapon() == WEAPON_RIFLE || GetActiveWeapon() == WEAPON_PLASMA_RIFLE)
+	if
+	(
+		GetActiveWeapon() == WEAPON_GRENADE
+		|| GetActiveWeapon() == WEAPON_SHOTGUN
+		|| GetActiveWeapon() == WEAPON_RIFLE
+		|| GetActiveWeapon() == WEAPON_PLASMA_RIFLE
+		|| GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE
+	)
 		FullAuto = true;
 	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && GetActiveWeapon() == WEAPON_GUN)
 		FullAuto = true;
@@ -529,50 +539,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_GUN:
 		{
-			int SpookyGhost = m_pPlayer->m_SpookyGhost ? 1 : 0;
-			if (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun)
-			{
-				new CPlasmaBullet
-				(
-					GameWorld(),
-					m_pPlayer->GetCID(),	//owner
-					ProjStartPos,			//pos
-					Direction,				//dir
-					0,						//freeze
-					0,						//explosive
-					0,						//unfreeze
-					1,						//bloody
-					SpookyGhost,			//ghost
-					SpookyGhost,			//spooky
-					Team(),					//responibleteam
-					6,						//lifetime
-					1.0f,					//accel
-					10.0f					//speed
-				);
-				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-			}
-			else if (m_HeartGun || m_pPlayer->m_InfHeartGun)
-			{
-				new CHeartProjectile
-				(
-					GameWorld(),
-					m_pPlayer->GetCID(),	//owner
-					ProjStartPos,			//pos
-					Direction,				//dir
-					0,						//freeze
-					0,						//explosive
-					0,						//unfreeze
-					0,						//bloody
-					SpookyGhost,			//ghost
-					SpookyGhost,			//spooky
-					Team(),					//responibleteam
-					6,						//lifetime
-					1.0f,					//accel
-					10.0f					//speed
-				);
-				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-			}
-			else if ((!m_Jetpack && !m_pPlayer->m_InfJetpack) || !m_pPlayer->m_NinjaJetpack)
+			if ((!m_Jetpack && !m_pPlayer->m_InfJetpack) || !m_pPlayer->m_NinjaJetpack)
 			{
 				int Lifetime;
 				if (!m_TuneZone)
@@ -680,35 +647,30 @@ void CCharacter::FireWeapon()
 			else
 				Lifetime = (int)(Server()->TickSpeed()*GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime);
 
-			if (m_StraightGrenade)
-				new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
-			else
-			{
-				CProjectile *pProj = new CProjectile
-						(
-						GameWorld(),
-						WEAPON_GRENADE,//Type
-						m_pPlayer->GetCID(),//Owner
-						ProjStartPos,//Pos
-						Direction,//Dir
-						Lifetime,//Span
-						0,//Freeze
-						true,//Explosive
-						0,//Force
-						SOUND_GRENADE_EXPLODE,//SoundImpact
-						WEAPON_GRENADE//Weapon
-						);//SoundImpact
+			CProjectile *pProj = new CProjectile
+					(
+					GameWorld(),
+					WEAPON_GRENADE,//Type
+					m_pPlayer->GetCID(),//Owner
+					ProjStartPos,//Pos
+					Direction,//Dir
+					Lifetime,//Span
+					0,//Freeze
+					true,//Explosive
+					0,//Force
+					SOUND_GRENADE_EXPLODE,//SoundImpact
+					WEAPON_GRENADE//Weapon
+					);//SoundImpact
 
-				// pack the Projectile and send it to the client Directly
-				CNetObj_Projectile p;
-				pProj->FillInfo(&p);
+			// pack the Projectile and send it to the client Directly
+			CNetObj_Projectile p;
+			pProj->FillInfo(&p);
 
-				CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
-				Msg.AddInt(1);
-				for(unsigned i = 0; i < sizeof(CNetObj_Projectile)/sizeof(int); i++)
-					Msg.AddInt(((int *)&p)[i]);
-				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
-			}
+			CMsgPacker Msg(NETMSGTYPE_SV_EXTRAPROJECTILE);
+			Msg.AddInt(1);
+			for(unsigned i = 0; i < sizeof(CNetObj_Projectile)/sizeof(int); i++)
+				Msg.AddInt(((int *)&p)[i]);
+			Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
@@ -757,6 +719,36 @@ void CCharacter::FireWeapon()
 				10.0f					//speed
 			);
 			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+		} break;
+
+		case WEAPON_HEART_GUN:
+		{
+			int SpookyGhost = m_pPlayer->m_SpookyGhost ? 1 : 0;
+
+			new CHeartProjectile
+			(
+				GameWorld(),
+				m_pPlayer->GetCID(),	//owner
+				ProjStartPos,			//pos
+				Direction,				//dir
+				0,						//freeze
+				0,						//explosive
+				0,						//unfreeze
+				0,						//bloody
+				SpookyGhost,			//ghost
+				SpookyGhost,			//spooky
+				Team(),					//responibleteam
+				6,						//lifetime
+				1.0f,					//accel
+				10.0f					//speed
+			);
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+		} break;
+
+		case WEAPON_STRAIGHT_GRENADE:
+		{
+			new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
+			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 	}
 
@@ -2108,26 +2100,6 @@ void CCharacter::HandleTiles(int Index)
 		SetExtra(JETPACK, m_pPlayer->GetCID(), false, Remove);
 	}
 
-	//plasma gun toggle
-	if ((m_TileIndex == TILE_PLASMA_GUN) || (m_TileFIndex == TILE_PLASMA_GUN))
-	{
-		if ((m_LastIndexTile == TILE_PLASMA_GUN) || (m_LastIndexFrontTile == TILE_PLASMA_GUN))
-			return;
-
-		bool Remove = (m_PlasmaGun || m_pPlayer->m_InfPlasmaGun) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(PLASMA_GUN, m_pPlayer->GetCID(), false, Remove);
-	}
-
-	//heart gun toggle
-	if ((m_TileIndex == TILE_HEART_GUN) || (m_TileFIndex == TILE_HEART_GUN))
-	{
-		if ((m_LastIndexTile == TILE_HEART_GUN) || (m_LastIndexFrontTile == TILE_HEART_GUN))
-			return;
-
-		bool Remove = (m_HeartGun || m_pPlayer->m_InfHeartGun) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(HEART_GUN, m_pPlayer->GetCID(), false, Remove);
-	}
-
 	//rainbow toggle
 	if ((m_TileIndex == TILE_RAINBOW) || (m_TileFIndex == TILE_RAINBOW))
 	{
@@ -2212,16 +2184,6 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), false, true);
-	}
-
-	//straight grenade toggle
-	if ((m_TileIndex == TILE_STRAIGHT_GRENADE) || (m_TileFIndex == TILE_STRAIGHT_GRENADE))
-	{
-		if ((m_LastIndexTile == TILE_STRAIGHT_GRENADE) || (m_LastIndexFrontTile == TILE_STRAIGHT_GRENADE))
-			return;
-
-		bool Remove = m_StraightGrenade && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(STRAIGHT_GRENADE, m_pPlayer->GetCID(), false, Remove);
 	}
 
 	//bloody toggle
@@ -3174,18 +3136,20 @@ void CCharacter::SaveRealInfos()
 	}
 }
 
-void CCharacter::SetActiveWeapon(int ActiveWeap)
+void CCharacter::SetActiveWeapon(int Weapon)
 {
-	if (ActiveWeap == WEAPON_PLASMA_RIFLE)
-	{
-		m_RealActiveWeapon = WEAPON_PLASMA_RIFLE;
+	m_RealActiveWeapon = Weapon;
+
+	if (Weapon == WEAPON_PLASMA_RIFLE)
 		m_Core.m_ActiveWeapon = WEAPON_RIFLE;
-	}
+	else if (Weapon == WEAPON_HEART_GUN)
+		m_Core.m_ActiveWeapon = WEAPON_GUN;
+	else if (Weapon == WEAPON_STRAIGHT_GRENADE)
+		m_Core.m_ActiveWeapon = WEAPON_GRENADE;
 	else
-	{
-		m_RealActiveWeapon = ActiveWeap;
-		m_Core.m_ActiveWeapon = ActiveWeap;
-	}
+		m_Core.m_ActiveWeapon = Weapon;
+
+	UpdateWeaponIndicator();
 }
 
 void CCharacter::GetWeaponName(int Weapon, char* pWeaponName)
@@ -3206,6 +3170,10 @@ void CCharacter::GetWeaponName(int Weapon, char* pWeaponName)
 		str_format(aName, sizeof(aName), "Ninja");
 	else if (Weapon == WEAPON_PLASMA_RIFLE)
 		str_format(aName, sizeof(aName), "Plasma Rifle");
+	else if (Weapon == WEAPON_HEART_GUN)
+		str_format(aName, sizeof(aName), "Heart Gun");
+	else if (Weapon == WEAPON_STRAIGHT_GRENADE)
+		str_format(aName, sizeof(aName), "Straight Grenade");
 	else
 		str_format(aName, sizeof(aName), "Unknown");
 
@@ -3238,28 +3206,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			pChr->m_Jetpack = false;
 		else
 			pChr->m_Jetpack = true;
-	}
-	else if (Extra == PLASMA_GUN)
-	{
-		str_format(aItem, sizeof aItem, "Plasma Gun");
-		if (Remove)
-			pChr->m_PlasmaGun = false;
-		else
-		{
-			pChr->m_HeartGun = false;
-			pChr->m_PlasmaGun = true;
-		}
-	}
-	else if (Extra == HEART_GUN)
-	{
-		str_format(aItem, sizeof aItem, "Heart Gun");
-		if (Remove)
-			pChr->m_HeartGun = false;
-		else
-		{
-			pChr->m_PlasmaGun = false;
-			pChr->m_HeartGun = true;
-		}
 	}
 	else if (Extra == RAINBOW)
 	{
@@ -3405,14 +3351,6 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 			}
 		}
 	}
-	else if (Extra == STRAIGHT_GRENADE)
-	{
-		str_format(aItem, sizeof aItem, "Straight Grenade");
-		if (Remove)
-			pChr->m_StraightGrenade = false;
-		else
-			pChr->m_StraightGrenade = true;
-	}
 	else if (Extra == BLOODY)
 	{
 		str_format(aItem, sizeof aItem, "Bloody");
@@ -3463,7 +3401,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 
 	if (FromID == -1 || FromID == ToID)
 	{
-		if (Extra == JETPACK || Extra == PLASMA_GUN || Extra == HEART_GUN || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == STRAIGHT_GRENADE || Extra == SCROLL_NINJA)
+		if (Extra == JETPACK || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == SCROLL_NINJA)
 		{
 			if (Remove)
 				str_format(aMsg, sizeof aMsg, "You lost your %s", aItem);

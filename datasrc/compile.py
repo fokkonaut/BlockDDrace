@@ -125,7 +125,9 @@ if gen_network_header:
 
 	EmitEnum(["SOUND_%s"%i.name.value.upper() for i in content.container.sounds.items], "NUM_SOUNDS")
 	EmitEnum(["WEAPON_%s"%i.name.value.upper() for i in content.container.weapons.id.items]+[
-																								"WEAPON_PLASMA_RIFLE"
+																								"WEAPON_PLASMA_RIFLE",
+																								"WEAPON_HEART_GUN",
+																								"WEAPON_STRAIGHT_GRENADE",
 																								], "NUM_WEAPONS")
 
 	print("""

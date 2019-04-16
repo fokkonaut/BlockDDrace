@@ -186,6 +186,18 @@ void CGameContext::ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, false);
 }
 
+void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, false);
+}
+
+void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, false);
+}
+
 void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -204,30 +216,6 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	{
 		bool Remove = (pChr->m_Jetpack || pChr->GetPlayer()->m_InfJetpack) ? true : false;
 		pChr->SetExtra(JETPACK, Victim, false, Remove, pResult->m_ClientID);
-	}
-}
-
-void CGameContext::ConPlasmaGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-	{
-		bool Remove = (pChr->m_PlasmaGun || pChr->GetPlayer()->m_InfPlasmaGun) ? true : false;
-		pChr->SetExtra(PLASMA_GUN, Victim, false, Remove, pResult->m_ClientID);
-	}
-}
-
-void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-	{
-		bool Remove = (pChr->m_HeartGun || pChr->GetPlayer()->m_InfHeartGun) ? true : false;
-		pChr->SetExtra(HEART_GUN, Victim, false, Remove, pResult->m_ClientID);
 	}
 }
 
@@ -370,15 +358,6 @@ void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->SetExtra(VANILLA_MODE, Victim, false, true, pResult->m_ClientID);
-}
-
-void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->SetExtra(STRAIGHT_GRENADE, Victim, false, pChr->m_StraightGrenade, pResult->m_ClientID);
 }
 
 void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
@@ -579,6 +558,12 @@ void CGameContext::ConConnectDefaultDummies(IConsole::IResult *pResult, void *pU
 	pSelf->ConnectDefaultBots();
 }
 
+void CGameContext::ConExtraWeapons(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, -2, false);
+}
+
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
@@ -621,10 +606,28 @@ void CGameContext::ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, true);
 }
 
+void CGameContext::ConUnHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, true);
+}
+
+void CGameContext::ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, true);
+}
+
 void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	pSelf->ModifyWeapons(pResult, pUserData, -1, true);
+}
+
+void CGameContext::ConUnExtraWeapons(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, -2, true);
 }
 
 void CGameContext::ConAddWeapon(IConsole::IResult *pResult, void *pUserData)
@@ -650,7 +653,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 	if (!pChr)
 		return;
 
-	if (clamp(Weapon, -1, NUM_WEAPONS - 1) != Weapon)
+	if (clamp(Weapon, -2, NUM_WEAPONS - 1) != Weapon)
 	{
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
 				"invalid weapon id");
@@ -669,6 +672,12 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 			pChr->GiveWeapon(WEAPON_HAMMER, Remove);
 			pChr->GiveWeapon(WEAPON_GUN, Remove, Amount);
 		}
+	}
+	else if (Weapon == -2)
+	{
+		pChr->GiveWeapon(WEAPON_PLASMA_RIFLE, Remove, Amount);
+		pChr->GiveWeapon(WEAPON_HEART_GUN, Remove, Amount);
+		pChr->GiveWeapon(WEAPON_STRAIGHT_GRENADE, Remove, Amount);
 	}
 	else
 	{

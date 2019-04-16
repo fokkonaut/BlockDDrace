@@ -353,6 +353,7 @@ public:
 	void PurchaseEnd(bool canceled);
 	bool m_ChangeShopPage;
 
+	void UpdateWeaponIndicator();
 	bool m_WeaponIndicator;
 	void GetWeaponName(int Weapon, char* pWeaponName);
 
@@ -360,7 +361,7 @@ public:
 	int GetLastWeapon() { return m_LastWeapon; };
 	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
 	int GetActiveWeapon() { return m_RealActiveWeapon; };
-	void SetActiveWeapon(int ActiveWeap);
+	void SetActiveWeapon(int Weapon);
 	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
 	int GetArmor() { return m_Armor; };
 	void SetArmor(int Armor) {m_Armor = Armor; };

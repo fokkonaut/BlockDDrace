@@ -63,8 +63,6 @@ enum
 enum EXTRAS
 {
 	JETPACK = 1,
-	PLASMA_GUN,
-	HEART_GUN,
 	RAINBOW,
 	ATOM,
 	TRAIL,
@@ -72,7 +70,6 @@ enum EXTRAS
 	METEOR,
 	PASSIVE,
 	VANILLA_MODE,
-	STRAIGHT_GRENADE,
 	BLOODY,
 	STRONG_BLOODY,
 	POLICE_HELPER,
@@ -410,13 +407,23 @@ private:
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConExtraWeapons(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnExtraWeapons(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnHeartGun(IConsole::IResult *pResult, void *pUserData);
+	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
-	static void ConScrollNinja(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnGun(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConScrollNinja(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
@@ -426,8 +433,6 @@ private:
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
-	static void ConPlasmaGun(IConsole::IResult *pResult, void *pUserData);
-	static void ConHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
 	static void ConRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfRainbow(IConsole::IResult *pResult, void *pUserData);
@@ -441,7 +446,6 @@ private:
 	static void ConPassive(IConsole::IResult *pResult, void *pUserData);
 	static void ConVanillaMode(IConsole::IResult *pResult, void *pUserData);
 	static void ConDDraceMode(IConsole::IResult *pResult, void *pUserData);
-	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConBloody(IConsole::IResult *pResult, void *pUserData);
 	static void ConStrongBloody(IConsole::IResult *pResult, void *pUserData);
 	static void ConPoliceHelper(IConsole::IResult *pResult, void *pUserData);
