@@ -3025,6 +3025,7 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 		if (GetWeaponGot(i))
 			SetWeapon(i);
 	}
+	UpdateWeaponIndicator();
 }
 
 void CCharacter::DropWeapon(int WeaponID)
