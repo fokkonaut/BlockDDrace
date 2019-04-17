@@ -3145,10 +3145,8 @@ void CCharacter::UpdateWeaponIndicator()
 
 	char aBuf[256];
 	char aSpaces[128];
-	char aWeapon[32];
-	GetWeaponName(GetActiveWeapon());
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
-	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", aWeapon, aSpaces);
+	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", GetWeaponName(GetActiveWeapon()), aSpaces);
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
