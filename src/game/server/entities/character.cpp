@@ -181,7 +181,7 @@ void CCharacter::HandleJetpack()
 	vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 
 	bool FullAuto = false;
-	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && GetActiveWeapon() == WEAPON_GUN)
+	if (m_Jetpack && GetActiveWeapon() == WEAPON_GUN)
 		FullAuto = true;
 
 	// check if we gonna fire
@@ -205,7 +205,7 @@ void CCharacter::HandleJetpack()
 	{
 		case WEAPON_GUN:
 		{
-			if (m_Jetpack || m_pPlayer->m_InfJetpack)
+			if (m_Jetpack)
 			{
 				float Strength;
 				if (!m_TuneZone)
@@ -394,7 +394,7 @@ void CCharacter::FireWeapon()
 		|| GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE
 	)
 		FullAuto = true;
-	if ((m_Jetpack || m_pPlayer->m_InfJetpack) && GetActiveWeapon() == WEAPON_GUN)
+	if (m_Jetpack && GetActiveWeapon() == WEAPON_GUN)
 		FullAuto = true;
 
 	// don't fire non auto weapons when player is deep and sv_deepfly is disabled
@@ -463,8 +463,7 @@ void CCharacter::FireWeapon()
 
 			CCharacter *apEnts[MAX_CLIENTS];
 			int Hits = 0;
-			int Num = GameServer()->m_World.FindEntities(ProjStartPos, m_ProximityRadius*0.5f, (CEntity**)apEnts,
-														MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+			int Num = GameServer()->m_World.FindEntities(ProjStartPos, m_ProximityRadius*0.5f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 
 			for (int i = 0; i < Num; ++i)
 			{
@@ -525,7 +524,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_GUN:
 		{
-			if ((!m_Jetpack && !m_pPlayer->m_InfJetpack) || !m_pPlayer->m_NinjaJetpack)
+			if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
 			{
 				int Lifetime;
 				if (!m_TuneZone)
@@ -775,6 +774,8 @@ void CCharacter::HandleWeapons()
 
 	// ammo regen
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[GetActiveWeapon()].m_Ammoregentime;
+	if (GetActiveWeapon() == WEAPON_HEART_GUN)
+		AmmoRegenTime = g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Ammoregentime;
 	if(AmmoRegenTime && m_pPlayer->m_VanillaMode && !m_FreezeTime)
 	{
 		// If equipped and not active, regen ammo?
@@ -1053,9 +1054,7 @@ void CCharacter::BlockDDraceTick()
 		if (!pChar || !pChar->IsAlive() || pChar == this)
 			continue;
 		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
-		{
 			m_LastToucherID = i;
-		}
 	}
 
 	CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
@@ -1122,7 +1121,7 @@ void CCharacter::BlockDDraceTick()
 			m_PurchaseState = 0;
 			m_ShopWindowPage = -1;
 
-			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, true, -1, true);
+			SetExtra(PASSIVE, m_pPlayer->GetCID(), true, -1, true);
 			m_InShop = false;
 		}
 	}
@@ -1283,7 +1282,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	if (m_LastToucherID == -1)
 		m_LastToucherID = m_pPlayer->GetCID();
-	Weapon = m_LastHitWeapon;
+	Weapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 	Killer = m_LastToucherID;
 
 	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
@@ -1458,7 +1457,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if ((Dmg && m_pPlayer->m_VanillaMode) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE)
+	else if ((Dmg && m_pPlayer->m_VanillaMode) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -1576,7 +1575,7 @@ void CCharacter::Snap(int SnappingClient)
 	// jetpack and ninjajetpack prediction
 	if (m_pPlayer->GetCID() == SnappingClient)
 	{
-		if ((m_Jetpack || m_pPlayer->m_InfJetpack) && pCharacter->m_Weapon != WEAPON_NINJA)
+		if (m_Jetpack && pCharacter->m_Weapon != WEAPON_NINJA)
 		{
 			if (!(m_NeededFaketuning & FAKETUNE_JETPACK))
 			{
@@ -1595,7 +1594,7 @@ void CCharacter::Snap(int SnappingClient)
 	}
 
 	// change eyes, use ninja graphic and set ammo count if player has ninjajetpack
-	if (m_pPlayer->m_NinjaJetpack && (m_Jetpack || m_pPlayer->m_InfJetpack) && GetActiveWeapon() == WEAPON_GUN && !m_DeepFreeze && !(m_FreezeTime > 0 || m_FreezeTime == -1))
+	if (m_pPlayer->m_NinjaJetpack && m_Jetpack && GetActiveWeapon() == WEAPON_GUN && !m_DeepFreeze && !(m_FreezeTime > 0 || m_FreezeTime == -1))
 	{
 		if (pCharacter->m_Emote == EMOTE_NORMAL)
 			pCharacter->m_Emote = EMOTE_HAPPY;
@@ -2054,17 +2053,10 @@ void CCharacter::HandleTiles(int Index)
 	}
 
 	// jetpack gun
-	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack && !m_pPlayer->m_InfJetpack)
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(),"You have a jetpack gun");
-		m_Jetpack = true;
-	}
-	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && (m_Jetpack || m_pPlayer->m_InfJetpack))
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You lost your jetpack gun");
-		m_Jetpack = false;
-		m_pPlayer->m_InfJetpack = false;
-	}
+	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack)
+		SetExtra(JETPACK, m_pPlayer->GetCID(), false);
+	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && m_Jetpack)
+		SetExtra(JETPACK, m_pPlayer->GetCID(), true);
 
 	// unlock team
 	else if(((m_TileIndex == TILE_UNLOCK_TEAM) || (m_TileFIndex == TILE_UNLOCK_TEAM)) && Teams()->TeamLocked(Team()))
@@ -2082,8 +2074,8 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_JETPACK) || (m_LastIndexFrontTile == TILE_JETPACK))
 			return;
 
-		bool Remove = (m_Jetpack || m_pPlayer->m_InfJetpack) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(JETPACK, m_pPlayer->GetCID(), false, Remove);
+		bool Remove = m_Jetpack && g_Config.m_SvExtraTilesToggle ? true : false;
+		SetExtra(JETPACK, m_pPlayer->GetCID(), Remove);
 	}
 
 	//rainbow toggle
@@ -2093,7 +2085,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(RAINBOW, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(RAINBOW, m_pPlayer->GetCID(), Remove);
 	}
 
 	//atom toggle
@@ -2103,7 +2095,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(ATOM, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(ATOM, m_pPlayer->GetCID(), Remove);
 	}
 
 	//trail toggle
@@ -2113,7 +2105,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(TRAIL, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(TRAIL, m_pPlayer->GetCID(), Remove);
 	}
 
 	//spooky ghost toggle
@@ -2123,7 +2115,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), Remove);
 	}
 
 	//add meteor
@@ -2132,7 +2124,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_ADD_METEOR) || (m_LastIndexFrontTile == TILE_ADD_METEOR))
 			return;
 
-		SetExtra(METEOR, m_pPlayer->GetCID(), false);
+		SetExtra(METEOR, m_pPlayer->GetCID());
 	}
 
 	//remove meteors
@@ -2141,7 +2133,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_REMOVE_METEORS) || (m_LastIndexFrontTile == TILE_REMOVE_METEORS))
 			return;
 
-		SetExtra(METEOR, m_pPlayer->GetCID(), false, true);
+		SetExtra(METEOR, m_pPlayer->GetCID(), true);
 	}
 
 	//passive toggle
@@ -2151,7 +2143,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_Passive && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(PASSIVE, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(PASSIVE, m_pPlayer->GetCID(), Remove);
 	}
 
 	//vanilla mode
@@ -2160,7 +2152,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_VANILLA_MODE) || (m_LastIndexFrontTile == TILE_VANILLA_MODE))
 			return;
 
-		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), false);
+		SetExtra(VANILLA_MODE, m_pPlayer->GetCID());
 	}
 
 	//ddrace mode
@@ -2169,7 +2161,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_DDRACE_MODE) || (m_LastIndexFrontTile == TILE_DDRACE_MODE))
 			return;
 
-		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), false, true);
+		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), true);
 	}
 
 	//bloody toggle
@@ -2179,7 +2171,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(BLOODY, m_pPlayer->GetCID(), false, Remove);
+		SetExtra(BLOODY, m_pPlayer->GetCID(), Remove);
 	}
 
 	m_LastIndexTile = m_TileIndex;
@@ -2194,7 +2186,7 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if (m_EnteredShop)
 		{
-			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, false, -1, true);
+			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, -1, true);
 			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
 				m_EnteredShop = false;
 			else if (m_EnteredShop)
@@ -3039,20 +3031,19 @@ void CCharacter::DropWeapon(int WeaponID)
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
 	}
 
-
 	int m_CountWeapons = 0;
 
-	for (int i = 5; i > -1; i--)
+	for (int i = 0; i < NUM_WEAPONS; i++)
 	{
+		if (i == WEAPON_NINJA)
+			continue;
 		if (m_aWeapons[i].m_Got)
 			m_CountWeapons++;
 	}
 
-	if (WeaponID == WEAPON_GUN && (m_Jetpack || m_pPlayer->m_InfJetpack))
+	if (WeaponID == WEAPON_GUN && m_Jetpack)
 	{
-		m_Jetpack = false;
-		m_pPlayer->m_InfJetpack = false;
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You lost your jetpack gun");
+		SetExtra(JETPACK, m_pPlayer->GetCID(), true);
 
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
@@ -3125,7 +3116,7 @@ void CCharacter::SaveRealInfos()
 
 void CCharacter::SetActiveWeapon(int Weapon)
 {
-	m_RealActiveWeapon = Weapon;
+	m_ActiveWeapon = Weapon;
 
 	if (Weapon == WEAPON_PLASMA_RIFLE)
 		m_Core.m_ActiveWeapon = WEAPON_RIFLE;
@@ -3147,47 +3138,15 @@ void CCharacter::UpdateWeaponIndicator()
 	char aBuf[256];
 	char aSpaces[128];
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
-	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", GetWeaponName(GetActiveWeapon()), aSpaces);
+	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", GameServer()->GetWeaponName(GetActiveWeapon()), aSpaces);
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
-const char *CCharacter::GetWeaponName(int Weapon)
-{
-	switch (Weapon)
-	{
-	case WEAPON_HAMMER:
-		return "Hammer";
-	case WEAPON_GUN:
-		return "Gun";
-	case WEAPON_SHOTGUN:
-		return "Shotgun";
-	case WEAPON_GRENADE:
-		return "Grenade";
-	case WEAPON_RIFLE:
-		return "Rifle";
-	case WEAPON_NINJA:
-		return "Ninja";
-	case WEAPON_PLASMA_RIFLE:
-		return "Plasma Rifle";
-	case WEAPON_HEART_GUN:
-		return "Heart Gun";
-	case WEAPON_STRAIGHT_GRENADE:
-		return "Straight Grenade";
-	}
-	return "Unknown";
-}
-
-void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID, bool Silent)
+void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Silent)
 {
 	char aGiven[32];
 	char aItem[32];
 	char aMsg[64];
-	char aInfinite[16];
-
-	if (Infinite && !Remove)
-		str_format(aInfinite, sizeof aInfinite, "Infinite ");
-	else
-		str_format(aInfinite, sizeof aInfinite, "");
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
@@ -3205,42 +3164,69 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (Extra == RAINBOW)
 	{
-		str_format(aItem, sizeof aItem, "%sRainbow", aInfinite);
+		str_format(aItem, sizeof aItem, "Rainbow");
 		if (Remove)
 		{
 			pChr->m_Rainbow = false;
 			pPlayer->m_InfRainbow = false;
 		}
-		else if (Infinite)
-			pPlayer->m_InfRainbow = true;
 		else
 			pChr->m_Rainbow = true;
 	}
+	else if (Extra == INF_RAINBOW)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Rainbow");
+		if (Remove)
+		{
+			pChr->m_Rainbow = false;
+			pPlayer->m_InfRainbow = false;
+		}
+		else
+			pPlayer->m_InfRainbow = true;
+	}
 	else if (Extra == ATOM)
 	{
-		str_format(aItem, sizeof aItem, "%sAtom", aInfinite);
+		str_format(aItem, sizeof aItem, "Atom");
 		if (Remove)
 		{
 			pChr->m_Atom = false;
 			pPlayer->m_InfAtom = false;
 		}
-		else if (Infinite)
-			pPlayer->m_InfAtom = true;
 		else
 			pChr->m_Atom = true;
 	}
+	else if (Extra == INF_ATOM)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Atom");
+		if (Remove)
+		{
+			pChr->m_Atom = false;
+			pPlayer->m_InfAtom = false;
+		}
+		else
+			pPlayer->m_InfAtom = true;
+	}
 	else if (Extra == TRAIL)
 	{
-		str_format(aItem, sizeof aItem, "%sTrail", aInfinite);
+		str_format(aItem, sizeof aItem, "Trail");
 		if (Remove)
 		{
 			pChr->m_Trail = false;
 			pPlayer->m_InfTrail = false;
 		}
-		else if (Infinite)
-			pPlayer->m_InfTrail = true;
 		else
 			pChr->m_Trail = true;
+	}
+	else if (Extra == TRAIL)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Trail");
+		if (Remove)
+		{
+			pChr->m_Trail = false;
+			pPlayer->m_InfTrail = false;
+		}
+		else
+			pPlayer->m_InfTrail = true;
 	}
 	else if (Extra == EXTRA_SPOOKY_GHOST)
 	{
@@ -3249,7 +3235,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 	}
 	else if (Extra == METEOR)
 	{
-		str_format(aItem, sizeof aItem, "%sMeteor", aInfinite);
+		str_format(aItem, sizeof aItem, "Meteor");
 		if (Remove)
 		{
 			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
@@ -3264,11 +3250,32 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		{
 			if (pPlayer->m_InfMeteors + pChr->m_Meteors <= 50)
 			{
-				if (Infinite)
-					pPlayer->m_InfMeteors++;
-				else
-					pChr->m_Meteors++;
-				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), Infinite);
+				pChr->m_Meteors++;
+				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), false);
+			}
+			else
+				return;
+		}
+	}
+	else if (Extra == INF_METEOR)
+	{
+		str_format(aItem, sizeof aItem, "Infinite Meteor");
+		if (Remove)
+		{
+			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
+				return;
+			else
+			{
+				pChr->m_Meteors = 0;
+				pPlayer->m_InfMeteors = 0;
+			}
+		}
+		else
+		{
+			if (pPlayer->m_InfMeteors + pChr->m_Meteors <= 50)
+			{
+				pPlayer->m_InfMeteors++;
+				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), true);
 			}
 			else
 				return;
@@ -3397,7 +3404,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 
 	if (FromID == -1 || FromID == ToID)
 	{
-		if (Extra == JETPACK || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == SCROLL_NINJA)
+		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA)
 		{
 			if (Remove)
 				str_format(aMsg, sizeof aMsg, "You lost your %s", aItem);

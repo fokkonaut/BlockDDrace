@@ -64,10 +64,14 @@ enum EXTRAS
 {
 	JETPACK = 1,
 	RAINBOW,
+	INF_RAINBOW,
 	ATOM,
+	INF_ATOM,
 	TRAIL,
+	INF_TRAIL,
 	EXTRA_SPOOKY_GHOST,
 	METEOR,
+	INF_METEOR,
 	PASSIVE,
 	VANILLA_MODE,
 	BLOODY,
@@ -299,6 +303,9 @@ public:
 	int GetNextClientID();
 	int GetCIDByName(const char *pName);
 	void SendMotd(const char *pMsg, int ClientID);
+
+	const char *GetWeaponName(int Weapon);
+	int GetRealWeapon(int Weapon);
 
 private:
 

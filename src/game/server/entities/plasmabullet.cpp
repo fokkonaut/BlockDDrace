@@ -62,10 +62,10 @@ bool CPlasmaBullet::HitCharacter()
 		Hit->UnFreeze();
 	
 	if (m_Explosive)
-		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_GRENADE, true,
+		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_PLASMA_RIFLE, true,
 				m_ResponsibleTeam, Hit->Teams()->TeamMask(m_ResponsibleTeam));
-
-	Hit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Damage, m_Owner, WEAPON_GUN);
+	else
+		Hit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[WEAPON_PLASMA_RIFLE].m_Damage, m_Owner, WEAPON_PLASMA_RIFLE);
 
 	GameServer()->m_World.DestroyEntity(this);
 	return true;
@@ -100,8 +100,8 @@ void CPlasmaBullet::Tick()
 		if (m_Explosive)
 			GameServer()->CreateExplosion(
 					m_Pos,
-					-1,
-					WEAPON_GRENADE,
+					m_Owner,
+					WEAPON_PLASMA_RIFLE,
 					true,
 					m_ResponsibleTeam,
 					((CGameControllerDDRace*) GameServer()->m_pController)->m_Teams.TeamMask(

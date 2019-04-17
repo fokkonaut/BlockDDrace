@@ -105,7 +105,7 @@ public:
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
 
-	void SetExtra(int Extra, int ToID, bool Infinite = false, bool Remove = false, int FromID = -1, bool Silent = false);
+	void SetExtra(int Extra, int ToID, bool Remove = false, int FromID = -1, bool Silent = false);
 
 private:
 	// player controlling this character
@@ -133,7 +133,7 @@ private:
 	int m_aWeaponsBackup[NUM_WEAPONS+1][2];
 	bool m_WeaponsBackupped;
 
-	int m_RealActiveWeapon;
+	int m_ActiveWeapon;
 
 	int m_LastWeapon;
 	int m_QueuedWeapon;
@@ -355,12 +355,11 @@ public:
 
 	void UpdateWeaponIndicator();
 	bool m_WeaponIndicator;
-	const char *GetWeaponName(int Weapon);
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
 	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
-	int GetActiveWeapon() { return m_RealActiveWeapon; };
+	int GetActiveWeapon() { return m_ActiveWeapon; };
 	void SetActiveWeapon(int Weapon);
 	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
 	int GetArmor() { return m_Armor; };

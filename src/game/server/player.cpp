@@ -62,7 +62,7 @@ void CPlayer::Reset()
 
 	// DDRace
 
-	m_vWeaponLimit.resize(5);
+	m_vWeaponLimit.resize(NUM_WEAPONS);
 
 	m_LastCommandPos = 0;
 	m_LastPlaytime = time_get();

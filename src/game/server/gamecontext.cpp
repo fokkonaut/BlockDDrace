@@ -201,7 +201,7 @@ void CGameContext::CreateExplosion(vec2 Pos, int Owner, int Weapon, bool NoDamag
 			{
 				if(Owner != -1 && apEnts[i]->IsAlive() && !apEnts[i]->CanCollide(Owner)) continue;
 				if(Owner == -1 && ActivatedTeam != -1 && apEnts[i]->IsAlive() && apEnts[i]->Team() != ActivatedTeam) continue;
-				if (apEnts[i]->m_Passive && Owner != apEnts[i]->GetPlayer()->GetCID()) continue;
+				if ((apEnts[i]->m_Passive || (Owner >= 0 && GetPlayerChar(Owner)->m_Passive)) && Owner != apEnts[i]->GetPlayer()->GetCID()) continue;
 
 				// Explode at most once per team
 				int PlayerTeam = ((CGameControllerDDRace*)m_pController)->m_Teams.m_Core.Team(apEnts[i]->GetPlayer()->GetCID());
@@ -3969,4 +3969,44 @@ void CGameContext::ConnectDefaultBots()
 
 	if (m_SpawnShopBot && GetShopBot() == -1)
 		ConnectDummy(99); // shop bot
+}
+
+const char *CGameContext::GetWeaponName(int Weapon)
+{
+	switch (Weapon)
+	{
+	case WEAPON_HAMMER:
+		return "Hammer";
+	case WEAPON_GUN:
+		return "Gun";
+	case WEAPON_SHOTGUN:
+		return "Shotgun";
+	case WEAPON_GRENADE:
+		return "Grenade";
+	case WEAPON_RIFLE:
+		return "Rifle";
+	case WEAPON_NINJA:
+		return "Ninja";
+	case WEAPON_PLASMA_RIFLE:
+		return "Plasma Rifle";
+	case WEAPON_HEART_GUN:
+		return "Heart Gun";
+	case WEAPON_STRAIGHT_GRENADE:
+		return "Straight Grenade";
+	}
+	return "Unknown";
+}
+
+int CGameContext::GetRealWeapon(int Weapon)
+{
+	switch (Weapon)
+	{
+	case WEAPON_PLASMA_RIFLE:
+		return WEAPON_RIFLE;
+	case WEAPON_HEART_GUN:
+		return WEAPON_GUN;
+	case WEAPON_STRAIGHT_GRENADE:
+		return WEAPON_GRENADE;
+	}
+	return Weapon;
 }

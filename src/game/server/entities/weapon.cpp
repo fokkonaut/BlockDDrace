@@ -88,43 +88,40 @@ int CWeapon::IsCharacterNear()
 
 void CWeapon::Pickup()
 {
-	int CharID = IsCharacterNear();
-	if (CharID != -1)
+	int ID = IsCharacterNear();
+	if (ID != -1)
 	{
-		CCharacter* pChar = GameServer()->GetPlayerChar(CharID);
+		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
 
-		if (pChar->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
+		if (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
 			return;
 
-		if (pChar->GetWeaponGot(m_Type) && !m_Jetpack && !pChar->GetPlayer()->m_VanillaMode)
+		if (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
 			return;
 
-		if (m_Jetpack && !pChar->GetWeaponGot(WEAPON_GUN))
+		if (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 			return;
 
-		if (m_Jetpack && (pChar->m_Jetpack || pChar->GetPlayer()->m_InfJetpack))
+		if (m_Jetpack && pChr->m_Jetpack)
 			return;
 
-		if (pChar->GetPlayer()->m_VanillaMode && pChar->GetWeaponGot(m_Type) && pChar->GetWeaponAmmo(m_Type) >= m_Bullets)
+		if (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
 			return;
 
-		int Ammo = pChar->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
-		pChar->GiveWeapon(m_Type, false, Ammo);
-		if (pChar->GetPlayer())
-			GameServer()->SendWeaponPickup(pChar->GetPlayer()->GetCID(), m_Type);
+		int Ammo = pChr->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
+		pChr->GiveWeapon(m_Type, false, Ammo);
+		if (pChr->GetPlayer())
+			GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Type);
 
 		if (m_Jetpack)
-		{
-			pChar->m_Jetpack = true;
-			GameServer()->SendChatTarget(pChar->GetPlayer()->GetCID(), "You have a jetpack gun");
-		}
+			pChr->SetExtra(JETPACK, ID, false, false);
 
-		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChar->Teams()->TeamMask(pChar->Team()));
-		else if (m_Type == WEAPON_GRENADE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChar->Teams()->TeamMask(pChar->Team()));
-		else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChar->Teams()->TeamMask(pChar->Team()));
+		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
+		else if (m_Type == WEAPON_GRENADE || m_Type == WEAPON_STRAIGHT_GRENADE)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
+		else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN || m_Type == WEAPON_HEART_GUN)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 		m_EreaseWeapon = true;
 		Reset();
@@ -279,7 +276,7 @@ void CWeapon::Snap(int SnappingClient)
 	pP->m_X = (int)m_Pos.x;
 	pP->m_Y = (int)m_Pos.y;
 	pP->m_Type = POWERUP_WEAPON;
-	pP->m_Subtype = m_Type;
+	pP->m_Subtype = GameServer()->GetRealWeapon(m_Type);
 
 	if (m_Jetpack)
 	{
