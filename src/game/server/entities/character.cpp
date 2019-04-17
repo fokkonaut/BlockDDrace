@@ -3146,39 +3146,36 @@ void CCharacter::UpdateWeaponIndicator()
 	char aBuf[256];
 	char aSpaces[128];
 	char aWeapon[32];
-	GetWeaponName(GetActiveWeapon(), aWeapon);
+	GetWeaponName(GetActiveWeapon());
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
 	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", aWeapon, aSpaces);
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
 }
 
-void CCharacter::GetWeaponName(int Weapon, char* pWeaponName)
+const char *CCharacter::GetWeaponName(int Weapon)
 {
-	char aName[32];
-
-	if (Weapon == WEAPON_HAMMER)
-		str_format(aName, sizeof(aName), "Hammer");
-	else if (Weapon == WEAPON_GUN)
-		str_format(aName, sizeof(aName), "Gun");
-	else if (Weapon == WEAPON_SHOTGUN)
-		str_format(aName, sizeof(aName), "Shotgun");
-	else if (Weapon == WEAPON_GRENADE)
-		str_format(aName, sizeof(aName), "Grenade");
-	else if (Weapon == WEAPON_RIFLE)
-		str_format(aName, sizeof(aName), "Rifle");
-	else if (Weapon == WEAPON_NINJA)
-		str_format(aName, sizeof(aName), "Ninja");
-	else if (Weapon == WEAPON_PLASMA_RIFLE)
-		str_format(aName, sizeof(aName), "Plasma Rifle");
-	else if (Weapon == WEAPON_HEART_GUN)
-		str_format(aName, sizeof(aName), "Heart Gun");
-	else if (Weapon == WEAPON_STRAIGHT_GRENADE)
-		str_format(aName, sizeof(aName), "Straight Grenade");
-	else
-		str_format(aName, sizeof(aName), "Unknown");
-
-	for (int i = 0; i < 32; i++)
-		pWeaponName[i] = aName[i];
+	switch (Weapon)
+	{
+	case WEAPON_HAMMER:
+		return "Hammer";
+	case WEAPON_GUN:
+		return "Gun";
+	case WEAPON_SHOTGUN:
+		return "Shotgun";
+	case WEAPON_GRENADE:
+		return "Grenade";
+	case WEAPON_RIFLE:
+		return "Rifle";
+	case WEAPON_NINJA:
+		return "Ninja";
+	case WEAPON_PLASMA_RIFLE:
+		return "Plasma Rifle";
+	case WEAPON_HEART_GUN:
+		return "Heart Gun";
+	case WEAPON_STRAIGHT_GRENADE:
+		return "Straight Grenade";
+	}
+	return "Unknown";
 }
 
 void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int FromID, bool Silent)

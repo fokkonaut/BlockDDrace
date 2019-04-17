@@ -355,7 +355,7 @@ public:
 
 	void UpdateWeaponIndicator();
 	bool m_WeaponIndicator;
-	void GetWeaponName(int Weapon, char* pWeaponName);
+	const char *GetWeaponName(int Weapon);
 
 	// Setters/Getters because i don't want to modify vanilla vars access modifiers
 	int GetLastWeapon() { return m_LastWeapon; };
