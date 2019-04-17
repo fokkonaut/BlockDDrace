@@ -819,9 +819,9 @@ void CCharacter::GiveNinja()
 void CCharacter::RemoveNinja()
 {
 	m_Ninja.m_CurrentMoveTime = 0;
+	if (GetActiveWeapon() == WEAPON_NINJA)
+		SetWeapon(m_LastWeapon);
 	m_aWeapons[WEAPON_NINJA].m_Got = false;
-	SetActiveWeapon(m_LastWeapon);
-	SetWeapon(GetActiveWeapon());
 }
 
 void CCharacter::SetEmote(int Emote, int Tick)
@@ -3384,8 +3384,8 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Infinite, bool Remove, int F
 		str_format(aItem, sizeof aItem, "Scroll Ninja");
 		if (Remove)
 		{
-			pChr->m_ScrollNinja = false;
 			pChr->RemoveNinja();
+			pChr->m_ScrollNinja = false;
 		}
 		else
 		{
