@@ -12,7 +12,7 @@
 #include "laser.h"
 #include "projectile.h"
 #include "flag.h"
-#include "plasmabullet.h"
+#include "custom_projectile.h"
 #include "heartprojectile.h"
 #include "meteor.h"
 #include "pickup.h"
@@ -686,7 +686,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_PLASMA_RIFLE:
 		{
-			new CPlasmaBullet
+			new CCustomProjectile
 			(
 				GameWorld(),
 				m_pPlayer->GetCID(),	//owner
@@ -698,7 +698,7 @@ void CCharacter::FireWeapon()
 				0,						//bloody
 				0,						//ghost
 				0,						//spooky
-				Team(),					//responibleteam
+				WEAPON_PLASMA_RIFLE,	//type
 				6,						//lifetime
 				1.0f,					//accel
 				10.0f					//speed
@@ -708,9 +708,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_HEART_GUN:
 		{
-			int SpookyGhost = m_pPlayer->m_SpookyGhost ? 1 : 0;
-
-			new CHeartProjectile
+			new CCustomProjectile
 			(
 				GameWorld(),
 				m_pPlayer->GetCID(),	//owner
@@ -720,9 +718,9 @@ void CCharacter::FireWeapon()
 				0,						//explosive
 				0,						//unfreeze
 				0,						//bloody
-				SpookyGhost,			//ghost
-				SpookyGhost,			//spooky
-				Team(),					//responibleteam
+				0,						//ghost
+				0,						//spooky
+				WEAPON_HEART_GUN,		//type
 				6,						//lifetime
 				1.0f,					//accel
 				10.0f					//speed

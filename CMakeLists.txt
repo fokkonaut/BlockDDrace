@@ -988,6 +988,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   ddracecommands.cpp
   entities/character.cpp
   entities/character.h
+  entities/custom_projectile.cpp
+  entities/custom_projectile.h
   entities/door.cpp
   entities/door.h
   entities/dragger.cpp
@@ -997,8 +999,6 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/flag.h
   entities/gun.cpp
   entities/gun.h
-  entities/heartprojectile.cpp
-  entities/heartprojectile.h
   entities/laser.cpp
   entities/laser.h
   entities/light.cpp
@@ -1009,8 +1009,6 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/pickup.h
   entities/plasma.cpp
   entities/plasma.h
-  entities/plasmabullet.cpp
-  entities/plasmabullet.h
   entities/projectile.cpp
   entities/projectile.h
   entities/shop.cpp
