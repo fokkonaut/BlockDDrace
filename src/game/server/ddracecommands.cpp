@@ -681,6 +681,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 	}
 	else
 	{
+		if (Weapon == WEAPON_NINJA && pChr->m_ScrollNinja && Remove)
+			pChr->SetExtra(SCROLL_NINJA, Victim, false, Remove, pResult->m_ClientID);
 		pChr->GiveWeapon(Weapon, Remove, Amount);
 	}
 
