@@ -20,6 +20,8 @@ CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int N
 
 	m_Owner = Owner;
 
+	m_SnapPos = m_Pos;
+
 	Reset();
 
 	GameWorld()->InsertEntity(this);
@@ -133,16 +135,15 @@ void CPickup::Tick()
 
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 
-							if (m_Subtype == WEAPON_GRENADE)
+							if (m_Subtype == WEAPON_GRENADE || m_Subtype == WEAPON_STRAIGHT_GRENADE)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
-							else if (m_Subtype == WEAPON_SHOTGUN || m_Subtype == WEAPON_RIFLE)
+							else if (m_Subtype == WEAPON_SHOTGUN || m_Subtype == WEAPON_RIFLE || m_Subtype == WEAPON_PLASMA_RIFLE)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
-							else if (m_Subtype == WEAPON_HAMMER || m_Subtype == WEAPON_GUN)
+							else if (m_Subtype == WEAPON_HAMMER || m_Subtype == WEAPON_GUN || m_Subtype == WEAPON_HEART_GUN)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 							if (pChr->GetPlayer())
 								GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Subtype);
-
 						}
 						break;
 
@@ -166,6 +167,13 @@ void CPickup::Tick()
 							}
 						}
 						break;
+					}
+
+				case POWERUP_AMMO:
+
+					if (true)
+					{
+						//nothing here yet
 					}
 					default:
 						break;
@@ -232,14 +240,41 @@ void CPickup::Snap(int SnappingClient)
 					&& (!Tick))
 		return;
 
-	CNetObj_Pickup *pP = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
-	if(!pP)
-		return;
+	if (m_Type == POWERUP_AMMO)
+	{
+		CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
+		if (!pProj)
+			return;
 
-	pP->m_X = (int)m_Pos.x;
-	pP->m_Y = (int)m_Pos.y;
-	pP->m_Type = m_Type;
-	pP->m_Subtype = m_Subtype;
+		static float s_Time = 0.0f;
+		static float s_LastLocalTime = Server()->Tick();
+
+		s_Time += (Server()->Tick() - s_LastLocalTime) / Server()->TickSpeed();
+
+		float Offset = m_SnapPos.y / 32.0f + m_SnapPos.x / 32.0f;
+		m_SnapPos.x += cosf(s_Time*2.0f + Offset)*2.5f;
+		m_SnapPos.y += sinf(s_Time*2.0f + Offset)*2.5f;
+		s_LastLocalTime = Server()->Tick();
+
+		pProj->m_X = m_SnapPos.x;
+		pProj->m_Y = m_SnapPos.y;
+
+		pProj->m_VelX = 0;
+		pProj->m_VelY = 0;
+		pProj->m_StartTick = 0;
+		pProj->m_Type = WEAPON_RIFLE;
+	}
+	else
+	{
+		CNetObj_Pickup *pP = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
+		if (!pP)
+			return;
+
+		pP->m_X = (int)m_Pos.x;
+		pP->m_Y = (int)m_Pos.y;
+		pP->m_Type = m_Type;
+		pP->m_Subtype = GameServer()->GetRealWeapon(m_Subtype);
+	}
 }
 
 void CPickup::Move()

@@ -25,6 +25,8 @@ private:
 	int m_Subtype;
 	int m_SpawnTick;
 
+	vec2 m_SnapPos;
+
 	// DDRace
 
 	int m_Owner;

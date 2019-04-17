@@ -428,9 +428,16 @@ void CGameContext::SendEmoticon(int ClientID, int Emoticon)
 
 void CGameContext::SendWeaponPickup(int ClientID, int Weapon)
 {
-	CNetMsg_Sv_WeaponPickup Msg;
-	Msg.m_Weapon = Weapon;
-	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+	if (Weapon > WEAPON_NINJA)
+	{
+		GetPlayerChar(ClientID)->SetWeapon(Weapon);
+	}
+	else
+	{
+		CNetMsg_Sv_WeaponPickup Msg;
+		Msg.m_Weapon = Weapon;
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+	}
 }
 
 
