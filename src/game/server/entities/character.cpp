@@ -13,7 +13,6 @@
 #include "projectile.h"
 #include "flag.h"
 #include "custom_projectile.h"
-#include "heartprojectile.h"
 #include "meteor.h"
 #include "pickup.h"
 #include "straight_grenade.h"
