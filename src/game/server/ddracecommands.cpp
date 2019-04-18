@@ -272,7 +272,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
-		pChr->SetExtra(TRAIL, Victim, false, Remove, pResult->m_ClientID);
+		pChr->SetExtra(TRAIL, Victim, Remove, pResult->m_ClientID);
 	}
 }
 

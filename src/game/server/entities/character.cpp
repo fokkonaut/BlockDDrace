@@ -3141,6 +3141,12 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Sil
 	char aGiven[32];
 	char aItem[32];
 	char aMsg[64];
+	char aInfinite[16];
+
+	if (!Remove)
+		str_format(aInfinite, sizeof aInfinite, "Infinite ");
+	else
+		str_format(aInfinite, sizeof aInfinite, "");
 
 	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
 	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
@@ -3169,7 +3175,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Sil
 	}
 	else if (Extra == INF_RAINBOW)
 	{
-		str_format(aItem, sizeof aItem, "Infinite Rainbow");
+		str_format(aItem, sizeof aItem, "%sRainbow", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Rainbow = false;
@@ -3191,7 +3197,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Sil
 	}
 	else if (Extra == INF_ATOM)
 	{
-		str_format(aItem, sizeof aItem, "Infinite Atom");
+		str_format(aItem, sizeof aItem, "%sAtom", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Atom = false;
@@ -3211,9 +3217,9 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Sil
 		else
 			pChr->m_Trail = true;
 	}
-	else if (Extra == TRAIL)
+	else if (Extra == INF_TRAIL)
 	{
-		str_format(aItem, sizeof aItem, "Infinite Trail");
+		str_format(aItem, sizeof aItem, "%sTrail", aInfinite);
 		if (Remove)
 		{
 			pChr->m_Trail = false;
@@ -3253,7 +3259,7 @@ void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Sil
 	}
 	else if (Extra == INF_METEOR)
 	{
-		str_format(aItem, sizeof aItem, "Infinite Meteor");
+		str_format(aItem, sizeof aItem, "%sMeteor", aInfinite);
 		if (Remove)
 		{
 			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
