@@ -252,8 +252,8 @@ void CPickup::Snap(int SnappingClient)
 		s_Time += (Server()->Tick() - s_LastLocalTime) / Server()->TickSpeed();
 
 		float Offset = m_SnapPos.y / 32.0f + m_SnapPos.x / 32.0f;
-		m_SnapPos.x += cosf(s_Time*2.0f + Offset)*2.5f;
-		m_SnapPos.y += sinf(s_Time*2.0f + Offset)*2.5f;
+		m_SnapPos.x = m_Pos.x + cosf(s_Time*2.0f + Offset)*2.5f;
+		m_SnapPos.y = m_Pos.y + sinf(s_Time*2.0f + Offset)*2.5f;
 		s_LastLocalTime = Server()->Tick();
 
 		pProj->m_X = m_SnapPos.x;
