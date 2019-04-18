@@ -45,7 +45,7 @@ void CStraightGrenade::Tick()
 	{
 		m_Owner = -1;
 
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_GRENADE, true, 0, -1);
+		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, true, 0, -1);
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, -1);
 
 		Reset();
@@ -54,7 +54,7 @@ void CStraightGrenade::Tick()
 
 	if (GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y))
 	{
-		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_GRENADE, true, 0, GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0));
+		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, true, 0, GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0));
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0));
 
 		Reset();
@@ -139,7 +139,7 @@ bool CStraightGrenade::Hit(CCharacter* pHitTarget)
 	{
 		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_GRENADE);
 
-		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_GRENADE, true, 0, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
+		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, true, 0, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
 
 		return true;
