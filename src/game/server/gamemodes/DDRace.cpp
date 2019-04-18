@@ -284,28 +284,16 @@ void CGameControllerDDRace::Tick()
 			}
 			else
 			{
+				//Gravity
+				F->m_Vel.y += GameServer()->Tuning()->m_Gravity;
 
 				//Friction
-				Grounded = false;
-				if (GameServer()->Collision()->CheckPoint(F->m_Pos.x + ms_PhysSize, F->m_Pos.y + ms_PhysSize + 5))
-					Grounded = true;
-				if (GameServer()->Collision()->CheckPoint(F->m_Pos.x - ms_PhysSize, F->m_Pos.y + ms_PhysSize + 5))
-					Grounded = true;
+				vec2 TempVel = F->m_Vel;
 
-				if (Grounded == true) {
-					F->m_Vel.x *= 0.75f;
-				}
-				else {
-					F->m_Vel.x *= 0.98f;
-				}
-
-				//Gravity
-				F->m_Vel.y += 0.5f;
-
-				//Speedups // WAY TO FAST, FIX IT PLEASE
+				//Speedups
 				if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(F->m_Pos))) {
 					int Force, MaxSpeed = 0;
-					vec2 Direction, MaxVel, TempVel = F->m_Vel;
+					vec2 Direction, MaxVel;
 					float TeeAngle, SpeederAngle, DiffAngle, SpeedLeft, TeeSpeed;
 					GameServer()->Collision()->GetSpeedup(GameServer()->Collision()->GetMapIndex(F->m_Pos), &Direction, &Force, &MaxSpeed);
 
@@ -356,14 +344,63 @@ void CGameControllerDDRace::Tick()
 						}
 						else
 							TempVel += Direction * Force;
-
 					}
-					F->m_Vel = TempVel;
 				}
+				
+
+				//stopper
+				int CurrentIndex = GameServer()->Collision()->GetMapIndex(F->m_Pos);
+				std::list < int > Indices = GameServer()->Collision()->GetMapIndices(F->m_PrevPos, F->m_Pos);
+				if (!Indices.empty())
+					for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
+						HandleTiles(*i);
+				else
+				{
+					HandleTiles(CurrentIndex);
+				}
+
+				if (TempVel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
+					TempVel.x = 0;
+				if (TempVel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
+					TempVel.x = 0;
+				F->m_Vel = TempVel;
+				IsGrounded(fi, true);
+
 				GameServer()->Collision()->MoveBox(&F->m_Pos, &F->m_Vel, vec2(F->ms_PhysSize, F->ms_PhysSize), 0.5f);
 			}
 		}
+
+		F->m_PrevPos = F->m_Pos;
 	}
+}
+
+bool CGameControllerDDRace::IsGrounded(int ID, bool SetVel)
+{
+	CFlag *F = m_apFlags[ID];
+
+	if (!F)
+		return false;
+
+	if ((GameServer()->Collision()->CheckPoint(F->m_Pos.x + ms_PhysSize / 2, F->m_Pos.y + ms_PhysSize / 2 + 5))
+		|| (GameServer()->Collision()->CheckPoint(F->m_Pos.x - ms_PhysSize / 2, F->m_Pos.y + ms_PhysSize / 2 + 5)))
+	{
+		if (SetVel)
+			F->m_Vel.x *= 0.75f;
+		return true;
+	}
+
+	if (F->m_Vel.y < 0 && (((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_180) || (m_TileIndexB == TILE_STOP && m_TileFlagsB == ROTATION_180) || (m_TileIndexB == TILE_STOPS && (m_TileFlagsB == ROTATION_0 || m_TileFlagsB == ROTATION_180)) || (m_TileIndexB == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_180) || (m_TileFIndexB == TILE_STOP && m_TileFFlagsB == ROTATION_180) || (m_TileFIndexB == TILE_STOPS && (m_TileFFlagsB == ROTATION_0 || m_TileFFlagsB == ROTATION_180)) || (m_TileFIndexB == TILE_STOPA)))
+		|| (F->m_Vel.y > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_0) || (m_TileIndexT == TILE_STOP && m_TileFlagsT == ROTATION_0) || (m_TileIndexT == TILE_STOPS && (m_TileFlagsT == ROTATION_0 || m_TileFlagsT == ROTATION_180)) || (m_TileIndexT == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_0) || (m_TileFIndexT == TILE_STOP && m_TileFFlagsT == ROTATION_0) || (m_TileFIndexT == TILE_STOPS && (m_TileFFlagsT == ROTATION_0 || m_TileFFlagsT == ROTATION_180)) || (m_TileFIndexT == TILE_STOPA))))
+	{
+		F->m_Vel.y = 0;
+		if (SetVel)
+			F->m_Vel.x *= 0.925f;
+		return true;
+	}
+
+	if (SetVel)
+		F->m_Vel.x *= 0.98f;
+	return false;
 }
 
 void CGameControllerDDRace::InitTeleporter()
@@ -390,5 +427,43 @@ void CGameControllerDDRace::InitTeleporter()
 						vec2(i % Width * 32 + 16, i / Width * 32 + 16));
 			}
 		}
+	}
+}
+
+void CGameControllerDDRace::HandleTiles(int Index)
+{
+	for (int fi = 0; fi < 2; fi++)
+	{
+		CFlag *F = m_apFlags[fi];
+
+		if (!F)
+			continue;
+
+		int MapIndex = Index;
+		float Offset = 4.0f;
+		MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(F->m_Pos.x + ms_PhysSize + Offset, F->m_Pos.y));
+		MapIndexR = GameServer()->Collision()->GetPureMapIndex(vec2(F->m_Pos.x - ms_PhysSize - Offset, F->m_Pos.y));
+		MapIndexT = GameServer()->Collision()->GetPureMapIndex(vec2(F->m_Pos.x, F->m_Pos.y + ms_PhysSize + Offset));
+		MapIndexB = GameServer()->Collision()->GetPureMapIndex(vec2(F->m_Pos.x, F->m_Pos.y - ms_PhysSize - Offset));
+		m_TileIndex = GameServer()->Collision()->GetTileIndex(MapIndex);
+		m_TileFlags = GameServer()->Collision()->GetTileFlags(MapIndex);
+		m_TileIndexL = GameServer()->Collision()->GetTileIndex(MapIndexL);
+		m_TileFlagsL = GameServer()->Collision()->GetTileFlags(MapIndexL);
+		m_TileIndexR = GameServer()->Collision()->GetTileIndex(MapIndexR);
+		m_TileFlagsR = GameServer()->Collision()->GetTileFlags(MapIndexR);
+		m_TileIndexB = GameServer()->Collision()->GetTileIndex(MapIndexB);
+		m_TileFlagsB = GameServer()->Collision()->GetTileFlags(MapIndexB);
+		m_TileIndexT = GameServer()->Collision()->GetTileIndex(MapIndexT);
+		m_TileFlagsT = GameServer()->Collision()->GetTileFlags(MapIndexT);
+		m_TileFIndex = GameServer()->Collision()->GetFTileIndex(MapIndex);
+		m_TileFFlags = GameServer()->Collision()->GetFTileFlags(MapIndex);
+		m_TileFIndexL = GameServer()->Collision()->GetFTileIndex(MapIndexL);
+		m_TileFFlagsL = GameServer()->Collision()->GetFTileFlags(MapIndexL);
+		m_TileFIndexR = GameServer()->Collision()->GetFTileIndex(MapIndexR);
+		m_TileFFlagsR = GameServer()->Collision()->GetFTileFlags(MapIndexR);
+		m_TileFIndexB = GameServer()->Collision()->GetFTileIndex(MapIndexB);
+		m_TileFFlagsB = GameServer()->Collision()->GetFTileFlags(MapIndexB);
+		m_TileFIndexT = GameServer()->Collision()->GetFTileIndex(MapIndexT);
+		m_TileFFlagsT = GameServer()->Collision()->GetFTileFlags(MapIndexT);
 	}
 }

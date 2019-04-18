@@ -14,6 +14,7 @@ public:
 	CCharacter *m_pLastCarryingCharacter;
 	vec2 m_Vel;
 	vec2 m_StandPos;
+	vec2 m_PrevPos;
 
 	int m_Team;
 	int m_AtStand;

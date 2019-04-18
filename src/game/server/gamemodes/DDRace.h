@@ -36,6 +36,40 @@ public:
 	void InitTeleporter();
 	virtual void Tick();
 
-	static int const ms_PhysSize = 14;
+	static int const ms_PhysSize = 14*2;
+
+	bool IsGrounded(int ID, bool SetVel = false);
+
+	void HandleTiles(int Index);
+	int MapIndexL;
+	int MapIndexR;
+	int MapIndexT;
+	int MapIndexB;
+	int m_TileIndex;
+	int m_TileFlags;
+	int m_TileFIndex;
+	int m_TileFFlags;
+	int m_TileSIndex;
+	int m_TileSFlags;
+	int m_TileIndexL;
+	int m_TileFlagsL;
+	int m_TileFIndexL;
+	int m_TileFFlagsL;
+	int m_TileSIndexL;
+	int m_TileSFlagsL;
+	int m_TileIndexR;
+	int m_TileFlagsR;
+	int m_TileFIndexR;
+	int m_TileFFlagsR;
+	int m_TileSIndexR;
+	int m_TileSFlagsR;
+	int m_TileIndexT;
+	int m_TileFlagsT;
+	int m_TileFIndexT;
+	int m_TileFFlagsT;
+	int m_TileIndexB;
+	int m_TileFlagsB;
+	int m_TileFIndexB;
+	int m_TileFFlagsB;
 };
 #endif // GAME_SERVER_GAMEMODES_DDRACE_H
