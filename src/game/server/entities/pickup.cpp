@@ -226,6 +226,7 @@ void CPickup::Snap(int SnappingClient)
 	if(m_SpawnTick != -1 || NetworkClipped(SnappingClient))
 		return;
 
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
 	CCharacter *Char = GameServer()->GetPlayerChar(SnappingClient);
 
 	if(SnappingClient > -1 && (GameServer()->m_apPlayers[SnappingClient]->GetTeam() == -1
@@ -239,6 +240,16 @@ void CPickup::Snap(int SnappingClient)
 					!GameServer()->Collision()->m_pSwitchers[m_Number].m_Status[Char->Team()])
 					&& (!Tick))
 		return;
+
+	if (pOwner && Char)
+	{
+		if (Char->Team() != pOwner->Team())
+			return;
+
+		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, SnappingClient))
+			return;
+	}
 
 	if (m_Type == POWERUP_AMMO)
 	{

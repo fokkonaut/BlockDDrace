@@ -12,10 +12,12 @@ class CStableProjectile : public CEntity
 	int m_VelX;
 	int m_VelY;
 
+	int m_Owner;
+
 	void CalculateVel();
 
 public:
-	CStableProjectile(CGameWorld *pGameWorld, int Type, vec2 Pos=vec2());
+	CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos=vec2());
 
 	virtual void Reset();
 	virtual void TickDefered();

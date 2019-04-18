@@ -895,7 +895,7 @@ void CCharacter::Tick()
 		{
 			for (int i = 0; i<NUM_ATOMS; i++)
 			{
-				m_AtomProjs.push_back(new CStableProjectile(GameWorld(), i % 2 ? WEAPON_GRENADE : WEAPON_SHOTGUN));
+				m_AtomProjs.push_back(new CStableProjectile(GameWorld(), i % 2 ? WEAPON_GRENADE : WEAPON_SHOTGUN, m_pPlayer->GetCID()));
 			}
 			m_AtomPosition = 0;
 		}
@@ -926,7 +926,7 @@ void CCharacter::Tick()
 		{
 			for (int i = 0; i<NUM_TRAILS; i++)
 			{
-				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN));
+				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN, m_pPlayer->GetCID()));
 			}
 			m_TrailHistory.clear();
 			m_TrailHistory.push_front(HistoryPoint(m_Pos, 0.0f));

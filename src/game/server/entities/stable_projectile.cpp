@@ -1,14 +1,14 @@
 #include <game/server/gamecontext.h>
 #include "stable_projectile.h"
+#include <game/server/teams.h>
 
-CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, vec2 Pos)
+CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
 	m_Type = Type;
-
 	m_Pos = Pos;
 	m_LastResetPos = Pos;
-
+	m_Owner = Owner;
 	m_LastResetTick = Server()->Tick();
 	m_CalculatedVel = false;
 
@@ -91,6 +91,24 @@ void CStableProjectile::Snap(int SnappingClient)
 {
 	if(NetworkClipped(SnappingClient))
 		return;
+
+	if (!GameServer()->m_apPlayers[m_Owner])
+		m_Owner = -1;
+
+	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
+		return;
+
+	if (pOwner && pSnapChar)
+	{
+		if (pSnapChar->Team() != pOwner->Team())
+			return;
+
+		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, SnappingClient))
+			return;
+	}
 
 	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
 	if(!pProj)
