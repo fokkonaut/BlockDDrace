@@ -2774,10 +2774,7 @@ void CCharacter::DDRacePostCoreTick()
 	}
 
 	if (!(isFreezed))
-	{
-
 		m_FirstFreezeTick = 0;
-	}
 
 	HandleBroadcast();
 }

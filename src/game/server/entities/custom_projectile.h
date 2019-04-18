@@ -10,6 +10,10 @@ class CCustomProjectile : public CEntity
 	int m_EvalTick;
 	int m_LifeTime;
 
+	int64_t m_TeamMask;
+
+	vec2 m_PrevPos;
+
 	int m_Freeze;
 	int m_Unfreeze;
 	int m_Bloody;

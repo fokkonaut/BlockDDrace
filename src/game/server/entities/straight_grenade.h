@@ -26,6 +26,8 @@ private:
 	int m_VelX;
 	int m_VelY;
 
+	int64_t m_TeamMask;
+
 	int m_StartTick;
 
 	float m_Force;

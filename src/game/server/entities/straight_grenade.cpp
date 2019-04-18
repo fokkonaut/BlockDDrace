@@ -33,8 +33,16 @@ void CStraightGrenade::Reset()
 
 void CStraightGrenade::Tick()
 {
-	m_Lifetime--;
+	if (!GameServer()->m_apPlayers[m_Owner])
+		m_Owner = -1;
 
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pOwner)
+		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+	else
+		m_TeamMask = -1LL;
+
+	m_Lifetime--;
 	if (m_Lifetime < 0)
 	{
 		Reset();
@@ -44,9 +52,9 @@ void CStraightGrenade::Tick()
 	if (!GameServer()->m_apPlayers[m_Owner])
 	{
 		m_Owner = -1;
-
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, true, 0, -1);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, -1);
+		CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, -1, m_TeamMask);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		Reset();
 		return;
@@ -54,8 +62,9 @@ void CStraightGrenade::Tick()
 
 	if (GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y))
 	{
-		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, true, 0, GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0));
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0));
+		CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		Reset();
 		return;
@@ -99,9 +108,43 @@ void CStraightGrenade::CalculateVel()
 	m_CalculatedVel = true;
 }
 
+CCharacter* CStraightGrenade::CharacterNear()
+{
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	CCharacter* pTarget = GameWorld()->ClosestCharacter(m_Pos, 2000.f, pOwner ? pOwner : 0);
+
+	if (pTarget)
+		return pTarget;
+
+	return 0x0;
+}
+
+bool CStraightGrenade::Hit(CCharacter* pHitTarget)
+{
+	vec2 TargetPos = pHitTarget->m_Pos;
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+
+	if (distance(m_Pos, TargetPos) < 40.f && !pHitTarget->m_Passive && !pOwner->m_Passive && pOwner->Team() == pHitTarget->Team())
+	{
+		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_STRAIGHT_GRENADE);
+
+		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, -1, -1LL);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
+
+		return true;
+	}
+
+	return false;
+}
+
 void CStraightGrenade::Snap(int SnappingClient)
 {
 	if (NetworkClipped(SnappingClient))
+		return;
+
+	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
 		return;
 
 	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
@@ -117,33 +160,4 @@ void CStraightGrenade::Snap(int SnappingClient)
 	pProj->m_VelY = m_VelY;
 	pProj->m_StartTick = m_LastResetTick;
 	pProj->m_Type = WEAPON_GRENADE;
-}
-
-CCharacter* CStraightGrenade::CharacterNear()
-{
-	CCharacter* pOwner  = GameServer()->GetPlayerChar(m_Owner);
-	CCharacter* pTarget = GameWorld()->ClosestCharacter(m_Pos, 2000.f, pOwner ? pOwner : 0);
-
-	if(pTarget)
-		return pTarget;
-
-	return 0x0;
-}
-
-bool CStraightGrenade::Hit(CCharacter* pHitTarget)
-{
-	vec2 TargetPos = pHitTarget->m_Pos;
-	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-
-	if(distance(m_Pos, TargetPos) < 40.f && !pHitTarget->m_Passive && (pOwner && !pOwner->m_Passive))
-	{
-		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_GRENADE);
-
-		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, true, 0, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
-
-		return true;
-	}
-
-	return false;
 }

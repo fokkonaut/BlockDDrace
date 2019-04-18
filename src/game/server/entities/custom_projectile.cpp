@@ -13,6 +13,7 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 {
 	m_Owner = Owner;
 	m_Pos = Pos;
+	m_PrevPos = Pos;
 	m_Core = normalize(Dir) * Speed;
 	m_Freeze = Freeze;
 	m_Explosive = Explosive;
@@ -30,35 +31,41 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 
 bool CCustomProjectile::HitCharacter()
 {
-	vec2 To2;
-	CCharacter *Hit = GameServer()->m_World.IntersectCharacter(m_Pos, m_Pos + m_Core, 0.0f, To2);
-	if (!Hit)
+	vec2 To;
+	CCharacter *pHit = GameServer()->m_World.IntersectCharacter(m_Pos, m_Pos + m_Core, 0.0f, To);
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (!pHit)
 		return false;
 
-	if (Hit->GetPlayer()->GetCID() == m_Owner) // dont hit yourself
+	if (pHit->GetPlayer()->GetCID() == m_Owner) // dont hit yourself
 		return false;
-	else if (Hit->m_Passive || (GameServer()->GetPlayerChar(m_Owner) && GameServer()->GetPlayerChar(m_Owner)->m_Passive))
+	if (pHit->m_Passive || (pOwner && pOwner->m_Passive))
+		return false;
+	if (pHit->Team() != pOwner->Team())
 		return false;
 
 	if (m_Spooky)
 	{
-		Hit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
-		GameServer()->SendEmoticon(Hit->GetPlayer()->GetCID(), 7);		//emoticon ghost
+		pHit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
+		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), 7);		//emoticon ghost
 	}
 
 	if (m_Bloody)
-		GameServer()->CreateDeath(m_Pos, Hit->GetPlayer()->GetCID());
+		GameServer()->CreateDeath(m_Pos, pHit->GetPlayer()->GetCID());
 
 	if (m_Freeze)
-		Hit->Freeze();
+		pHit->Freeze();
 
 	if (m_Unfreeze)
-		Hit->UnFreeze();
-	
+		pHit->UnFreeze();
+
 	if (m_Explosive)
-		GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, (!Hit ? -1 : Hit->Team()), -1LL);
+	{
+		GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, (pHit ? pHit->Team() : -1), m_TeamMask);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
+	}
 	else
-		Hit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
+		pHit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
 
 	GameServer()->m_World.DestroyEntity(this);
 	return true;
@@ -77,6 +84,15 @@ void CCustomProjectile::Reset()
 
 void CCustomProjectile::Tick()
 {
+	if (!GameServer()->m_apPlayers[m_Owner])
+		m_Owner = -1;
+
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pOwner)
+		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+	else
+		m_TeamMask = -1LL;
+
 	if (m_LifeTime == 0)
 	{
 		Reset();
@@ -91,29 +107,42 @@ void CCustomProjectile::Tick()
 	if (Res)
 	{
 		if (m_Explosive)
-			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, -1, -1LL);
+		{
+			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, (pOwner ? pOwner->Team() : -1), m_TeamMask);
+			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
+		}
 
 		if (m_Bloody)
 		{
 			if (m_IsInsideWall == 1 && Server()->Tick() % 5 == 0)
-				GameServer()->CreateDeath(m_Pos, m_Owner);
+				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 			else
-				GameServer()->CreateDeath(m_Pos, m_Owner);
+				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 		}
 
 		if (m_Ghost && m_IsInsideWall == 0)
 			m_IsInsideWall = 1; // enteres the wall, collides the first time
 
 		if (m_IsInsideWall == 2 || !m_Ghost) // collides second time with a wall
+		{
 			Reset();
+			return;
+		}
 	}
 	else if(m_Ghost && m_IsInsideWall == 1)
 		m_IsInsideWall = 2; // leaves the wall
+
+	m_PrevPos = m_Pos;
 }
 
 void CCustomProjectile::Snap(int SnappingClient)
 {
 	if (NetworkClipped(SnappingClient))
+		return;
+
+	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
 		return;
 
 	if (m_Type == WEAPON_PLASMA_RIFLE)
