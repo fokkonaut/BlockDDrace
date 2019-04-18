@@ -15,9 +15,7 @@ CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, in
 	m_Jetpack = Jetpack;
 	m_Bullets = Bullets;
 	m_Owner = Owner;
-
 	m_Vel = vec2(5*Direction, -5);
-
 	m_PickupDelay = Server()->TickSpeed() * 2;
 
 	m_ID2 = Server()->SnapNewID();
@@ -29,16 +27,13 @@ void CWeapon::Reset()
 {
 	if (m_EreaseWeapon)
 	{
-		if (m_Owner != -1)
-		{
-			CPlayer* pOwner = GameServer()->GetPlayerChar(m_Owner)->GetPlayer();
+		CPlayer* pOwner = GameServer()->GetPlayerChar(m_Owner)->GetPlayer();
 
-			for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
+		for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
+		{
+			if (pOwner->m_vWeaponLimit[m_Type][i] == this)
 			{
-				if (pOwner->m_vWeaponLimit[m_Type][i] == this)
-				{
-					pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
-				}
+				pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
 			}
 		}
 	}
@@ -61,7 +56,7 @@ void CWeapon::IsShieldNear()
 
 		if (pShield->GetType() == POWERUP_ARMOR)
 		{
-			if (m_Owner != -1 && !GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
+			if (!GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
 			{
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 				m_EreaseWeapon = true;
@@ -136,7 +131,7 @@ void CWeapon::Pickup()
 void CWeapon::Tick()
 {
 	if (!GameServer()->m_apPlayers[m_Owner])
-		m_Owner = -1;
+		Reset();
 
 	// weapon hits death-tile or left the game layer, reset it
 	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
