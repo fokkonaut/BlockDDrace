@@ -92,19 +92,16 @@ void CStableProjectile::Snap(int SnappingClient)
 	if(NetworkClipped(SnappingClient))
 		return;
 
-	if (!GameServer()->m_apPlayers[m_Owner])
-		m_Owner = -1;
+	if (m_Owner != -1 && !GameServer()->m_apPlayers[m_Owner])
+	{
+		Reset();
+		return;
+	}
 
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
-		return;
-
 	if (pOwner && pSnapChar)
 	{
-		if (pSnapChar->Team() != pOwner->Team())
-			return;
-
 		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 		if (!CmaskIsSet(TeamMask, SnappingClient))
 			return;

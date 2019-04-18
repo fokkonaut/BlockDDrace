@@ -29,6 +29,7 @@ private:
 	int64_t m_TeamMask;
 
 	vec2 m_PrevPos;
+	vec2 m_Core;
 
 	int m_StartTick;
 

@@ -80,6 +80,10 @@ int CWeapon::IsCharacterNear()
 	{
 		CCharacter * pChr = apEnts[i];
 
+		int64_t TeamMask = GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(GameServer()->GetPlayerChar(m_Owner)->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, pChr->GetPlayer()->GetCID()))
+			return false;
+
 		if (pChr && pChr->IsAlive())
 			return pChr->GetPlayer()->GetCID();
 	}
@@ -246,6 +250,15 @@ void CWeapon::Snap(int SnappingClient)
 {
 	if(NetworkClipped(SnappingClient))
 		return;
+
+	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
+	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (pOwner && pSnapChar)
+	{
+		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, SnappingClient))
+			return;
+	}
 
 	CNetObj_Pickup *pP = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
 	if(!pP)

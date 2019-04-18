@@ -12,16 +12,14 @@ CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Own
 	m_Owner = Owner;
 	m_StartTick = Server()->Tick();
 	m_Lifetime = Server()->TickSpeed() * Lifetime;
-
 	m_Direction = Dir;
 	m_Force = Force;
-
 	m_LastResetPos = GameServer()->GetPlayerChar(Owner)->m_Pos;
 	m_LastResetTick = Server()->Tick();
-	
 	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
 	m_PrevPos = m_Pos;
 
+	m_Core = m_Direction * 15;
 	m_CalculatedVel = false;
 
 	GameWorld()->InsertEntity(this);
@@ -52,14 +50,16 @@ void CStraightGrenade::Tick()
 
 	if (GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y))
 	{
-		GameServer()->CreateExplosion(m_PrevPos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
+		GameServer()->CreateExplosion(m_PrevPos, m_Owner, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
 		GameServer()->CreateSound(m_PrevPos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		Reset();
 		return;
 	}
 
-	m_Pos += m_Direction * 15;
+	m_Pos += m_Core;
+
+	m_PrevPos = m_Pos;
 
 	CCharacter* pTarget = CharacterNear();
 	if(!pTarget)
@@ -70,8 +70,6 @@ void CStraightGrenade::Tick()
 		Reset();
 		return;
 	}
-
-	m_PrevPos = m_Pos;
 }
 
 void CStraightGrenade::TickDefered()
@@ -102,7 +100,7 @@ void CStraightGrenade::CalculateVel()
 CCharacter* CStraightGrenade::CharacterNear()
 {
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	CCharacter* pTarget = GameWorld()->ClosestCharacter(m_Pos, 2000.f, pOwner);
+	CCharacter* pTarget = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Core, 6.0f, m_Pos + m_Core, pOwner, m_Owner);
 
 	if (pTarget)
 		return pTarget;
@@ -115,11 +113,11 @@ bool CStraightGrenade::Hit(CCharacter* pHitTarget)
 	vec2 TargetPos = pHitTarget->m_Pos;
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if (distance(m_Pos, TargetPos) < 40.f && !pHitTarget->m_Passive && !pOwner->m_Passive && pOwner->Team() == pHitTarget->Team())
+	if (distance(m_Pos, TargetPos) < 40.f && !pHitTarget->m_Passive && !pOwner->m_Passive)
 	{
 		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_STRAIGHT_GRENADE);
 
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
+		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, (pHitTarget ? pHitTarget->Team() : -1), m_TeamMask);
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		return true;
@@ -135,8 +133,12 @@ void CStraightGrenade::Snap(int SnappingClient)
 
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
-		return;
+	if (pOwner && pSnapChar)
+	{
+		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, SnappingClient))
+			return;
+	}
 
 	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
 	if (!pProj)

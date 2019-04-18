@@ -31,9 +31,8 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 
 bool CCustomProjectile::HitCharacter()
 {
-	vec2 To;
-	CCharacter *pHit = GameServer()->m_World.IntersectCharacter(m_Pos, m_Pos + m_Core, 0.0f, To);
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Core, 6.0f, m_Pos + m_Core, pOwner, m_Owner);
 	if (!pHit)
 		return false;
 
@@ -42,6 +41,10 @@ bool CCustomProjectile::HitCharacter()
 	if (pHit->m_Passive || pOwner->m_Passive)
 		return false;
 	if (pHit->Team() != pOwner->Team())
+		return false;
+
+	int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+	if (!CmaskIsSet(TeamMask, pHit->GetPlayer()->GetCID()))
 		return false;
 
 	if (m_Spooky)
@@ -142,8 +145,12 @@ void CCustomProjectile::Snap(int SnappingClient)
 
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (pSnapChar && pOwner && pSnapChar->Team() != pOwner->Team())
-		return;
+	if (pOwner && pSnapChar)
+	{
+		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+		if (!CmaskIsSet(TeamMask, SnappingClient))
+			return;
+	}
 
 	if (m_Type == WEAPON_PLASMA_RIFLE)
 	{

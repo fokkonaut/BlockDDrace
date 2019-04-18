@@ -243,9 +243,6 @@ void CPickup::Snap(int SnappingClient)
 
 	if (pOwner && Char)
 	{
-		if (Char->Team() != pOwner->Team())
-			return;
-
 		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 		if (!CmaskIsSet(TeamMask, SnappingClient))
 			return;
