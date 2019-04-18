@@ -1279,7 +1279,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	if (m_LastToucherID == -1)
 		m_LastToucherID = m_pPlayer->GetCID();
-	Weapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
+	Weapon = m_LastHitWeapon;
 	Killer = m_LastToucherID;
 
 	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
@@ -1326,7 +1326,7 @@ void CCharacter::Die(int Killer, int Weapon)
 			GameServer()->m_apPlayers[Killer]->FixForNoName(0);
 
 		m_pPlayer->m_MsgKiller = Killer;
-		m_pPlayer->m_MsgWeapon = Weapon;
+		m_pPlayer->m_MsgWeapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
 		m_pPlayer->FixForNoName(2);
 	}
@@ -1335,7 +1335,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		CNetMsg_Sv_KillMsg Msg;
 		Msg.m_Killer = Killer;
 		Msg.m_Victim = m_pPlayer->GetCID();
-		Msg.m_Weapon = Weapon;
+		Msg.m_Weapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 		Msg.m_ModeSpecial = ModeSpecial;
 		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 	}
