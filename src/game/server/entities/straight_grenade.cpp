@@ -33,10 +33,13 @@ void CStraightGrenade::Reset()
 
 void CStraightGrenade::Tick()
 {
-	if (!GameServer()->m_apPlayers[m_Owner])
-		m_Owner = -1;
-
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (!pOwner)
+	{
+		Reset();
+		return;
+	}
+
 	if (pOwner)
 		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 	else
@@ -45,17 +48,6 @@ void CStraightGrenade::Tick()
 	m_Lifetime--;
 	if (m_Lifetime < 0)
 	{
-		Reset();
-		return;
-	}
-
-	if (!GameServer()->m_apPlayers[m_Owner])
-	{
-		m_Owner = -1;
-		CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, -1, m_TeamMask);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
-
 		Reset();
 		return;
 	}

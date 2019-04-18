@@ -84,10 +84,13 @@ void CCustomProjectile::Reset()
 
 void CCustomProjectile::Tick()
 {
-	if (!GameServer()->m_apPlayers[m_Owner])
-		m_Owner = -1;
-
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
+	if (!pOwner)
+	{
+		Reset();
+		return;
+	}
+
 	if (pOwner)
 		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 	else
