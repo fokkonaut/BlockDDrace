@@ -13,7 +13,6 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 {
 	m_Owner = Owner;
 	m_Pos = Pos;
-	m_PrevPos = Pos;
 	m_Core = normalize(Dir) * Speed;
 	m_Freeze = Freeze;
 	m_Explosive = Explosive;
@@ -26,6 +25,7 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 	m_LifeTime = Server()->TickSpeed() * Lifetime;
 	m_Type = Type;
 	m_Accel = Accel;
+	m_PrevPos = m_Pos;
 	GameWorld()->InsertEntity(this);
 }
 
@@ -39,7 +39,7 @@ bool CCustomProjectile::HitCharacter()
 
 	if (pHit->GetPlayer()->GetCID() == m_Owner) // dont hit yourself
 		return false;
-	if (pHit->m_Passive || (pOwner && pOwner->m_Passive))
+	if (pHit->m_Passive || pOwner->m_Passive)
 		return false;
 	if (pHit->Team() != pOwner->Team())
 		return false;
@@ -91,10 +91,7 @@ void CCustomProjectile::Tick()
 		return;
 	}
 
-	if (pOwner)
-		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
-	else
-		m_TeamMask = -1LL;
+	m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 
 	if (m_LifeTime == 0)
 	{
@@ -111,7 +108,7 @@ void CCustomProjectile::Tick()
 	{
 		if (m_Explosive)
 		{
-			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, (pOwner ? pOwner->Team() : -1), m_TeamMask);
+			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, pOwner->Team(), m_TeamMask);
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 		}
 

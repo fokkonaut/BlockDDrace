@@ -28,6 +28,8 @@ private:
 
 	int64_t m_TeamMask;
 
+	vec2 m_PrevPos;
+
 	int m_StartTick;
 
 	float m_Force;

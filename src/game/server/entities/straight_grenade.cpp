@@ -20,6 +20,7 @@ CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Own
 	m_LastResetTick = Server()->Tick();
 	
 	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
+	m_PrevPos = m_Pos;
 
 	m_CalculatedVel = false;
 
@@ -40,10 +41,7 @@ void CStraightGrenade::Tick()
 		return;
 	}
 
-	if (pOwner)
-		m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
-	else
-		m_TeamMask = -1LL;
+	m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 
 	m_Lifetime--;
 	if (m_Lifetime < 0)
@@ -54,9 +52,8 @@ void CStraightGrenade::Tick()
 
 	if (GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y))
 	{
-		CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
+		GameServer()->CreateExplosion(m_PrevPos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
+		GameServer()->CreateSound(m_PrevPos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		Reset();
 		return;
@@ -73,6 +70,8 @@ void CStraightGrenade::Tick()
 		Reset();
 		return;
 	}
+
+	m_PrevPos = m_Pos;
 }
 
 void CStraightGrenade::TickDefered()
@@ -103,7 +102,7 @@ void CStraightGrenade::CalculateVel()
 CCharacter* CStraightGrenade::CharacterNear()
 {
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	CCharacter* pTarget = GameWorld()->ClosestCharacter(m_Pos, 2000.f, pOwner ? pOwner : 0);
+	CCharacter* pTarget = GameWorld()->ClosestCharacter(m_Pos, 2000.f, pOwner);
 
 	if (pTarget)
 		return pTarget;
@@ -120,8 +119,8 @@ bool CStraightGrenade::Hit(CCharacter* pHitTarget)
 	{
 		pHitTarget->TakeDamage(m_Direction * max(0.001f, m_Force), 1, m_Owner, WEAPON_STRAIGHT_GRENADE);
 
-		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, -1, -1LL);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, pOwner ? GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(0) : -1LL);
+		GameServer()->CreateExplosion(m_Pos, -1, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pOwner->Team(), m_TeamMask);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 
 		return true;
 	}
