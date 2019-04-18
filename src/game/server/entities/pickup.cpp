@@ -14,14 +14,10 @@ CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int N
 	m_Type = Type;
 	m_Subtype = SubType;
 	m_ProximityRadius = PickupPhysSize;
-
 	m_Layer = Layer;
 	m_Number = Number;
-
 	m_Owner = Owner;
-
 	m_SnapPos = m_Pos;
-
 	Reset();
 
 	GameWorld()->InsertEntity(this);
