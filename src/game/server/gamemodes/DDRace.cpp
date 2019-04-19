@@ -43,9 +43,6 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 	// drop flags
 	for (int i = 0; i < 2; i++)
 	{
-		if (!Suicide)
-			return HadFlag |= 1;
-
 		CFlag *F = m_apFlags[i];
 		if (!F)
 			continue;
@@ -54,7 +51,8 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 			HadFlag |= 2;
 		if (F->GetCarrier() == pVictim)
 		{
-			F->Drop();
+			if (Suicide)
+				F->Drop();
 			HadFlag |= 1;
 		}
 		if (pKiller && pKiller->GetCharacter() == pVictim)
