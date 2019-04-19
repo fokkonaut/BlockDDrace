@@ -2223,37 +2223,6 @@ void CCharacter::HandleTiles(int Index)
 		m_LastRefillJumps = false;
 	}
 
-	// flags
-	if (((m_TileIndex == 66) || (m_TileFIndex == 66)) && m_Core.m_Vel.x < 0)
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this || ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
-		{
-			//
-		}
-		else
-		{
-			if ((int)GameServer()->Collision()->GetPos(MapIndexL).x)
-				if ((int)GameServer()->Collision()->GetPos(MapIndexL).x < (int)m_Core.m_Pos.x)
-					m_Core.m_Pos = m_PrevPos;
-			m_Core.m_Vel.x = 0;
-		}
-	}
-
-	if (((m_TileIndex == 67) || (m_TileFIndex == 67)) && m_Core.m_Vel.x > 0)
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this || ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
-		{
-			//
-		}
-		else
-		{
-			if ((int)GameServer()->Collision()->GetPos(MapIndexL).x)
-				if ((int)GameServer()->Collision()->GetPos(MapIndexL).x < (int)m_Core.m_Pos.x)
-					m_Core.m_Pos = m_PrevPos;
-			m_Core.m_Vel.x = 0;
-		}
-	}
-
 	// Teleport gun
 	if (((m_TileIndex == TILE_TELE_GUN_ENABLE) || (m_TileFIndex == TILE_TELE_GUN_ENABLE)) && !m_HasTeleGun)
 	{
