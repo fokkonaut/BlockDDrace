@@ -19,7 +19,7 @@ public:
 	virtual void Snap(int SnappingClient);
 
 	virtual bool OnEntity(int Index, vec2 Pos);
-	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon);
+	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon, bool Suicide);
 
 	void ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter *pNewCarrier);
 	int HasFlag(CCharacter *pChr);

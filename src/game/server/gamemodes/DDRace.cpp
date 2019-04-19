@@ -36,13 +36,16 @@ bool CGameControllerDDRace::OnEntity(int Index, vec2 Pos)
 	return true;
 }
 
-int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID)
+int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID, bool Suicide)
 {
 	int HadFlag = 0;
 
 	// drop flags
 	for (int i = 0; i < 2; i++)
 	{
+		if (!Suicide)
+			return HadFlag |= 1;
+
 		CFlag *F = m_apFlags[i];
 		if (!F)
 			continue;
@@ -71,14 +74,7 @@ void CGameControllerDDRace::ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter 
 			return;
 
 		if (F->GetCarrier() == pOldCarrier && HasFlag(pNewCarrier) == -1)
-		{
-			if (g_Config.m_SvFlagSounds)
-				GameServer()->CreateSoundGlobal(SOUND_CTF_DROP);
-
-			F->SetAtStand(false);
-			F->SetCarrier(pNewCarrier);
-			F->GetCarrier()->m_FirstFreezeTick = 0;
-		}
+			F->Grab(pNewCarrier);
 	}
 }
 

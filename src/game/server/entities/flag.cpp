@@ -52,6 +52,25 @@ void CFlag::Drop(int Dir)
 
 void CFlag::Grab(CCharacter *pChr)
 {
+	if (g_Config.m_SvFlagSounds)
+	{
+		for (int i = 0; i < MAX_CLIENTS; i++)
+		{
+			CPlayer *pPlayer = GameServer()->m_apPlayers[i];
+			if (!pPlayer)
+				continue;
+
+			if (pPlayer->GetTeam() == TEAM_SPECTATORS && pPlayer->m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[pPlayer->m_SpectatorID] && GameServer()->m_apPlayers[pPlayer->m_SpectatorID]->GetTeam() == m_Team)
+				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
+			else if (pPlayer->GetTeam() == m_Team)
+				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
+			else
+				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL, i);
+		}
+		// demo record entry
+		GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, -2);
+	}
+
 	if (m_AtStand)
 		m_GrabTick = Server()->Tick();
 	m_AtStand = false;
@@ -123,30 +142,13 @@ void CFlag::Tick()
 
 			// take the flag
 			IGameController* ControllerDDrace = GameServer()->m_pController;
-			if (((CGameControllerDDRace*)ControllerDDrace)->HasFlag(apCloseCCharacters[i]) == -1)
-				Grab(apCloseCCharacters[i]);
-			else
+			if (((CGameControllerDDRace*)ControllerDDrace)->HasFlag(apCloseCCharacters[i]) != -1)
 				continue;
-
-			if (g_Config.m_SvFlagSounds)
+			else
 			{
-				for (int i = 0; i < MAX_CLIENTS; i++)
-				{
-					CPlayer *pPlayer = GameServer()->m_apPlayers[i];
-					if (!pPlayer)
-						continue;
-
-					if (pPlayer->GetTeam() == TEAM_SPECTATORS && pPlayer->m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[pPlayer->m_SpectatorID] && GameServer()->m_apPlayers[pPlayer->m_SpectatorID]->GetTeam() == m_Team)
-						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
-					else if (pPlayer->GetTeam() == m_Team)
-						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
-					else
-						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL, i);
-				}
+				Grab(apCloseCCharacters[i]);
+				break;
 			}
-			// demo record entry
-			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, -2);
-			break;
 		}
 	}
 

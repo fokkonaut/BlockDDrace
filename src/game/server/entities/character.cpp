@@ -1283,16 +1283,16 @@ void CCharacter::Die(int Killer, int Weapon)
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastToucherID;
 
-	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
-
+	bool Suicide = true;
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
 		if (GameServer()->m_apPlayers[Killer])
 			GameServer()->m_apPlayers[Killer]->m_Kills++;
 		m_pPlayer->m_Deaths++;
+		Suicide = false;
 	}
 
-	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
+	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon, Suicide);
 
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
@@ -1320,6 +1320,8 @@ void CCharacter::Die(int Killer, int Weapon)
 		Msg.m_ModeSpecial = ModeSpecial;
 		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 	}
+
+	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
 
 	// a nice sound
 	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));

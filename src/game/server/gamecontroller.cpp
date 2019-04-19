@@ -564,7 +564,7 @@ void IGameController::PostReset()
 }*/
 
 
-int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
+int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon, bool Suicide)
 {
 	/*// do scoreing
 	if(!pKiller || Weapon == WEAPON_GAME)
