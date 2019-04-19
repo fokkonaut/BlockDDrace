@@ -95,9 +95,6 @@ void CFlag::Tick()
 
 	if (m_pCarrier && m_pCarrier->IsAlive())
 	{
-		// update flag position
-		m_Pos = m_pCarrier->m_Pos;
-
 		if (m_pCarrier->m_FirstFreezeTick != 0)
 		{
 			if (Server()->Tick() > m_pCarrier->m_FirstFreezeTick + Server()->TickSpeed() * 8)

@@ -97,6 +97,15 @@ int CGameControllerDDRace::HasFlag(CCharacter *pChr)
 void CGameControllerDDRace::Tick()
 {
 	IGameController::Tick();
+
+	for (int i = 0; i < 2; i++)
+	{
+		CFlag *F = m_apFlags[i];
+		if (!F)
+			continue;
+		if (F->GetCarrier() && F->GetCarrier()->IsAlive())
+			F->m_Pos = F->GetCarrier()->m_Pos;
+	}
 }
 
 void CGameControllerDDRace::Snap(int SnappingClient)
