@@ -43,10 +43,6 @@ bool CCustomProjectile::HitCharacter()
 	if (pHit->Team() != pOwner->Team())
 		return false;
 
-	int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
-	if (!CmaskIsSet(TeamMask, pHit->GetPlayer()->GetCID()))
-		return false;
-
 	if (m_Spooky)
 	{
 		pHit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
