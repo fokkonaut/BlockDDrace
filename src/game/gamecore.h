@@ -221,20 +221,15 @@ public:
 	void Tick(bool UseInput, bool IsClient);
 	void Move();
 
-	void setFlagPos(int id, vec2 Pos, int Stand, vec2 Vel, int carry);
+	void SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Carried);
 
-	vec2 m_FlagPos1;
-	vec2 m_FlagPos2;
-	int m_AtStand1;
-	int m_AtStand2;
-	vec2 m_FlagVel1;
-	vec2 m_FlagVel2;
+	vec2 m_FlagPos[2];
+	vec2 m_FlagVel[2];
+	bool m_AtStand[2];
+	bool m_Carried[2];
 
-	int m_updateFlagVel;
+	int m_UpdateFlagVel;
 	vec2 m_UFlagVel;
-
-	int m_carryFlagChar1;
-	int m_carryFlagChar2;
 
 	void Read(const CNetObj_CharacterCore *pObjCore);
 	void Write(CNetObj_CharacterCore *pObjCore);

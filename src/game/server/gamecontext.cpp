@@ -1738,16 +1738,14 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					}
 					else
 					{
-						IGameController* ControllerDDrace = pChr->GameServer()->m_pController;
-						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0])
+						for (int i = 0; i < 2; i++)
 						{
-							if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[0]->m_pCarryingCharacter == pChr)
-								((CGameControllerDDRace*)ControllerDDrace)->DropFlag(0, pChr->GetAimDir()); //red
-						}
-						if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1])
-						{
-							if (((CGameControllerDDRace*)ControllerDDrace)->m_apFlags[1]->m_pCarryingCharacter == pChr)
-								((CGameControllerDDRace*)ControllerDDrace)->DropFlag(1, pChr->GetAimDir()); //blue
+							CFlag *F = ((CGameControllerDDRace*)m_pController)->m_apFlags[i];
+							if (!F)
+								continue;
+
+							if (F->GetCarrier() == pChr)
+								F->Drop(pChr->GetAimDir());
 						}
 					}
 				}

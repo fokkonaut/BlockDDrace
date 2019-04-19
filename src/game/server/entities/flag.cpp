@@ -2,23 +2,29 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 
 #include <game/server/gamecontext.h>
+#include <engine/shared/config.h>
 #include "flag.h"
+#include <game/server/gamemodes/ddrace.h>
 
-CFlag::CFlag(CGameWorld *pGameWorld, int Team)
+CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_FLAG)
 {
+	m_Pos = Pos;
+	m_StandPos = Pos;
 	m_Team = Team;
 	m_ProximityRadius = ms_PhysSize;
-	m_pCarryingCharacter = NULL;
+	m_pCarrier = NULL;
 	m_GrabTick = 0;
 	m_PrevPos = m_Pos;
+
+	GameServer()->m_World.InsertEntity(this);
 
 	Reset();
 }
 
 void CFlag::Reset()
 {
-	m_pCarryingCharacter = NULL;
+	m_pCarrier = NULL;
 	m_AtStand = 1;
 	m_Pos = m_StandPos;
 	m_Vel = vec2(0,0);
@@ -33,6 +39,214 @@ void CFlag::TickPaused()
 		++m_GrabTick;
 }
 
+void CFlag::Drop(int Dir)
+{
+	if (g_Config.m_SvFlagSounds)
+		GameServer()->CreateSoundGlobal(SOUND_CTF_DROP);
+	m_DropTick = Server()->Tick();
+	m_DropFreezeTick = Server()->Tick();
+	m_pLastCarrier = m_pCarrier;
+	m_pCarrier = 0;
+	m_Vel = vec2(5 * Dir, Dir == 0 ? 0 : -5);
+}
+
+void CFlag::Grab(CCharacter *pChr)
+{
+	if (m_AtStand)
+		m_GrabTick = Server()->Tick();
+	m_AtStand = false;
+	m_pCarrier = pChr;
+	pChr->m_FirstFreezeTick = 0;
+}
+
+bool CFlag::IsGrounded(bool SetVel)
+{
+	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
+		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize, m_Pos.y + ms_PhysSize + 5)))
+	{
+		if (SetVel)
+			m_Vel.x *= 0.75f;
+		return true;
+	}
+
+	if (m_Vel.y < 0 && (((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_180) || (m_TileIndexB == TILE_STOP && m_TileFlagsB == ROTATION_180) || (m_TileIndexB == TILE_STOPS && (m_TileFlagsB == ROTATION_0 || m_TileFlagsB == ROTATION_180)) || (m_TileIndexB == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_180) || (m_TileFIndexB == TILE_STOP && m_TileFFlagsB == ROTATION_180) || (m_TileFIndexB == TILE_STOPS && (m_TileFFlagsB == ROTATION_0 || m_TileFFlagsB == ROTATION_180)) || (m_TileFIndexB == TILE_STOPA)))
+		|| (m_Vel.y > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_0) || (m_TileIndexT == TILE_STOP && m_TileFlagsT == ROTATION_0) || (m_TileIndexT == TILE_STOPS && (m_TileFlagsT == ROTATION_0 || m_TileFlagsT == ROTATION_180)) || (m_TileIndexT == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_0) || (m_TileFIndexT == TILE_STOP && m_TileFFlagsT == ROTATION_0) || (m_TileFIndexT == TILE_STOPS && (m_TileFFlagsT == ROTATION_0 || m_TileFFlagsT == ROTATION_180)) || (m_TileFIndexT == TILE_STOPA))))
+	{
+		m_Vel.y = 0;
+		if (SetVel)
+			m_Vel.x *= 0.925f;
+		return true;
+	}
+
+	if (SetVel)
+		m_Vel.x *= 0.98f;
+	return false;
+}
+
+void CFlag::Tick()
+{
+	if (GameServer()->m_World.m_ResetRequested || GameServer()->m_World.m_Paused)
+		return;
+
+	// flag hits death-tile or left the game layer, reset it
+	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
+	{
+		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
+		if (g_Config.m_SvFlagSounds)
+			GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
+		Reset();
+		return;
+	}
+
+	if (m_pCarrier && m_pCarrier->IsAlive())
+	{
+		// update flag position
+		m_Pos = m_pCarrier->m_Pos;
+
+		if (m_pCarrier->m_FirstFreezeTick != 0)
+		{
+			if (Server()->Tick() > m_pCarrier->m_FirstFreezeTick + Server()->TickSpeed() * 8)
+				Drop(m_pCarrier->GetAimDir());
+		}
+	}
+	else
+	{
+		CCharacter *apCloseCCharacters[MAX_CLIENTS];
+		int Num = GameServer()->m_World.FindEntities(m_Pos, ms_PhysSize, (CEntity**)apCloseCCharacters, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+		for (int i = 0; i < Num; i++)
+		{
+			if (!apCloseCCharacters[i] || apCloseCCharacters[i]->GetPlayer()->GetTeam() == TEAM_SPECTATORS || GameServer()->Collision()->IntersectLine(m_Pos, apCloseCCharacters[i]->m_Pos, NULL, NULL))
+				continue;
+
+			if (m_pCarrier == apCloseCCharacters[i] || (m_pLastCarrier == apCloseCCharacters[i] && (m_DropFreezeTick + Server()->TickSpeed() * 2) > Server()->Tick()))
+				continue;
+
+			// take the flag
+			IGameController* ControllerDDrace = GameServer()->m_pController;
+			if (((CGameControllerDDRace*)ControllerDDrace)->HasFlag(apCloseCCharacters[i]) == -1)
+				Grab(apCloseCCharacters[i]);
+			else
+				continue;
+
+			if (g_Config.m_SvFlagSounds)
+			{
+				for (int i = 0; i < MAX_CLIENTS; i++)
+				{
+					CPlayer *pPlayer = GameServer()->m_apPlayers[i];
+					if (!pPlayer)
+						continue;
+
+					if (pPlayer->GetTeam() == TEAM_SPECTATORS && pPlayer->m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[pPlayer->m_SpectatorID] && GameServer()->m_apPlayers[pPlayer->m_SpectatorID]->GetTeam() == m_Team)
+						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
+					else if (pPlayer->GetTeam() == m_Team)
+						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
+					else
+						GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL, i);
+				}
+			}
+			// demo record entry
+			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, -2);
+			break;
+		}
+	}
+
+	if (!m_pCarrier && !m_AtStand)
+	{
+		if (Server()->Tick() > m_DropTick + Server()->TickSpeed() * 90)
+		{
+			GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
+			if (g_Config.m_SvFlagSounds)
+				GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
+			Reset();
+		}
+		else
+		{
+			//Gravity
+			m_Vel.y += GameServer()->Tuning()->m_Gravity;
+
+			//Friction
+			vec2 TempVel = m_Vel;
+
+			//Speedups
+			if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
+			{
+				int Force, MaxSpeed = 0;
+				vec2 Direction, MaxVel;
+				float TeeAngle, SpeederAngle, DiffAngle, SpeedLeft, TeeSpeed;
+				GameServer()->Collision()->GetSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos), &Direction, &Force, &MaxSpeed);
+
+				if (Force == 255 && MaxSpeed)
+					m_Vel = Direction * (MaxSpeed / 5);
+				else
+				{
+					if (MaxSpeed > 0 && MaxSpeed < 5) MaxSpeed = 5;
+					if (MaxSpeed > 0)
+					{
+						if (Direction.x > 0.0000001f)
+							SpeederAngle = -atan(Direction.y / Direction.x);
+						else if (Direction.x < 0.0000001f)
+							SpeederAngle = atan(Direction.y / Direction.x) + 2.0f * asin(1.0f);
+						else if (Direction.y > 0.0000001f)
+							SpeederAngle = asin(1.0f);
+						else
+							SpeederAngle = asin(-1.0f);
+
+						if (SpeederAngle < 0)
+							SpeederAngle = 4.0f * asin(1.0f) + SpeederAngle;
+
+						if (TempVel.x > 0.0000001f)
+							TeeAngle = -atan(TempVel.y / TempVel.x);
+						else if (TempVel.x < 0.0000001f)
+							TeeAngle = atan(TempVel.y / TempVel.x) + 2.0f * asin(1.0f);
+						else if (TempVel.y > 0.0000001f)
+							TeeAngle = asin(1.0f);
+						else
+							TeeAngle = asin(-1.0f);
+
+						if (TeeAngle < 0)
+							TeeAngle = 4.0f * asin(1.0f) + TeeAngle;
+
+						TeeSpeed = sqrt(pow(TempVel.x, 2) + pow(TempVel.y, 2));
+
+						DiffAngle = SpeederAngle - TeeAngle;
+						SpeedLeft = MaxSpeed / 5.0f - cos(DiffAngle) * TeeSpeed;
+						if (abs(SpeedLeft) > Force && SpeedLeft > 0.0000001f)
+							TempVel += Direction * Force;
+						else if (abs(SpeedLeft) > Force)
+							TempVel += Direction * -Force;
+						else
+							TempVel += Direction * SpeedLeft;
+					}
+					else
+						TempVel += Direction * Force;
+				}
+			}
+
+			//stopper
+			int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
+			std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
+			if (!Indices.empty())
+				for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
+					HandleTiles(*i);
+			else
+			{
+				HandleTiles(CurrentIndex);
+			}
+
+			if (TempVel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
+				TempVel.x = 0;
+			if (TempVel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
+				TempVel.x = 0;
+			m_Vel = TempVel;
+			IsGrounded(true);
+
+			GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
+		}
+	}
+
+	m_PrevPos = m_Pos;
+}
+
 void CFlag::Snap(int SnappingClient)
 {
 	if(NetworkClipped(SnappingClient))
@@ -45,4 +259,34 @@ void CFlag::Snap(int SnappingClient)
 	pFlag->m_X = (int)m_Pos.x;
 	pFlag->m_Y = (int)m_Pos.y;
 	pFlag->m_Team = m_Team;
+}
+
+void CFlag::HandleTiles(int Index)
+{
+	int MapIndex = Index;
+	float Offset = 4.0f;
+	MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));
+	MapIndexR = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x - ms_PhysSize - Offset, m_Pos.y));
+	MapIndexT = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + ms_PhysSize + Offset));
+	MapIndexB = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y - ms_PhysSize - Offset));
+	m_TileIndex = GameServer()->Collision()->GetTileIndex(MapIndex);
+	m_TileFlags = GameServer()->Collision()->GetTileFlags(MapIndex);
+	m_TileIndexL = GameServer()->Collision()->GetTileIndex(MapIndexL);
+	m_TileFlagsL = GameServer()->Collision()->GetTileFlags(MapIndexL);
+	m_TileIndexR = GameServer()->Collision()->GetTileIndex(MapIndexR);
+	m_TileFlagsR = GameServer()->Collision()->GetTileFlags(MapIndexR);
+	m_TileIndexB = GameServer()->Collision()->GetTileIndex(MapIndexB);
+	m_TileFlagsB = GameServer()->Collision()->GetTileFlags(MapIndexB);
+	m_TileIndexT = GameServer()->Collision()->GetTileIndex(MapIndexT);
+	m_TileFlagsT = GameServer()->Collision()->GetTileFlags(MapIndexT);
+	m_TileFIndex = GameServer()->Collision()->GetFTileIndex(MapIndex);
+	m_TileFFlags = GameServer()->Collision()->GetFTileFlags(MapIndex);
+	m_TileFIndexL = GameServer()->Collision()->GetFTileIndex(MapIndexL);
+	m_TileFFlagsL = GameServer()->Collision()->GetFTileFlags(MapIndexL);
+	m_TileFIndexR = GameServer()->Collision()->GetFTileIndex(MapIndexR);
+	m_TileFFlagsR = GameServer()->Collision()->GetFTileFlags(MapIndexR);
+	m_TileFIndexB = GameServer()->Collision()->GetFTileIndex(MapIndexB);
+	m_TileFFlagsB = GameServer()->Collision()->GetFTileFlags(MapIndexB);
+	m_TileFIndexT = GameServer()->Collision()->GetFTileIndex(MapIndexT);
+	m_TileFFlagsT = GameServer()->Collision()->GetFTileFlags(MapIndexT);
 }

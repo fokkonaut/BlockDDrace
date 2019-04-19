@@ -1013,26 +1013,24 @@ void CCharacter::Tick()
 
 	m_Core.m_Input = m_Input;
 
-	int carry1 = 1; int carry2 = 1;
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
+	for (int i = 0; i < 2; i++)
 	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == NULL)
-			carry1 = 0;
-		m_Core.setFlagPos(0, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel, carry1);
-	}
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == NULL)
-			carry2 = 0;
-		m_Core.setFlagPos(1, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Pos, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_AtStand, ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel, carry2);
+		bool Carried = true;
+		CFlag *F = ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[i];
+		if (!F)
+			continue;
+
+		if (F->GetCarrier() == NULL)
+			Carried = false;
+		m_Core.SetFlagPos(i, F->m_Pos, F->IsAtStand(), F->GetVel(), Carried);
 	}
 
 	m_Core.Tick(true, false);
 
-	if (m_Core.m_updateFlagVel == 129)
-		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_Vel = m_Core.m_UFlagVel;
-	else if (m_Core.m_updateFlagVel == 130)
-		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_Vel = m_Core.m_UFlagVel;
+	if (m_Core.m_UpdateFlagVel == 129)
+		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
+	else if (m_Core.m_UpdateFlagVel == 130)
+		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_BLUE]->SetVel(m_Core.m_UFlagVel);
 
 	// handle Weapons
 	HandleWeapons();
@@ -1285,27 +1283,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastToucherID;
 
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0])
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[0]->m_pCarryingCharacter == this)
-		{
-			if (Killer >= 0 && Killer != m_pPlayer->GetCID())
-			{
-				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(0, Killer);
-			}
-		}
-	}
-
-	if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1])
-	{
-		if (((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[1]->m_pCarryingCharacter == this)
-		{
-			if (Killer >= 0 && Killer != m_pPlayer->GetCID())
-			{
-				((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(1, Killer);
-			}
-		}
-	}
+	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
 
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
