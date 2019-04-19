@@ -1114,7 +1114,7 @@ void CCharacter::BlockDDraceTick()
 				GameServer()->SendMotd("", GetPlayer()->GetCID());
 			}
 
-			GameServer()->SendBroadcast("", m_pPlayer->GetCID(), 0);
+			GameServer()->SendBroadcast("", m_pPlayer->GetCID());
 
 			m_PurchaseState = 0;
 			m_ShopWindowPage = -1;
@@ -2186,7 +2186,7 @@ void CCharacter::HandleTiles(int Index)
 		}
 
 		if (Server()->Tick() % 50 == 0)
-			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), 0);
+			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID());
 	}
 
 	// solo part
@@ -3095,7 +3095,7 @@ void CCharacter::UpdateWeaponIndicator()
 	char aSpaces[128];
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
 	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", GameServer()->GetWeaponName(GetActiveWeapon()), aSpaces);
-	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID());
+	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID(), false);
 }
 
 void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Silent)
