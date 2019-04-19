@@ -69,20 +69,10 @@ void CWeapon::IsShieldNear()
 
 int CWeapon::IsCharacterNear()
 {
-	CCharacter *apEnts[MAX_CLIENTS];
-	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
-	
-	for (int i = 0; i < Num; ++i)
-	{
-		CCharacter * pChr = apEnts[i];
+	CCharacter* pChr = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Vel, 20.0f, m_Pos + m_Vel, 0, m_Owner);
+	if (pChr && pChr->IsAlive())
+		return pChr->GetPlayer()->GetCID();
 
-		int64_t TeamMask = GameServer()->GetPlayerChar(m_Owner)->Teams()->TeamMask(GameServer()->GetPlayerChar(m_Owner)->Team(), -1, m_Owner);
-		if (!CmaskIsSet(TeamMask, pChr->GetPlayer()->GetCID()))
-			return false;
-
-		if (pChr && pChr->IsAlive())
-			return pChr->GetPlayer()->GetCID();
-	}
 	return -1;
 }
 
