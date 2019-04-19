@@ -448,13 +448,6 @@ void CPlayer::Snap(int SnappingClient)
 		pAuthInfo->m_AuthLevel = Server()->GetAuthedState(id);
 	else
 		pAuthInfo->m_AuthLevel = AUTHED_NO;
-
-
-	CNetObj_DDNetGameInfo *pDDNetGameInfo = static_cast<CNetObj_DDNetGameInfo *>(Server()->SnapNewItem(NETOBJTYPE_DDNETGAMEINFO, id, sizeof(CNetObj_DDNetGameInfo)));
-	if (!pDDNetGameInfo)
-		return;
-
-	pDDNetGameInfo->m_AllowTimeScore = m_AllowTimeScore;
 }
 
 void CPlayer::FakeSnap()

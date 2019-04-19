@@ -55,6 +55,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_HasTeleGrenade = false;
 	m_TeleGunTeleport = false;
 	m_IsBlueTeleGunTeleport = false;
+	m_Solo = false;
 
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
@@ -121,6 +122,7 @@ void CCharacter::Destroy()
 {
 	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
 	m_Alive = false;
+	m_Solo = false;
 }
 
 void CCharacter::SetWeapon(int W)
@@ -145,6 +147,8 @@ void CCharacter::SetWeapon(int W)
 
 void CCharacter::SetSolo(bool Solo)
 {
+	m_Solo = Solo;
+	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()]->m_Solo = Solo;
 	Teams()->m_Core.SetSolo(m_pPlayer->GetCID(), Solo);
 
 	if(Solo)
@@ -1076,7 +1080,6 @@ void CCharacter::BlockDDraceTick()
 		m_LastHitWeapon = -1;
 	}
 
-
 	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
 	if (pPas && pPas->m_Passive)
 	{
@@ -1347,6 +1350,8 @@ void CCharacter::Die(int Killer, int Weapon)
 	m_pPlayer->m_DieTick = Server()->Tick();
 
 	m_Alive = false;
+	m_Solo = false;
+
 	GameServer()->m_World.RemoveEntity(this);
 	GameServer()->m_World.m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
 	GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID(), Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -1631,6 +1636,11 @@ void CCharacter::Snap(int SnappingClient)
 	}
 
 	pCharacter->m_PlayerFlags = GetPlayer()->m_PlayerFlags;
+
+	CNetObj_DDNetCharacter *pDDNetCharacter = static_cast<CNetObj_DDNetCharacter *>(Server()->SnapNewItem(NETOBJTYPE_DDNETCHARACTER, id, sizeof(CNetObj_DDNetCharacter)));
+	pDDNetCharacter->m_Flags = 0;
+	if (m_Solo)
+		pDDNetCharacter->m_Flags |= CHARACTERFLAG_SOLO;
 }
 
 int CCharacter::NetworkClipped(int SnappingClient)

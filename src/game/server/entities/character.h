@@ -199,6 +199,7 @@ private:
 
 	bool m_SetSavePos;
 	vec2 m_PrevSavePos;
+	bool m_Solo;
 
 	void BlockDDraceTick();
 	void DummyTick();
@@ -214,6 +215,7 @@ public:
 	int Team();
 	bool CanCollide(int ClientID);
 	bool SameTeam(int ClientID);
+	bool IsSolo() { return m_Solo; };
 	bool m_Super;
 	bool m_SuperJump;
 	bool m_Jetpack;
