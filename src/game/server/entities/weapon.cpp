@@ -242,8 +242,8 @@ void CWeapon::Tick()
 
 bool CWeapon::IsGrounded(bool SetVel)
 {
-	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize / 2, m_Pos.y + ms_PhysSize / 2 + 5))
-		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize / 2, m_Pos.y + ms_PhysSize / 2 + 5)))
+	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
+		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize, m_Pos.y + ms_PhysSize + 5)))
 	{
 		if (SetVel)
 			m_Vel.x *= 0.75f;

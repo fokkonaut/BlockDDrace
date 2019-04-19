@@ -29,7 +29,7 @@ private:
 	bool m_EreaseWeapon;
 	vec2 m_PrevPos;
 
-	static int const ms_PhysSize = 14*2;
+	static int const ms_PhysSize = 14;
 
 	// have to define a new ID variable for the bullet
 	int m_ID2;
