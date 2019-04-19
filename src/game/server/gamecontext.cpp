@@ -430,7 +430,8 @@ void CGameContext::SendWeaponPickup(int ClientID, int Weapon)
 {
 	if (Weapon > WEAPON_NINJA)
 	{
-		GetPlayerChar(ClientID)->SetWeapon(Weapon);
+		if (GetPlayerChar(ClientID))
+			GetPlayerChar(ClientID)->SetWeapon(Weapon);
 	}
 	else
 	{
