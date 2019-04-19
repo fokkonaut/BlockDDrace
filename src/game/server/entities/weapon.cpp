@@ -69,7 +69,7 @@ void CWeapon::IsShieldNear()
 
 int CWeapon::IsCharacterNear()
 {
-	CCharacter* pChr = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Vel, 20.0f, m_Pos + m_Vel, 0, m_Owner);
+	CCharacter* pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, 0, m_Owner);
 	if (pChr && pChr->IsAlive())
 		return pChr->GetPlayer()->GetCID();
 
