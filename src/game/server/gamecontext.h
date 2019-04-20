@@ -3,13 +3,6 @@
 #ifndef GAME_SERVER_GAMECONTEXT_H
 #define GAME_SERVER_GAMECONTEXT_H
 
-enum ITEMS
-{
-	SPOOKY_GHOST,
-	POLICE,
-	NUM_ITEMS
-};
-
 #include <engine/server.h>
 #include <engine/console.h>
 #include <engine/shared/memheap.h>
@@ -58,27 +51,6 @@ typedef unsigned __int64 uint64_t;
 enum
 {
 	NUM_TUNEZONES = 256
-};
-
-enum EXTRAS
-{
-	JETPACK = 1,
-	RAINBOW,
-	INF_RAINBOW,
-	ATOM,
-	INF_ATOM,
-	TRAIL,
-	INF_TRAIL,
-	EXTRA_SPOOKY_GHOST,
-	METEOR,
-	INF_METEOR,
-	PASSIVE,
-	VANILLA_MODE,
-	BLOODY,
-	STRONG_BLOODY,
-	POLICE_HELPER,
-	SCROLL_NINJA,
-	NUM_EXTRAS
 };
 
 

@@ -10,6 +10,14 @@
 #include "entities/weapon.h"
 #include <vector>
 
+enum
+{
+	SPOOKY_GHOST,
+	POLICE,
+	NUM_ITEMS
+};
+
+
 // player object
 class CPlayer
 {
