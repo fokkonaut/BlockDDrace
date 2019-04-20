@@ -150,24 +150,24 @@ void CCustomProjectile::Snap(int SnappingClient)
 
 	if (m_Type == WEAPON_PLASMA_RIFLE)
 	{
-		CNetObj_Laser *pObj = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID, sizeof(CNetObj_Laser)));
-		if (!pObj)
+		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID, sizeof(CNetObj_Laser)));
+		if (!pLaser)
 			return;
 
-		pObj->m_X = (int)m_Pos.x;
-		pObj->m_Y = (int)m_Pos.y;
-		pObj->m_FromX = (int)m_Pos.x;
-		pObj->m_FromY = (int)m_Pos.y;
-		pObj->m_StartTick = m_EvalTick;
+		pLaser->m_X = (int)m_Pos.x;
+		pLaser->m_Y = (int)m_Pos.y;
+		pLaser->m_FromX = (int)m_Pos.x;
+		pLaser->m_FromY = (int)m_Pos.y;
+		pLaser->m_StartTick = m_EvalTick;
 	}
 	else if (m_Type == WEAPON_HEART_GUN)
 	{
-		CNetObj_Pickup *pObj = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
-		if (!pObj)
+		CNetObj_Pickup *pPickup = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
+		if (!pPickup)
 			return;
 
-		pObj->m_X = (int)m_Pos.x;
-		pObj->m_Y = (int)m_Pos.y;
-		pObj->m_Type = POWERUP_HEALTH;
+		pPickup->m_X = (int)m_Pos.x;
+		pPickup->m_Y = (int)m_Pos.y;
+		pPickup->m_Type = POWERUP_HEALTH;
 	}
 }
