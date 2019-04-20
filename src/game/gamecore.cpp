@@ -356,16 +356,16 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 			{
 				vec2 ClosestPoint;
 				ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos[i]);
-				if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != 130 && m_HookedPlayer != 129)
+				if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != FLAG_BLUE && m_HookedPlayer != FLAG_RED)
 				{
 					if (m_HookedPlayer == -1)
 					{
 						m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
 						m_HookState = HOOK_GRABBED;
 						if (i == TEAM_RED)
-							m_HookedPlayer = 129;
+							m_HookedPlayer = FLAG_RED;
 						if (i == TEAM_BLUE)
-							m_HookedPlayer = 130;
+							m_HookedPlayer = FLAG_BLUE;
 						Distance = distance(m_HookPos, m_FlagPos[i]);
 					}
 				}
@@ -408,11 +408,11 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 	if(m_HookState == HOOK_GRABBED)
 	{
 		// UPDATE HOOK POS ON FLAG POS!!!!!
-		if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				if ((i == TEAM_RED && m_HookedPlayer == 129) || (i == TEAM_BLUE && m_HookedPlayer == 130))
+				if ((i == TEAM_RED && m_HookedPlayer == FLAG_RED) || (i == TEAM_BLUE && m_HookedPlayer == FLAG_BLUE))
 					if (!m_Carried[i])
 						m_HookPos = m_FlagPos[i];
 				else
@@ -469,18 +469,18 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 
 		// release hook (max default hook time is 1.25 s)
 		m_HookTick++;
-		if (m_HookedPlayer != -1 && (m_HookTick > SERVER_TICK_SPEED+SERVER_TICK_SPEED/5 || (m_HookedPlayer < 129 && !m_pWorld->m_apCharacters[m_HookedPlayer])))
+		if (m_HookedPlayer != -1 && (m_HookTick > SERVER_TICK_SPEED+SERVER_TICK_SPEED/5 || (m_HookedPlayer < FLAG_RED && !m_pWorld->m_apCharacters[m_HookedPlayer])))
 		{
 			m_HookedPlayer = -1;
 			m_HookState = HOOK_RETRACTED;
 			m_HookPos = m_Pos;
 		}
 
-		if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				if ((i == TEAM_RED && m_HookedPlayer == 129) || (i == TEAM_BLUE && m_HookedPlayer == 130))
+				if ((i == TEAM_RED && m_HookedPlayer == FLAG_RED) || (i == TEAM_BLUE && m_HookedPlayer == FLAG_BLUE))
 				{
 					if (m_AtStand[i])
 					{
@@ -567,7 +567,7 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 			}
 		}
 
-		if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			float Distance;
 			vec2 FlagVel;
@@ -576,9 +576,9 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 			vec2 Temp;
 			int Team;
 
-			if (m_HookedPlayer == 129)
+			if (m_HookedPlayer == FLAG_RED)
 				Team = TEAM_RED;
-			else if (m_HookedPlayer == 130)
+			else if (m_HookedPlayer == FLAG_BLUE)
 				Team = TEAM_BLUE;
 
 			m_UpdateFlagVel = m_HookedPlayer;
@@ -811,7 +811,7 @@ void CCharacterCore::Write(CNetObj_CharacterCore *pObjCore)
 	pObjCore->m_HookY = round_to_int(m_HookPos.y);
 	pObjCore->m_HookDx = round_to_int(m_HookDir.x*256.0f);
 	pObjCore->m_HookDy = round_to_int(m_HookDir.y*256.0f);
-	if (m_HookedPlayer == 129 || m_HookedPlayer == 130)
+	if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		pObjCore->m_HookedPlayer = -1;
 	else
 		pObjCore->m_HookedPlayer = m_HookedPlayer;
@@ -832,7 +832,7 @@ void CCharacterCore::Read(const CNetObj_CharacterCore *pObjCore)
 	m_HookPos.y = pObjCore->m_HookY;
 	m_HookDir.x = pObjCore->m_HookDx/256.0f;
 	m_HookDir.y = pObjCore->m_HookDy/256.0f;
-	if (m_HookedPlayer != 129 && m_HookedPlayer != 130)
+	if (m_HookedPlayer != FLAG_RED && m_HookedPlayer != FLAG_BLUE)
 		m_HookedPlayer = pObjCore->m_HookedPlayer;
 	m_Jumped = pObjCore->m_Jumped;
 	m_Direction = pObjCore->m_Direction;

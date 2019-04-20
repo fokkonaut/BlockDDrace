@@ -1027,9 +1027,9 @@ void CCharacter::Tick()
 
 	m_Core.Tick(true, false);
 
-	if (m_Core.m_UpdateFlagVel == 129)
+	if (m_Core.m_UpdateFlagVel == FLAG_RED)
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
-	else if (m_Core.m_UpdateFlagVel == 130)
+	else if (m_Core.m_UpdateFlagVel == FLAG_BLUE)
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_BLUE]->SetVel(m_Core.m_UFlagVel);
 
 	// handle Weapons

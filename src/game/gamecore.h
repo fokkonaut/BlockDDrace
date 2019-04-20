@@ -17,6 +17,12 @@
 #include "teamscore.h"
 #include "mapitems.h"
 
+enum
+{
+	FLAG_RED = 257,
+	FLAG_BLUE = 258
+};
+
 
 class CTuneParam
 {
