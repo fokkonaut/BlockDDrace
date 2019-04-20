@@ -4,7 +4,7 @@
 void CCharacter::ShopWindow(int Dir)
 {
 	m_ShopMotdTick = 0;
-	int m_MaxShopPage = 4; // UPDATE THIS WITH EVERY PAGE YOU ADD!!!!!
+	int m_MaxShopPage = 3; // UPDATE THIS WITH EVERY PAGE YOU ADD!!!!!
 
 	if (Dir == 0)
 		m_ShopWindowPage = 0;
@@ -50,16 +50,6 @@ void CCharacter::ShopWindow(int Dir)
 		str_format(aInfo, sizeof(aInfo), "Bloody will give your tee a permanent kill effect.");
 	}
 	else if (m_ShopWindowPage == 3)
-	{
-		str_format(aItem, sizeof(aItem), "       ~  S P O O K Y G H O S T  ~     ");
-		str_format(aLevelTmp, sizeof(aLevelTmp), "1");
-		str_format(aPriceTmp, sizeof(aPriceTmp), "1.000.000");
-		str_format(aTimeTmp, sizeof(aTimeTmp), "You own this item forever.");
-		str_format(aInfo, sizeof(aInfo), "Using this item you can hide from other players behind bushes.\n"
-			"If your ghost is activated you won't have a name\n"
-			"For more information please visit '/spookyghost help'.");
-	}
-	else if (m_ShopWindowPage == 4)
 	{
 		str_format(aItem, sizeof(aItem), "        ~  P O L I C E  ~      ");
 		str_format(aLevelTmp, sizeof(aLevelTmp), "18");
@@ -209,24 +199,6 @@ void CCharacter::BuyItem(int ItemID)
 		}
 	}
 	else if (ItemID == 3)
-	{
-		if (m_pPlayer->m_Level < 1)
-		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 1 to buy the spooky ghost.");
-			return;
-		}
-		else if (m_pPlayer->m_aHasItem[SPOOKY_GHOST])
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the spooky ghost.");
-		else if (m_pPlayer->m_Money >= 1000000)
-		{
-			m_pPlayer->MoneyTransaction(-1000000, "-1000000 money. (bought 'spooky_ghost')");
-			m_pPlayer->m_aHasItem[SPOOKY_GHOST] = true;
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You bought the spooky ghost. For more infos check '/spookyghostinfo'.");
-		}
-		else
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You don't have enough money! You need 1.000.000 money.");
-	}
-	else if (ItemID == 4)
 	{
 		if (!m_pPlayer->m_aHasItem[POLICE])
 		{
