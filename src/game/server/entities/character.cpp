@@ -2218,7 +2218,7 @@ void CCharacter::HandleTiles(int Index)
 		}
 
 		if (Server()->Tick() % 50 == 0)
-			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID());
+			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
 
 	// solo part
