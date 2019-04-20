@@ -54,21 +54,10 @@ void CFlag::Grab(CCharacter *pChr)
 {
 	if (g_Config.m_SvFlagSounds)
 	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CPlayer *pPlayer = GameServer()->m_apPlayers[i];
-			if (!pPlayer)
-				continue;
-
-			if (pPlayer->GetTeam() == TEAM_SPECTATORS && pPlayer->m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[pPlayer->m_SpectatorID] && GameServer()->m_apPlayers[pPlayer->m_SpectatorID]->GetTeam() == m_Team)
-				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
-			else if (pPlayer->GetTeam() == m_Team)
-				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, i);
-			else
-				GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL, i);
-		}
-		// demo record entry
-		GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN, -2);
+		if (m_Team == TEAM_RED)
+			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN);
+		else if (m_Team == TEAM_BLUE)
+			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL);
 	}
 
 	if (m_AtStand)
