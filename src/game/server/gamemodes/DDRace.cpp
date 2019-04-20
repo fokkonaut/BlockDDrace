@@ -44,14 +44,14 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 	for (int i = 0; i < 2; i++)
 	{
 		CFlag *F = m_apFlags[i];
-		if (!F)
+		if (!F || !pKiller || !pKiller->GetCharacter())
 			continue;
 
-		if (pKiller && pKiller->GetCharacter() && F->GetCarrier() == pKiller->GetCharacter())
+		if (F->GetCarrier() == pKiller->GetCharacter())
 			HadFlag |= 2;
 		if (F->GetCarrier() == pVictim)
 		{
-			if (Suicide)
+			if (Suicide || HasFlag(pKiller->GetCharacter()) != -1)
 				F->Drop();
 			HadFlag |= 1;
 		}
