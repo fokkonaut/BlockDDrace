@@ -17,6 +17,13 @@ enum
 	NUM_ITEMS
 };
 
+enum
+{
+	FIX_SET_NAME_ONLY = 0,
+	FIX_CHAT_MSG,
+	FIX_KILL_MSG
+};
+
 
 // player object
 class CPlayer

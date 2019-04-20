@@ -254,9 +254,9 @@ void CPlayer::Tick()
 	{
 		if (m_SetRealNameTick < Server()->Tick())
 		{
-			if (m_FixNameID == 1)
+			if (m_FixNameID == FIX_CHAT_MSG)
 				GameServer()->SendChat(m_ClientID, m_ChatTeam, m_ChatText, m_ClientID);
-			else if (m_FixNameID == 2)
+			else if (m_FixNameID == FIX_KILL_MSG)
 			{
 				CNetMsg_Sv_KillMsg Msg;
 				Msg.m_Killer = m_MsgKiller;
