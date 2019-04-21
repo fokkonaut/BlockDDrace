@@ -88,7 +88,7 @@ public:
 		{
 			str_format(msgbuf, sizeof(msgbuf), "%s: %s", ClientName(pMsg->m_ClientID), pMsg->m_pMessage);
 			pMsg->m_pMessage = msgbuf;
-			pMsg->m_ClientID = VANILLA_MAX_CLIENTS - 1;
+			pMsg->m_ClientID = DDRACE_MAX_CLIENTS - 1;
 		}
 		return SendPackMsgOne(pMsg, Flags, ClientID);
 	}
@@ -111,13 +111,13 @@ public:
 
 	bool Translate(int& Target, int Client)
 	{
-		CClientInfo Info;
+		/*CClientInfo Info;
 		GetClientInfo(Client, &Info);
 		if (Info.m_ClientVersion >= VERSION_DDNET_OLD)
-			return true;
+			return true;*/
 		int *pMap = GetIdMap(Client);
 		bool Found = false;
-		for (int i = 0; i < VANILLA_MAX_CLIENTS; i++)
+		for (int i = 0; i < DDRACE_MAX_CLIENTS; i++)
 		{
 			if (Target == pMap[i])
 			{
@@ -131,11 +131,11 @@ public:
 
 	bool ReverseTranslate(int& Target, int Client)
 	{
-		CClientInfo Info;
+		/*CClientInfo Info;
 		GetClientInfo(Client, &Info);
 		if (Info.m_ClientVersion >= VERSION_DDNET_OLD)
-			return true;
-		Target = clamp(Target, 0, VANILLA_MAX_CLIENTS-1);
+			return true;*/
+		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS -1);
 		int *pMap = GetIdMap(Client);
 		if (pMap[Target] == -1)
 			return false;

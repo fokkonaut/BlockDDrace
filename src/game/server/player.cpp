@@ -54,7 +54,7 @@ void CPlayer::Reset()
 	m_WeakHookSpawn = false;
 
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
-	for (int i = 1;i < VANILLA_MAX_CLIENTS;i++)
+	for (int i = 1;i < DDRACE_MAX_CLIENTS;i++)
 	{
 		pIdMap[i] = -1;
 	}
@@ -405,12 +405,12 @@ void CPlayer::Snap(int SnappingClient)
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
-	pPlayerInfo->m_Team = (m_ClientVersion < VERSION_DDNET_OLD || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
+	pPlayerInfo->m_Team = (/*m_ClientVersion < VERSION_DDNET_OLD || */m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
 
-	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && m_ClientVersion < VERSION_DDNET_OLD)
+	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED/* && m_ClientVersion < VERSION_DDNET_OLD*/)
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
-	if(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || m_ClientVersion >= VERSION_DDNET_OLD))
+	if(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED/* || m_ClientVersion >= VERSION_DDNET_OLD*/))
 		pPlayerInfo->m_Local = 1;
 
 	if(m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
@@ -455,10 +455,10 @@ void CPlayer::FakeSnap()
 	// This is problematic when it's sent before we know whether it's a non-64-player-client
 	// Then we can't spectate players at the start
 
-	if(m_ClientVersion >= VERSION_DDNET_OLD)
-		return;
+	/*if(m_ClientVersion >= VERSION_DDNET_OLD)
+		return;*/
 
-	int FakeID = VANILLA_MAX_CLIENTS - 1;
+	int FakeID = DDRACE_MAX_CLIENTS - 1;
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, FakeID, sizeof(CNetObj_ClientInfo)));
 
