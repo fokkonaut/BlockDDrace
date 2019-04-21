@@ -1885,12 +1885,6 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 	// gametype
 	if (!Ingame && g_Config.m_SvHideServerInfo)
 		p.AddString("", 16);
-	else if (!Ingame && g_Config.m_SvBlockDDraceBrowserFix && !str_comp_nocase(GameServer()->GameType(), "BlockDDrace"))
-	{
-		char aGameType[16];
-		str_format(aGameType, sizeof(aGameType), "BlockDDrac idm");
-		p.AddString(aGameType, 16);
-	}
 	else
 		p.AddString(GameServer()->GameType(), 16);
 
