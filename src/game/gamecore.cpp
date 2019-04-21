@@ -356,7 +356,7 @@ void CCharacterCore::Tick(bool UseInput, bool IsClient)
 			{
 				vec2 ClosestPoint;
 				ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos[i]);
-				if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != FLAG_BLUE && m_HookedPlayer != FLAG_RED)
+				if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != FLAG_RED && m_HookedPlayer != FLAG_BLUE)
 				{
 					if (m_HookedPlayer == -1)
 					{
