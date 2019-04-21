@@ -19,8 +19,8 @@
 
 enum
 {
-	FLAG_RED = 257,
-	FLAG_BLUE = 258
+	FLAG_RED = MAX_CLIENTS,
+	FLAG_BLUE
 };
 
 
