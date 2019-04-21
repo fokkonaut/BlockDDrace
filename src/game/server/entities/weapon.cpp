@@ -24,7 +24,7 @@ CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, in
 	GameWorld()->InsertEntity(this);
 }
 
-void CWeapon::Reset()
+void CWeapon::Reset(bool Picked)
 {
 	if (m_EreaseWeapon)
 	{
@@ -39,7 +39,7 @@ void CWeapon::Reset()
 		}
 	}
 
-	if (IsCharacterNear() == -1)
+	if (!Picked)
 		GameServer()->CreateDeath(m_Pos, -1);
 
 	Server()->SnapFreeID(m_ID2);
@@ -69,9 +69,26 @@ void CWeapon::IsShieldNear()
 
 int CWeapon::IsCharacterNear()
 {
-	CCharacter* pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, 0, m_Owner);
-	if (pChr && pChr->IsAlive())
+	CCharacter *apEnts[MAX_CLIENTS];
+	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+	
+	for (int i = 0; i < Num; i++)
+	{
+		CCharacter* pChr = apEnts[i];
+
+		if (
+			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
+			|| (!pChr->CanCollide(m_Owner))
+			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
+			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
+			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
+			|| (m_Jetpack && pChr->m_Jetpack)
+			|| (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
+			)
+			continue;
+
 		return pChr->GetPlayer()->GetCID();
+	}
 
 	return -1;
 }
@@ -82,21 +99,6 @@ void CWeapon::Pickup()
 	if (ID != -1)
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
-
-		if (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			return;
-
-		if (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
-			return;
-
-		if (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
-			return;
-
-		if (m_Jetpack && pChr->m_Jetpack)
-			return;
-
-		if (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
-			return;
 
 		int Ammo = pChr->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
 		pChr->GiveWeapon(m_Type, false, Ammo);
@@ -114,7 +116,7 @@ void CWeapon::Pickup()
 			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 		m_EreaseWeapon = true;
-		Reset();
+		Reset(true);
 		return;
 	}
 }
@@ -148,8 +150,7 @@ void CWeapon::Tick()
 	if (m_PickupDelay > 0)
 		m_PickupDelay--;
 
-	if (m_PickupDelay <= 0 || IsCharacterNear() != m_Owner)
-		Pickup();
+	Pickup();
 
 	IsShieldNear();
 
