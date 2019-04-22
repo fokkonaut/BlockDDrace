@@ -92,12 +92,12 @@ void CCustomProjectile::Tick()
 
 	m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 
-	if (m_LifeTime == 0)
+	m_LifeTime--;
+	if (m_LifeTime <= 0)
 	{
 		Reset();
 		return;
 	}
-	m_LifeTime--;
 	Move();
 	HitCharacter();
 

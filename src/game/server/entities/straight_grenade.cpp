@@ -42,7 +42,7 @@ void CStraightGrenade::Tick()
 	m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
 
 	m_Lifetime--;
-	if (m_Lifetime < 0)
+	if (m_Lifetime <= 0)
 	{
 		Reset();
 		return;
