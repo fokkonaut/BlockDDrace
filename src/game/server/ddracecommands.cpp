@@ -384,7 +384,8 @@ void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	CCharacter* pChr = pSelf->GetPlayerChar(pResult->GetVictim());
+	int Victim = pResult->GetVictim();
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 	{
 		int Power = HOOK_NORMAL;
@@ -405,7 +406,7 @@ void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 		if (pChr->m_HookPower == Power)
 			Power = HOOK_NORMAL;
 
-		pChr->HookPower(Power);
+		pChr->HookPower(Power, pResult->m_ClientID);
 	}
 }
 
