@@ -4017,3 +4017,132 @@ int CGameContext::GetRealWeapon(int Weapon)
 	}
 	return Weapon;
 }
+
+void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int HookPower)
+{
+	if (Silent)
+		return;
+
+	SendChatTarget(ToID, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower));
+	if (FromID >= 0 && FromID != ToID)
+		SendChatTarget(FromID, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower));
+}
+
+const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
+{
+	char aGiven[16];
+	char aItem[32];
+	char aMsg[128];
+	char aInfinite[16];
+
+	// infinite
+	if (!Remove && (Extra == INF_RAINBOW || Extra == INF_ATOM || Extra == INF_TRAIL || Extra == INF_METEOR))
+		str_format(aInfinite, sizeof(aInfinite), "Infinite ");
+	else
+		str_format(aInfinite, sizeof(aInfinite), "");
+
+	// get item name
+	str_format(aItem, sizeof(aItem), "%s%s", aInfinite, GetExtraName(Extra, HookPower));
+
+	// message without a sender
+	if (FromID == -1 || FromID == ToID)
+	{
+		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "You lost your %s", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "You have a %s", aItem);
+		}
+		else if (Extra == VANILLA_MODE || Extra == DDRACE_MODE)
+		{
+			str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
+		}
+		else if (Extra == PASSIVE)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "You are no longer in %s", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
+		}
+		else if (Extra == POLICE_HELPER)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "You are no longer a %s", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "You are now a %s", aItem);
+		}
+		else
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "You lost %s", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "You have %s", aItem);
+		}
+	}
+
+	// message with a sender
+	else if (FromID >= 0)
+	{
+		// given or removed
+		if (Remove)
+			str_format(aGiven, sizeof(aGiven), "removed from");
+		else
+			str_format(aGiven, sizeof(aGiven), "given to");
+
+		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, aGiven, Server()->ClientName(ToID), Server()->ClientName(FromID));
+	}
+
+	dbg_msg("test", "%s", aMsg);
+	return aMsg;
+}
+
+const char *CGameContext::GetExtraName(int Extra, int HookPower)
+{
+	switch (Extra)
+	{
+	case HOOK_NORMAL:
+		return "Normal";
+	case JETPACK:
+		return "Jetpack Gun";
+	case RAINBOW:
+		return "Rainbow";
+	case INF_RAINBOW:
+		return "Rainbow";
+	case ATOM:
+		return "Atom";
+	case INF_ATOM:
+		return "Atom";
+	case TRAIL:
+		return "Trail";
+	case INF_TRAIL:
+		return "Trail";
+	case EXTRA_SPOOKY_GHOST:
+		return "Spooky Ghost";
+	case METEOR:
+		return "Meteor";
+	case INF_METEOR:
+		return "Meteor";
+	case PASSIVE:
+		return "Passive mode";
+	case VANILLA_MODE:
+		return "Vanilla mode";
+	case DDRACE_MODE:
+		return "DDrace mode";
+	case BLOODY:
+		return "Bloody";
+	case STRONG_BLOODY:
+		return "Strong Bloody";
+	case POLICE_HELPER:
+		return "Police helper";
+	case SCROLL_NINJA:
+		return "Scroll Ninja";
+	case HOOK_POWER:
+		{
+			char Power[32];
+			str_format(Power, sizeof(Power), "%s Hook", GetExtraName(HookPower));
+			return Power;
+		}
+	}
+	return "Unknown";
+}

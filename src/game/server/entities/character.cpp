@@ -100,12 +100,12 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
 
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_VanillaModeStart)
-		m_pPlayer->m_VanillaMode = true;
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
+		m_pPlayer->m_Gamemode = MODE_VANILLA;
 	else
-		m_pPlayer->m_VanillaMode = false;
+		m_pPlayer->m_Gamemode = MODE_DDRACE;
 
-	if (m_pPlayer->m_VanillaMode)
+	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
 	{
 		m_Armor = 0;
 		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
@@ -583,7 +583,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			if (m_pPlayer->m_VanillaMode && g_Config.m_SvVanillaShotgun)
+			if (m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
 			{
 				int ShotSpread = 2;
 
@@ -777,7 +777,7 @@ void CCharacter::HandleWeapons()
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[GetActiveWeapon()].m_Ammoregentime;
 	if (GetActiveWeapon() == WEAPON_HEART_GUN)
 		AmmoRegenTime = g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Ammoregentime;
-	if(AmmoRegenTime && m_pPlayer->m_VanillaMode && !m_FreezeTime)
+	if(AmmoRegenTime && m_pPlayer->m_Gamemode == MODE_VANILLA && !m_FreezeTime)
 	{
 		// If equipped and not active, regen ammo?
 		if (m_ReloadTimer <= 0)
@@ -893,7 +893,7 @@ void CCharacter::Tick()
 	if (m_Paused)
 		return;
 
-	if (m_Atom || m_pPlayer->m_InfAtom)
+	if (m_Atom || m_pPlayer->m_InfAtom || m_pPlayer->IsHooked(ATOM))
 	{
 		if (m_AtomProjs.empty())
 		{
@@ -924,7 +924,7 @@ void CCharacter::Tick()
 		m_AtomProjs.clear();
 	}
 
-	if (m_Trail || m_pPlayer->m_InfTrail)
+	if (m_Trail || m_pPlayer->m_InfTrail || m_pPlayer->IsHooked(TRAIL))
 	{
 		if (m_TrailProjs.empty())
 		{
@@ -1119,7 +1119,7 @@ void CCharacter::BlockDDraceTick()
 			m_PurchaseState = 0;
 			m_ShopWindowPage = -1;
 
-			SetExtra(PASSIVE, m_pPlayer->GetCID(), true, -1, true);
+			Passive(true, -1, true);
 			m_InShop = false;
 		}
 	}
@@ -1349,7 +1349,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		}
 	}
 
-	if (m_pPlayer->m_VanillaMode)
+	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
 	{
 		//m_Core.m_Vel += Force;
 
@@ -1435,11 +1435,11 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);
 	}
 
-	if (!m_pPlayer->m_VanillaMode && From != -1 && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
+	if (!m_pPlayer->m_Gamemode == MODE_VANILLA && From != -1 && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if ((Dmg && m_pPlayer->m_VanillaMode) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
+	else if ((Dmg && m_pPlayer->m_Gamemode == MODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -1499,7 +1499,7 @@ void CCharacter::Snap(int SnappingClient)
 		for (int i = 0; i < 3; i++)
 			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
 	}
-	else if (m_Bloody)
+	else if (m_Bloody || m_pPlayer->IsHooked(BLOODY))
 	{
 		if (Server()->Tick() % 3 == 0)
 			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
@@ -2073,9 +2073,9 @@ void CCharacter::HandleTiles(int Index)
 
 	// jetpack gun
 	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack)
-		SetExtra(JETPACK, m_pPlayer->GetCID(), false);
+		Jetpack();
 	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && m_Jetpack)
-		SetExtra(JETPACK, m_pPlayer->GetCID(), true);
+		Jetpack(true);
 
 	// unlock team
 	else if(((m_TileIndex == TILE_UNLOCK_TEAM) || (m_TileFIndex == TILE_UNLOCK_TEAM)) && Teams()->TeamLocked(Team()))
@@ -2094,7 +2094,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_Jetpack && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(JETPACK, m_pPlayer->GetCID(), Remove);
+		Jetpack(Remove);
 	}
 
 	//rainbow toggle
@@ -2104,7 +2104,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(RAINBOW, m_pPlayer->GetCID(), Remove);
+		Rainbow(Remove);
 	}
 
 	//atom toggle
@@ -2114,7 +2114,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(ATOM, m_pPlayer->GetCID(), Remove);
+		Atom(Remove);
 	}
 
 	//trail toggle
@@ -2124,7 +2124,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(TRAIL, m_pPlayer->GetCID(), Remove);
+		Trail(Remove);
 	}
 
 	//spooky ghost toggle
@@ -2134,7 +2134,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), Remove);
+		SpookyGhost(Remove);
 	}
 
 	//add meteor
@@ -2143,7 +2143,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_ADD_METEOR) || (m_LastIndexFrontTile == TILE_ADD_METEOR))
 			return;
 
-		SetExtra(METEOR, m_pPlayer->GetCID());
+		Meteor();
 	}
 
 	//remove meteors
@@ -2152,7 +2152,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_REMOVE_METEORS) || (m_LastIndexFrontTile == TILE_REMOVE_METEORS))
 			return;
 
-		SetExtra(METEOR, m_pPlayer->GetCID(), true);
+		Meteor(true);
 	}
 
 	//passive toggle
@@ -2162,7 +2162,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = m_Passive && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(PASSIVE, m_pPlayer->GetCID(), Remove);
+		Passive(Remove);
 	}
 
 	//vanilla mode
@@ -2171,7 +2171,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_VANILLA_MODE) || (m_LastIndexFrontTile == TILE_VANILLA_MODE))
 			return;
 
-		SetExtra(VANILLA_MODE, m_pPlayer->GetCID());
+		VanillaMode();
 	}
 
 	//ddrace mode
@@ -2180,7 +2180,7 @@ void CCharacter::HandleTiles(int Index)
 		if ((m_LastIndexTile == TILE_DDRACE_MODE) || (m_LastIndexFrontTile == TILE_DDRACE_MODE))
 			return;
 
-		SetExtra(VANILLA_MODE, m_pPlayer->GetCID(), true);
+		DDraceMode();
 	}
 
 	//bloody toggle
@@ -2190,7 +2190,7 @@ void CCharacter::HandleTiles(int Index)
 			return;
 
 		bool Remove = (m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle ? true : false;
-		SetExtra(BLOODY, m_pPlayer->GetCID(), Remove);
+		Bloody(Remove);
 	}
 
 	m_LastIndexTile = m_TileIndex;
@@ -2205,7 +2205,7 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if (m_EnteredShop)
 		{
-			SetExtra(PASSIVE, m_pPlayer->GetCID(), false, -1, true);
+			Passive(false, -1, true);
 			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
 				m_EnteredShop = false;
 			else if (m_EnteredShop)
@@ -2941,6 +2941,7 @@ void CCharacter::DDRaceInit()
 	m_Bloody = false;
 	m_StrongBloody = false;
 	m_ScrollNinja = false;
+	m_HookPower = 0;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -3034,7 +3035,7 @@ void CCharacter::DropWeapon(int WeaponID)
 
 	if (WeaponID == WEAPON_GUN && m_Jetpack)
 	{
-		SetExtra(JETPACK, m_pPlayer->GetCID(), true);
+		Jetpack(true);
 
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
@@ -3133,321 +3134,227 @@ void CCharacter::UpdateWeaponIndicator()
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID(), false);
 }
 
-void CCharacter::SetExtra(int Extra, int ToID, bool Remove, int FromID, bool Silent)
+void CCharacter::Jetpack(bool Remove, int FromID, bool Silent)
 {
-	char aGiven[32];
-	char aItem[32];
-	char aMsg[64];
-	char aInfinite[16];
+	m_Jetpack = !Remove;
+	GameServer()->SendExtraMessage(JETPACK, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
 
-	if (!Remove)
-		str_format(aInfinite, sizeof aInfinite, "Infinite ");
+void CCharacter::Rainbow(bool Remove, int FromID, bool Silent)
+{
+	m_Rainbow = !Remove;
+	if (Remove)
+		m_pPlayer->m_InfRainbow = false;
+	GameServer()->SendExtraMessage(RAINBOW, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::InfRainbow(bool Remove, int FromID, bool Silent)
+{
+	m_pPlayer->m_InfRainbow = !Remove;
+	if (Remove)
+		m_Rainbow = false;
+	GameServer()->SendExtraMessage(INF_RAINBOW, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::Atom(bool Remove, int FromID, bool Silent)
+{
+	m_Atom = !Remove;
+	if (Remove)
+		m_pPlayer->m_InfAtom = false;
+	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::InfAtom(bool Remove, int FromID, bool Silent)
+{
+	m_pPlayer->m_InfAtom = !Remove;
+	if (Remove)
+		m_Atom = false;
+	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::Trail(bool Remove, int FromID, bool Silent)
+{
+	m_Trail = !Remove;
+	if (Remove)
+		m_pPlayer->m_InfTrail = false;
+	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::InfTrail(bool Remove, int FromID, bool Silent)
+{
+	m_pPlayer->m_InfTrail = !Remove;
+	if (Remove)
+		m_Trail = false;
+	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::SpookyGhost(bool Remove, int FromID, bool Silent)
+{
+	m_pPlayer->m_HasSpookyGhost = !Remove;
+	GameServer()->SendExtraMessage(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	if (!Silent && !Remove)
+		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "For more info, say '/spookyghost help'");
+}
+
+void CCharacter::Meteor(bool Remove, int FromID, bool Silent)
+{
+	if (Remove)
+	{
+		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
+			return;
+		else
+		{
+			m_Meteors = 0;
+			m_pPlayer->m_InfMeteors = 0;
+		}
+	}
 	else
-		str_format(aInfinite, sizeof aInfinite, "");
+	{
+		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
+		{
+			vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
+			vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
 
-	CCharacter* pChr = GameServer()->GetPlayerChar(ToID);
-	CPlayer* pPlayer = GameServer()->m_apPlayers[ToID];
+			m_Meteors++;
+			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), false);
+		}
+	}
+	GameServer()->SendExtraMessage(METEOR, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
 
-	vec2 Direction = normalize(vec2(pChr->m_LatestInput.m_TargetX, pChr->m_LatestInput.m_TargetY));
-	vec2 ProjStartPos = pChr->m_Pos + Direction * pChr->m_ProximityRadius*0.75f;
+void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
+{
+	if (Remove)
+	{
+		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
+			return;
+		else
+		{
+			m_Meteors = 0;
+			m_pPlayer->m_InfMeteors = 0;
+		}
+	}
+	else
+	{
+		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
+		{
+			vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
+			vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
 
-	if (Extra == JETPACK)
-	{
-		str_format(aItem, sizeof aItem, "Jetpack");
-		if (Remove)
-			pChr->m_Jetpack = false;
-		else
-			pChr->m_Jetpack = true;
-	}
-	else if (Extra == RAINBOW)
-	{
-		str_format(aItem, sizeof aItem, "Rainbow");
-		if (Remove)
-		{
-			pChr->m_Rainbow = false;
-			pPlayer->m_InfRainbow = false;
+			m_pPlayer->m_InfMeteors++;
+			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), true);
 		}
-		else
-			pChr->m_Rainbow = true;
 	}
-	else if (Extra == INF_RAINBOW)
+	GameServer()->SendExtraMessage(INF_METEOR, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::Passive(bool Remove, int FromID, bool Silent)
+{
+	if (Remove)
 	{
-		str_format(aItem, sizeof aItem, "%sRainbow", aInfinite);
-		if (Remove)
+		m_Passive = false;
+		m_Core.m_Passive = false;
+		m_Core.m_Collision = true;
+		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+		m_Hit = HIT_ALL;
+		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+	}
+	else
+	{
+		m_Passive = true;
+		m_Core.m_Passive = true;
+		m_Core.m_Collision = false;
+		m_NeededFaketuning |= FAKETUNE_NOCOLL;
+		m_Hit = DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN;
+		m_NeededFaketuning |= FAKETUNE_NOHAMMER;
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
+	}
+	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::VanillaMode(int FromID, bool Silent)
+{
+	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+		return;
+	else
+	{
+		m_pPlayer->m_Gamemode = MODE_VANILLA;
+		m_Armor = 0;
+		for (int i = 0; i < NUM_WEAPONS + 1; i++)
 		{
-			pChr->m_Rainbow = false;
-			pPlayer->m_InfRainbow = false;
-		}
-		else
-			pPlayer->m_InfRainbow = true;
-	}
-	else if (Extra == ATOM)
-	{
-		str_format(aItem, sizeof aItem, "Atom");
-		if (Remove)
-		{
-			pChr->m_Atom = false;
-			pPlayer->m_InfAtom = false;
-		}
-		else
-			pChr->m_Atom = true;
-	}
-	else if (Extra == INF_ATOM)
-	{
-		str_format(aItem, sizeof aItem, "%sAtom", aInfinite);
-		if (Remove)
-		{
-			pChr->m_Atom = false;
-			pPlayer->m_InfAtom = false;
-		}
-		else
-			pPlayer->m_InfAtom = true;
-	}
-	else if (Extra == TRAIL)
-	{
-		str_format(aItem, sizeof aItem, "Trail");
-		if (Remove)
-		{
-			pChr->m_Trail = false;
-			pPlayer->m_InfTrail = false;
-		}
-		else
-			pChr->m_Trail = true;
-	}
-	else if (Extra == INF_TRAIL)
-	{
-		str_format(aItem, sizeof aItem, "%sTrail", aInfinite);
-		if (Remove)
-		{
-			pChr->m_Trail = false;
-			pPlayer->m_InfTrail = false;
-		}
-		else
-			pPlayer->m_InfTrail = true;
-	}
-	else if (Extra == EXTRA_SPOOKY_GHOST)
-	{
-		str_format(aItem, sizeof aItem, "Spooky Ghost");
-		pPlayer->m_HasSpookyGhost ^= true;
-	}
-	else if (Extra == METEOR)
-	{
-		str_format(aItem, sizeof aItem, "Meteor");
-		if (Remove)
-		{
-			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
-				return;
-			else
+			if (i == NUM_WEAPONS)
+				m_aWeaponsBackup[NUM_WEAPONS][1] = 0;
+			else if (m_aWeapons[i].m_Got && GetWeaponAmmo(i) && i != WEAPON_HAMMER)
 			{
-				pChr->m_Meteors = 0;
-				pPlayer->m_InfMeteors = 0;
-			}
-		}
-		else
-		{
-			if (pPlayer->m_InfMeteors + pChr->m_Meteors <= 50)
-			{
-				pChr->m_Meteors++;
-				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), false);
-			}
-			else
-				return;
-		}
-	}
-	else if (Extra == INF_METEOR)
-	{
-		str_format(aItem, sizeof aItem, "%sMeteor", aInfinite);
-		if (Remove)
-		{
-			if (!pChr->m_Meteors && !pPlayer->m_InfMeteors)
-				return;
-			else
-			{
-				pChr->m_Meteors = 0;
-				pPlayer->m_InfMeteors = 0;
-			}
-		}
-		else
-		{
-			if (pPlayer->m_InfMeteors + pChr->m_Meteors <= 50)
-			{
-				pPlayer->m_InfMeteors++;
-				new CMeteor(GameWorld(), ProjStartPos, pPlayer->GetCID(), true);
-			}
-			else
-				return;
-		}
-	}
-	else if (Extra == PASSIVE)
-	{
-		str_format(aItem, sizeof aItem, "Passive Mode");
-		if (Remove)
-		{
-			pChr->m_Passive = false;
-			pChr->m_Core.m_Passive = false;
-			pChr->m_Core.m_Collision = true;
-			pChr->m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-			pChr->m_Hit = HIT_ALL;
-			pChr->m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
-			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
-		else
-		{
-			pChr->m_Passive = true;
-			pChr->m_Core.m_Passive = true;
-			pChr->m_Core.m_Collision = false;
-			pChr->m_NeededFaketuning |= FAKETUNE_NOCOLL;
-			pChr->m_Hit = DISABLE_HIT_GRENADE | DISABLE_HIT_HAMMER | DISABLE_HIT_RIFLE | DISABLE_HIT_SHOTGUN;
-			pChr->m_NeededFaketuning |= FAKETUNE_NOHAMMER;
-			GameServer()->SendTuningParams(pPlayer->GetCID(), m_TuneZone); // update tunings
-			new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, pPlayer->GetCID());
-		}
-	}
-	else if (Extra == VANILLA_MODE)
-	{
-		if (Remove)
-		{
-			str_format(aItem, sizeof aItem, "DDrace Mode");
-			if (!pPlayer->m_VanillaMode)
-				return;
-			else
-			{
-				pPlayer->m_VanillaModeStart = false;
-				pPlayer->m_VanillaMode = false;
-				pChr->m_Health = 10;
-				pChr->m_Armor = 10;
-				for (int i = 0; i < NUM_WEAPONS + 1; i++)
-				{
-					if (i == NUM_WEAPONS)
-						pChr->m_aWeaponsBackup[NUM_WEAPONS][1] = 10;
-					else if (pChr->m_aWeapons[i].m_Got)
-					{
-						pChr->m_aWeaponsBackup[i][1] = -1;
-						pChr->m_aWeapons[i].m_Ammo = -1;
-					}
-				}
-			}
-		}
-		else
-		{
-			str_format(aItem, sizeof aItem, "Vanilla Mode");
-			if (pPlayer->m_VanillaMode)
-				return;
-			else
-			{
-				pPlayer->m_VanillaModeStart = true;
-				pPlayer->m_VanillaMode = true;
-				pChr->m_Armor = 0;
-				for (int i = 0; i < NUM_WEAPONS + 1; i++)
-				{
-					if (i == NUM_WEAPONS)
-						pChr->m_aWeaponsBackup[NUM_WEAPONS][1] = 0;
-					else if (pChr->m_aWeapons[i].m_Got && pChr->GetWeaponAmmo(i) && i != WEAPON_HAMMER)
-					{
-						pChr->m_aWeaponsBackup[i][1] = 10;
-						pChr->m_aWeapons[i].m_Ammo = 10;
-					}
-				}
+				m_aWeaponsBackup[i][1] = 10;
+				m_aWeapons[i].m_Ammo = 10;
 			}
 		}
 	}
-	else if (Extra == BLOODY)
-	{
-		str_format(aItem, sizeof aItem, "Bloody");
-		if (Remove)
-		{
-			pChr->m_Bloody = false;
-			pChr->m_StrongBloody = false;
-		}
-		else
-			pChr->m_Bloody = true;
-	}
-	else if (Extra == STRONG_BLOODY)
-	{
-		str_format(aItem, sizeof aItem, "Strong Bloody");
-		if (Remove)
-		{
-			pChr->m_Bloody = false;
-			pChr->m_StrongBloody = false;
-		}
-		else
-		{
-			pChr->m_StrongBloody = true;
-			pChr->m_Bloody = false;
-		}
-	}
-	else if (Extra == POLICE_HELPER)
-	{
-		str_format(aItem, sizeof aItem, "Police Helper");
-		if (Remove)
-			pChr->m_PoliceHelper = false;
-		else
-			pChr->m_PoliceHelper = true;
-	}
-	else if (Extra == SCROLL_NINJA)
-	{
-		str_format(aItem, sizeof aItem, "Scroll Ninja");
-		if (Remove)
-		{
-			pChr->RemoveNinja();
-			pChr->m_ScrollNinja = false;
-		}
-		else
-		{
-			pChr->m_ScrollNinja = true;
-			pChr->GiveNinja();
-		}
-	}
+	GameServer()->SendExtraMessage(VANILLA_MODE, m_pPlayer->GetCID(), false, FromID, Silent);
+}
 
-	if (FromID == -1 || FromID == ToID)
+void CCharacter::DDraceMode(int FromID, bool Silent)
+{
+	if (m_pPlayer->m_Gamemode == MODE_DDRACE)
+		return;
+	else
 	{
-		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA)
+		m_pPlayer->m_Gamemode = MODE_DDRACE;
+		m_Health = 10;
+		m_Armor = 10;
+		for (int i = 0; i < NUM_WEAPONS + 1; i++)
 		{
-			if (Remove)
-				str_format(aMsg, sizeof aMsg, "You lost your %s", aItem);
-			else
-				str_format(aMsg, sizeof aMsg, "You have a %s", aItem);
-		}
-		else if (Extra == VANILLA_MODE)
-		{
-			str_format(aMsg, sizeof aMsg, "You are now in %s", aItem);
-		}
-		else if (Extra == PASSIVE)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof aMsg, "You are no longer in %s", aItem);
-			else
-				str_format(aMsg, sizeof aMsg, "You are now in %s", aItem);
-		}
-		else if (Extra == POLICE_HELPER)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof aMsg, "You are no longer a %s", aItem);
-			else
-				str_format(aMsg, sizeof aMsg, "You are now a %s", aItem);
-		}
-		else
-		{
-			if (Remove)
-				str_format(aMsg, sizeof aMsg, "You lost %s", aItem);
-			else
-				str_format(aMsg, sizeof aMsg, "You have %s", aItem);
+			if (i == NUM_WEAPONS)
+				m_aWeaponsBackup[NUM_WEAPONS][1] = 10;
+			else if (m_aWeapons[i].m_Got)
+			{
+				m_aWeaponsBackup[i][1] = -1;
+				m_aWeapons[i].m_Ammo = -1;
+			}
 		}
 	}
-	else if (FromID >= 0)
-	{
-		if (Remove && Extra != VANILLA_MODE)
-			str_format(aGiven, sizeof aGiven, "removed from");
-		else
-			str_format(aGiven, sizeof aGiven, "given to");
+	GameServer()->SendExtraMessage(DDRACE_MODE, m_pPlayer->GetCID(), false, FromID, Silent);
+}
 
-		str_format(aMsg, sizeof aMsg, "%s was %s '%s' by '%s'", aItem, aGiven, GameServer()->Server()->ClientName(ToID), GameServer()->Server()->ClientName(FromID));
-		if (FromID != ToID && !Silent)
-			GameServer()->SendChatTarget(FromID, aMsg);
-	}
-	if (!Silent)
-		GameServer()->SendChatTarget(ToID, aMsg);
+void CCharacter::Bloody(bool Remove, int FromID, bool Silent)
+{
+	m_Bloody = !Remove;
+	if (Remove)
+		m_StrongBloody = false;
+	GameServer()->SendExtraMessage(BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
 
-	if (Extra == EXTRA_SPOOKY_GHOST && !Remove && !Silent)
-		GameServer()->SendChatTarget(ToID, "For more info, say '/spookyghost help'");
+void CCharacter::StrongBloody(bool Remove, int FromID, bool Silent)
+{
+	m_StrongBloody = !Remove;
+	if (Remove)
+		m_Bloody = false;
+	GameServer()->SendExtraMessage(STRONG_BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::PoliceHelper(bool Remove, int FromID, bool Silent)
+{
+	m_PoliceHelper = !Remove;
+	GameServer()->SendExtraMessage(POLICE_HELPER, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::ScrollNinja(bool Remove, int FromID, bool Silent)
+{
+	m_ScrollNinja = !Remove;
+	if (Remove)
+		RemoveNinja();
+	else
+		GiveNinja();
+	GameServer()->SendExtraMessage(SCROLL_NINJA, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::HookPower(int Extra, int FromID, bool Silent)
+{
+	if (m_HookPower == HOOK_NORMAL && Extra == HOOK_NORMAL)
+		return;
+	m_HookPower = Extra;
+	GameServer()->SendExtraMessage(HOOK_POWER, m_pPlayer->GetCID(), false, FromID, Silent, Extra);
 }

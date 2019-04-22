@@ -204,7 +204,7 @@ void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(SCROLL_NINJA, Victim, pChr->m_ScrollNinja, pResult->m_ClientID);
+		pChr->ScrollNinja(pChr->m_ScrollNinja, pResult->m_ClientID);
 }
 
 void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
@@ -213,7 +213,7 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(JETPACK, Victim, pChr->m_Jetpack, pResult->m_ClientID);
+		pChr->Jetpack(pChr->m_Jetpack, pResult->m_ClientID);
 }
 
 void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
@@ -224,7 +224,7 @@ void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
-		pChr->SetExtra(RAINBOW, Victim, Remove, pResult->m_ClientID);
+		pChr->Rainbow(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -236,7 +236,7 @@ void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow) ? true : false;
-		pChr->SetExtra(INF_RAINBOW, Victim, Remove, pResult->m_ClientID);
+		pChr->InfRainbow(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -248,7 +248,7 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
-		pChr->SetExtra(ATOM, Victim, Remove, pResult->m_ClientID);
+		pChr->Atom(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -260,7 +260,7 @@ void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Atom || pChr->GetPlayer()->m_InfAtom) ? true : false;
-		pChr->SetExtra(INF_ATOM, Victim, Remove, pResult->m_ClientID);
+		pChr->InfAtom(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -272,7 +272,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
-		pChr->SetExtra(TRAIL, Victim, Remove, pResult->m_ClientID);
+		pChr->Trail(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -284,7 +284,7 @@ void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = (pChr->m_Trail || pChr->GetPlayer()->m_InfTrail) ? true : false;
-		pChr->SetExtra(INF_TRAIL, Victim, Remove, pResult->m_ClientID);
+		pChr->InfTrail(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -294,7 +294,7 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(EXTRA_SPOOKY_GHOST, Victim, pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
+		pChr->SpookyGhost(pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
 }
 
 void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
@@ -303,7 +303,7 @@ void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(METEOR, Victim, false, pResult->m_ClientID);
+		pChr->Meteor(false, pResult->m_ClientID);
 }
 
 void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
@@ -312,7 +312,7 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(INF_METEOR, Victim, false, pResult->m_ClientID);
+		pChr->InfMeteor(false, pResult->m_ClientID);
 }
 
 void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
@@ -321,7 +321,7 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(METEOR, Victim, true, pResult->m_ClientID);
+		pChr->Meteor(true, pResult->m_ClientID);
 }
 
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
@@ -330,7 +330,7 @@ void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(PASSIVE, Victim, pChr->m_Passive, pResult->m_ClientID);
+		pChr->Passive(pChr->m_Passive, pResult->m_ClientID);
 }
 
 void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
@@ -339,7 +339,7 @@ void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(VANILLA_MODE, Victim, false, pResult->m_ClientID);
+		pChr->VanillaMode(pResult->m_ClientID);
 }
 
 void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
@@ -348,7 +348,7 @@ void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(VANILLA_MODE, Victim, true, pResult->m_ClientID);
+		pChr->DDraceMode(pResult->m_ClientID);
 }
 
 void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
@@ -359,7 +359,7 @@ void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
 	if (pChr)
 	{
 		bool Remove = pChr->m_Bloody || pChr->m_StrongBloody ? true : false;
-		pChr->SetExtra(BLOODY, Victim, Remove, pResult->m_ClientID);
+		pChr->Bloody(Remove, pResult->m_ClientID);
 	}
 }
 
@@ -369,7 +369,7 @@ void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(STRONG_BLOODY, Victim, pChr->m_StrongBloody, pResult->m_ClientID);
+		pChr->StrongBloody(pChr->m_StrongBloody, pResult->m_ClientID);
 }
 
 void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
@@ -378,7 +378,35 @@ void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->SetExtra(POLICE_HELPER, Victim, pChr->m_PoliceHelper, pResult->m_ClientID);
+		pChr->PoliceHelper(pChr->m_PoliceHelper, pResult->m_ClientID);
+}
+
+void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CCharacter* pChr = pSelf->GetPlayerChar(pResult->GetVictim());
+	if (pChr)
+	{
+		int Power = HOOK_NORMAL;
+		char Str[32];
+		str_format(Str, sizeof(Str), "%s", pResult->GetString(1));
+
+		if (!str_comp_nocase(Str, "normal"))
+			Power = HOOK_NORMAL;
+		else if (!str_comp_nocase(Str, "rainbow"))
+			Power = RAINBOW;
+		else if (!str_comp_nocase(Str, "bloody"))
+			Power = BLOODY;
+		else if (!str_comp_nocase(Str, "atom"))
+			Power = ATOM;
+		else if (!str_comp_nocase(Str, "trail"))
+			Power = TRAIL;
+
+		if (pChr->m_HookPower == Power)
+			Power = HOOK_NORMAL;
+
+		pChr->HookPower(Power);
+	}
 }
 
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
@@ -432,8 +460,10 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	if (pPlayer->m_VanillaMode)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Vanilla Mode: True");
+	if (pPlayer->m_Gamemode == MODE_DDRACE)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: DDrace");
+	else if (pPlayer->m_Gamemode == MODE_VANILLA)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: Vanilla");
 
 	if (pChr)
 	{
@@ -641,7 +671,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		return;
 	}
 
-	int Amount = (pChr->GetPlayer()->m_VanillaMode && Weapon != WEAPON_HAMMER) ? 10 : -1;
+	int Amount = (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
 	if (Weapon == -1)
 	{
@@ -663,7 +693,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 	else
 	{
 		if (Weapon == WEAPON_NINJA && pChr->m_ScrollNinja && Remove)
-			pChr->SetExtra(SCROLL_NINJA, Victim, false, Remove, pResult->m_ClientID);
+			pChr->ScrollNinja(Remove);
 		pChr->GiveWeapon(Weapon, Remove, Amount);
 	}
 

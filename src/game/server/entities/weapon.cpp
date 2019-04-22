@@ -164,12 +164,12 @@ void CWeapon::Pickup()
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
 
-		int Ammo = pChr->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
+		int Ammo = pChr->GetPlayer()->m_Gamemode == MODE_VANILLA ? m_Bullets : -1;
 		pChr->GiveWeapon(m_Type, false, Ammo);
 		GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Type);
 
 		if (m_Jetpack)
-			pChr->SetExtra(JETPACK, ID);
+			pChr->Jetpack();
 
 		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
 			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
@@ -195,10 +195,10 @@ int CWeapon::IsCharacterNear()
 			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
 			|| (!pChr->CanCollide(m_Owner))
 			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
+			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 			|| (m_Jetpack && pChr->m_Jetpack)
-			|| (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
+			|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
 			)
 			continue;
 
@@ -219,7 +219,7 @@ void CWeapon::IsShieldNear()
 
 		if (pShield->GetType() == POWERUP_ARMOR)
 		{
-			if (!GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
+			if (!GameServer()->m_apPlayers[m_Owner]->m_Gamemode == MODE_VANILLA)
 			{
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 				Reset(true);

@@ -367,7 +367,7 @@ void CPlayer::Snap(int SnappingClient)
 			GetCharacter()->m_TimesShot = 0;
 	}
 
-	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow)
+	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = true;
@@ -1022,4 +1022,19 @@ void CPlayer::MoneyTransaction(int Amount, const char *Description)
 	str_format(m_aLastMoneyTransaction[2], sizeof(m_aLastMoneyTransaction[2]), "%s", m_aLastMoneyTransaction[1]);
 	str_format(m_aLastMoneyTransaction[1], sizeof(m_aLastMoneyTransaction[1]), "%s", m_aLastMoneyTransaction[0]);
 	str_format(m_aLastMoneyTransaction[0], sizeof(m_aLastMoneyTransaction[0]), Description);
+}
+
+bool CPlayer::IsHooked(int Power)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		CCharacter* pChr = GameServer()->GetPlayerChar(i);
+		if (!pChr)
+			continue;
+
+		if (Power > 0 && pChr->Core()->m_HookedPlayer == m_ClientID && pChr->m_HookPower == Power)
+			return true;
+	}
+
+	return false;
 }

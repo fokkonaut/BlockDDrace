@@ -279,6 +279,10 @@ public:
 	const char *GetWeaponName(int Weapon);
 	int GetRealWeapon(int Weapon);
 
+	void SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int HookPower = HOOK_NORMAL);
+	const char *CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower);
+	const char *GetExtraName(int Extra, int HookPower = HOOK_NORMAL);
+
 private:
 
 	bool m_VoteWillPass;
@@ -410,6 +414,8 @@ private:
 	static void ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);

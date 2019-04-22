@@ -40,7 +40,8 @@ enum
 
 enum
 {
-	JETPACK = 1,
+	HOOK_NORMAL = 0,
+	JETPACK,
 	RAINBOW,
 	INF_RAINBOW,
 	ATOM,
@@ -52,10 +53,12 @@ enum
 	INF_METEOR,
 	PASSIVE,
 	VANILLA_MODE,
+	DDRACE_MODE,
 	BLOODY,
 	STRONG_BLOODY,
 	POLICE_HELPER,
 	SCROLL_NINJA,
+	HOOK_POWER,
 	NUM_EXTRAS
 };
 
@@ -127,7 +130,25 @@ public:
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
 
-	void SetExtra(int Extra, int ToID, bool Remove = false, int FromID = -1, bool Silent = false);
+	void Jetpack(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Rainbow(bool Remove = false, int FromID = -1, bool Silent = false);
+	void InfRainbow(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Atom(bool Remove = false, int FromID = -1, bool Silent = false);
+	void InfAtom(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Trail(bool Remove = false, int FromID = -1, bool Silent = false);
+	void InfTrail(bool Remove = false, int FromID = -1, bool Silent = false);
+	void SpookyGhost(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Meteor(bool Remove = false, int FromID = -1, bool Silent = false);
+	void InfMeteor(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Passive(bool Remove = false, int FromID = -1, bool Silent = false);
+	void VanillaMode(int FromID = -1, bool Silent = false);
+	void DDraceMode(int FromID = -1, bool Silent = false);
+	void Bloody(bool Remove = false, int FromID = -1, bool Silent = false);
+	void StrongBloody(bool Remove = false, int FromID = -1, bool Silent = false);
+	void PoliceHelper(bool Remove = false, int FromID = -1, bool Silent = false);
+	void ScrollNinja(bool Remove = false, int FromID = -1, bool Silent = false);
+	void HookPower(int Extra, int FromID = -1, bool Silent = false);
+
 
 private:
 	// player controlling this character
@@ -342,6 +363,8 @@ public:
 	bool m_StrongBloody;
 
 	bool m_ScrollNinja;
+
+	int m_HookPower;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;

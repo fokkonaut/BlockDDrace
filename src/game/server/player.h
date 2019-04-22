@@ -24,6 +24,12 @@ enum
 	FIX_KILL_MSG
 };
 
+enum
+{
+	MODE_DDRACE = 0,
+	MODE_VANILLA
+};
+
 
 // player object
 class CPlayer
@@ -200,8 +206,7 @@ public:
 	int m_Dummymode;
 	int m_FakePing;
 
-	bool m_VanillaMode;
-	bool m_VanillaModeStart;
+	int m_Gamemode;
 
 	//spooky ghost
 	bool m_SpookyGhost;
@@ -260,6 +265,8 @@ public:
 
 	int m_AllowTimeScore;
 	int m_DisplayScore;
+
+	bool IsHooked(int Power);
 
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);

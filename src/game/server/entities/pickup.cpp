@@ -67,7 +67,7 @@ void CPickup::Tick()
 				switch (m_Type)
 				{
 					case POWERUP_HEALTH:
-						if (pChr->GetPlayer()->m_VanillaMode && pChr->IncreaseHealth(1))
+						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseHealth(1))
 						{
 							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH);
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
@@ -77,7 +77,7 @@ void CPickup::Tick()
 
 					case POWERUP_ARMOR:
 						if(pChr->Team() == TEAM_SUPER) continue;
-						if (pChr->GetPlayer()->m_VanillaMode && pChr->IncreaseArmor(1))
+						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseArmor(1))
 						{
 							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
@@ -122,9 +122,9 @@ void CPickup::Tick()
 
 						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime)))))
 						{
-							if (pChr->GetPlayer()->m_VanillaMode && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
+							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
 								pChr->GiveWeapon(m_Subtype, false, 10);
-							else if (!pChr->GetPlayer()->m_VanillaMode)
+							else if (!pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 								pChr->GiveWeapon(m_Subtype);
 							else
 								continue;
@@ -150,7 +150,7 @@ void CPickup::Tick()
 
 						// activate ninja on target player
 						pChr->GiveNinja();
-						if (pChr->GetPlayer()->m_VanillaMode)
+						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 						{
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 
@@ -175,7 +175,7 @@ void CPickup::Tick()
 						break;
 				};
 
-				if (pChr->GetPlayer()->m_VanillaMode)
+				if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 				{
 					if (RespawnTime >= 0)
 					{
