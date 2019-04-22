@@ -5,12 +5,11 @@
 
 #include <game/server/teams.h>
 
-CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int ResponsibleTeam, int Bullets, bool Jetpack)
+CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool Jetpack)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_Type = Weapon;
 	m_Lifetime = Server()->TickSpeed() * Lifetime;
-	m_ResponsibleTeam = ResponsibleTeam;
 	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
 	m_Jetpack = Jetpack;
 	m_Bullets = Bullets;
@@ -24,9 +23,9 @@ CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, in
 	GameWorld()->InsertEntity(this);
 }
 
-void CWeapon::Reset(bool Picked)
+void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 {
-	if (m_EreaseWeapon)
+	if (EreaseWeapon)
 	{
 		CPlayer* pOwner = GameServer()->GetPlayerChar(m_Owner)->GetPlayer();
 
@@ -46,112 +45,29 @@ void CWeapon::Reset(bool Picked)
 	GameServer()->m_World.DestroyEntity(this);
 }
 
-void CWeapon::IsShieldNear()
-{
-	CPickup *apEnts[9];
-	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, 9, CGameWorld::ENTTYPE_PICKUP);
-
-	for (int i = 0; i < Num; i++)
-	{
-		CPickup *pShield = apEnts[i];
-
-		if (pShield->GetType() == POWERUP_ARMOR)
-		{
-			if (!GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
-			{
-				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
-				m_EreaseWeapon = true;
-				Reset();
-			}
-		}
-	}
-}
-
-int CWeapon::IsCharacterNear()
-{
-	CCharacter *apEnts[MAX_CLIENTS];
-	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
-	
-	for (int i = 0; i < Num; i++)
-	{
-		CCharacter* pChr = apEnts[i];
-
-		if (
-			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
-			|| (!pChr->CanCollide(m_Owner))
-			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
-			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
-			|| (m_Jetpack && pChr->m_Jetpack)
-			|| (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
-			)
-			continue;
-
-		return pChr->GetPlayer()->GetCID();
-	}
-
-	return -1;
-}
-
-void CWeapon::Pickup()
-{
-	int ID = IsCharacterNear();
-	if (ID != -1)
-	{
-		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
-
-		int Ammo = pChr->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
-		pChr->GiveWeapon(m_Type, false, Ammo);
-		if (pChr->GetPlayer())
-			GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Type);
-
-		if (m_Jetpack)
-			pChr->SetExtra(JETPACK, ID, false, false);
-
-		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
-		else if (m_Type == WEAPON_GRENADE || m_Type == WEAPON_STRAIGHT_GRENADE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
-		else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN || m_Type == WEAPON_HEART_GUN)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
-
-		m_EreaseWeapon = true;
-		Reset(true);
-		return;
-	}
-}
-
 void CWeapon::Tick()
 {
-	if (!GameServer()->m_apPlayers[m_Owner])
+	pOwner = 0;
+	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
+		pOwner = GameServer()->GetPlayerChar(m_Owner);
+
+	if (m_Owner >= 0 && !pOwner)
 		Reset();
+
+	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
 
 	// weapon hits death-tile or left the game layer, reset it
-	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
-	{
-		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "weapon_return");
+	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
+		Reset(true);
 
-		m_EreaseWeapon = true;
-		Reset();
-		return;
-	}
-
-	if (m_Lifetime == 0)
-	{
-		m_EreaseWeapon = true;
-		Reset();
-		return;
-	}
-
-	if (m_Lifetime != -1)
-		m_Lifetime--;
-
+	m_Lifetime--;
+	if (m_Lifetime <= 0)
+		Reset(true);
 
 	if (m_PickupDelay > 0)
 		m_PickupDelay--;
 
 	Pickup();
-
 	IsShieldNear();
 
 	//Gravity
@@ -241,6 +157,77 @@ void CWeapon::Tick()
 	m_PrevPos = m_Pos;
 }
 
+void CWeapon::Pickup()
+{
+	int ID = IsCharacterNear();
+	if (ID != -1)
+	{
+		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
+
+		int Ammo = pChr->GetPlayer()->m_VanillaMode ? m_Bullets : -1;
+		pChr->GiveWeapon(m_Type, false, Ammo);
+		GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Type);
+
+		if (m_Jetpack)
+			pChr->SetExtra(JETPACK, ID);
+
+		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
+		else if (m_Type == WEAPON_GRENADE || m_Type == WEAPON_STRAIGHT_GRENADE)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
+		else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN || m_Type == WEAPON_HEART_GUN)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
+
+		Reset(true, true);
+	}
+}
+
+int CWeapon::IsCharacterNear()
+{
+	CCharacter *apEnts[MAX_CLIENTS];
+	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+
+	for (int i = 0; i < Num; i++)
+	{
+		CCharacter* pChr = apEnts[i];
+
+		if (
+			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
+			|| (!pChr->CanCollide(m_Owner))
+			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
+			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_VanillaMode)
+			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
+			|| (m_Jetpack && pChr->m_Jetpack)
+			|| (pChr->GetPlayer()->m_VanillaMode && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
+			)
+			continue;
+
+		return pChr->GetPlayer()->GetCID();
+	}
+
+	return -1;
+}
+
+void CWeapon::IsShieldNear()
+{
+	CPickup *apEnts[9];
+	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, 9, CGameWorld::ENTTYPE_PICKUP);
+
+	for (int i = 0; i < Num; i++)
+	{
+		CPickup *pShield = apEnts[i];
+
+		if (pShield->GetType() == POWERUP_ARMOR)
+		{
+			if (!GameServer()->m_apPlayers[m_Owner]->m_VanillaMode)
+			{
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
+				Reset(true);
+			}
+		}
+	}
+}
+
 bool CWeapon::IsGrounded(bool SetVel)
 {
 	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
@@ -270,12 +257,9 @@ void CWeapon::Snap(int SnappingClient)
 	if(NetworkClipped(SnappingClient))
 		return;
 
-	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
-	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (pOwner && pSnapChar)
+	if (GameServer()->GetPlayerChar(SnappingClient))
 	{
-		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
-		if (!CmaskIsSet(TeamMask, SnappingClient))
+		if (!CmaskIsSet(m_TeamMask, SnappingClient))
 			return;
 	}
 
