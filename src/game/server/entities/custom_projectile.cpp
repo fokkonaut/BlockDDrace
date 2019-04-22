@@ -25,55 +25,10 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 	m_LifeTime = Server()->TickSpeed() * Lifetime;
 	m_Type = Type;
 	m_Accel = Accel;
+
 	m_PrevPos = m_Pos;
+
 	GameWorld()->InsertEntity(this);
-}
-
-bool CCustomProjectile::HitCharacter()
-{
-	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Core, 6.0f, m_Pos + m_Core, pOwner, m_Owner);
-	if (!pHit)
-		return false;
-
-	if (pHit->GetPlayer()->GetCID() == m_Owner) // dont hit yourself
-		return false;
-	if (pHit->m_Passive || pOwner->m_Passive)
-		return false;
-	if (pHit->Team() != pOwner->Team())
-		return false;
-
-	if (m_Spooky)
-	{
-		pHit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed()); // eyeemote surprise
-		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), 7);		//emoticon ghost
-	}
-
-	if (m_Bloody)
-		GameServer()->CreateDeath(m_Pos, pHit->GetPlayer()->GetCID());
-
-	if (m_Freeze)
-		pHit->Freeze();
-
-	if (m_Unfreeze)
-		pHit->UnFreeze();
-
-	if (m_Explosive)
-	{
-		GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, (pHit ? pHit->Team() : -1), m_TeamMask);
-		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
-	}
-	else
-		pHit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
-
-	GameServer()->m_World.DestroyEntity(this);
-	return true;
-}
-
-void CCustomProjectile::Move()
-{
-	m_Pos += m_Core;
-	m_Core *= m_Accel;
 }
 
 void CCustomProjectile::Reset()
@@ -83,55 +38,93 @@ void CCustomProjectile::Reset()
 
 void CCustomProjectile::Tick()
 {
-	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (!pOwner)
-	{
-		Reset();
-		return;
-	}
+	pOwner = 0;
+	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
+		pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	m_TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
+	if (m_Owner >= 0 && !pOwner)
+		Reset();
+
+	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
 
 	m_LifeTime--;
 	if (m_LifeTime <= 0)
-	{
 		Reset();
-		return;
-	}
+
 	Move();
 	HitCharacter();
 
-	bool Res;
-	Res = GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y);
-	if (Res)
+	if (GameServer()->Collision()->IsSolid(m_Pos.x, m_Pos.y))
 	{
 		if (m_Explosive)
 		{
-			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, pOwner->Team(), m_TeamMask);
+			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, pOwner ? pOwner->Team() : -1, m_TeamMask);
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 		}
 
+		if (m_CollisionState == COLLIDED_NOT)
+			m_CollisionState = COLLIDED_ONCE;
+
 		if (m_Bloody)
 		{
-			if (m_IsInsideWall == 1 && Server()->Tick() % 5 == 0)
+			if (m_Ghost && m_CollisionState == COLLIDED_ONCE && Server()->Tick() % 5 == 0)
 				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 			else
 				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 		}
 
-		if (m_Ghost && m_IsInsideWall == 0)
-			m_IsInsideWall = 1; // enteres the wall, collides the first time
-
-		if (m_IsInsideWall == 2 || !m_Ghost) // collides second time with a wall
-		{
+		if (m_CollisionState == COLLIDED_TWICE || !m_Ghost)
 			Reset();
-			return;
-		}
 	}
-	else if(m_Ghost && m_IsInsideWall == 1)
-		m_IsInsideWall = 2; // leaves the wall
+	else if(m_CollisionState == COLLIDED_ONCE)
+		m_CollisionState = COLLIDED_TWICE;
 
 	m_PrevPos = m_Pos;
+}
+
+void CCustomProjectile::Move()
+{
+	m_Pos += m_Core;
+	m_Core *= m_Accel;
+}
+
+void CCustomProjectile::HitCharacter()
+{
+	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, m_Pos + m_Core, 6.0f, m_Pos + m_Core, pOwner, m_Owner);
+	if (!pHit)
+		return;
+
+	if (
+		pHit->GetPlayer()->GetCID() == m_Owner
+		|| pHit->m_Passive
+		|| pOwner->m_Passive
+		|| pHit->Team() != pOwner->Team()
+		)
+		return;
+
+	if (m_Spooky)
+	{
+		pHit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed());
+		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), 7);
+	}
+
+	if (m_Bloody)
+		GameServer()->CreateDeath(m_PrevPos, pHit->GetPlayer()->GetCID());
+
+	if (m_Freeze)
+		pHit->Freeze();
+	else if (m_Unfreeze)
+		pHit->UnFreeze();
+
+	if (m_Explosive)
+	{
+		GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, pHit->Team(), m_TeamMask);
+		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
+	}
+	else
+		pHit->TakeDamage(m_Direction * max(0.001f, 0.0f), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
+
+	Reset();
 }
 
 void CCustomProjectile::Snap(int SnappingClient)
@@ -139,12 +132,9 @@ void CCustomProjectile::Snap(int SnappingClient)
 	if (NetworkClipped(SnappingClient))
 		return;
 
-	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
-	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
-	if (pOwner && pSnapChar)
+	if (GameServer()->GetPlayerChar(SnappingClient))
 	{
-		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
-		if (!CmaskIsSet(TeamMask, SnappingClient))
+		if (!CmaskIsSet(m_TeamMask, SnappingClient))
 			return;
 	}
 

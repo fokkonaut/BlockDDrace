@@ -4,43 +4,52 @@
 
 #include <game/server/entity.h>
 
+enum
+{
+	COLLIDED_NOT = 0,
+	COLLIDED_ONCE,
+	COLLIDED_TWICE
+};
+
 class CCustomProjectile : public CEntity
 {
+public:
+
+	CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
+		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int Type, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
+
+	virtual void Reset();
+	virtual void Tick();
+	virtual void Snap(int SnappingClient);
+
+private:
 	vec2 m_Core;
+	vec2 m_PrevPos;
+	vec2 m_Direction;
+
 	int m_EvalTick;
 	int m_LifeTime;
 
 	int64_t m_TeamMask;
-
-	vec2 m_PrevPos;
+	CCharacter* pOwner;
+	int m_Owner;
 
 	int m_Freeze;
 	int m_Unfreeze;
 	int m_Bloody;
 	int m_Ghost;
 	int m_Spooky;
-
+	bool m_Explosive;
 	int m_Type;
 
-	vec2 m_Direction;
-
-	int m_Owner;
 	float m_Accel;
 	float m_Speed;
 
-	int m_IsInsideWall;
+	int m_CollisionState;
 
-	bool m_Explosive;
-	bool HitCharacter();
+	void HitCharacter();
 	void Move();
-public:
 
-	CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
-			bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int Type, float Lifetime = 1.5, float Accel = 1.1f, float Speed = 1.0f);
-
-	virtual void Reset();
-	virtual void Tick();
-	virtual void Snap(int SnappingClient);
 };
 
 #endif
