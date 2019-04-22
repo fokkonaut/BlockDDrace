@@ -9,11 +9,11 @@ void CCharacter::DummyTick()
 	ResetInput();
 	m_Input.m_Hook = 0;
 
-	if (m_pPlayer->m_Dummymode == 0)
+	if (m_pPlayer->m_Dummymode == DUMMYMODE_NULL)
 	{
 		// do nothing
 	}
-	else if (m_pPlayer->m_Dummymode == -6)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_BLMAPV3_1O1)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
 	{
 		CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, this);
 		if (pChr && pChr->IsAlive())
@@ -268,7 +268,7 @@ void CCharacter::DummyTick()
 				m_Input.m_Direction = -1;
 		}
 	}
-	else if (m_pPlayer->m_Dummymode == 23) //Race mode ChillBlock5 //by chillerdragon cleanup by fokkonaut
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_CHILLBLOCK5_RACER) //Race mode ChillBlock5 //by chillerdragon cleanup by fokkonaut
 	{
 		if (m_Core.m_Pos.x > 241 * 32 && m_Core.m_Pos.x < 418 * 32 && m_Core.m_Pos.y > 121 * 32 && m_Core.m_Pos.y < 192 * 32) //new spawn ChillBlock5 (tourna edition (the on with the gores stuff))
 		{
@@ -1677,7 +1677,7 @@ void CCharacter::DummyTick()
 				m_Input.m_Hook = 0;
 		}
 	}
-	else if (m_pPlayer->m_Dummymode == 29) //chillblock5 blocker //made by chillerdragon, cleaned up as much as possible by fokkonaut
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_CHILLBLOCK5_BLOCKER) //chillblock5 blocker //made by chillerdragon, cleaned up as much as possible by fokkonaut
 	{
 		if (m_DummyBoredCounter > 2)
 		{
@@ -3063,7 +3063,7 @@ void CCharacter::DummyTick()
 		else
 			m_DummyBlockMode = 0;
 	}
-	else if (m_pPlayer->m_Dummymode == 31) //ChillBlock5 Police Guard //made by chillerdragon
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_CHILLBLOCK5_POLICE) //ChillBlock5 Police Guard //made by chillerdragon
 	{
 		if (m_Core.m_Pos.x < 460 * 32) //spawn
 		{
@@ -3333,7 +3333,7 @@ void CCharacter::DummyTick()
 			}
 		}
 	}
-	else if (m_pPlayer->m_Dummymode == 32) //BlmapChill police bot // made by fokkonaut
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_BLMAPCHILL_POLICE) //BlmapChill police bot // made by fokkonaut
 	{
 		if (m_Core.m_Pos.x > 451 * 32 && m_Core.m_Pos.x < 472 * 32 && m_Core.m_Pos.y > 74 * 32 && m_Core.m_Pos.y < 85 * 32) //spawn area, walk into the left SPAWN teleporter
 		{
@@ -4014,7 +4014,7 @@ void CCharacter::DummyTick()
 			}
 		}
 	}
-	else if (m_pPlayer->m_Dummymode == 99) // shop bot
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_SHOP_BOT) // shop bot
 	{
 		CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, this);
 		if (pChr && pChr->m_InShop)
