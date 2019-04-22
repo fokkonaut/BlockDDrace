@@ -4026,5 +4026,5 @@ void CCharacter::DummyTick()
 		}
 	}
 	else
-		m_pPlayer->m_Dummymode = 0;
+		m_pPlayer->m_Dummymode = DUMMYMODE_NULL;
 }

@@ -517,7 +517,7 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 	if (!Amount)
 		Amount = 1;
 
-	if (Dummymode == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+	if (Dummymode == DUMMYMODE_SHOP_BOT && pSelf->GetShopBot() != -1) // there can only be one shop bot
 	{
 		char aBuf[64];
 		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
