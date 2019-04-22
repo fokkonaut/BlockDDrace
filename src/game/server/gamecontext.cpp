@@ -4033,7 +4033,7 @@ void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID
 const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
 {
 	char aGiven[16];
-	char aItem[32];
+	char aItem[64];
 	char aMsg[128];
 	char aInfinite[16];
 
@@ -4044,7 +4044,9 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 		str_format(aInfinite, sizeof(aInfinite), "");
 
 	// get item name
-	str_format(aItem, sizeof(aItem), "%s%s", aInfinite, GetExtraName(Extra, HookPower));
+	char aTemp[64];
+	str_copy(aTemp, GetExtraName(Extra, HookPower), sizeof(aItem));
+	str_format(aItem, sizeof(aItem), "%s%s", aInfinite, aTemp);
 
 	// message without a sender
 	if (FromID == -1 || FromID == ToID)
@@ -4140,7 +4142,7 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 		return "Scroll Ninja";
 	case HOOK_POWER:
 		{
-			char Power[32];
+			char Power[64];
 			str_format(Power, sizeof(Power), "%s Hook", GetExtraName(HookPower));
 			return Power;
 		}
