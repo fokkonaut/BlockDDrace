@@ -338,9 +338,6 @@ public:
 	bool m_Atom;
 	bool m_Trail;
 	int m_Meteors;
-	bool m_PlasmaGun;
-	bool m_HeartGun;
-	bool m_StraightGrenade;
 	bool m_Bloody;
 	bool m_StrongBloody;
 

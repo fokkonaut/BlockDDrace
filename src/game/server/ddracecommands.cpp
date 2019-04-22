@@ -454,10 +454,6 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
 		if (pChr->m_Jetpack)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
-		if (pChr->m_PlasmaGun)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Plasma Gun: True");
-		if (pChr->m_HeartGun)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Heart Gun: True");
 		if (pChr->m_Rainbow)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
 		if (pChr->m_Atom)

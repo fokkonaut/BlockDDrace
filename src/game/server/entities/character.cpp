@@ -2938,6 +2938,9 @@ void CCharacter::DDRaceInit()
 	m_Atom = false;
 	m_Trail = false;
 	m_Meteors = 0;
+	m_Bloody = false;
+	m_StrongBloody = false;
+	m_ScrollNinja = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
