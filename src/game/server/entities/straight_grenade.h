@@ -12,33 +12,30 @@ public:
 	virtual void Tick();
 	virtual void Snap(int SnappingClient);
 
+private:
+
 	void CalculateVel();
 	virtual void TickDefered();
-
 	void HitCharacter();
 	void Move();
 
-private:
-
+	int m_StartTick;
 	vec2 m_LastResetPos;
 	int m_LastResetTick;
+	vec2 m_PrevPos;
+	vec2 m_Core;
+
 	bool m_CalculatedVel;
 	int m_VelX;
 	int m_VelY;
 
 	int64_t m_TeamMask;
-
-	vec2 m_PrevPos;
-	vec2 m_Core;
-
-	int m_StartTick;
+	CCharacter* pOwner;
+	int m_Owner;
 
 	float m_Force;
 	vec2 m_Direction;
-	int m_Owner;
 	int m_Lifetime;
-
-	CCharacter* pOwner;
 };
 
 #endif

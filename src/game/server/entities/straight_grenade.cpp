@@ -107,7 +107,7 @@ void CStraightGrenade::Snap(int SnappingClient)
 	if (NetworkClipped(SnappingClient))
 		return;
 
-	if (pOwner && GameServer()->GetPlayerChar(SnappingClient))
+	if (GameServer()->GetPlayerChar(SnappingClient))
 	{
 		if (!CmaskIsSet(m_TeamMask, SnappingClient))
 			return;
