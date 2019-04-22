@@ -4023,9 +4023,11 @@ void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID
 	if (Silent)
 		return;
 
-	SendChatTarget(ToID, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower));
+	char aMsg[128];
+	str_copy(aMsg, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower), sizeof(aMsg));
+	SendChatTarget(ToID, aMsg);
 	if (FromID >= 0 && FromID != ToID)
-		SendChatTarget(FromID, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower));
+		SendChatTarget(FromID, aMsg);
 }
 
 const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
