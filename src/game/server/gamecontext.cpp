@@ -4149,3 +4149,23 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 	}
 	return "Unknown";
 }
+
+int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
+{
+	int cPlayers = 0;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (((CServer*)Server())->m_aClients[i].m_State != CServer::CClient::STATE_EMPTY)
+		{
+			if (m_apPlayers[i])
+			{
+				if (ExcludeBots && m_apPlayers[i]->m_IsDummy)
+					continue;
+				if (!CountSpectators && !m_apPlayers[i]->GetCharacter())
+					continue;
+			}
+			cPlayers++;
+		}
+	}
+	return cPlayers;
+}

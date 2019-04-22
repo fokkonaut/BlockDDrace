@@ -283,6 +283,8 @@ public:
 	const char *CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower);
 	const char *GetExtraName(int Extra, int HookPower = HOOK_NORMAL);
 
+	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
+
 private:
 
 	bool m_VoteWillPass;
