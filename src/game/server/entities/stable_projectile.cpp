@@ -92,6 +92,12 @@ void CStableProjectile::Snap(int SnappingClient)
 	if(NetworkClipped(SnappingClient))
 		return;
 
+	if (m_Owner != -1 && !GameServer()->m_apPlayers[m_Owner])
+	{
+		Reset();
+		return;
+	}
+
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
 	CCharacter* pOwner = GameServer()->GetPlayerChar(m_Owner);
 	if (pOwner && pSnapChar)
