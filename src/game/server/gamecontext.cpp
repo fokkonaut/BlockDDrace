@@ -4093,7 +4093,6 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, aGiven, Server()->ClientName(ToID), Server()->ClientName(FromID));
 	}
 
-	dbg_msg("test", "%s", aMsg);
 	return aMsg;
 }
 
