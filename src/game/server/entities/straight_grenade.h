@@ -12,11 +12,11 @@ public:
 	virtual void Tick();
 	virtual void Snap(int SnappingClient);
 
-	CCharacter* CharacterNear();
-
 	void CalculateVel();
 	virtual void TickDefered();
-	bool Hit(CCharacter* pHitCharacter);
+
+	void HitCharacter();
+	void Move();
 
 private:
 
@@ -37,6 +37,8 @@ private:
 	vec2 m_Direction;
 	int m_Owner;
 	int m_Lifetime;
+
+	CCharacter* pOwner;
 };
 
 #endif
