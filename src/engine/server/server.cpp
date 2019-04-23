@@ -241,7 +241,7 @@ void CServer::BotJoin(int BotID)
 		"noobScout24",
 		"geneticual",
 		"trollface",
-			"flappy",
+		"flappy",
 		"Chillingo",
 		"Fluffy",
 		"MLG_PRO",
@@ -305,7 +305,7 @@ void CServer::BotJoin(int BotID)
 		"NotAB0t",
 		"Hurman",
 		"xxlddnnet64",
-		"flappy2", //64igster name
+		"flappy2", //192igster name
 		"steeeve",
 		"naki",
 		"tuba",
