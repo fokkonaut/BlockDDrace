@@ -3019,12 +3019,11 @@ void CCharacter::DropWeapon(int WeaponID)
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)
 	{
-		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset();
+		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset(false);
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
 	}
 
 	int m_CountWeapons = 0;
-
 	for (int i = 0; i < NUM_WEAPONS; i++)
 	{
 		if (i == WEAPON_NINJA)

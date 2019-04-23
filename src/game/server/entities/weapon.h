@@ -6,7 +6,7 @@ class CWeapon : public CEntity
 public:
 	CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool Jetpack = false);
 
-	virtual void Reset(bool EreaseWeapon = false, bool Picked = false);
+	virtual void Reset(bool EreaseWeapon = true, bool Picked = false);
 	virtual void Tick();
 	virtual void Snap(int SnappingClient);
 

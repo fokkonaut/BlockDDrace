@@ -27,13 +27,15 @@ void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 {
 	if (EreaseWeapon)
 	{
-		CPlayer* pOwner = GameServer()->GetPlayerChar(m_Owner)->GetPlayer();
-
-		for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
+		CPlayer* pOwner = GameServer()->m_apPlayers[m_Owner];
+		if (pOwner)
 		{
-			if (pOwner->m_vWeaponLimit[m_Type][i] == this)
+			for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
 			{
-				pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
+				if (pOwner->m_vWeaponLimit[m_Type][i] == this)
+				{
+					pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
+				}
 			}
 		}
 	}
@@ -51,18 +53,18 @@ void CWeapon::Tick()
 	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
 		pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if (m_Owner >= 0 && !pOwner)
+	if (m_Owner >= 0 && !GameServer()->m_apPlayers[m_Owner])
 		Reset();
 
 	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
 
 	// weapon hits death-tile or left the game layer, reset it
 	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
-		Reset(true);
+		Reset();
 
 	m_Lifetime--;
 	if (m_Lifetime <= 0)
-		Reset(true);
+		Reset();
 
 	if (m_PickupDelay > 0)
 		m_PickupDelay--;
@@ -222,7 +224,7 @@ void CWeapon::IsShieldNear()
 			if (!GameServer()->m_apPlayers[m_Owner]->m_Gamemode == MODE_VANILLA)
 			{
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
-				Reset(true);
+				Reset();
 			}
 		}
 	}
