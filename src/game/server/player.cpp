@@ -42,6 +42,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Reset()
 {
+	m_RespawnTick = Server()->Tick();
 	m_DieTick = Server()->Tick();
 	m_JoinTick = Server()->Tick();
 	delete m_pCharacter;
@@ -221,11 +222,12 @@ void CPlayer::Tick()
 				m_pCharacter = 0;
 			}
 		}
-		else if(m_Spawning && !m_WeakHookSpawn)
+		else if(m_Spawning && !m_WeakHookSpawn && m_RespawnTick <= Server()->Tick())
 			TryRespawn();
 	}
 	else
 	{
+		++m_RespawnTick;
 		++m_DieTick;
 		++m_JoinTick;
 		++m_LastActionTick;
@@ -608,6 +610,9 @@ void CPlayer::KillCharacter(int Weapon)
 {
 	if(m_pCharacter)
 	{
+		if (m_RespawnTick > Server()->Tick())
+			return;
+
 		m_pCharacter->Die(m_ClientID, Weapon);
 
 		delete m_pCharacter;
@@ -658,6 +663,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	m_LastSetTeam = Server()->Tick();
 	m_LastActionTick = Server()->Tick();
 	m_SpectatorID = SPEC_FREEVIEW;
+	m_RespawnTick = Server()->Tick();
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' m_Team=%d", m_ClientID, Server()->ClientName(m_ClientID), m_Team);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 

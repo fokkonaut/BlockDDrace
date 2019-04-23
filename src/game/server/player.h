@@ -127,6 +127,7 @@ public:
 		int m_ColorFeet;
 	} m_TeeInfos;
 
+	int m_RespawnTick;
 	int m_DieTick;
 	int m_Score;
 	int m_JoinTick;
