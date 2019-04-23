@@ -115,11 +115,13 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 		return;
 
 	bool FlagPosFix = false;
-	if (GameServer()->m_apPlayers[SnappingClient]
-		&& ((GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
-		|| (GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS))
-		)
-		FlagPosFix = true;
+	if (GameServer()->m_apPlayers[SnappingClient])
+	{
+		if (GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
+			FlagPosFix = true;
+		if (GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS)
+			FlagPosFix = true;
+	}
 
 	if (m_apFlags[TEAM_RED])
 	{
