@@ -3928,8 +3928,8 @@ void CGameContext::ConnectDummy(int Dummymode)
 	m_apPlayers[DummyID]->m_IsDummy = true;
 	Server()->BotJoin(DummyID);
 
-	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", MAX_NAME_LENGTH);
-	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = true;
+	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
+	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
 	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
 	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
 
