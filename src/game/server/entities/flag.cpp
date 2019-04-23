@@ -4,7 +4,7 @@
 #include <game/server/gamecontext.h>
 #include <engine/shared/config.h>
 #include "flag.h"
-#include <game/server/gamemodes/ddrace.h>
+#include <game/server/gamemodes/DDRace.h>
 
 CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_FLAG)
