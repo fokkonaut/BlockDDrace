@@ -463,7 +463,7 @@ void CPlayer::FakeSnap()
 	// This is problematic when it's sent before we know whether it's a non-64-player-client
 	// Then we can't spectate players at the start
 
-	if(m_ClientVersion >= VERSION_DDNET_OLD && (GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS || m_DDNetSnapFix))
+	if(m_ClientVersion >= VERSION_DDNET_OLD && ((GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS) || m_DDNetSnapFix))
 		return;
 	if (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() <= VANILLA_MAX_CLIENTS && m_ClientID < VANILLA_MAX_CLIENTS)
 		return;
