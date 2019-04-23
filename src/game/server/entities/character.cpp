@@ -3324,16 +3324,14 @@ void CCharacter::DDraceMode(int FromID, bool Silent)
 void CCharacter::Bloody(bool Remove, int FromID, bool Silent)
 {
 	m_Bloody = !Remove;
-	if (Remove)
-		m_StrongBloody = false;
+	m_StrongBloody = false;
 	GameServer()->SendExtraMessage(BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
 }
 
 void CCharacter::StrongBloody(bool Remove, int FromID, bool Silent)
 {
 	m_StrongBloody = !Remove;
-	if (Remove)
-		m_Bloody = false;
+	m_Bloody = false;
 	GameServer()->SendExtraMessage(STRONG_BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
 }
 
