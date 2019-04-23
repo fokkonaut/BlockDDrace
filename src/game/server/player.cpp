@@ -1038,7 +1038,7 @@ bool CPlayer::IsHooked(int Power)
 		if (!pChr)
 			continue;
 
-		if (Power > 0 && pChr->Core()->m_HookedPlayer == m_ClientID && pChr->m_HookPower == Power)
+		if (Power > HOOK_NORMAL && pChr->Core()->m_HookedPlayer == m_ClientID && pChr->m_HookPower == Power)
 			return true;
 	}
 
