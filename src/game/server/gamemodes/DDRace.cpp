@@ -86,7 +86,7 @@ int CGameControllerDDRace::HasFlag(CCharacter *pChr)
 		if (!m_apFlags[i])
 			continue;
 
-		if (m_apFlags[i]->GetCarrier() == pChr)
+		if (m_apFlags[i]->GetCarrier() == pChr || pChr->m_FlagCarrier == i)
 			return i;
 	}
 	return -1;

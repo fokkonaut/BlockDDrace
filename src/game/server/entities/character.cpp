@@ -2953,6 +2953,7 @@ void CCharacter::DDRaceInit()
 	m_StrongBloody = false;
 	m_ScrollNinja = false;
 	m_HookPower = 0;
+	m_FlagCarrier = -1;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -3120,6 +3121,11 @@ void CCharacter::UpdateWeaponIndicator()
 	str_format(aSpaces, sizeof(aSpaces), "                                                                                                                               ");
 	str_format(aBuf, sizeof(aBuf), "Weapon: %s%s", GameServer()->GetWeaponName(GetActiveWeapon()), aSpaces);
 	GameServer()->SendBroadcast(aBuf, m_pPlayer->GetCID(), false);
+}
+
+int CCharacter::HasFlag()
+{
+	return ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(this);
 }
 
 void CCharacter::Jetpack(bool Remove, int FromID, bool Silent)

@@ -468,6 +468,10 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 
 	if (pChr)
 	{
+		if (pChr->HasFlag() == TEAM_RED)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Red");
+		if (pChr->HasFlag() == TEAM_BLUE)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Blue");
 		if (pChr->m_DeepFreeze)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
 		else if (pChr->isFreezed)
@@ -477,8 +481,6 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 			str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pChr->m_FreezeTime);
 			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 		}
-		else
-			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: False");
 		if (pChr->m_SuperJump)
 			pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
 		if (pChr->m_EndlessHook)

@@ -45,6 +45,7 @@ void CFlag::Drop(int Dir)
 		GameServer()->CreateSoundGlobal(SOUND_CTF_DROP);
 	m_DropTick = Server()->Tick();
 	m_DropFreezeTick = Server()->Tick();
+	m_pCarrier->m_FlagCarrier = -1;
 	m_pLastCarrier = m_pCarrier;
 	m_pCarrier = 0;
 	m_Vel = vec2(5 * Dir, Dir == 0 ? 0 : -5);
@@ -65,6 +66,7 @@ void CFlag::Grab(CCharacter *pChr)
 	m_AtStand = false;
 	m_pCarrier = pChr;
 	pChr->m_FirstFreezeTick = 0;
+	pChr->m_FlagCarrier = m_Team;
 }
 
 void CFlag::Tick()

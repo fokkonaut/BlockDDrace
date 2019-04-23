@@ -335,8 +335,10 @@ public:
 	int m_LastIndexTile;
 	int m_LastIndexFrontTile;
 
-	bool m_PoliceHelper;
+	int HasFlag();
+	int m_FlagCarrier;
 
+	bool m_PoliceHelper;
 	bool m_Passive;
 
 	int m_LastHitWeapon;
