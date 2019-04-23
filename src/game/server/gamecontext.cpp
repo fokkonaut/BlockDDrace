@@ -1206,7 +1206,7 @@ void CGameContext::OnClientConnected(int ClientID)
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
-	if (m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_IsLoggedIn)
+	if (m_apPlayers[ClientID]->m_IsLoggedIn)
 		m_apPlayers[ClientID]->Logout();
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);

@@ -535,7 +535,7 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int ID = pResult->NumArguments() ? pResult->GetVictim() : -1;
+	int ID = pResult->GetVictim();
 	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
 		pSelf->Server()->BotLeave(ID);
 }
