@@ -90,7 +90,7 @@ void CCustomProjectile::Move()
 
 void CCustomProjectile::HitCharacter()
 {
-	vec2 NewPos = m_Pos += m_Core;
+	vec2 NewPos = m_Pos + m_Core;
 	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
 	if (!pHit)
 		return;
