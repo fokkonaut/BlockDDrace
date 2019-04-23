@@ -409,13 +409,12 @@ void CPlayer::Snap(int SnappingClient)
 
 	bool DDNetFix1 = (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS);
 	bool VanillaFix1 = (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS);
-	bool DDNetFix2 = (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS);
 	pPlayerInfo->m_Team = (VanillaFix1 || DDNetFix1 || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (VanillaFix1 || DDNetFix1))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
-	if(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || DDNetFix2))
+	if(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS)))
 		pPlayerInfo->m_Local = 1;
 
 	if(m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
