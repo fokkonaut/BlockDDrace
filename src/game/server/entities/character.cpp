@@ -1306,7 +1306,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		if (m_pPlayer->m_SpookyGhost)
 			m_pPlayer->m_RespawnTick = Server()->Tick() + Server()->TickSpeed() / 10;
 
-		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
+		if (GameServer()->m_apPlayers[Killer] && GameServer()->m_apPlayers[Killer]->m_ShowName)
 			GameServer()->m_apPlayers[Killer]->FixForNoName(FIX_SET_NAME_ONLY);
 
 		m_pPlayer->m_MsgKiller = Killer;
