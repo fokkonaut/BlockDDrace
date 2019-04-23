@@ -777,7 +777,7 @@ void CCharacter::HandleWeapons()
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[GetActiveWeapon()].m_Ammoregentime;
 	if (GetActiveWeapon() == WEAPON_HEART_GUN)
 		AmmoRegenTime = g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Ammoregentime;
-	if(AmmoRegenTime && m_pPlayer->m_Gamemode == MODE_VANILLA && !m_FreezeTime)
+	if(AmmoRegenTime && m_pPlayer->m_Gamemode == MODE_VANILLA && !m_FreezeTime && m_aWeapons[GetActiveWeapon()].m_Ammo != -1)
 	{
 		// If equipped and not active, regen ammo?
 		if (m_ReloadTimer <= 0)
@@ -2776,40 +2776,48 @@ void CCharacter::DDRacePostCoreTick()
 	HandleBroadcast();
 }
 
-void CCharacter::BackupWeapons()
+void CCharacter::BackupWeapons(int Type)
 {
-	if (!m_WeaponsBackupped)
+	if (!m_WeaponsBackupped[Type])
 	{
-		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		for (int i = 0; i < NUM_WEAPONS+2; i++)
 		{
 			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[i][1] = m_Armor;
+				m_aWeaponsBackup[i][Type] = m_Armor;
+			else if (i == NUM_WEAPONS+1)
+				m_aWeaponsBackup[i][Type] = m_Health;
 			else
 			{
-				m_aWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo;
+				m_aWeaponsBackupGot[i][Type] = m_aWeapons[i].m_Got;
+				m_aWeaponsBackup[i][Type] = m_aWeapons[i].m_Ammo;
 				m_aWeapons[i].m_Ammo = 0;
+				if (Type == BACKUP_SPOOKY_GHOST)
+					m_aWeapons[i].m_Got = false;
 			}
 		}
-		m_WeaponsBackupped = true;
+		m_WeaponsBackupped[Type] = true;
 	}
 }
 
-void CCharacter::LoadWeaponBackup()
+void CCharacter::LoadWeaponBackup(int Type)
 {
-	if (m_WeaponsBackupped)
+	if (m_WeaponsBackupped[Type])
 	{
-		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		for (int i = 0; i < NUM_WEAPONS+2; i++)
 		{
 			if (i == NUM_WEAPONS)
-				m_Armor = m_aWeaponsBackup[i][1];
+				m_Armor = m_aWeaponsBackup[i][Type];
+			else if (i == NUM_WEAPONS+1)
+				m_Health = m_aWeaponsBackup[i][Type];
 			else
 			{
-				m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][1];
+				m_aWeapons[i].m_Got = m_aWeaponsBackupGot[i][Type];
+				m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][Type];
 				if (i == WEAPON_NINJA)
 					m_aWeapons[i].m_Ammo = -1;
 			}
 		}
-		m_WeaponsBackupped = false;
+		m_WeaponsBackupped[Type] = false;
 	}
 }
 
@@ -2820,7 +2828,7 @@ bool CCharacter::Freeze(int Seconds)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
 	{
-		BackupWeapons();
+		BackupWeapons(BACKUP_FREEZE);
 
 		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
 		{
@@ -2843,7 +2851,7 @@ bool CCharacter::UnFreeze()
 {
 	if (m_FreezeTime > 0)
 	{
-		LoadWeaponBackup();
+		LoadWeaponBackup(BACKUP_FREEZE);
 
 		if(!m_aWeapons[GetActiveWeapon()].m_Got)
 			SetActiveWeapon(WEAPON_GUN);
@@ -2879,7 +2887,7 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 		if (!m_FreezeTime)
 			m_aWeapons[Weapon].m_Ammo = Ammo;
 		else
-			m_aWeaponsBackup[Weapon][1] = Ammo;
+			m_aWeaponsBackup[Weapon][BACKUP_FREEZE] = Ammo;
 	}
 
 	m_aWeapons[Weapon].m_Got = !Remove;
@@ -3059,41 +3067,19 @@ void CCharacter::DropWeapon(int WeaponID)
 
 void CCharacter::SetSpookyGhost()
 {
-	if (!m_SpookyGhostWeaponsBackupped)
-	{
-		for (int i = 0; i < NUM_WEAPONS; i++)
-		{
-			m_aSpookyGhostWeaponsBackup[i][1] = m_aWeapons[i].m_Ammo;
-			m_aSpookyGhostWeaponsBackupGot[i][1] = m_aWeapons[i].m_Got;
-			m_aWeapons[i].m_Ammo = 0;
-			m_aWeapons[i].m_Got = false;
-		}
-		m_SpookyGhostWeaponsBackupped = true;
-		m_aWeapons[1].m_Got = 1;
-		m_aWeapons[1].m_Ammo = -1;
-	}
-
+	BackupWeapons(BACKUP_SPOOKY_GHOST);
+	m_aWeapons[WEAPON_GUN].m_Got = true;
+	m_aWeapons[WEAPON_GUN].m_Ammo = -1;
 	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, "ghost", sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = 0;
-
 	m_pPlayer->m_SpookyGhost = true;
 }
 
 void CCharacter::UnsetSpookyGhost()
 {
-	if (m_SpookyGhostWeaponsBackupped)
-	{
-		for (int i = 0; i < NUM_WEAPONS; i++)
-		{
-			m_aWeapons[i].m_Got = m_aSpookyGhostWeaponsBackupGot[i][1];
-			m_aWeapons[i].m_Ammo = m_aSpookyGhostWeaponsBackup[i][1];
-		}
-		m_SpookyGhostWeaponsBackupped = false;
-	}
-
+	LoadWeaponBackup(BACKUP_SPOOKY_GHOST);
 	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, m_pPlayer->m_RealSkinName, sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = m_pPlayer->m_RealUseCustomColor;
-
 	m_pPlayer->m_SpookyGhost = false;
 }
 
@@ -3280,18 +3266,22 @@ void CCharacter::VanillaMode(int FromID, bool Silent)
 {
 	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
 		return;
-	else
+
+	m_pPlayer->m_Gamemode = MODE_VANILLA;
+	m_Armor = 0;
+	for (int j = 0; j < NUM_BACKUPS; j++)
 	{
-		m_pPlayer->m_Gamemode = MODE_VANILLA;
-		m_Armor = 0;
-		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		for (int i = 0; i < NUM_WEAPONS+2; i++)
 		{
 			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[NUM_WEAPONS][1] = 0;
-			else if (m_aWeapons[i].m_Got && GetWeaponAmmo(i) && i != WEAPON_HAMMER)
+				m_aWeaponsBackup[i][j] = 0;
+			else if (i == NUM_WEAPONS+1)
+				m_aWeaponsBackup[i][j] = 10;
+			else if (i != WEAPON_HAMMER)
 			{
-				m_aWeaponsBackup[i][1] = 10;
-				m_aWeapons[i].m_Ammo = 10;
+				m_aWeaponsBackup[i][j] = 10;
+				if (!m_FreezeTime)
+					m_aWeapons[i].m_Ammo = 10;
 			}
 		}
 	}
@@ -3302,19 +3292,23 @@ void CCharacter::DDraceMode(int FromID, bool Silent)
 {
 	if (m_pPlayer->m_Gamemode == MODE_DDRACE)
 		return;
-	else
+
+	m_pPlayer->m_Gamemode = MODE_DDRACE;
+	m_Health = 10;
+	m_Armor = 10;
+	for (int j = 0; j < NUM_BACKUPS; j++)
 	{
-		m_pPlayer->m_Gamemode = MODE_DDRACE;
-		m_Health = 10;
-		m_Armor = 10;
-		for (int i = 0; i < NUM_WEAPONS + 1; i++)
+		for (int i = 0; i < NUM_WEAPONS+2; i++)
 		{
 			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[NUM_WEAPONS][1] = 10;
-			else if (m_aWeapons[i].m_Got)
+				m_aWeaponsBackup[i][j] = 10;
+			else if (i == NUM_WEAPONS+1)
+				m_aWeaponsBackup[i][j] = 10;
+			else
 			{
-				m_aWeaponsBackup[i][1] = -1;
-				m_aWeapons[i].m_Ammo = -1;
+				m_aWeaponsBackup[i][j] = -1;
+				if (!m_FreezeTime)
+					m_aWeapons[i].m_Ammo = -1;
 			}
 		}
 	}

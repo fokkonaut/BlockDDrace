@@ -84,12 +84,15 @@ void CPickup::Tick()
 						}
 						else if (pChr->GetPlayer()->m_SpookyGhost)
 						{
-							if (pChr->m_aSpookyGhostWeaponsBackupGot[2][1] || pChr->m_aSpookyGhostWeaponsBackupGot[3][1] || pChr->m_aSpookyGhostWeaponsBackupGot[4][1])
-								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
-
-							pChr->m_aSpookyGhostWeaponsBackup[2][1] = -1;
-							pChr->m_aSpookyGhostWeaponsBackup[3][1] = -1;
-							pChr->m_aSpookyGhostWeaponsBackup[4][1] = -1;
+							for (int i = WEAPON_SHOTGUN; i < NUM_WEAPONS; i++)
+							{
+								if (!Sound && pChr->m_aWeaponsBackupGot[i][BACKUP_SPOOKY_GHOST])
+								{
+									GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
+									Sound = true;
+								}
+								pChr->m_aWeaponsBackupGot[i][BACKUP_SPOOKY_GHOST] = false;
+							}
 						}
 						else
 						{

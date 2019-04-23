@@ -62,6 +62,13 @@ enum
 	NUM_EXTRAS
 };
 
+enum
+{
+	BACKUP_FREEZE = 1,
+	BACKUP_SPOOKY_GHOST,
+	NUM_BACKUPS
+};
+
 
 class CCharacter : public CEntity
 {
@@ -170,11 +177,6 @@ private:
 		bool m_Got;
 
 	} m_aWeapons[NUM_WEAPONS];
-
-	void BackupWeapons();
-	void LoadWeaponBackup();
-	int m_aWeaponsBackup[NUM_WEAPONS+1][2];
-	bool m_WeaponsBackupped;
 
 	int m_ActiveWeapon;
 
@@ -342,6 +344,12 @@ public:
 	int m_LastToucherID;
 	int m_OldLastHookedPlayer;
 
+	void BackupWeapons(int Type);
+	void LoadWeaponBackup(int Type);
+	int m_aWeaponsBackup[NUM_WEAPONS+2][NUM_BACKUPS];
+	bool m_WeaponsBackupped[NUM_BACKUPS];
+	bool m_aWeaponsBackupGot[NUM_WEAPONS+2][NUM_BACKUPS];
+
 	//spooky ghost
 	void SetSpookyGhost();
 	void UnsetSpookyGhost();
@@ -349,10 +357,6 @@ public:
 	bool m_CountSpookyGhostInputs;
 
 	int m_TimesShot;
-
-	int m_aSpookyGhostWeaponsBackup[NUM_WEAPONS][2];
-	bool m_SpookyGhostWeaponsBackupped;
-	int m_aSpookyGhostWeaponsBackupGot[NUM_WEAPONS][2];
 
 	//extras
 	bool m_Rainbow;
