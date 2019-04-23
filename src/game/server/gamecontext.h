@@ -267,7 +267,7 @@ public:
 	void FixMotd();
 	char m_aMotd[900];
 
-	void ConnectDummy(int Dummymode = 0/*DUMMYMODE_NULL*/);
+	void ConnectDummy(int Dummymode = 0);
 	int GetShopBot();
 	bool m_SpawnShopBot;
 	void ConnectDefaultBots();

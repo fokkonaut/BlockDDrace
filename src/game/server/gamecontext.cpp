@@ -3944,7 +3944,7 @@ int CGameContext::GetShopBot()
 	{
 		if (m_apPlayers[i])
 		{
-			if (m_apPlayers[i]->m_Dummymode == DUMMYMODE_SHOP_BOT)
+			if (m_apPlayers[i]->m_Dummymode == 99)
 				return i;
 		}
 	}

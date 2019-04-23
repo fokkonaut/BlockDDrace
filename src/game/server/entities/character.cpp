@@ -60,7 +60,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_pPlayer = pPlayer;
 	m_Pos = Pos;
 
-	if (m_pPlayer->m_Dummymode == DUMMYMODE_SHOP_BOT)
+	if (m_pPlayer->m_Dummymode == 99)
 	{
 		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomTile(TILE_SHOP_BOT_SPAWN);
 		if (ShopBotSpawn != vec2(-1, -1))
