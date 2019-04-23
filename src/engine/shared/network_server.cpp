@@ -725,6 +725,17 @@ void CNetServer::SetMaxClientsPerIP(int Max)
 	m_MaxClientsPerIP = Max;
 }
 
+void CNetServer::SetMaxClients(int Max)
+{
+	// clamp
+	if (Max < 1)
+		Max = 1;
+	else if (Max > NET_MAX_CLIENTS)
+		Max = NET_MAX_CLIENTS;
+
+	m_MaxClients = Max;
+}
+
 bool CNetServer::SetTimedOut(int ClientID, int OrigID)
 {
 	if (m_aSlots[ClientID].m_Connection.State() != NET_CONNSTATE_ERROR)

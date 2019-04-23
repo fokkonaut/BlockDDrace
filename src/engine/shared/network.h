@@ -370,6 +370,7 @@ public:
 
 	//
 	void SetMaxClientsPerIP(int Max);
+	void SetMaxClients(int Max);
 	bool SetTimedOut(int ClientID, int OrigID);
 	void SetTimeoutProtected(int ClientID);
 
