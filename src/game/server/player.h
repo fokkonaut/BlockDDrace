@@ -198,10 +198,10 @@ public:
 	bool m_Afk;
 	int m_KillMe;
 	bool m_HasFinishScore;
-
 	int m_ChatScore;
-
 	bool m_Moderating;
+
+	bool m_DDNetSnapFix;
 
 	bool m_IsDummy;
 	int m_Dummymode;

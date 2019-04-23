@@ -3785,6 +3785,10 @@ void CGameContext::List(int ClientID, const char *pFilter)
 	SendChatTarget(ClientID, aBuf);
 }
 
+bool CGameContext::IsDDNetSnapFix(int ClientID) {
+	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_DDNetSnapFix : false;
+}
+
 int CGameContext::GetClientVersion(int ClientID) {
 	return m_apPlayers[ClientID]
 		? m_apPlayers[ClientID]->m_ClientVersion

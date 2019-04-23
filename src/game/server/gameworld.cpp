@@ -187,13 +187,13 @@ void CGameWorld::UpdatePlayerMaps()
 			CCharacter* SnapChar = GameServer()->GetPlayerChar(i);
 			if(SnapChar && !SnapChar->m_Super &&
 				!GameServer()->m_apPlayers[i]->IsPaused() && GameServer()->m_apPlayers[i]->GetTeam() != -1 &&
-				!ch->CanCollide(i) &&
+				!ch->CanCollide(i)/* &&
 				(!GameServer()->m_apPlayers[i] ||
 					GameServer()->m_apPlayers[i]->m_ClientVersion == VERSION_VANILLA ||
 					(GameServer()->m_apPlayers[i]->m_ClientVersion >= VERSION_DDRACE &&
-					(!GameServer()->m_apPlayers[i]->m_ShowOthers || GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
+					(!GameServer()->m_apPlayers[i]->m_ShowOthers)
 					)
-				)
+				)*/
 			)
 				Dist[j].first = 1e8;
 			else
