@@ -114,24 +114,16 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	if (!pGameDataObj)
 		return;
 
-	bool FlagPosFix[2];
-	for (int i = 0; i < 2; i++)
-		FlagPosFix[i] = false;
+	bool FlagPosFix = false;
 	if (GameServer()->m_apPlayers[SnappingClient])
-	{
-		int OldMaxClients = GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_OLD ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS;
-		for (int i = 0; i < 2; i++)
-		{
-			if (i >= OldMaxClients || SnappingClient >= OldMaxClients)
-				FlagPosFix[i] = true;
-		}
-	}
+		if (GameServer()->m_apPlayers[SnappingClient]->m_DDNetSnapFix)
+			FlagPosFix = true;
 
 	if (m_apFlags[TEAM_RED])
 	{
 		if (m_apFlags[TEAM_RED]->IsAtStand())
 			pGameDataObj->m_FlagCarrierRed = FLAG_ATSTAND;
-		else if (m_apFlags[TEAM_RED]->GetCarrier() && m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer() && !FlagPosFix[TEAM_RED])
+		else if (m_apFlags[TEAM_RED]->GetCarrier() && m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer() && !FlagPosFix)
 			pGameDataObj->m_FlagCarrierRed = m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer()->GetCID();
 		else
 			pGameDataObj->m_FlagCarrierRed = FLAG_TAKEN;
@@ -142,7 +134,7 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	{
 		if (m_apFlags[TEAM_BLUE]->IsAtStand())
 			pGameDataObj->m_FlagCarrierBlue = FLAG_ATSTAND;
-		else if (m_apFlags[TEAM_BLUE]->GetCarrier() && m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer() && !FlagPosFix[FLAG_BLUE])
+		else if (m_apFlags[TEAM_BLUE]->GetCarrier() && m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer() && !FlagPosFix)
 			pGameDataObj->m_FlagCarrierBlue = m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer()->GetCID();
 		else
 			pGameDataObj->m_FlagCarrierBlue = FLAG_TAKEN;
