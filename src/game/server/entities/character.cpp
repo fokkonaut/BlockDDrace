@@ -1025,7 +1025,7 @@ void CCharacter::Tick()
 		m_Core.SetFlagPos(i, F->m_Pos, F->IsAtStand(), F->GetVel(), Carried);
 	}
 
-	m_Core.Tick(true, false);
+	m_Core.Tick(true);
 
 	if (m_Core.m_UpdateFlagVel == FLAG_RED)
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
@@ -1132,7 +1132,7 @@ void CCharacter::TickDefered()
 		CWorldCore TempWorld;
 		m_ReckoningCore.Init(&TempWorld, GameServer()->Collision(), &((CGameControllerDDRace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts);
 		m_ReckoningCore.m_Id = m_pPlayer->GetCID();
-		m_ReckoningCore.Tick(false, false);
+		m_ReckoningCore.Tick(false);
 		m_ReckoningCore.Move();
 		m_ReckoningCore.Quantize();
 	}
