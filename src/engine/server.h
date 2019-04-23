@@ -111,10 +111,10 @@ public:
 
 	bool Translate(int& Target, int Client)
 	{
-		/*CClientInfo Info;
+		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (Info.m_ClientVersion >= VERSION_DDNET_OLD)
-			return true;*/
+		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && ClientCount() <= DDRACE_MAX_CLIENTS)
+			return true;
 		int *pMap = GetIdMap(Client);
 		bool Found = false;
 		for (int i = 0; i < DDRACE_MAX_CLIENTS; i++)
@@ -131,10 +131,10 @@ public:
 
 	bool ReverseTranslate(int& Target, int Client)
 	{
-		/*CClientInfo Info;
+		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (Info.m_ClientVersion >= VERSION_DDNET_OLD)
-			return true;*/
+		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && ClientCount() <= DDRACE_MAX_CLIENTS)
+			return true;
 		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS -1);
 		int *pMap = GetIdMap(Client);
 		if (pMap[Target] == -1)
