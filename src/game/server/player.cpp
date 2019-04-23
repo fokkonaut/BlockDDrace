@@ -395,6 +395,13 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pPlayerInfo)
 		return;
 
+	m_DDNetSnapFix = (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS);
+	bool VanillaSnapFix = (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS);
+
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() >= DDRACE_MAX_CLIENTS)
+			m_DDNetSnapFix = true;
+
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
 		if (Server()->Tick() % 200 == 0)
@@ -406,12 +413,6 @@ void CPlayer::Snap(int SnappingClient)
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
-
-	m_DDNetSnapFix = (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS);
-	for (int i = 0; i < MAX_CLIENTS; i++)
-		if (GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() >= DDRACE_MAX_CLIENTS)
-			m_DDNetSnapFix = true;
-	bool VanillaSnapFix = (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS);
 	pPlayerInfo->m_Team = (VanillaSnapFix || m_DDNetSnapFix || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (VanillaSnapFix || m_DDNetSnapFix))
