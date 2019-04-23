@@ -131,8 +131,6 @@ public:
 	bool IsPaused() const { return m_Paused; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }
 
-	bool isFreezed;
-
 	void DropWeapon(int WeaponID);
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
@@ -266,6 +264,7 @@ public:
 	bool m_NinjaJetpack;
 	int m_TeamBeforeSuper;
 	int m_FreezeTime;
+	bool isFreezed;
 	int m_FreezeTick;
 	bool m_DeepFreeze;
 	bool m_EndlessHook;
