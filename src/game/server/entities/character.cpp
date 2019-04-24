@@ -2716,7 +2716,7 @@ void CCharacter::DDRaceTick()
 
 void CCharacter::DDRacePostCoreTick()
 {
-	isFreezed = false;
+	IsFrozen = false;
 	m_Time = (float)(Server()->Tick() - m_StartTime) / ((float)Server()->TickSpeed());
 
 	if (m_pPlayer->m_DefEmoteReset >= 0 && m_pPlayer->m_DefEmoteReset <= Server()->Tick())
@@ -2770,7 +2770,7 @@ void CCharacter::DDRacePostCoreTick()
 		m_IsBlueTeleGunTeleport = false;
 	}
 
-	if (!(isFreezed))
+	if (!(IsFrozen))
 		m_FirstFreezeTick = 0;
 
 	HandleBroadcast();
@@ -2823,7 +2823,7 @@ void CCharacter::LoadWeaponBackup(int Type)
 
 bool CCharacter::Freeze(int Seconds)
 {
-	isFreezed = true;
+	IsFrozen = true;
 	if ((Seconds <= 0 || m_Super || m_FreezeTime == -1 || m_FreezeTime > Seconds * Server()->TickSpeed()) && Seconds != -1)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
@@ -3025,7 +3025,7 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 
 void CCharacter::DropWeapon(int WeaponID)
 {
-	if ((isFreezed) || (m_FreezeTime) || !g_Config.m_SvAllowDroppingWeapons || (WeaponID == WEAPON_NINJA))
+	if ((IsFrozen) || (m_FreezeTime) || !g_Config.m_SvAllowDroppingWeapons || (WeaponID == WEAPON_NINJA))
 		return;
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)

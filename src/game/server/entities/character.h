@@ -82,8 +82,6 @@ public:
 
 	CCharacter(CGameWorld *pWorld);
 
-	int m_FirstFreezeTick;
-
 	virtual void Reset();
 	virtual void Destroy();
 	virtual void Tick();
@@ -264,7 +262,8 @@ public:
 	bool m_NinjaJetpack;
 	int m_TeamBeforeSuper;
 	int m_FreezeTime;
-	bool isFreezed;
+	bool IsFrozen;
+	int m_FirstFreezeTick;
 	int m_FreezeTick;
 	bool m_DeepFreeze;
 	bool m_EndlessHook;
