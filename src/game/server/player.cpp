@@ -54,15 +54,23 @@ void CPlayer::Reset()
 	m_LastInvited = 0;
 	m_WeakHookSpawn = false;
 
+	if (m_ClientVersion >= VERSION_DDNET_OLD)
+	{
+		m_SnapFixDDNet = true;
+		m_SnapFixVanilla = false;
+	}
+	else
+	{
+		m_SnapFixDDNet = false;
+		m_SnapFixVanilla = true;
+	}
+
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
 	for (int i = 1;i < DDRACE_MAX_CLIENTS;i++)
 	{
 		pIdMap[i] = -1;
 	}
 	pIdMap[0] = m_ClientID;
-
-	m_SnapFixDDNet = true;
-	m_SnapFixVanilla = true;
 
 	// DDRace
 
@@ -405,7 +413,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS || m_ClientID > DDRACE_MAX_CLIENTS)
 			m_SnapFixDDNet = true;
 		else for (int i = 0; i < MAX_CLIENTS; i++)
-			if (!m_SnapFixDDNet && GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() > DDRACE_MAX_CLIENTS)
+			if (!m_SnapFixDDNet && GameServer()->m_apPlayers[i] && (GameServer()->m_apPlayers[i]->m_SnapFixDDNet || i > DDRACE_MAX_CLIENTS))
 				m_SnapFixDDNet = true;
 	}
 	if (m_ClientVersion < VERSION_DDNET_OLD)
@@ -413,7 +421,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS || m_ClientID > VANILLA_MAX_CLIENTS)
 			m_SnapFixVanilla = true;
 		else for (int i = 0; i < MAX_CLIENTS; i++)
-			if (!m_SnapFixVanilla && GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() > VANILLA_MAX_CLIENTS)
+			if (!m_SnapFixVanilla && GameServer()->m_apPlayers[i] && (GameServer()->m_apPlayers[i]->m_SnapFixVanilla || i > VANILLA_MAX_CLIENTS))
 				m_SnapFixVanilla = true;
 	}
 
