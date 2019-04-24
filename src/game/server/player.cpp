@@ -54,16 +54,8 @@ void CPlayer::Reset()
 	m_LastInvited = 0;
 	m_WeakHookSpawn = false;
 
-	if (m_ClientVersion >= VERSION_DDNET_OLD)
-	{
-		m_SnapFixDDNet = true;
-		m_SnapFixVanilla = false;
-	}
-	else
-	{
-		m_SnapFixDDNet = false;
-		m_SnapFixVanilla = true;
-	}
+	m_SnapFixDDNet = true;
+	m_SnapFixVanilla = true;
 
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
 	for (int i = 1;i < DDRACE_MAX_CLIENTS;i++)
