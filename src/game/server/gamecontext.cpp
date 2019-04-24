@@ -3793,7 +3793,6 @@ bool CGameContext::IsSnapFixDDNet(int ClientID) {
 	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixDDNet : false;
 }
 
-
 int CGameContext::GetClientVersion(int ClientID) {
 	return m_apPlayers[ClientID]
 		? m_apPlayers[ClientID]->m_ClientVersion

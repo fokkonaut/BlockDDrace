@@ -122,7 +122,7 @@ public:
 			return true;
 		int *pMap = GetIdMap(Client);
 		bool Found = false;
-		for (int i = 0; i < (Info.m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS); i++)
+		for (int i = 0; i < DDRACE_MAX_CLIENTS; i++)
 		{
 			if (Target == pMap[i])
 			{
@@ -140,7 +140,7 @@ public:
 		GetClientInfo(Client, &Info);
 		if (!Info.m_SnapFixVanilla && !Info.m_SnapFixDDNet)
 			return true;
-		Target = clamp(Target, 0, (Info.m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) -1);
+		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS-1);
 		int *pMap = GetIdMap(Client);
 		if (pMap[Target] == -1)
 			return false;

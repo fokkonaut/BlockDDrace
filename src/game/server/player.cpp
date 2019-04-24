@@ -61,6 +61,9 @@ void CPlayer::Reset()
 	}
 	pIdMap[0] = m_ClientID;
 
+	m_SnapFixDDNet = true;
+	m_SnapFixVanilla = true;
+
 	// DDRace
 
 	m_vWeaponLimit.resize(NUM_WEAPONS);
@@ -402,7 +405,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (
 			(GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
 			|| (m_ClientID > DDRACE_MAX_CLIENTS)
-			|| (GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_SnapFixDDNet)
+			|| (pSnapping->m_SnapFixDDNet)
 			)
 			m_SnapFixDDNet = true;
 	}
@@ -411,7 +414,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (
 			(GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS)
 			|| (m_ClientID > VANILLA_MAX_CLIENTS)
-			|| (GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_SnapFixVanilla)
+			|| (pSnapping->m_SnapFixVanilla)
 			)
 			m_SnapFixVanilla = true;
 	}
@@ -428,7 +431,7 @@ void CPlayer::Snap(int SnappingClient)
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
 	pPlayerInfo->m_Team = (m_SnapFixVanilla || m_SnapFixDDNet || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
-	
+
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_SnapFixVanilla || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
