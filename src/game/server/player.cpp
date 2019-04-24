@@ -402,21 +402,19 @@ void CPlayer::Snap(int SnappingClient)
 	m_SnapFixVanilla = false;
 	if (m_ClientVersion >= VERSION_DDNET_OLD)
 	{
-		if (
-			(GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
-			|| (m_ClientID > DDRACE_MAX_CLIENTS)
-			|| (pSnapping->m_SnapFixDDNet)
-			)
+		if (GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS || m_ClientID > DDRACE_MAX_CLIENTS)
 			m_SnapFixDDNet = true;
+		else for (int i = 0; i < MAX_CLIENTS; i++)
+			if (!m_SnapFixDDNet && GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() > DDRACE_MAX_CLIENTS)
+				m_SnapFixDDNet = true;
 	}
 	if (m_ClientVersion < VERSION_DDNET_OLD)
 	{
-		if (
-			(GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS)
-			|| (m_ClientID > VANILLA_MAX_CLIENTS)
-			|| (pSnapping->m_SnapFixVanilla)
-			)
+		if (GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS || m_ClientID > VANILLA_MAX_CLIENTS)
 			m_SnapFixVanilla = true;
+		else for (int i = 0; i < MAX_CLIENTS; i++)
+			if (!m_SnapFixVanilla && GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() > VANILLA_MAX_CLIENTS)
+				m_SnapFixVanilla = true;
 	}
 
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
