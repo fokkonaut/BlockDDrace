@@ -1047,7 +1047,8 @@ int CServer::GetClientInfo(int ClientID, CClientInfo *pInfo)
 		pInfo->m_pName = m_aClients[ClientID].m_aName;
 		pInfo->m_Latency = m_aClients[ClientID].m_State == CClient::STATE_BOT ? 0 : m_aClients[ClientID].m_Latency;
 		pInfo->m_ClientVersion = GameServer()->GetClientVersion(ClientID);
-		pInfo->m_DDNetSnapFix = GameServer()->IsDDNetSnapFix(ClientID);
+		pInfo->m_SnapFixVanilla = GameServer()->IsSnapFixVanilla(ClientID);
+		pInfo->m_SnapFixDDNet = GameServer()->IsSnapFixDDNet(ClientID);
 		return 1;
 	}
 	return 0;

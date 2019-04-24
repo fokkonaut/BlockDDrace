@@ -86,7 +86,7 @@ int CGameControllerDDRace::HasFlag(CCharacter *pChr)
 		if (!m_apFlags[i])
 			continue;
 
-		if (m_apFlags[i]->GetCarrier() == pChr || pChr->m_FlagCarrier == i)
+		if (m_apFlags[i]->GetCarrier() == pChr)
 			return i;
 	}
 	return -1;
@@ -114,17 +114,33 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	if (!pGameDataObj)
 		return;
 
-	bool FlagPosFix = false;
-	if (GameServer()->m_apPlayers[SnappingClient])
-		if (GameServer()->m_apPlayers[SnappingClient]->m_DDNetSnapFix)
-			FlagPosFix = true;
+	CPlayer* pSnap = GameServer()->m_apPlayers[SnappingClient];
+
+	bool FlagPosFix[2];
+	FlagPosFix[TEAM_RED] = false;
+	FlagPosFix[TEAM_BLUE] = false;
+	if (pSnap->m_SnapFixDDNet || pSnap->m_SnapFixVanilla)
+		for (int i = 0; i < 2; i++)
+			if (
+				m_apFlags[i]
+				&& m_apFlags[i]->GetCarrier() && m_apFlags[i]->GetCarrier()->GetPlayer()
+				&& m_apFlags[i]->GetCarrier()->GetPlayer() == pSnap
+				)
+				FlagPosFix[i] = true;
 
 	if (m_apFlags[TEAM_RED])
 	{
 		if (m_apFlags[TEAM_RED]->IsAtStand())
 			pGameDataObj->m_FlagCarrierRed = FLAG_ATSTAND;
-		else if (m_apFlags[TEAM_RED]->GetCarrier() && m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer() && !FlagPosFix)
-			pGameDataObj->m_FlagCarrierRed = m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer()->GetCID();
+		else if (m_apFlags[TEAM_RED]->GetCarrier() && m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer())
+		{
+			if (!pSnap->m_SnapFixDDNet && !pSnap->m_SnapFixVanilla)
+				pGameDataObj->m_FlagCarrierRed = m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer()->GetCID();
+			else if (FlagPosFix[TEAM_RED])
+				pGameDataObj->m_FlagCarrierRed = 0;
+			else
+				pGameDataObj->m_FlagCarrierRed = FLAG_TAKEN;
+		}
 		else
 			pGameDataObj->m_FlagCarrierRed = FLAG_TAKEN;
 	}
@@ -134,8 +150,15 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	{
 		if (m_apFlags[TEAM_BLUE]->IsAtStand())
 			pGameDataObj->m_FlagCarrierBlue = FLAG_ATSTAND;
-		else if (m_apFlags[TEAM_BLUE]->GetCarrier() && m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer() && !FlagPosFix)
-			pGameDataObj->m_FlagCarrierBlue = m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer()->GetCID();
+		else if (m_apFlags[TEAM_BLUE]->GetCarrier() && m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer())
+		{
+			if (!pSnap->m_SnapFixDDNet && !pSnap->m_SnapFixVanilla)
+				pGameDataObj->m_FlagCarrierBlue = m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer()->GetCID();
+			else if (FlagPosFix[TEAM_BLUE])
+				pGameDataObj->m_FlagCarrierBlue = 0;
+			else
+				pGameDataObj->m_FlagCarrierBlue = FLAG_TAKEN;
+		}
 		else
 			pGameDataObj->m_FlagCarrierBlue = FLAG_TAKEN;
 	}

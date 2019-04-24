@@ -257,7 +257,8 @@ public:
 	// Describes the time when the first player joined the server.
 	int64 m_NonEmptySince;
 	int64 m_LastMapVote;
-	bool IsDDNetSnapFix(int ClientID);
+	bool IsSnapFixVanilla(int ClientID);
+	bool IsSnapFixDDNet(int ClientID);
 	int GetClientVersion(int ClientID);
 	void SetClientVersion(int ClientID, int Version);
 	bool PlayerExists(int ClientID) { return m_apPlayers[ClientID]; };

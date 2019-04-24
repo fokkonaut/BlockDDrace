@@ -27,7 +27,8 @@ public:
 		const char *m_pName;
 		int m_Latency;
 		int m_ClientVersion;
-		bool m_DDNetSnapFix;
+		bool m_SnapFixVanilla;
+		bool m_SnapFixDDNet;
 	};
 
 	int Tick() const { return m_CurrentGameTick; }
@@ -117,11 +118,11 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && ClientCount() <= DDRACE_MAX_CLIENTS && Client < DDRACE_MAX_CLIENTS && !Info.m_DDNetSnapFix)
+		if (!Info.m_SnapFixVanilla && !Info.m_SnapFixDDNet)
 			return true;
 		int *pMap = GetIdMap(Client);
 		bool Found = false;
-		for (int i = 0; i < DDRACE_MAX_CLIENTS; i++)
+		for (int i = 0; i < (Info.m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS); i++)
 		{
 			if (Target == pMap[i])
 			{
@@ -137,9 +138,9 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && ClientCount() <= DDRACE_MAX_CLIENTS && Client < DDRACE_MAX_CLIENTS && !Info.m_DDNetSnapFix)
+		if (!Info.m_SnapFixVanilla && !Info.m_SnapFixDDNet)
 			return true;
-		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS -1);
+		Target = clamp(Target, 0, (Info.m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) -1);
 		int *pMap = GetIdMap(Client);
 		if (pMap[Target] == -1)
 			return false;
@@ -233,7 +234,8 @@ public:
 	// DDRace
 
 	virtual void OnSetAuthed(int ClientID, int Level) = 0;
-	virtual bool IsDDNetSnapFix(int ClientID) = 0;
+	virtual bool IsSnapFixVanilla(int ClientID) = 0;
+	virtual bool IsSnapFixDDNet(int ClientID) = 0;
 	virtual int GetClientVersion(int ClientID) = 0;
 	virtual void SetClientVersion(int ClientID, int Version) = 0;
 	virtual bool PlayerExists(int ClientID) = 0;

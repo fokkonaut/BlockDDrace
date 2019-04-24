@@ -395,12 +395,26 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pPlayerInfo)
 		return;
 
-	m_DDNetSnapFix = (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS);
-	bool VanillaSnapFix = (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS);
-
-	for (int i = 0; i < MAX_CLIENTS; i++)
-		if (GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetCID() >= DDRACE_MAX_CLIENTS)
-			m_DDNetSnapFix = true;
+	m_SnapFixDDNet = false;
+	m_SnapFixVanilla = false;
+	if (m_ClientVersion >= VERSION_DDNET_OLD)
+	{
+		if (
+			(GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS)
+			|| (m_ClientID > DDRACE_MAX_CLIENTS)
+			|| (GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_SnapFixDDNet)
+			)
+			m_SnapFixDDNet = true;
+	}
+	if (m_ClientVersion < VERSION_DDNET_OLD)
+	{
+		if (
+			(GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS)
+			|| (m_ClientID > VANILLA_MAX_CLIENTS)
+			|| (GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_SnapFixVanilla)
+			)
+			m_SnapFixVanilla = true;
+	}
 
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
@@ -413,12 +427,12 @@ void CPlayer::Snap(int SnappingClient)
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
-	pPlayerInfo->m_Team = (VanillaSnapFix || m_DDNetSnapFix || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
-
-	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (VanillaSnapFix || m_DDNetSnapFix))
+	pPlayerInfo->m_Team = (m_SnapFixVanilla || m_SnapFixDDNet || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
+	
+	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_SnapFixVanilla || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
-	if(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS)))
+	if (m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && !m_SnapFixDDNet)))
 		pPlayerInfo->m_Local = 1;
 
 	if(m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
@@ -463,12 +477,10 @@ void CPlayer::FakeSnap()
 	// This is problematic when it's sent before we know whether it's a non-64-player-client
 	// Then we can't spectate players at the start
 
-	if(m_ClientVersion >= VERSION_DDNET_OLD && ((GameServer()->CountConnectedPlayers() <= DDRACE_MAX_CLIENTS && m_ClientID < DDRACE_MAX_CLIENTS) || m_DDNetSnapFix))
-		return;
-	if (m_ClientVersion < VERSION_DDNET_OLD && GameServer()->CountConnectedPlayers() <= VANILLA_MAX_CLIENTS && m_ClientID < VANILLA_MAX_CLIENTS)
+	if(!m_SnapFixDDNet && !m_SnapFixVanilla)
 		return;
 
-	int FakeID = (m_ClientVersion >= VERSION_DDNET_OLD ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) - 1;
+	int FakeID = (m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) - 1;
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, FakeID, sizeof(CNetObj_ClientInfo)));
 

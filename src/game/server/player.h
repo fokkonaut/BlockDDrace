@@ -201,7 +201,8 @@ public:
 	int m_ChatScore;
 	bool m_Moderating;
 
-	bool m_DDNetSnapFix;
+	bool m_SnapFixVanilla;
+	bool m_SnapFixDDNet;
 
 	bool m_IsDummy;
 	int m_Dummymode;

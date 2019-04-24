@@ -2952,8 +2952,7 @@ void CCharacter::DDRaceInit()
 	m_Bloody = false;
 	m_StrongBloody = false;
 	m_ScrollNinja = false;
-	m_HookPower = 0;
-	m_FlagCarrier = -1;
+	m_HookPower = HOOK_NORMAL;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 

@@ -336,7 +336,6 @@ public:
 	int m_LastIndexFrontTile;
 
 	int HasFlag();
-	int m_FlagCarrier;
 
 	bool m_PoliceHelper;
 	bool m_Passive;
