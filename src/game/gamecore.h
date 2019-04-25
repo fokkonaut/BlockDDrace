@@ -197,8 +197,6 @@ public:
 	bool m_Hook;
 	bool m_Collision;
 
-	bool m_Passive;
-
 	vec2 m_HookPos;
 	vec2 m_HookDir;
 	vec2 m_HookTeleBase;
@@ -251,6 +249,8 @@ public:
 	int m_Colliding;
 	bool m_LeftWall;
 	
+	bool m_Passive;
+
 	// DDNet Character
 	bool m_Solo;
 	bool m_Jetpack;

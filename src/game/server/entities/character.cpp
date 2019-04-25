@@ -473,10 +473,7 @@ void CCharacter::FireWeapon()
 				CCharacter *pTarget = apEnts[i];
 
 				//if ((pTarget == this) || GameServer()->Collision()->IntersectLine(ProjStartPos, pTarget->m_Pos, NULL, NULL))
-				if((pTarget == this || (pTarget->IsAlive() && !CanCollide(pTarget->GetPlayer()->GetCID()))))
-					continue;
-
-				if (pTarget->m_Passive)
+				if(pTarget == this || (pTarget->IsAlive() && (pTarget->m_Passive || !CanCollide(pTarget->GetPlayer()->GetCID()))))
 					continue;
 
 				// set his velocity to fast upward (for now)
@@ -1060,10 +1057,8 @@ void CCharacter::BlockDDraceTick()
 	if (pChr)
 	{
 		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
-		{
-			if (pChr->m_FreezeTime == 0 && !pChr->m_Passive && !m_Passive)
+			if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
 				m_LastToucherID = pChr->GetPlayer()->GetCID();
-		}
 	}
 
 	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
@@ -1078,18 +1073,19 @@ void CCharacter::BlockDDraceTick()
 		m_LastHitWeapon = -1;
 	}
 
-	CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
-	if (pPas && pPas->m_Passive)
+	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS)
 	{
-		m_Core.m_Collision = false;
-		m_NeededFaketuning |= FAKETUNE_NOCOLL;
-		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-	}
-	else if (!m_Passive)
-	{
-		m_Core.m_Collision = true;
-		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
+		if (pPas && pPas->m_Passive && !pPas->m_Super && !m_Super)
+		{
+			m_NeededFaketuning |= FAKETUNE_NOCOLL;
+			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		}
+		else if (!m_Passive)
+		{
+			m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		}
 	}
 
 	if (m_ShopMotdTick < Server()->Tick())
@@ -2983,6 +2979,7 @@ void CCharacter::DDRaceInit()
 	m_StrongBloody = false;
 	m_ScrollNinja = false;
 	m_HookPower = HOOK_NORMAL;
+	m_Passive = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -3275,26 +3272,25 @@ void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
 void CCharacter::Passive(bool Remove, int FromID, bool Silent)
 {
 	if (Remove)
-	{
-		m_Passive = false;
-		m_Core.m_Passive = false;
-		m_Core.m_Collision = true;
 		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-		m_Hit = HIT_ALL;
-		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
-		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-	}
 	else
-	{
-		m_Passive = true;
-		m_Core.m_Passive = true;
-		m_Core.m_Collision = false;
 		m_NeededFaketuning |= FAKETUNE_NOCOLL;
-		m_Hit = DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN;
-		m_NeededFaketuning |= FAKETUNE_NOHAMMER;
-		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
-	}
+
+	m_Passive = !Remove;
+	m_Core.m_Passive = !Remove;
+	m_Core.m_Collision = Remove;
+	m_Core.m_NoCollision = !Remove;
+	m_Hit = Remove ? HIT_ALL : (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN);
+	m_Core.m_NoShotgunHit = !Remove;
+	m_Core.m_NoGrenadeHit = !Remove;
+	m_Core.m_NoHammerHit = !Remove;
+	m_Core.m_NoRifleHit = !Remove;
+	m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
+	m_Core.m_Hook = Remove;
+	m_Core.m_NoHookHit = !Remove;
+	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+
+	new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
 	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Remove, FromID, Silent);
 }
 
