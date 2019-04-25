@@ -3916,7 +3916,6 @@ void CGameContext::FixMotd()
 	}
 	else
 		m_aMotd[0] = 0;
-		str_format(m_aMotd, sizeof(m_aMotd), "");
 }
 
 void CGameContext::ConnectDummy(int Dummymode)
@@ -4042,10 +4041,9 @@ void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID
 const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
 {
 	char aGiven[16];
-	char aItem[64];
 	char aInfinite[16];
-	char aMsg[128];
-	aMsg[0] = 0;
+	char aItem[64];
+	static char aMsg[128];
 
 	// infinite
 	if (!Remove && (Extra == INF_RAINBOW || Extra == INF_ATOM || Extra == INF_TRAIL || Extra == INF_METEOR))
@@ -4152,8 +4150,7 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 		return "Scroll Ninja";
 	case HOOK_POWER:
 		{
-			char aPower[64];
-			aPower[0] = 0;
+			static char aPower[64];
 			str_format(aPower, sizeof(aPower), "%s Hook", GetExtraName(HookPower));
 			return aPower;
 		}
