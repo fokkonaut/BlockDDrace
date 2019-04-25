@@ -3893,10 +3893,10 @@ void CGameContext::FixMotd()
 
 		for (int i = MotdLen; i > 0; i--)
 		{
-			if ((g_Config.m_SvMotd[i-1] == '\\' && g_Config.m_SvMotd[i] == 'n') || count > 20)
+			if ((g_Config.m_SvMotd[i - 1] == '\\' && g_Config.m_SvMotd[i] == 'n') || count > 20)
 			{
 				g_Config.m_SvMotd[i] = '\0';
-				g_Config.m_SvMotd[i-1] = '\0';
+				g_Config.m_SvMotd[i - 1] = '\0';
 			}
 			else
 				break;
@@ -3905,7 +3905,7 @@ void CGameContext::FixMotd()
 		if (count > 20)
 			count = 20;
 
-		str_format(aTemp, sizeof(aTemp), "");
+		aTemp[0] = 0;
 		for (int i = 0; i < 22 - count; i++)
 		{
 			str_format(aTemp2, sizeof(aTemp2), "%s", aTemp);
@@ -3915,6 +3915,7 @@ void CGameContext::FixMotd()
 		str_format(m_aMotd, sizeof(m_aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, aTemp, GAME_VERSION);
 	}
 	else
+		m_aMotd[0] = 0;
 		str_format(m_aMotd, sizeof(m_aMotd), "");
 }
 
@@ -4042,14 +4043,15 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 {
 	char aGiven[16];
 	char aItem[64];
-	char aMsg[128];
 	char aInfinite[16];
+	char aMsg[128];
+	aMsg[0] = 0;
 
 	// infinite
 	if (!Remove && (Extra == INF_RAINBOW || Extra == INF_ATOM || Extra == INF_TRAIL || Extra == INF_METEOR))
 		str_format(aInfinite, sizeof(aInfinite), "Infinite ");
 	else
-		str_format(aInfinite, sizeof(aInfinite), "");
+		aInfinite[0] = 0;
 
 	// get item name
 	char aTemp[64];
@@ -4150,9 +4152,10 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 		return "Scroll Ninja";
 	case HOOK_POWER:
 		{
-			char Power[64];
-			str_format(Power, sizeof(Power), "%s Hook", GetExtraName(HookPower));
-			return Power;
+			char aPower[64];
+			aPower[0] = 0;
+			str_format(aPower, sizeof(aPower), "%s Hook", GetExtraName(HookPower));
+			return aPower;
 		}
 	}
 	return "Unknown";

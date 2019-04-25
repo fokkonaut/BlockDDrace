@@ -61,7 +61,7 @@ void CCharacter::ShopWindow(int Dir)
 	}
 	else
 	{
-		str_format(aItem, sizeof(aItem), "");
+		aItem[0] = 0;
 	}
 	//////////////////// UPDATE m_MaxShopPage ON TOP OF THIS FUNCTION!!! /////////////////////////
 
