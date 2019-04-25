@@ -959,7 +959,7 @@ void CCharacter::Tick()
 
 		int HistoryPos = 0;
 		float HistoryPosLength = 0.0f;
-		float AdditionalLength = 0.0f;
+		//float AdditionalLength = 0.0f;
 		for (int i = 0; i<NUM_TRAILS; i++)
 		{
 			float Length = (i + 1)*TRAIL_DIST;
@@ -981,14 +981,14 @@ void CCharacter::Tick()
 
 				if (Length <= HistoryPosLength + NextDist)
 				{
-					AdditionalLength = Length - HistoryPosLength;
+					//AdditionalLength = Length - HistoryPosLength;
 					break;
 				}
 				else
 				{
 					HistoryPos += 1;
 					HistoryPosLength += NextDist;
-					AdditionalLength = 0;
+					//AdditionalLength = 0;
 				}
 			}
 			m_TrailProjs[i]->m_Pos = m_TrailHistory[HistoryPos].m_Pos;
