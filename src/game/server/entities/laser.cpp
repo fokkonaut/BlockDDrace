@@ -241,6 +241,13 @@ void CLaser::Reset()
 
 void CLaser::Tick()
 {
+	if (g_Config.m_SvDestroyLasersOnDeath && m_Owner >= 0)
+	{
+		CCharacter *pOwnerChar = GameServer()->GetPlayerChar(m_Owner);
+		if (!(pOwnerChar && pOwnerChar->IsAlive()))
+			Reset();
+	}
+
 	float Delay;
 	if (m_TuneZone)
 		Delay = GameServer()->TuningList()[m_TuneZone].m_LaserBounceDelay;
