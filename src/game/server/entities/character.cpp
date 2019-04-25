@@ -99,6 +99,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_LastHitWeapon = -1;
 	m_LastToucherID = -1;
+	m_OldLastHookedPlayer = -1;
 
 	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
 		m_pPlayer->m_Gamemode = MODE_VANILLA;
@@ -2980,6 +2981,7 @@ void CCharacter::DDRaceInit()
 	m_ScrollNinja = false;
 	m_HookPower = HOOK_NORMAL;
 	m_Passive = false;
+	m_PoliceHelper = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
