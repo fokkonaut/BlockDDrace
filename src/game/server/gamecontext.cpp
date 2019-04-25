@@ -1107,24 +1107,6 @@ void CGameContext::OnClientEnter(int ClientID)
 
 	Score()->CheckBirthday(ClientID);
 
-	/*{
-		int Empty = -1;
-		for(int i = 0; i < MAX_CLIENTS; i++)
-		{
-			if(!Server()->ClientIngame(i))
-			{
-				Empty = i;
-				break;
-			}
-		}
-		CNetMsg_Sv_Chat Msg;
-		Msg.m_Team = 0;
-		Msg.m_ClientID = Empty;
-		Msg.m_pMessage = "Do you know someone who uses a bot? Please report them to the moderators.";
-		m_apPlayers[ClientID]->m_EligibleForFinishCheck = time_get();
-		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NORECORD, ClientID);
-	}*/
-
 	if(!Server()->ClientPrevIngame(ClientID))
 	{
 		char aBuf[512];
