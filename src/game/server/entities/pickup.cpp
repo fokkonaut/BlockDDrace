@@ -127,7 +127,7 @@ void CPickup::Tick()
 						{
 							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
 								pChr->GiveWeapon(m_Subtype, false, 10);
-							else if (!pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+							else if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
 								pChr->GiveWeapon(m_Subtype);
 							else
 								continue;

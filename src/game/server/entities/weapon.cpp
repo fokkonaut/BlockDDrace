@@ -197,7 +197,7 @@ int CWeapon::IsCharacterNear()
 			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
 			|| (!pChr->CanCollide(m_Owner))
 			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && !pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
 			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 			|| (m_Jetpack && pChr->m_Jetpack)
 			|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
@@ -221,7 +221,7 @@ void CWeapon::IsShieldNear()
 
 		if (pShield->GetType() == POWERUP_ARMOR)
 		{
-			if (!GameServer()->m_apPlayers[m_Owner]->m_Gamemode == MODE_VANILLA)
+			if (GameServer()->m_apPlayers[m_Owner]->m_Gamemode == MODE_DDRACE)
 			{
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 				Reset();

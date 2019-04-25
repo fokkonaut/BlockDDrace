@@ -411,13 +411,15 @@ void CCharacterCore::Tick(bool UseInput)
 			for (int i = 0; i < 2; i++)
 			{
 				if ((i == TEAM_RED && m_HookedPlayer == FLAG_RED) || (i == TEAM_BLUE && m_HookedPlayer == FLAG_BLUE))
+				{
 					if (!m_Carried[i])
 						m_HookPos = m_FlagPos[i];
-				else
-				{
-					m_HookedPlayer = -1;
-					m_HookState = HOOK_RETRACTED;
-					m_HookPos = m_Pos;
+					else
+					{
+						m_HookedPlayer = -1;
+						m_HookState = HOOK_RETRACTED;
+						m_HookPos = m_Pos;
+					}
 				}
 			}
 		}

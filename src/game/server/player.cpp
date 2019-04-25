@@ -1049,7 +1049,7 @@ void CPlayer::MoneyTransaction(int Amount, const char *Description)
 	str_format(m_aLastMoneyTransaction[3], sizeof(m_aLastMoneyTransaction[3]), "%s", m_aLastMoneyTransaction[2]);
 	str_format(m_aLastMoneyTransaction[2], sizeof(m_aLastMoneyTransaction[2]), "%s", m_aLastMoneyTransaction[1]);
 	str_format(m_aLastMoneyTransaction[1], sizeof(m_aLastMoneyTransaction[1]), "%s", m_aLastMoneyTransaction[0]);
-	str_format(m_aLastMoneyTransaction[0], sizeof(m_aLastMoneyTransaction[0]), Description);
+	str_format(m_aLastMoneyTransaction[0], sizeof(m_aLastMoneyTransaction[0]), "%s", Description);
 }
 
 bool CPlayer::IsHooked(int Power)
