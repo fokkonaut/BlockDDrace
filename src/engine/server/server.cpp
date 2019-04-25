@@ -2705,10 +2705,7 @@ void CServer::StatusImpl(IConsole::IResult *pResult, void *pUser, bool DnsblBlac
 
 	for(int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if(
-			pThis->m_aClients[i].m_State != CClient::STATE_EMPTY && pThis->m_aClients[i].m_State != CClient::STATE_BOT
-			&& (!DnsblBlacklistedOnly || pThis->m_aClients[i].m_DnsblState == CClient::DNSBL_STATE_BLACKLISTED)
-		)
+		if(pThis->m_aClients[i].m_State != CClient::STATE_EMPTY && (!DnsblBlacklistedOnly || pThis->m_aClients[i].m_DnsblState == CClient::DNSBL_STATE_BLACKLISTED))
 		{
 			net_addr_str(pThis->m_NetServer.ClientAddr(i), aAddrStr, sizeof(aAddrStr), true);
 			if(pThis->m_aClients[i].m_State == CClient::STATE_INGAME)
@@ -2728,6 +2725,10 @@ void CServer::StatusImpl(IConsole::IResult *pResult, void *pUser, bool DnsblBlac
 					str_format(aBuf, sizeof(aBuf), "id=%d name='%s' score=%d client=%d secure=%s %s", i,
 						pThis->m_aClients[i].m_aName, pThis->m_aClients[i].m_Score, pThis->GameServer()->GetClientVersion(i), pThis->m_NetServer.HasSecurityToken(i) ? "yes" : "no", aAuthStr);
 			}
+			else if (pThis->m_aClients[i].m_State == CClient::STATE_BOT)
+			{
+				str_format(aBuf, sizeof(aBuf), "id=%d name='%s' score=%d bot=yes", i, pThis->m_aClients[i].m_aName, pThis->GameServer()->GetClientVersion(i));
+			}
 			else
 			{
 				if(CanSeeAddress)
@@ -2735,7 +2736,8 @@ void CServer::StatusImpl(IConsole::IResult *pResult, void *pUser, bool DnsblBlac
 				else
 					str_format(aBuf, sizeof(aBuf), "id=%d connecting", i);
 			}
-			pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Server", aBuf);
+			if (pThis->m_aClients[i].m_State != CClient::STATE_BOT || !g_Config.m_SvHideBotsStatus)
+				pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Server", aBuf);
 		}
 	}
 }

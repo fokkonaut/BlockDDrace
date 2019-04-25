@@ -185,6 +185,7 @@ MACRO_CONFIG_STR(SvAccFilePath, sv_acc_file_path, 128, "data/accounts", CFGFLAG_
 MACRO_CONFIG_INT(SvFlagSounds, sv_flag_sounds, 0, 0, 1, CFGFLAG_SERVER, "Whether flags create a public sound on drop/pickup/respawn")
 MACRO_CONFIG_INT(SvAllowDroppingWeapons, sv_allow_dropping_weapons, 1, 0, 1, CFGFLAG_SERVER, "Whether to allow dropping weapons with f4")
 MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "Whether to hide server-side bots (0=show bots, 1=show in scoreboard, 2=hide in browser and scoreboard)")
+MACRO_CONFIG_INT(SvHideBotsStatus, sv_hide_bots_status, 1, 0, 1, CFGFLAG_SERVER, "Whether to hide server-side bots from status command")
 MACRO_CONFIG_INT(SvHideServerInfo, sv_hide_server_info, 0, 0, 1, CFGFLAG_SERVER, "Whether to hide server info like map and gametype from the browser")
 MACRO_CONFIG_INT(SvVanillaModeStart, sv_vanilla_mode_start, 0, 0, 1, CFGFLAG_SERVER, "Whether to set the players mode to vanilla on spawn or ddrace")
 MACRO_CONFIG_INT(SvExtraTilesToggle, sv_extra_tiles_toggle, 1, 0, 1, CFGFLAG_SERVER, "Whether the extra tiles toggle the extra or only activate it")
