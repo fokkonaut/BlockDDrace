@@ -4130,7 +4130,7 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 
 int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
 {
-	int cPlayers = 0;
+	int count = 0;
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (((CServer*)Server())->m_aClients[i].m_State != CServer::CClient::STATE_EMPTY)
@@ -4142,8 +4142,8 @@ int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
 				if (!CountSpectators && !m_apPlayers[i]->GetCharacter())
 					continue;
 			}
-			cPlayers++;
+			count++;
 		}
 	}
-	return cPlayers;
+	return count;
 }
