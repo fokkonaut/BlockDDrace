@@ -3248,9 +3248,15 @@ void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
 void CCharacter::Passive(bool Remove, int FromID, bool Silent)
 {
 	if (Remove)
+	{
 		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
+	}
 	else
+	{
 		m_NeededFaketuning |= FAKETUNE_NOCOLL;
+		m_NeededFaketuning |= FAKETUNE_NOHAMMER;
+	}
 
 	m_Passive = !Remove;
 	m_Core.m_Passive = !Remove;
@@ -3261,7 +3267,6 @@ void CCharacter::Passive(bool Remove, int FromID, bool Silent)
 	m_Core.m_NoGrenadeHit = !Remove;
 	m_Core.m_NoHammerHit = !Remove;
 	m_Core.m_NoRifleHit = !Remove;
-	m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
 	m_Core.m_Hook = Remove;
 	m_Core.m_NoHookHit = !Remove;
 	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
