@@ -54,7 +54,7 @@ void CPlayer::Reset()
 	m_LastInvited = 0;
 	m_WeakHookSpawn = false;
 
-	m_SnapFixDDNet = false;
+	m_SnapFixDDNet = GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS;
 	m_SnapFixVanilla = false;
 
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
