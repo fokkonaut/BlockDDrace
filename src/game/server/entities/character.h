@@ -59,6 +59,7 @@ enum
 	POLICE_HELPER,
 	SCROLL_NINJA,
 	HOOK_POWER,
+	ENDLESS_HOOK,
 	NUM_EXTRAS
 };
 
@@ -151,6 +152,7 @@ public:
 	void PoliceHelper(bool Remove = false, int FromID = -1, bool Silent = false);
 	void ScrollNinja(bool Remove = false, int FromID = -1, bool Silent = false);
 	void HookPower(int Extra, int FromID = -1, bool Silent = false);
+	void EndlessHook(bool Remove = false, int FromID = -1, bool Silent = false);
 
 
 private:

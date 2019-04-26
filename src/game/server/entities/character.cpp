@@ -1980,17 +1980,9 @@ void CCharacter::HandleTiles(int Index)
 
 	// endless hook
 	if(((m_TileIndex == TILE_EHOOK_START) || (m_TileFIndex == TILE_EHOOK_START)) && !m_EndlessHook)
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "Endless hook has been activated");
-		m_EndlessHook = true;
-		m_Core.m_EndlessHook = true;
-	}
+		EndlessHook();
 	else if(((m_TileIndex == TILE_EHOOK_END) || (m_TileFIndex == TILE_EHOOK_END)) && m_EndlessHook)
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "Endless hook has been deactivated");
-		m_EndlessHook = false;
-		m_Core.m_EndlessHook = false;
-	}
+		EndlessHook(true);
 
 	// hit others
 	if(((m_TileIndex == TILE_HIT_END) || (m_TileFIndex == TILE_HIT_END)) && m_Hit != (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN))
@@ -3385,4 +3377,11 @@ void CCharacter::HookPower(int Extra, int FromID, bool Silent)
 		return;
 	m_HookPower = Extra;
 	GameServer()->SendExtraMessage(HOOK_POWER, m_pPlayer->GetCID(), false, FromID, Silent, Extra);
+}
+
+void CCharacter::EndlessHook(bool Remove, int FromID, bool Silent)
+{
+	m_EndlessHook = !Remove;
+	m_Core.m_EndlessHook = !Remove;
+	GameServer()->SendExtraMessage(ENDLESS_HOOK, m_pPlayer->GetCID(), Remove, FromID, Silent);
 }

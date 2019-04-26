@@ -4054,6 +4054,13 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 			else
 				str_format(aMsg, sizeof(aMsg), "You are now a %s", aItem);
 		}
+		else if (Extra == ENDLESS_HOOK)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "%s has been deactivated", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "%s has been activated", aItem);
+		}
 		else
 		{
 			if (Remove)
@@ -4124,6 +4131,8 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 			str_format(aPower, sizeof(aPower), "%s Hook", GetExtraName(HookPower));
 			return aPower;
 		}
+	case ENDLESS_HOOK:
+		return "Endless Hook";
 	}
 	return "Unknown";
 }

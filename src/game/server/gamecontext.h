@@ -421,6 +421,7 @@ private:
 
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConEndlessHook(IConsole::IResult *pResult, void *pUserData);
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
 	static void ConRainbow(IConsole::IResult *pResult, void *pUserData);
