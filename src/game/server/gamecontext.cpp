@@ -3902,16 +3902,17 @@ void CGameContext::ConnectDummy(int Dummymode)
 
 	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
 
-	m_apPlayers[DummyID]->m_IsDummy = true;
 	Server()->BotJoin(DummyID);
+	m_apPlayers[DummyID]->m_IsDummy = true;
+	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
 
 	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
 	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
 	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
 	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
 
-	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
 	OnClientEnter(DummyID);
+
 	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", DummyID, Dummymode);
 }
 

@@ -178,7 +178,6 @@ public:
 
 		NETADDR m_Addr;
 
-		bool m_IsDummy;
 		bool m_IsClientDummy;
 
 		// DNSBL

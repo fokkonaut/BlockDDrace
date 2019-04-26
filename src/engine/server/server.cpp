@@ -629,6 +629,7 @@ void CServer::BotJoin(int BotID)
 		"256" //255th clan
 	};
 
+	m_aClients[BotID].Reset();
 	m_NetServer.BotInit(BotID);
 	m_aClients[BotID].m_State = CClient::STATE_BOT;
 	m_aClients[BotID].m_IsClientDummy = true;
@@ -644,6 +645,7 @@ void CServer::BotLeave(int BotID)
 	GameServer()->OnClientDrop(BotID, "");
 
 	m_aClients[BotID].m_State = CClient::STATE_EMPTY;
+	m_aClients[BotID].m_IsClientDummy = false;
 	m_aClients[BotID].m_aName[0] = 0;
 	m_aClients[BotID].m_aClan[0] = 0;
 	m_aClients[BotID].m_Country = -1;
@@ -1045,7 +1047,7 @@ int CServer::GetClientInfo(int ClientID, CClientInfo *pInfo)
 	if(m_aClients[ClientID].m_State == CClient::STATE_INGAME)
 	{
 		pInfo->m_pName = m_aClients[ClientID].m_aName;
-		pInfo->m_Latency = m_aClients[ClientID].m_State == CClient::STATE_BOT ? 0 : m_aClients[ClientID].m_Latency;
+		pInfo->m_Latency = m_aClients[ClientID].m_Latency;
 		pInfo->m_ClientVersion = GameServer()->GetClientVersion(ClientID);
 		pInfo->m_SnapFixVanilla = GameServer()->IsSnapFixVanilla(ClientID);
 		pInfo->m_SnapFixDDNet = GameServer()->IsSnapFixDDNet(ClientID);
@@ -1480,7 +1482,7 @@ int CServer::DelClientCallback(int ClientID, const char *pReason, void *pUser)
 	pThis->m_aClients[ClientID].m_aName[0] = 0;
 	pThis->m_aClients[ClientID].m_aClan[0] = 0;
 	pThis->m_aClients[ClientID].m_Country = -1;
-	pThis->m_aClients[ClientID].m_IsDummy = false;
+	pThis->m_aClients[ClientID].m_IsClientDummy = false;
 	pThis->m_aClients[ClientID].m_Authed = AUTHED_NO;
 	pThis->m_aClients[ClientID].m_AuthKey = -1;
 	pThis->m_aClients[ClientID].m_AuthTries = 0;
@@ -1747,7 +1749,6 @@ void CServer::ProcessClientPacket(CNetChunk *pPacket)
 				str_format(aBuf, sizeof(aBuf), "player is ready. ClientID=%d addr=%s secure=%s", ClientID, aAddrStr, m_NetServer.HasSecurityToken(ClientID)?"yes":"no");
 				Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "server", aBuf);
 				m_aClients[ClientID].m_State = CClient::STATE_READY;
-				m_aClients[ClientID].m_IsDummy = false;
 				GameServer()->OnClientConnected(ClientID);
 			}
 
