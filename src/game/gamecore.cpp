@@ -332,7 +332,9 @@ void CCharacterCore::Tick(bool UseInput)
 			for(int i = 0; i < MAX_CLIENTS; i++)
 			{
 				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[i];
-				if(!pCharCore || pCharCore == this || (!(m_Super || pCharCore->m_Super) && ((!m_pTeams->CanCollide(i, m_Id) || pCharCore->m_Solo || m_Solo || pCharCore->m_Passive || m_Passive))))
+				if(!pCharCore || pCharCore == this || (!(m_Super || pCharCore->m_Super) && (!m_pTeams->CanCollide(i, m_Id) || pCharCore->m_Solo || m_Solo)))
+					continue;
+				if (pCharCore->m_Passive || m_Passive)
 					continue;
 
 				vec2 ClosestPoint = closest_point_on_line(m_HookPos, NewPos, pCharCore->m_Pos);
@@ -512,7 +514,10 @@ void CCharacterCore::Tick(bool UseInput)
 			if(pCharCore == this || (m_Id != -1 && !m_pTeams->CanCollide(m_Id, i)))
 				continue; // make sure that we don't nudge our self
 
-			if (!(m_Super || pCharCore->m_Super) && (m_Solo || pCharCore->m_Solo))
+			if(!(m_Super || pCharCore->m_Super) && (m_Solo || pCharCore->m_Solo))
+				continue;
+
+			if(pCharCore->m_Passive || m_Passive)
 				continue;
 
 			// handle player <-> player collision
@@ -658,7 +663,7 @@ void CCharacterCore::Move()
 
 	m_Vel.x = m_Vel.x*(1.0f/RampValue);
 
-	if (m_pWorld && (m_Super || (m_pWorld->m_Tuning[g_Config.m_ClDummy].m_PlayerCollision && m_Collision && !m_NoCollision && !m_Solo)))
+	if(m_pWorld && (m_Super || (m_pWorld->m_Tuning[g_Config.m_ClDummy].m_PlayerCollision && m_Collision && !m_NoCollision && !m_Solo)))
 	{
 		// check player collision
 		float Distance = distance(m_Pos, NewPos);
@@ -671,9 +676,11 @@ void CCharacterCore::Move()
 			for(int p = 0; p < MAX_CLIENTS; p++)
 			{
 				CCharacterCore *pCharCore = m_pWorld->m_apCharacters[p];
-				if (!pCharCore || pCharCore == this)
+				if(!pCharCore || pCharCore == this )
 					continue;
-				if ((!(pCharCore->m_Super || m_Super) && (m_Solo || pCharCore->m_Solo || !pCharCore->m_Collision || pCharCore->m_NoCollision || (m_Id != -1 && !m_pTeams->CanCollide(m_Id, p)))))
+				if((!(pCharCore->m_Super || m_Super) && (m_Solo || pCharCore->m_Solo || !pCharCore->m_Collision || pCharCore->m_NoCollision || (m_Id != -1 && !m_pTeams->CanCollide(m_Id, p)))))
+					continue;
+				if (pCharCore->m_Passive || m_Passive)
 					continue;
 				float D = distance(Pos, pCharCore->m_Pos);
 				if(D < 28.0f && D > 0.0f)

@@ -1077,7 +1077,7 @@ void CCharacter::BlockDDraceTick()
 	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS)
 	{
 		CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
-		if (pPas && pPas->m_Passive && !pPas->m_Super && !m_Super)
+		if (pPas && pPas->m_Passive)
 		{
 			m_NeededFaketuning |= FAKETUNE_NOCOLL;
 			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
