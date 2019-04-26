@@ -4061,6 +4061,13 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 			else
 				str_format(aMsg, sizeof(aMsg), "%s has been activated", aItem);
 		}
+		else if (Extra == INFINITE_JUMPS)
+		{
+			if (Remove)
+				str_format(aMsg, sizeof(aMsg), "You don't have %s", aItem);
+			else
+				str_format(aMsg, sizeof(aMsg), "You have %s", aItem);
+		}
 		else
 		{
 			if (Remove)
@@ -4133,6 +4140,8 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 		}
 	case ENDLESS_HOOK:
 		return "Endless Hook";
+	case INFINITE_JUMPS:
+		return "Unlimited Air Jumps";
 	}
 	return "Unknown";
 }

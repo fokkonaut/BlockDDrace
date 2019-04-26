@@ -60,6 +60,7 @@ enum
 	SCROLL_NINJA,
 	HOOK_POWER,
 	ENDLESS_HOOK,
+	INFINITE_JUMPS,
 	NUM_EXTRAS
 };
 
@@ -153,6 +154,7 @@ public:
 	void ScrollNinja(bool Remove = false, int FromID = -1, bool Silent = false);
 	void HookPower(int Extra, int FromID = -1, bool Silent = false);
 	void EndlessHook(bool Remove = false, int FromID = -1, bool Silent = false);
+	void InfiniteJumps(bool Remove = false, int FromID = -1, bool Silent = false);
 
 
 private:

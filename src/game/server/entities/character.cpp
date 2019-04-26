@@ -2046,27 +2046,9 @@ void CCharacter::HandleTiles(int Index)
 
 	// unlimited air jumps
 	if(((m_TileIndex == TILE_SUPER_START) || (m_TileFIndex == TILE_SUPER_START)) && !m_SuperJump)
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(),"You have unlimited air jumps");
-		m_SuperJump = true;
-		m_Core.m_EndlessJump = true;
-		if (m_Core.m_Jumps == 0)
-		{
-			m_NeededFaketuning &= ~FAKETUNE_NOJUMP;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
-	}
+		InfiniteJumps();
 	else if(((m_TileIndex == TILE_SUPER_END) || (m_TileFIndex == TILE_SUPER_END)) && m_SuperJump)
-	{
-		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You don't have unlimited air jumps");
-		m_SuperJump = false;
-		m_Core.m_EndlessJump = false;
-		if (m_Core.m_Jumps == 0)
-		{
-			m_NeededFaketuning |= FAKETUNE_NOJUMP;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
-	}
+		InfiniteJumps(true);
 
 	// walljump
 	if((m_TileIndex == TILE_WALLJUMP) || (m_TileFIndex == TILE_WALLJUMP))
@@ -3384,4 +3366,19 @@ void CCharacter::EndlessHook(bool Remove, int FromID, bool Silent)
 	m_EndlessHook = !Remove;
 	m_Core.m_EndlessHook = !Remove;
 	GameServer()->SendExtraMessage(ENDLESS_HOOK, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::InfiniteJumps(bool Remove, int FromID, bool Silent)
+{
+	m_SuperJump = !Remove;
+	m_Core.m_EndlessJump = !Remove;
+	if (m_Core.m_Jumps == 0)
+	{
+		if (Remove)
+			m_NeededFaketuning |= FAKETUNE_NOJUMP;
+		else
+			m_NeededFaketuning &= ~FAKETUNE_NOJUMP;
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+	}
+	GameServer()->SendExtraMessage(INFINITE_JUMPS, m_pPlayer->GetCID(), Remove, FromID, Silent);
 }

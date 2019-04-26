@@ -208,6 +208,15 @@ void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 		pChr->ScrollNinja(pChr->m_ScrollNinja, pResult->m_ClientID);
 }
 
+void CGameContext::ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfiniteJumps(pChr->m_SuperJump, pResult->m_ClientID);
+}
+
 void CGameContext::ConEndlessHook(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
