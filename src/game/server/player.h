@@ -214,8 +214,8 @@ public:
 	bool m_SpookyGhost;
 	int m_RealUseCustomColor;
 	char m_RealSkinName[64];
-	char m_RealName[64];
-	char m_RealClan[64];
+	char m_RealName[MAX_NAME_LENGTH];
+	char m_RealClan[MAX_CLAN_LENGTH];
 	int m_RealColorBody;
 	int m_RealColorFeet;
 

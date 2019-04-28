@@ -545,7 +545,10 @@ void CCharacter::FireWeapon()
 						0,//Explosive
 						0,//Force
 						-1,//SoundImpact
-						WEAPON_GUN//Weapon
+						WEAPON_GUN,//Weapon
+						0,
+						0,
+						m_pPlayer->m_SpookyGhost
 						);
 
 				// pack the Projectile and send it to the client Directly
@@ -3084,13 +3087,13 @@ void CCharacter::UnsetSpookyGhost()
 
 void CCharacter::SaveRealInfos()
 {
-	if (!m_pPlayer->m_SpookyGhost)
-	{
-		str_copy(m_pPlayer->m_RealSkinName, m_pPlayer->m_TeeInfos.m_SkinName, sizeof(m_pPlayer->m_RealSkinName));
-		m_pPlayer->m_RealUseCustomColor = m_pPlayer->m_TeeInfos.m_UseCustomColor;
-		str_copy(m_pPlayer->m_RealClan, Server()->ClientClan(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealClan));
-		str_copy(m_pPlayer->m_RealName, Server()->ClientName(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealName));
-	}
+	if (m_pPlayer->m_SpookyGhost)
+		return;
+
+	str_copy(m_pPlayer->m_RealSkinName, m_pPlayer->m_TeeInfos.m_SkinName, sizeof(m_pPlayer->m_RealSkinName));
+	m_pPlayer->m_RealUseCustomColor = m_pPlayer->m_TeeInfos.m_UseCustomColor;
+	str_copy(m_pPlayer->m_RealClan, Server()->ClientClan(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealClan));
+	str_copy(m_pPlayer->m_RealName, Server()->ClientName(m_pPlayer->GetCID()), sizeof(m_pPlayer->m_RealName));
 }
 
 void CCharacter::SetActiveWeapon(int Weapon)
