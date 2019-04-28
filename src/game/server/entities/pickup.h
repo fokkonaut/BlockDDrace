@@ -34,6 +34,9 @@ private:
 
 	void Move();
 	vec2 m_Core;
+
+	// have to define a new ID variable for the bullet
+	int m_ID2;
 };
 
 #endif
