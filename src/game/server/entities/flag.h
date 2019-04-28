@@ -69,7 +69,7 @@ public:
 
 	void Grab(class CCharacter *pChr);
 	void Drop(int Dir = 0);
-
+	void HandleDropped();
 	bool IsGrounded(bool SetVel = false);
 
 	CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos);

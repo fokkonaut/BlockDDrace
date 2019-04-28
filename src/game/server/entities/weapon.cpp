@@ -71,90 +71,7 @@ void CWeapon::Tick()
 
 	Pickup();
 	IsShieldNear();
-
-	//Gravity
-	m_Vel.y += GameServer()->Tuning()->m_Gravity;
-
-	//Friction
-	vec2 TempVel = m_Vel;
-
-	//Speedups
-	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
-	{
-		int Force, MaxSpeed = 0;
-		vec2 Direction, MaxVel;
-		float TeeAngle, SpeederAngle, DiffAngle, SpeedLeft, TeeSpeed;
-		GameServer()->Collision()->GetSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos), &Direction, &Force, &MaxSpeed);
-
-		if (Force == 255 && MaxSpeed)
-		{
-			m_Vel = Direction * (MaxSpeed / 5);
-		}
-
-		else
-		{
-			if (MaxSpeed > 0 && MaxSpeed < 5) MaxSpeed = 5;
-			if (MaxSpeed > 0)
-			{
-				if (Direction.x > 0.0000001f)
-					SpeederAngle = -atan(Direction.y / Direction.x);
-				else if (Direction.x < 0.0000001f)
-					SpeederAngle = atan(Direction.y / Direction.x) + 2.0f * asin(1.0f);
-				else if (Direction.y > 0.0000001f)
-					SpeederAngle = asin(1.0f);
-				else
-					SpeederAngle = asin(-1.0f);
-
-				if (SpeederAngle < 0)
-					SpeederAngle = 4.0f * asin(1.0f) + SpeederAngle;
-
-				if (TempVel.x > 0.0000001f)
-					TeeAngle = -atan(TempVel.y / TempVel.x);
-				else if (TempVel.x < 0.0000001f)
-					TeeAngle = atan(TempVel.y / TempVel.x) + 2.0f * asin(1.0f);
-				else if (TempVel.y > 0.0000001f)
-					TeeAngle = asin(1.0f);
-				else
-					TeeAngle = asin(-1.0f);
-
-				if (TeeAngle < 0)
-					TeeAngle = 4.0f * asin(1.0f) + TeeAngle;
-
-				TeeSpeed = sqrt(pow(TempVel.x, 2) + pow(TempVel.y, 2));
-
-				DiffAngle = SpeederAngle - TeeAngle;
-				SpeedLeft = MaxSpeed / 5.0f - cos(DiffAngle) * TeeSpeed;
-				if (abs(SpeedLeft) > Force && SpeedLeft > 0.0000001f)
-					TempVel += Direction * Force;
-				else if (abs(SpeedLeft) > Force)
-					TempVel += Direction * -Force;
-				else
-					TempVel += Direction * SpeedLeft;
-			}
-			else
-				TempVel += Direction * Force;
-		}
-	}
-
-	//stopper
-	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
-	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
-	if (!Indices.empty())
-		for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
-			HandleTiles(*i);
-	else
-	{
-		HandleTiles(CurrentIndex);
-	}
-
-	if (TempVel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
-		TempVel.x = 0;
-	if (TempVel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
-		TempVel.x = 0;
-	m_Vel = TempVel;
-	IsGrounded(true);
-
-	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
+	HandleDropped();
 
 	m_PrevPos = m_Pos;
 }
@@ -252,6 +169,93 @@ bool CWeapon::IsGrounded(bool SetVel)
 	if (SetVel)
 		m_Vel.x *= 0.98f;
 	return false;
+}
+
+void CWeapon::HandleDropped()
+{
+	//Gravity
+	m_Vel.y += GameServer()->Tuning()->m_Gravity;
+
+	//Friction
+	vec2 TempVel = m_Vel;
+
+	//Speedups
+	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
+	{
+		int Force, MaxSpeed = 0;
+		vec2 Direction, MaxVel;
+		float TeeAngle, SpeederAngle, DiffAngle, SpeedLeft, TeeSpeed;
+		GameServer()->Collision()->GetSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos), &Direction, &Force, &MaxSpeed);
+
+		if (Force == 255 && MaxSpeed)
+		{
+			m_Vel = Direction * (MaxSpeed / 5);
+		}
+
+		else
+		{
+			if (MaxSpeed > 0 && MaxSpeed < 5) MaxSpeed = 5;
+			if (MaxSpeed > 0)
+			{
+				if (Direction.x > 0.0000001f)
+					SpeederAngle = -atan(Direction.y / Direction.x);
+				else if (Direction.x < 0.0000001f)
+					SpeederAngle = atan(Direction.y / Direction.x) + 2.0f * asin(1.0f);
+				else if (Direction.y > 0.0000001f)
+					SpeederAngle = asin(1.0f);
+				else
+					SpeederAngle = asin(-1.0f);
+
+				if (SpeederAngle < 0)
+					SpeederAngle = 4.0f * asin(1.0f) + SpeederAngle;
+
+				if (TempVel.x > 0.0000001f)
+					TeeAngle = -atan(TempVel.y / TempVel.x);
+				else if (TempVel.x < 0.0000001f)
+					TeeAngle = atan(TempVel.y / TempVel.x) + 2.0f * asin(1.0f);
+				else if (TempVel.y > 0.0000001f)
+					TeeAngle = asin(1.0f);
+				else
+					TeeAngle = asin(-1.0f);
+
+				if (TeeAngle < 0)
+					TeeAngle = 4.0f * asin(1.0f) + TeeAngle;
+
+				TeeSpeed = sqrt(pow(TempVel.x, 2) + pow(TempVel.y, 2));
+
+				DiffAngle = SpeederAngle - TeeAngle;
+				SpeedLeft = MaxSpeed / 5.0f - cos(DiffAngle) * TeeSpeed;
+				if (abs(SpeedLeft) > Force && SpeedLeft > 0.0000001f)
+					TempVel += Direction * Force;
+				else if (abs(SpeedLeft) > Force)
+					TempVel += Direction * -Force;
+				else
+					TempVel += Direction * SpeedLeft;
+			}
+			else
+				TempVel += Direction * Force;
+		}
+	}
+
+	//stopper
+	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
+	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
+	if (!Indices.empty())
+		for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
+			HandleTiles(*i);
+	else
+	{
+		HandleTiles(CurrentIndex);
+	}
+
+	if (TempVel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
+		TempVel.x = 0;
+	if (TempVel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
+		TempVel.x = 0;
+	m_Vel = TempVel;
+	IsGrounded(true);
+
+	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
 }
 
 void CWeapon::Snap(int SnappingClient)

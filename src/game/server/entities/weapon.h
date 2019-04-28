@@ -17,6 +17,7 @@ private:
 	void IsShieldNear();
 	void Pickup();
 	bool IsGrounded(bool SetVel = false);
+	void HandleDropped();
 
 	vec2 m_Vel;
 
