@@ -1045,86 +1045,6 @@ void CCharacter::Tick()
 	return;
 }
 
-void CCharacter::BlockDDraceTick()
-{
-	for (int i = 0; i < MAX_CLIENTS; i++)
-	{
-		CCharacter *pChar = GameServer()->GetPlayerChar(i);
-
-		if (!pChar || !pChar->IsAlive() || pChar == this)
-			continue;
-		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
-			m_LastToucherID = i;
-	}
-
-	CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
-	if (pChr)
-	{
-		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
-			if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
-				m_LastToucherID = pChr->GetPlayer()->GetCID();
-	}
-
-	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
-	{
-		m_LastHitWeapon = -1;
-	}
-	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
-
-	if (!GameServer()->m_apPlayers[m_LastToucherID])
-	{
-		m_LastToucherID = -1;
-		m_LastHitWeapon = -1;
-	}
-
-	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS)
-	{
-		CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
-		if (pPas && pPas->m_Passive)
-		{
-			m_NeededFaketuning |= FAKETUNE_NOCOLL;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
-		else if (!m_Passive)
-		{
-			m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
-	}
-
-	if (m_ShopMotdTick < Server()->Tick())
-	{
-		m_ShopWindowPage = -1;
-		m_PurchaseState = 0;
-	}
-
-	if (m_InShop)
-	{
-		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
-		{
-			if (m_pPlayer->m_ShopBotAntiSpamTick < Server()->Tick())
-			{
-				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
-
-				m_pPlayer->m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
-			}
-
-			if (m_ShopWindowPage != -1)
-			{
-				GameServer()->SendMotd("", GetPlayer()->GetCID());
-			}
-
-			GameServer()->SendBroadcast("", m_pPlayer->GetCID());
-
-			m_PurchaseState = 0;
-			m_ShopWindowPage = -1;
-
-			Passive(true, -1, true);
-			m_InShop = false;
-		}
-	}
-}
-
 void CCharacter::TickDefered()
 {
 	// advance the dummy
@@ -2776,51 +2696,6 @@ void CCharacter::DDRacePostCoreTick()
 	HandleBroadcast();
 }
 
-void CCharacter::BackupWeapons(int Type)
-{
-	if (!m_WeaponsBackupped[Type])
-	{
-		for (int i = 0; i < NUM_WEAPONS+2; i++)
-		{
-			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[i][Type] = m_Armor;
-			else if (i == NUM_WEAPONS+1)
-				m_aWeaponsBackup[i][Type] = m_Health;
-			else
-			{
-				m_aWeaponsBackupGot[i][Type] = m_aWeapons[i].m_Got;
-				m_aWeaponsBackup[i][Type] = m_aWeapons[i].m_Ammo;
-				m_aWeapons[i].m_Ammo = 0;
-				if (Type == BACKUP_SPOOKY_GHOST)
-					m_aWeapons[i].m_Got = false;
-			}
-		}
-		m_WeaponsBackupped[Type] = true;
-	}
-}
-
-void CCharacter::LoadWeaponBackup(int Type)
-{
-	if (m_WeaponsBackupped[Type])
-	{
-		for (int i = 0; i < NUM_WEAPONS+2; i++)
-		{
-			if (i == NUM_WEAPONS)
-				m_Armor = m_aWeaponsBackup[i][Type];
-			else if (i == NUM_WEAPONS+1)
-				m_Health = m_aWeaponsBackup[i][Type];
-			else
-			{
-				m_aWeapons[i].m_Got = m_aWeaponsBackupGot[i][Type];
-				m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][Type];
-				if (i == WEAPON_NINJA)
-					m_aWeapons[i].m_Ammo = -1;
-			}
-		}
-		m_WeaponsBackupped[Type] = false;
-	}
-}
-
 bool CCharacter::Freeze(int Seconds)
 {
 	IsFrozen = true;
@@ -3001,6 +2876,131 @@ void CCharacter::Rescue()
 			m_Core.m_HookPos = m_Core.m_Pos;
 			UnFreeze();
 		}
+	}
+}
+
+void CCharacter::BlockDDraceTick()
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		CCharacter *pChar = GameServer()->GetPlayerChar(i);
+
+		if (!pChar || !pChar->IsAlive() || pChar == this)
+			continue;
+		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
+			m_LastToucherID = i;
+	}
+
+	CCharacter *pChr = GameServer()->m_World.ClosestCharacter(m_Pos, 20.0f, this);
+	if (pChr)
+	{
+		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
+			if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
+				m_LastToucherID = pChr->GetPlayer()->GetCID();
+	}
+
+	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
+	{
+		m_LastHitWeapon = -1;
+	}
+	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
+
+	if (!GameServer()->m_apPlayers[m_LastToucherID])
+	{
+		m_LastToucherID = -1;
+		m_LastHitWeapon = -1;
+	}
+
+	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS)
+	{
+		CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
+		if (pPas && pPas->m_Passive)
+		{
+			m_NeededFaketuning |= FAKETUNE_NOCOLL;
+			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		}
+		else if (!m_Passive)
+		{
+			m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
+		}
+	}
+
+	if (m_ShopMotdTick < Server()->Tick())
+	{
+		m_ShopWindowPage = -1;
+		m_PurchaseState = 0;
+	}
+
+	if (m_InShop)
+	{
+		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
+		{
+			if (m_pPlayer->m_ShopBotAntiSpamTick < Server()->Tick())
+			{
+				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
+
+				m_pPlayer->m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
+			}
+
+			if (m_ShopWindowPage != -1)
+			{
+				GameServer()->SendMotd("", GetPlayer()->GetCID());
+			}
+
+			GameServer()->SendBroadcast("", m_pPlayer->GetCID());
+
+			m_PurchaseState = 0;
+			m_ShopWindowPage = -1;
+
+			Passive(true, -1, true);
+			m_InShop = false;
+		}
+	}
+}
+
+void CCharacter::BackupWeapons(int Type)
+{
+	if (!m_WeaponsBackupped[Type])
+	{
+		for (int i = 0; i < NUM_WEAPONS + 2; i++)
+		{
+			if (i == NUM_WEAPONS)
+				m_aWeaponsBackup[i][Type] = m_Armor;
+			else if (i == NUM_WEAPONS + 1)
+				m_aWeaponsBackup[i][Type] = m_Health;
+			else
+			{
+				m_aWeaponsBackupGot[i][Type] = m_aWeapons[i].m_Got;
+				m_aWeaponsBackup[i][Type] = m_aWeapons[i].m_Ammo;
+				m_aWeapons[i].m_Ammo = 0;
+				if (Type == BACKUP_SPOOKY_GHOST)
+					m_aWeapons[i].m_Got = false;
+			}
+		}
+		m_WeaponsBackupped[Type] = true;
+	}
+}
+
+void CCharacter::LoadWeaponBackup(int Type)
+{
+	if (m_WeaponsBackupped[Type])
+	{
+		for (int i = 0; i < NUM_WEAPONS + 2; i++)
+		{
+			if (i == NUM_WEAPONS)
+				m_Armor = m_aWeaponsBackup[i][Type];
+			else if (i == NUM_WEAPONS + 1)
+				m_Health = m_aWeaponsBackup[i][Type];
+			else
+			{
+				m_aWeapons[i].m_Got = m_aWeaponsBackupGot[i][Type];
+				m_aWeapons[i].m_Ammo = m_aWeaponsBackup[i][Type];
+				if (i == WEAPON_NINJA)
+					m_aWeapons[i].m_Ammo = -1;
+			}
+		}
+		m_WeaponsBackupped[Type] = false;
 	}
 }
 
