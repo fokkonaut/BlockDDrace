@@ -506,5 +506,4 @@ void CNetConnection::BotConnect()
 void CNetConnection::BotDrop()
 {
 	m_State = NET_CONNSTATE_OFFLINE;
-	Disconnect("");
 }
