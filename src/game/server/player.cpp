@@ -405,7 +405,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS || m_ClientID > DDRACE_MAX_CLIENTS)
 			m_SnapFixDDNet = true;
 		else for (int i = 0; i < MAX_CLIENTS; i++)
-			if (!m_SnapFixDDNet && GameServer()->m_apPlayers[i] && (GameServer()->m_apPlayers[i]->m_SnapFixDDNet || i > DDRACE_MAX_CLIENTS))
+			if (i >= DDRACE_MAX_CLIENTS && GameServer()->m_apPlayers[i])
 				m_SnapFixDDNet = true;
 	}
 	if (m_ClientVersion < VERSION_DDNET_OLD)
