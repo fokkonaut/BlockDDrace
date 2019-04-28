@@ -20,7 +20,8 @@ public:
 		int SoundImpact,
 		int Weapon,
 		int Layer = 0,
-		int Number = 0
+		int Number = 0,
+		bool Spooky = false
 	);
 
 	vec2 GetPos(float Time);
@@ -49,6 +50,8 @@ private:
 	int m_Bouncing;
 	bool m_Freeze;
 	int m_TuneZone;
+
+	bool m_Spooky;
 
 public:
 

@@ -22,7 +22,8 @@ CProjectile::CProjectile
 		int SoundImpact,
 		int Weapon,
 		int Layer,
-		int Number
+		int Number,
+		bool Spooky
 	)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
@@ -42,6 +43,7 @@ CProjectile::CProjectile
 	m_Layer = Layer;
 	m_Number = Number;
 	m_Freeze = Freeze;
+	m_Spooky = Spooky;
 
 	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
 
@@ -174,6 +176,12 @@ void CProjectile::Tick()
 		{
 			int Dmg = (pTargetChr && pTargetChr->m_Passive) ? 0 : g_pData->m_Weapons.m_aId[m_Weapon].m_Damage;
 			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), Dmg, m_Owner, m_Weapon);
+		}
+
+		if (pTargetChr && m_Spooky)
+		{
+			pTargetChr->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed());
+			GameServer()->SendEmoticon(pTargetChr->GetPlayer()->GetCID(), EMOTICON_GHOST);
 		}
 
 		if (pOwnerChar && ColPos && !GameLayerClipped(ColPos) &&
