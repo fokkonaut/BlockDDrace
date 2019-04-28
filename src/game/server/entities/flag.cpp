@@ -13,8 +13,6 @@ CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 	m_StandPos = Pos;
 	m_Team = Team;
 	m_ProximityRadius = ms_PhysSize;
-	m_pCarrier = NULL;
-	m_GrabTick = 0;
 	m_PrevPos = m_Pos;
 
 	GameServer()->m_World.InsertEntity(this);
@@ -25,6 +23,7 @@ CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 void CFlag::Reset()
 {
 	m_pCarrier = NULL;
+	m_pLastCarrier = NULL;
 	m_AtStand = 1;
 	m_Pos = m_StandPos;
 	m_Vel = vec2(0,0);
