@@ -498,10 +498,13 @@ void CNetConnection::SetTimedOut(const NETADDR *pAddr, int Sequence, int Ack, SE
 
 void CNetConnection::BotConnect()
 {
+	Reset();
+	ResetStats();
 	m_State = NET_CONNSTATE_BOT;
 }
 
 void CNetConnection::BotDrop()
 {
 	m_State = NET_CONNSTATE_OFFLINE;
+	Disconnect("");
 }

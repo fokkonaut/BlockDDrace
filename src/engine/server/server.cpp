@@ -629,15 +629,14 @@ void CServer::BotJoin(int BotID)
 		"256" //255th clan
 	};
 
-	m_aClients[BotID].Reset();
 	m_NetServer.BotInit(BotID);
 	m_aClients[BotID].m_State = CClient::STATE_BOT;
 	m_aClients[BotID].m_IsClientDummy = true;
 
-	m_aClients[BotID].m_Authed = AUTHED_NO;	//crashfix, the server crashed because the bot was trying to receive rcon commands for auto completing but he couldnt get it
+	m_aClients[BotID].m_Authed = AUTHED_NO;
 
-	str_copy(m_aClients[BotID].m_aName, pNames[BotID], MAX_NAME_LENGTH); //Namen des Jeweiligen Dummys setzten
-	str_copy(m_aClients[BotID].m_aClan, pClans[BotID], MAX_CLAN_LENGTH); //Clan des jeweiligen Dummys setzten
+	str_copy(m_aClients[BotID].m_aName, pNames[BotID], MAX_NAME_LENGTH);
+	str_copy(m_aClients[BotID].m_aClan, pClans[BotID], MAX_CLAN_LENGTH);
 }
 
 void CServer::BotLeave(int BotID)
