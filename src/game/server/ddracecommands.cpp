@@ -564,7 +564,8 @@ void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserDat
 void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	CCharacter* pChr = pSelf->GetPlayerChar(pResult->GetInteger(0));
+	int Victim = pResult->GetVictim();
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 
 	if (pResult->NumArguments() == 2)
 	{
