@@ -413,7 +413,7 @@ void CPlayer::Snap(int SnappingClient)
 		if (GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS || m_ClientID > VANILLA_MAX_CLIENTS)
 			m_SnapFixVanilla = true;
 		else for (int i = 0; i < MAX_CLIENTS; i++)
-			if (!m_SnapFixVanilla && GameServer()->m_apPlayers[i] && (GameServer()->m_apPlayers[i]->m_SnapFixVanilla || i > VANILLA_MAX_CLIENTS))
+			if (i >= VANILLA_MAX_CLIENTS && GameServer()->m_apPlayers[i])
 				m_SnapFixVanilla = true;
 	}
 
