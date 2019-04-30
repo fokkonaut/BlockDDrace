@@ -335,7 +335,6 @@ void CPlayer::Snap(int SnappingClient)
 	CPlayer *pSnapping = GameServer()->m_apPlayers[SnappingClient];
 
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
-	//StrToInts(&pClientInfo->m_Clan0, 3, Server()->ClientClan(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
 	m_ShowName = true;
@@ -686,8 +685,6 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	m_RespawnTick = Server()->Tick();
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' m_Team=%d", m_ClientID, Server()->ClientName(m_ClientID), m_Team);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
-
-	//GameServer()->m_pController->OnPlayerInfoChange(GameServer()->m_apPlayers[m_ClientID]);
 
 	if(Team == TEAM_SPECTATORS)
 	{
