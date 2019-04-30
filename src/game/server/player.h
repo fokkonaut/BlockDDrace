@@ -268,7 +268,7 @@ public:
 	int m_AllowTimeScore;
 	int m_DisplayScore;
 
-	bool IsHooked(int Power);
+	bool IsHooked(int Power = -1);
 
 	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
 	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
