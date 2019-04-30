@@ -285,8 +285,6 @@ void CPlayer::FixForNoName(int ID)
 	m_FixNameID = ID;
 	m_SetRealName = true;
 	m_SetRealNameTick = Server()->Tick() + Server()->TickSpeed() / 20;
-
-	return;
 }
 
 
