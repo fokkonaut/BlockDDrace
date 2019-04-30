@@ -767,33 +767,16 @@ void CGameContext::ConToCheckTeleporter(IConsole::IResult *pResult, void *pUserD
 void CGameContext::ConTeleport(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
-	int Tele = pResult->NumArguments() == 2 ? str_toint(pResult->GetString(0)) : pResult->m_ClientID;
-	int TeleTo = pResult->NumArguments() ? pResult->GetInteger(pResult->NumArguments() - 1) : pResult->m_ClientID;
+	int Tele = pResult->GetVictim();
+	int TeleTo = pResult->NumArguments() == 2 ? pResult->GetInteger(1) : pResult->m_ClientID;
 
-	if (!str_comp_nocase(pResult->GetString(0), "all"))
+	CCharacter *pChr = pSelf->GetPlayerChar(Tele);
+	if (pChr && pSelf->GetPlayerChar(TeleTo))
 	{
-		for (int i = 0; i < MAX_CLIENTS; i++)
-		{
-			CCharacter *pChr = pSelf->GetPlayerChar(i);
-			if (pChr && pSelf->GetPlayerChar(TeleTo))
-			{
-				pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-				pChr->m_DDRaceState = DDRACE_CHEAT;
-			}
-		}
-	}
-	else
-	{
-		CCharacter *pChr = pSelf->GetPlayerChar(Tele);
-		if (pChr && pSelf->GetPlayerChar(TeleTo))
-		{
-			pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
-			pChr->m_DDRaceState = DDRACE_CHEAT;
-		}
+		pChr->Core()->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_Pos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_PrevPos = pSelf->m_apPlayers[TeleTo]->m_ViewPos;
+		pChr->m_DDRaceState = DDRACE_CHEAT;
 	}
 }
 
