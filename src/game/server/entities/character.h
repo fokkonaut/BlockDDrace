@@ -61,6 +61,7 @@ enum
 	HOOK_POWER,
 	ENDLESS_HOOK,
 	INFINITE_JUMPS,
+	SPREAD_WEAPON,
 	NUM_EXTRAS
 };
 
@@ -155,6 +156,7 @@ public:
 	void HookPower(int Extra, int FromID = -1, bool Silent = false);
 	void EndlessHook(bool Remove = false, int FromID = -1, bool Silent = false);
 	void InfiniteJumps(bool Remove = false, int FromID = -1, bool Silent = false);
+	void SpreadWeapon(int Type, bool Remove = false, int FromID = -1, bool Silent = false);
 
 
 private:

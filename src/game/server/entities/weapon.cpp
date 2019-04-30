@@ -5,13 +5,14 @@
 
 #include <game/server/teams.h>
 
-CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool Jetpack)
+CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_Type = Weapon;
 	m_Lifetime = Server()->TickSpeed() * Lifetime;
 	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
 	m_Jetpack = Jetpack;
+	m_SpreadWeapon = SpreadWeapon;
 	m_Bullets = Bullets;
 	m_Owner = Owner;
 	m_Vel = vec2(5*Direction, -5);
@@ -89,6 +90,8 @@ void CWeapon::Pickup()
 
 		if (m_Jetpack)
 			pChr->Jetpack();
+		if (m_SpreadWeapon)
+			pChr->SpreadWeapon(m_Type);
 
 		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
 			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
@@ -114,9 +117,10 @@ int CWeapon::IsCharacterNear()
 			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
 			|| (!pChr->CanCollide(m_Owner))
 			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			|| (pChr->GetWeaponGot(m_Type) && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+			|| (pChr->GetWeaponGot(m_Type) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
 			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 			|| (m_Jetpack && pChr->m_Jetpack)
+			|| (m_SpreadWeapon && pChr->m_aSpreadWeapon[m_Type])
 			|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
 			)
 			continue;

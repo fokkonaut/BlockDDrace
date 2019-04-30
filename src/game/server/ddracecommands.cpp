@@ -707,10 +707,9 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 			pChr->GiveWeapon(WEAPON_HAMMER, Remove);
 			pChr->GiveWeapon(WEAPON_GUN, Remove, Amount);
 		}
-		pChr->m_aSpreadWeapon[WEAPON_SHOTGUN] = Spread;
-		pChr->m_aSpreadWeapon[WEAPON_GRENADE] = Spread;
-		pChr->m_aSpreadWeapon[WEAPON_RIFLE] = Spread;
-		pChr->m_aSpreadWeapon[WEAPON_GUN] = Spread;
+		for (int i = 2; i < WEAPON_NINJA; i++)
+			if (pChr->m_aSpreadWeapon[i] != Spread)
+				pChr->SpreadWeapon(i, !Spread, pResult->m_ClientID);
 	}
 	else if (Weapon == -2)
 	{
@@ -718,9 +717,9 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		pChr->GiveWeapon(WEAPON_HEART_GUN, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_STRAIGHT_GRENADE, Remove, Amount);
 
-		pChr->m_aSpreadWeapon[WEAPON_PLASMA_RIFLE] = Spread;
-		pChr->m_aSpreadWeapon[WEAPON_HEART_GUN] = Spread;
-		pChr->m_aSpreadWeapon[WEAPON_STRAIGHT_GRENADE] = Spread;
+		for (int i = WEAPON_NINJA+1; i < NUM_WEAPONS; i++)
+			if (pChr->m_aSpreadWeapon[i] != Spread)
+				pChr->SpreadWeapon(i, !Spread, pResult->m_ClientID);
 	}
 	else
 	{
@@ -728,7 +727,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 			pChr->ScrollNinja(Remove);
 		pChr->GiveWeapon(Weapon, Remove, Amount);
 
-		pChr->m_aSpreadWeapon[Weapon] = Spread;
+		if (pChr->m_aSpreadWeapon[Weapon] != Spread)
+			pChr->SpreadWeapon(Weapon, !Spread, pResult->m_ClientID);
 	}
 
 	pChr->m_DDRaceState = DDRACE_CHEAT;

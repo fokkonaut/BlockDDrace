@@ -3061,23 +3061,18 @@ void CCharacter::DropWeapon(int WeaponID)
 			m_CountWeapons++;
 	}
 
-	if (WeaponID == WEAPON_GUN && m_Jetpack)
+	if (m_CountWeapons > 1)
 	{
-		Jetpack(true);
-
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-
-		CWeapon *Weapon = new CWeapon(&GameServer()->m_World, WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo, true);
-		m_pPlayer->m_vWeaponLimit[WEAPON_GUN].push_back(Weapon);
-	}
-	else if (m_CountWeapons > 1)
-	{
-		m_aWeapons[WeaponID].m_Got = false;
-
-		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-
-		CWeapon *Weapon = new CWeapon(&GameServer()->m_World, WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo);
+		CWeapon *Weapon = new CWeapon(&GameServer()->m_World, WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
+
+		if (!m_aSpreadWeapon[WeaponID] && !m_Jetpack)
+			m_aWeapons[WeaponID].m_Got = false;
+		if (m_aSpreadWeapon[WeaponID])
+			SpreadWeapon(WeaponID, true);
+		if (WeaponID == WEAPON_GUN && m_Jetpack)
+			Jetpack(true);
 	}
 
 	SetWeapon(WEAPON_GUN);
@@ -3401,4 +3396,10 @@ void CCharacter::InfiniteJumps(bool Remove, int FromID, bool Silent)
 		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 	}
 	GameServer()->SendExtraMessage(INFINITE_JUMPS, m_pPlayer->GetCID(), Remove, FromID, Silent);
+}
+
+void CCharacter::SpreadWeapon(int Type, bool Remove, int FromID, bool Silent)
+{
+	m_aSpreadWeapon[Type] = !Remove;
+	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Remove, FromID, Silent, Type);
 }

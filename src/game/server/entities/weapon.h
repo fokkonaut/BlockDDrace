@@ -4,7 +4,7 @@
 class CWeapon : public CEntity
 {
 public:
-	CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool Jetpack = false);
+	CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack);
 
 	virtual void Reset(bool EreaseWeapon = true, bool Picked = false);
 	virtual void Tick();
@@ -30,6 +30,7 @@ private:
 	int m_Bullets;
 	int m_PickupDelay;
 	bool m_Jetpack;
+	bool m_SpreadWeapon;
 	vec2 m_PrevPos;
 
 	// have to define a new ID variable for the bullet

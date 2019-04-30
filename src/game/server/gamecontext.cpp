@@ -3829,19 +3829,19 @@ int CGameContext::GetRealWeapon(int Weapon)
 	return Weapon;
 }
 
-void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int HookPower)
+void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int Special)
 {
 	if (Silent)
 		return;
 
 	char aMsg[128];
-	str_copy(aMsg, CreateExtraMessage(Extra, Remove, FromID, ToID, HookPower), sizeof(aMsg));
+	str_copy(aMsg, CreateExtraMessage(Extra, Remove, FromID, ToID, Special), sizeof(aMsg));
 	SendChatTarget(ToID, aMsg);
 	if (FromID >= 0 && FromID != ToID)
 		SendChatTarget(FromID, aMsg);
 }
 
-const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
+const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int Special)
 {
 	char aInfinite[16];
 	char aItem[64];
@@ -3855,13 +3855,13 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 
 	// get item name
 	char aTemp[64];
-	str_copy(aTemp, GetExtraName(Extra, HookPower), sizeof(aItem));
+	str_copy(aTemp, GetExtraName(Extra, Special), sizeof(aItem));
 	str_format(aItem, sizeof(aItem), "%s%s", aInfinite, aTemp);
 
 	// message without a sender
 	if (FromID == -1 || FromID == ToID)
 	{
-		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER)
+		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER || Extra == SPREAD_WEAPON)
 			str_format(aMsg, sizeof(aMsg), "You %s %s", Remove ? "lost your" : "have a", aItem);
 		else if (Extra == VANILLA_MODE || Extra == DDRACE_MODE)
 			str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
@@ -3884,7 +3884,7 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 	return aMsg;
 }
 
-const char *CGameContext::GetExtraName(int Extra, int HookPower)
+const char *CGameContext::GetExtraName(int Extra, int Special)
 {
 	switch (Extra)
 	{
@@ -3927,13 +3927,19 @@ const char *CGameContext::GetExtraName(int Extra, int HookPower)
 	case HOOK_POWER:
 		{
 			static char aPower[64];
-			str_format(aPower, sizeof(aPower), "%s Hook", GetExtraName(HookPower));
+			str_format(aPower, sizeof(aPower), "%s Hook", GetExtraName(Special));
 			return aPower;
 		}
 	case ENDLESS_HOOK:
 		return "Endless Hook";
 	case INFINITE_JUMPS:
 		return "Unlimited Air Jumps";
+	case SPREAD_WEAPON:
+		{
+			static char aWeapon[64];
+			str_format(aWeapon, sizeof(aWeapon), "Spread %s", GetWeaponName(Special));
+			return aWeapon;
+		}
 	}
 	return "Unknown";
 }
