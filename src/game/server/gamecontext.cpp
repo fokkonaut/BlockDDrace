@@ -4013,7 +4013,6 @@ void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID
 
 const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int HookPower)
 {
-	char aGiven[16];
 	char aInfinite[16];
 	char aItem[64];
 	static char aMsg[128];
@@ -4033,64 +4032,24 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 	if (FromID == -1 || FromID == ToID)
 	{
 		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "You lost your %s", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "You have a %s", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "You %s %s", Remove ? "lost your" : "have a", aItem);
 		else if (Extra == VANILLA_MODE || Extra == DDRACE_MODE)
-		{
 			str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
-		}
 		else if (Extra == PASSIVE)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "You are no longer in %s", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "You are %s in %s", Remove ? "no longer" : "now", aItem);
 		else if (Extra == POLICE_HELPER)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "You are no longer a %s", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "You are now a %s", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "You are %s a %s", Remove ? "no longer" : "now", aItem);
 		else if (Extra == ENDLESS_HOOK)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "%s has been deactivated", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "%s has been activated", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "%s has been %s", aItem, Remove ? "deactivated" : "activated");
 		else if (Extra == INFINITE_JUMPS)
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "You don't have %s", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "You have %s", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "You %shave %s", Remove ? "don't" : "", aItem);
 		else
-		{
-			if (Remove)
-				str_format(aMsg, sizeof(aMsg), "You lost %s", aItem);
-			else
-				str_format(aMsg, sizeof(aMsg), "You have %s", aItem);
-		}
+			str_format(aMsg, sizeof(aMsg), "You %s %s", Remove ? "lost" : "have", aItem);
 	}
 
 	// message with a sender
 	else if (FromID >= 0)
-	{
-		// given or removed
-		if (Remove)
-			str_format(aGiven, sizeof(aGiven), "removed from");
-		else
-			str_format(aGiven, sizeof(aGiven), "given to");
-
-		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, aGiven, Server()->ClientName(ToID), Server()->ClientName(FromID));
-	}
+		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, Remove ? "removed from" : "given to", Server()->ClientName(ToID), Server()->ClientName(FromID));
 
 	return aMsg;
 }
