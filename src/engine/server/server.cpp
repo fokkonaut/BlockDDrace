@@ -2737,7 +2737,7 @@ void CServer::StatusImpl(IConsole::IResult *pResult, void *pUser, bool DnsblBlac
 					str_format(aBuf, sizeof(aBuf), "id=%d connecting", i);
 			}
 			if (pThis->m_aClients[i].m_State != CClient::STATE_BOT || !g_Config.m_SvHideBotsStatus)
-				pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Server", aBuf);
+				pThis->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
 		}
 	}
 }
