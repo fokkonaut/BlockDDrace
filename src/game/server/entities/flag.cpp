@@ -38,6 +38,12 @@ void CFlag::TickPaused()
 		++m_GrabTick;
 }
 
+void CFlag::TickDefered()
+{
+	if (m_pCarrier && m_pCarrier->IsAlive())
+		m_Pos = m_pCarrier->m_Pos;
+}
+
 void CFlag::Drop(int Dir)
 {
 	if (g_Config.m_SvFlagSounds)

@@ -76,6 +76,7 @@ public:
 
 	virtual void Reset();
 	virtual void TickPaused();
+	virtual void TickDefered();
 	virtual void Snap(int SnappingClient);
 	virtual void Tick();
 };
