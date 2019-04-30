@@ -373,6 +373,8 @@ public:
 
 	int m_HookPower;
 
+	bool m_aSpreadWeapon[NUM_WEAPONS];
+
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
 	int m_AtomPosition;

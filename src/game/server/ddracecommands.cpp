@@ -680,9 +680,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		int Weapon, bool Remove, bool AddRemoveCommand)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	if (AddRemoveCommand)
-		Victim = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : pResult->m_ClientID;
+	int Offset = AddRemoveCommand ? 1 : 0;
+	int Victim = pResult->NumArguments() > Offset ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = GetPlayerChar(Victim);
 	if (!pChr)
 		return;
@@ -696,6 +695,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 
 	int Amount = (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
+	bool Spread = pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : pChr->m_aSpreadWeapon[Weapon];
+
 	if (Weapon == -1)
 	{
 		pChr->GiveWeapon(WEAPON_SHOTGUN, Remove, Amount);
@@ -706,18 +707,28 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 			pChr->GiveWeapon(WEAPON_HAMMER, Remove);
 			pChr->GiveWeapon(WEAPON_GUN, Remove, Amount);
 		}
+		pChr->m_aSpreadWeapon[WEAPON_SHOTGUN] = Spread;
+		pChr->m_aSpreadWeapon[WEAPON_GRENADE] = Spread;
+		pChr->m_aSpreadWeapon[WEAPON_RIFLE] = Spread;
+		pChr->m_aSpreadWeapon[WEAPON_GUN] = Spread;
 	}
 	else if (Weapon == -2)
 	{
 		pChr->GiveWeapon(WEAPON_PLASMA_RIFLE, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_HEART_GUN, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_STRAIGHT_GRENADE, Remove, Amount);
+
+		pChr->m_aSpreadWeapon[WEAPON_PLASMA_RIFLE] = Spread;
+		pChr->m_aSpreadWeapon[WEAPON_HEART_GUN] = Spread;
+		pChr->m_aSpreadWeapon[WEAPON_STRAIGHT_GRENADE] = Spread;
 	}
 	else
 	{
 		if (Weapon == WEAPON_NINJA && pChr->m_ScrollNinja && Remove)
 			pChr->ScrollNinja(Remove);
 		pChr->GiveWeapon(Weapon, Remove, Amount);
+
+		pChr->m_aSpreadWeapon[Weapon] = Spread;
 	}
 
 	pChr->m_DDRaceState = DDRACE_CHEAT;
