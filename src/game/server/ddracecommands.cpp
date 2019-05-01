@@ -511,6 +511,14 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
 		if (pChr->m_PoliceHelper)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Police Helper: True");
+		for (int i = 0; i < NUM_WEAPONS; i++)
+		{
+			if (pChr->m_aSpreadWeapon[i])
+			{
+				str_format(aBuf, sizeof(aBuf), "Spread %s: True", pSelf->GetWeaponName(i));
+				pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+			}
+		}
 		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
