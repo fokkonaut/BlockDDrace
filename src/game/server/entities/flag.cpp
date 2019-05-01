@@ -2,6 +2,7 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include <game/server/gamecontext.h>
 #include <engine/shared/config.h>
+#include <game/server/teams.h>
 #include "flag.h"
 
 CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
@@ -242,6 +243,12 @@ void CFlag::Snap(int SnappingClient)
 {
 	if(NetworkClipped(SnappingClient))
 		return;
+
+	if (GameServer()->GetPlayerChar(SnappingClient) && m_pCarrier)
+	{
+		if (!CmaskIsSet(m_pCarrier->Teams()->TeamMask(m_pCarrier->Team(), -1, m_pCarrier->GetPlayer()->GetCID()), SnappingClient))
+			return;
+	}
 
 	CNetObj_Flag *pFlag = (CNetObj_Flag *)Server()->SnapNewItem(NETOBJTYPE_FLAG, m_Team, sizeof(CNetObj_Flag));
 	if(!pFlag)
