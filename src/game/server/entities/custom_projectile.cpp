@@ -1,9 +1,6 @@
-#include <engine/server.h>
-#include <engine/config.h>
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include <game/server/teams.h>
-#include <game/server/gamemodes/DDRace.h>
 #include "custom_projectile.h"
 
 CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,

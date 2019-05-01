@@ -1,5 +1,4 @@
 #include <game/server/gamecontext.h>
-#include <engine/shared/config.h>
 #include "meteor.h"
 
 CMeteor::CMeteor(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
