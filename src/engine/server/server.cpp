@@ -965,9 +965,14 @@ void CServer::Kick(int ClientID, const char *pReason)
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "you can't kick yourself");
 		return;
 	}
-	else if(m_aClients[ClientID].m_Authed > m_RconAuthLevel || m_aClients[ClientID].m_State == CClient::STATE_BOT)
+	else if(m_aClients[ClientID].m_Authed > m_RconAuthLevel)
 	{
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "kick command denied");
+		return;
+	}
+	else if (m_aClients[ClientID].m_State == CClient::STATE_BOT)
+	{
+		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "you can't kick dummies");
 		return;
 	}
 
