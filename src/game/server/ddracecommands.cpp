@@ -686,7 +686,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 			pChr->GiveWeapon(WEAPON_HAMMER, Remove);
 			pChr->GiveWeapon(WEAPON_GUN, Remove, Amount);
 		}
-		for (int i = 2; i < WEAPON_NINJA; i++)
+		for (int i = WEAPON_HAMMER; i < WEAPON_NINJA; i++)
 			if (pChr->m_aSpreadWeapon[i] != Spread)
 				pChr->SpreadWeapon(i, Spread, pResult->m_ClientID);
 	}
@@ -696,7 +696,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 		pChr->GiveWeapon(WEAPON_HEART_GUN, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_STRAIGHT_GRENADE, Remove, Amount);
 
-		for (int i = WEAPON_NINJA+1; i < NUM_WEAPONS; i++)
+		for (int i = WEAPON_NINJA; i < NUM_WEAPONS; i++)
 			if (pChr->m_aSpreadWeapon[i] != Spread)
 				pChr->SpreadWeapon(i, Spread, pResult->m_ClientID);
 	}
