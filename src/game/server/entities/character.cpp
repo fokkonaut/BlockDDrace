@@ -1995,7 +1995,7 @@ void CCharacter::HandleTiles(int Index)
 	if(((m_TileIndex == TILE_JETPACK_START) || (m_TileFIndex == TILE_JETPACK_START)) && !m_Jetpack)
 		Jetpack();
 	else if(((m_TileIndex == TILE_JETPACK_END) || (m_TileFIndex == TILE_JETPACK_END)) && m_Jetpack)
-		Jetpack(true);
+		Jetpack(false);
 
 	// unlock team
 	else if(((m_TileIndex == TILE_UNLOCK_TEAM) || (m_TileFIndex == TILE_UNLOCK_TEAM)) && Teams()->TeamLocked(Team()))
@@ -2012,9 +2012,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_JETPACK) || (m_LastIndexFrontTile == TILE_JETPACK))
 			return;
-
-		bool Remove = m_Jetpack && g_Config.m_SvExtraTilesToggle ? true : false;
-		Jetpack(Remove);
+		Jetpack(!(m_Jetpack && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//rainbow toggle
@@ -2022,9 +2020,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_RAINBOW) || (m_LastIndexFrontTile == TILE_RAINBOW))
 			return;
-
-		bool Remove = (m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle ? true : false;
-		Rainbow(Remove);
+		Rainbow(!((m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//atom toggle
@@ -2032,9 +2028,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_ATOM) || (m_LastIndexFrontTile == TILE_ATOM))
 			return;
-
-		bool Remove = (m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle ? true : false;
-		Atom(Remove);
+		Atom(!((m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//trail toggle
@@ -2042,9 +2036,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_TRAIL) || (m_LastIndexFrontTile == TILE_TRAIL))
 			return;
-
-		bool Remove = (m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle ? true : false;
-		Trail(Remove);
+		Trail(!((m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//spooky ghost toggle
@@ -2052,9 +2044,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST) || m_pPlayer->m_aHasItem[SPOOKY_GHOST])
 			return;
-
-		bool Remove = m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle ? true : false;
-		SpookyGhost(Remove);
+		SpookyGhost(!(m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//add meteor
@@ -2062,7 +2052,6 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_ADD_METEOR) || (m_LastIndexFrontTile == TILE_ADD_METEOR))
 			return;
-
 		Meteor();
 	}
 
@@ -2071,8 +2060,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_REMOVE_METEORS) || (m_LastIndexFrontTile == TILE_REMOVE_METEORS))
 			return;
-
-		Meteor(true);
+		Meteor(false);
 	}
 
 	//passive toggle
@@ -2080,9 +2068,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_PASSIVE) || (m_LastIndexFrontTile == TILE_PASSIVE))
 			return;
-
-		bool Remove = m_Passive && g_Config.m_SvExtraTilesToggle ? true : false;
-		Passive(Remove);
+		Passive(!(m_Passive && g_Config.m_SvExtraTilesToggle));
 	}
 
 	//vanilla mode
@@ -2090,7 +2076,6 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_VANILLA_MODE) || (m_LastIndexFrontTile == TILE_VANILLA_MODE))
 			return;
-
 		VanillaMode();
 	}
 
@@ -2099,7 +2084,6 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_DDRACE_MODE) || (m_LastIndexFrontTile == TILE_DDRACE_MODE))
 			return;
-
 		DDraceMode();
 	}
 
@@ -2108,9 +2092,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_BLOODY) || (m_LastIndexFrontTile == TILE_BLOODY))
 			return;
-
-		bool Remove = (m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle ? true : false;
-		Bloody(Remove);
+		Bloody(!((m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle));
 	}
 
 	m_LastIndexTile = m_TileIndex;
@@ -3133,82 +3115,72 @@ int CCharacter::HasFlag()
 	return ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(this);
 }
 
-void CCharacter::Jetpack(bool Remove, int FromID, bool Silent)
+void CCharacter::Jetpack(bool Set, int FromID, bool Silent)
 {
-	m_Jetpack = !Remove;
+	m_Jetpack = Set;
 	m_Core.m_Jetpack = m_Jetpack;
-	GameServer()->SendExtraMessage(JETPACK, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(JETPACK, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::Rainbow(bool Remove, int FromID, bool Silent)
+void CCharacter::Rainbow(bool Set, int FromID, bool Silent)
 {
-	m_Rainbow = !Remove;
-	if (Remove)
+	m_Rainbow = Set;
+	if (!Set)
 		m_pPlayer->m_InfRainbow = false;
-	GameServer()->SendExtraMessage(RAINBOW, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(RAINBOW, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::InfRainbow(bool Remove, int FromID, bool Silent)
+void CCharacter::InfRainbow(bool Set, int FromID, bool Silent)
 {
-	m_pPlayer->m_InfRainbow = !Remove;
-	if (Remove)
+	m_pPlayer->m_InfRainbow = Set;
+	if (!Set)
 		m_Rainbow = false;
-	GameServer()->SendExtraMessage(INF_RAINBOW, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(INF_RAINBOW, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::Atom(bool Remove, int FromID, bool Silent)
+void CCharacter::Atom(bool Set, int FromID, bool Silent)
 {
-	m_Atom = !Remove;
-	if (Remove)
+	m_Atom = Set;
+	if (!Set)
 		m_pPlayer->m_InfAtom = false;
-	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::InfAtom(bool Remove, int FromID, bool Silent)
+void CCharacter::InfAtom(bool Set, int FromID, bool Silent)
 {
-	m_pPlayer->m_InfAtom = !Remove;
-	if (Remove)
+	m_pPlayer->m_InfAtom = Set;
+	if (!Set)
 		m_Atom = false;
-	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::Trail(bool Remove, int FromID, bool Silent)
+void CCharacter::Trail(bool Set, int FromID, bool Silent)
 {
-	m_Trail = !Remove;
-	if (Remove)
+	m_Trail = Set;
+	if (!Set)
 		m_pPlayer->m_InfTrail = false;
-	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::InfTrail(bool Remove, int FromID, bool Silent)
+void CCharacter::InfTrail(bool Set, int FromID, bool Silent)
 {
-	m_pPlayer->m_InfTrail = !Remove;
-	if (Remove)
+	m_pPlayer->m_InfTrail = Set;
+	if (!Set)
 		m_Trail = false;
-	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::SpookyGhost(bool Remove, int FromID, bool Silent)
+void CCharacter::SpookyGhost(bool Set, int FromID, bool Silent)
 {
-	m_pPlayer->m_HasSpookyGhost = !Remove;
-	GameServer()->SendExtraMessage(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), Remove, FromID, Silent);
-	if (!Silent && !Remove)
+	m_pPlayer->m_HasSpookyGhost = Set;
+	GameServer()->SendExtraMessage(EXTRA_SPOOKY_GHOST, m_pPlayer->GetCID(), Set, FromID, Silent);
+	if (!Silent && Set)
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "For more info, say '/spookyghost help'");
 }
 
-void CCharacter::Meteor(bool Remove, int FromID, bool Silent)
+void CCharacter::Meteor(bool Set, int FromID, bool Silent)
 {
-	if (Remove)
-	{
-		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
-			return;
-		else
-		{
-			m_Meteors = 0;
-			m_pPlayer->m_InfMeteors = 0;
-		}
-	}
-	else
+	if (Set)
 	{
 		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
 		{
@@ -3219,12 +3191,7 @@ void CCharacter::Meteor(bool Remove, int FromID, bool Silent)
 			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), false);
 		}
 	}
-	GameServer()->SendExtraMessage(METEOR, m_pPlayer->GetCID(), Remove, FromID, Silent);
-}
-
-void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
-{
-	if (Remove)
+	else
 	{
 		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
 			return;
@@ -3234,7 +3201,12 @@ void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
 			m_pPlayer->m_InfMeteors = 0;
 		}
 	}
-	else
+	GameServer()->SendExtraMessage(METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
+}
+
+void CCharacter::InfMeteor(bool Set, int FromID, bool Silent)
+{
+	if (Set)
 	{
 		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
 		{
@@ -3245,37 +3217,47 @@ void CCharacter::InfMeteor(bool Remove, int FromID, bool Silent)
 			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), true);
 		}
 	}
-	GameServer()->SendExtraMessage(INF_METEOR, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	else
+	{
+		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
+			return;
+		else
+		{
+			m_Meteors = 0;
+			m_pPlayer->m_InfMeteors = 0;
+		}
+	}
+	GameServer()->SendExtraMessage(INF_METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::Passive(bool Remove, int FromID, bool Silent)
+void CCharacter::Passive(bool Set, int FromID, bool Silent)
 {
-	if (Remove)
-	{
-		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
-	}
-	else
+	if (Set)
 	{
 		m_NeededFaketuning |= FAKETUNE_NOCOLL;
 		m_NeededFaketuning |= FAKETUNE_NOHAMMER;
 	}
+	else
+	{
+		m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
+		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
+	}
 
-	m_Passive = !Remove;
-	m_Core.m_Passive = !Remove;
-	m_Core.m_Collision = Remove;
-	m_Core.m_NoCollision = !Remove;
-	m_Hit = Remove ? HIT_ALL : (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN);
-	m_Core.m_NoShotgunHit = !Remove;
-	m_Core.m_NoGrenadeHit = !Remove;
-	m_Core.m_NoHammerHit = !Remove;
-	m_Core.m_NoRifleHit = !Remove;
-	m_Core.m_Hook = Remove;
-	m_Core.m_NoHookHit = !Remove;
+	m_Passive = Set;
+	m_Core.m_Passive = Set;
+	m_Core.m_Collision = !Set;
+	m_Core.m_NoCollision = Set;
+	m_Hit = Set ? (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN) : HIT_ALL;
+	m_Core.m_NoShotgunHit = Set;
+	m_Core.m_NoGrenadeHit = Set;
+	m_Core.m_NoHammerHit = Set;
+	m_Core.m_NoRifleHit = Set;
+	m_Core.m_Hook = !Set;
+	m_Core.m_NoHookHit = Set;
 	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 
 	new CPickup(&GameServer()->m_World, POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
-	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::VanillaMode(int FromID, bool Silent)
@@ -3301,7 +3283,7 @@ void CCharacter::VanillaMode(int FromID, bool Silent)
 			}
 		}
 	}
-	GameServer()->SendExtraMessage(VANILLA_MODE, m_pPlayer->GetCID(), false, FromID, Silent);
+	GameServer()->SendExtraMessage(VANILLA_MODE, m_pPlayer->GetCID(), true, FromID, Silent);
 }
 
 void CCharacter::DDraceMode(int FromID, bool Silent)
@@ -3328,37 +3310,37 @@ void CCharacter::DDraceMode(int FromID, bool Silent)
 			}
 		}
 	}
-	GameServer()->SendExtraMessage(DDRACE_MODE, m_pPlayer->GetCID(), false, FromID, Silent);
+	GameServer()->SendExtraMessage(DDRACE_MODE, m_pPlayer->GetCID(), true, FromID, Silent);
 }
 
-void CCharacter::Bloody(bool Remove, int FromID, bool Silent)
+void CCharacter::Bloody(bool Set, int FromID, bool Silent)
 {
-	m_Bloody = !Remove;
+	m_Bloody = Set;
 	m_StrongBloody = false;
-	GameServer()->SendExtraMessage(BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(BLOODY, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::StrongBloody(bool Remove, int FromID, bool Silent)
+void CCharacter::StrongBloody(bool Set, int FromID, bool Silent)
 {
-	m_StrongBloody = !Remove;
+	m_StrongBloody = Set;
 	m_Bloody = false;
-	GameServer()->SendExtraMessage(STRONG_BLOODY, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(STRONG_BLOODY, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::PoliceHelper(bool Remove, int FromID, bool Silent)
+void CCharacter::PoliceHelper(bool Set, int FromID, bool Silent)
 {
-	m_PoliceHelper = !Remove;
-	GameServer()->SendExtraMessage(POLICE_HELPER, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	m_PoliceHelper = Set;
+	GameServer()->SendExtraMessage(POLICE_HELPER, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::ScrollNinja(bool Remove, int FromID, bool Silent)
+void CCharacter::ScrollNinja(bool Set, int FromID, bool Silent)
 {
-	m_ScrollNinja = !Remove;
-	if (Remove)
-		RemoveNinja();
-	else
+	m_ScrollNinja = Set;
+	if (Set)
 		GiveNinja();
-	GameServer()->SendExtraMessage(SCROLL_NINJA, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	else
+		RemoveNinja();
+	GameServer()->SendExtraMessage(SCROLL_NINJA, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::HookPower(int Extra, int FromID, bool Silent)
@@ -3366,36 +3348,36 @@ void CCharacter::HookPower(int Extra, int FromID, bool Silent)
 	if (m_HookPower == HOOK_NORMAL && Extra == HOOK_NORMAL)
 		return;
 	m_HookPower = Extra;
-	GameServer()->SendExtraMessage(HOOK_POWER, m_pPlayer->GetCID(), false, FromID, Silent, Extra);
+	GameServer()->SendExtraMessage(HOOK_POWER, m_pPlayer->GetCID(), true, FromID, Silent, Extra);
 }
 
-void CCharacter::EndlessHook(bool Remove, int FromID, bool Silent)
+void CCharacter::EndlessHook(bool Set, int FromID, bool Silent)
 {
-	m_EndlessHook = !Remove;
-	m_Core.m_EndlessHook = !Remove;
-	GameServer()->SendExtraMessage(ENDLESS_HOOK, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	m_EndlessHook = Set;
+	m_Core.m_EndlessHook = Set;
+	GameServer()->SendExtraMessage(ENDLESS_HOOK, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::InfiniteJumps(bool Remove, int FromID, bool Silent)
+void CCharacter::InfiniteJumps(bool Set, int FromID, bool Silent)
 {
-	m_SuperJump = !Remove;
-	m_Core.m_EndlessJump = !Remove;
+	m_SuperJump = Set;
+	m_Core.m_EndlessJump = Set;
 	if (m_Core.m_Jumps == 0)
 	{
-		if (Remove)
-			m_NeededFaketuning |= FAKETUNE_NOJUMP;
-		else
+		if (Set)
 			m_NeededFaketuning &= ~FAKETUNE_NOJUMP;
+		else
+			m_NeededFaketuning |= FAKETUNE_NOJUMP;
 		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 	}
-	GameServer()->SendExtraMessage(INFINITE_JUMPS, m_pPlayer->GetCID(), Remove, FromID, Silent);
+	GameServer()->SendExtraMessage(INFINITE_JUMPS, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
-void CCharacter::SpreadWeapon(int Type, bool Remove, int FromID, bool Silent)
+void CCharacter::SpreadWeapon(int Type, bool Set, int FromID, bool Silent)
 {
 	if (Type == WEAPON_HAMMER || Type == WEAPON_NINJA)
 		return;
 
-	m_aSpreadWeapon[Type] = !Remove;
-	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Remove, FromID, Silent, Type);
+	m_aSpreadWeapon[Type] = Set;
+	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Set, FromID, Silent, Type);
 }

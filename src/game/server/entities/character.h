@@ -133,27 +133,27 @@ public:
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
 
-	void Jetpack(bool Remove = false, int FromID = -1, bool Silent = false);
-	void Rainbow(bool Remove = false, int FromID = -1, bool Silent = false);
-	void InfRainbow(bool Remove = false, int FromID = -1, bool Silent = false);
-	void Atom(bool Remove = false, int FromID = -1, bool Silent = false);
-	void InfAtom(bool Remove = false, int FromID = -1, bool Silent = false);
-	void Trail(bool Remove = false, int FromID = -1, bool Silent = false);
-	void InfTrail(bool Remove = false, int FromID = -1, bool Silent = false);
-	void SpookyGhost(bool Remove = false, int FromID = -1, bool Silent = false);
-	void Meteor(bool Remove = false, int FromID = -1, bool Silent = false);
-	void InfMeteor(bool Remove = false, int FromID = -1, bool Silent = false);
-	void Passive(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Jetpack(bool Set = true, int FromID = -1, bool Silent = false);
+	void Rainbow(bool Set = true, int FromID = -1, bool Silent = false);
+	void InfRainbow(bool Set = true, int FromID = -1, bool Silent = false);
+	void Atom(bool Set = true, int FromID = -1, bool Silent = false);
+	void InfAtom(bool Set = true, int FromID = -1, bool Silent = false);
+	void Trail(bool Set = true, int FromID = -1, bool Silent = false);
+	void InfTrail(bool Set = true, int FromID = -1, bool Silent = false);
+	void SpookyGhost(bool Set = true, int FromID = -1, bool Silent = false);
+	void Meteor(bool Set = true, int FromID = -1, bool Silent = false);
+	void InfMeteor(bool Set = true, int FromID = -1, bool Silent = false);
+	void Passive(bool Set = true, int FromID = -1, bool Silent = false);
 	void VanillaMode(int FromID = -1, bool Silent = false);
 	void DDraceMode(int FromID = -1, bool Silent = false);
-	void Bloody(bool Remove = false, int FromID = -1, bool Silent = false);
-	void StrongBloody(bool Remove = false, int FromID = -1, bool Silent = false);
-	void PoliceHelper(bool Remove = false, int FromID = -1, bool Silent = false);
-	void ScrollNinja(bool Remove = false, int FromID = -1, bool Silent = false);
+	void Bloody(bool Set = true, int FromID = -1, bool Silent = false);
+	void StrongBloody(bool Set = true, int FromID = -1, bool Silent = false);
+	void PoliceHelper(bool Set = true, int FromID = -1, bool Silent = false);
+	void ScrollNinja(bool Set = true, int FromID = -1, bool Silent = false);
 	void HookPower(int Extra, int FromID = -1, bool Silent = false);
-	void EndlessHook(bool Remove = false, int FromID = -1, bool Silent = false);
-	void InfiniteJumps(bool Remove = false, int FromID = -1, bool Silent = false);
-	void SpreadWeapon(int Type, bool Remove = false, int FromID = -1, bool Silent = false);
+	void EndlessHook(bool Set = true, int FromID = -1, bool Silent = false);
+	void InfiniteJumps(bool Set = true, int FromID = -1, bool Silent = false);
+	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 
 
 private:

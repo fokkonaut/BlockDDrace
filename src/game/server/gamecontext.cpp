@@ -3829,26 +3829,26 @@ int CGameContext::GetRealWeapon(int Weapon)
 	return Weapon;
 }
 
-void CGameContext::SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int Special)
+void CGameContext::SendExtraMessage(int Extra, int ToID, bool Set, int FromID, bool Silent, int Special)
 {
 	if (Silent)
 		return;
 
 	char aMsg[128];
-	str_copy(aMsg, CreateExtraMessage(Extra, Remove, FromID, ToID, Special), sizeof(aMsg));
+	str_copy(aMsg, CreateExtraMessage(Extra, Set, FromID, ToID, Special), sizeof(aMsg));
 	SendChatTarget(ToID, aMsg);
 	if (FromID >= 0 && FromID != ToID)
 		SendChatTarget(FromID, aMsg);
 }
 
-const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int Special)
+const char *CGameContext::CreateExtraMessage(int Extra, bool Set, int FromID, int ToID, int Special)
 {
 	char aInfinite[16];
 	char aItem[64];
 	static char aMsg[128];
 
 	// infinite
-	if (!Remove && (Extra == INF_RAINBOW || Extra == INF_ATOM || Extra == INF_TRAIL || Extra == INF_METEOR))
+	if (Set && (Extra == INF_RAINBOW || Extra == INF_ATOM || Extra == INF_TRAIL || Extra == INF_METEOR))
 		str_format(aInfinite, sizeof(aInfinite), "Infinite ");
 	else
 		aInfinite[0] = 0;
@@ -3862,24 +3862,24 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Remove, int FromID,
 	if (FromID == -1 || FromID == ToID)
 	{
 		if (Extra == JETPACK || Extra == ATOM || Extra == INF_ATOM || Extra == TRAIL || Extra == INF_TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER || Extra == SPREAD_WEAPON)
-			str_format(aMsg, sizeof(aMsg), "You %s %s", Remove ? "lost your" : "have a", aItem);
+			str_format(aMsg, sizeof(aMsg), "You %s %s", Set ? "have a" : "lost your", aItem);
 		else if (Extra == VANILLA_MODE || Extra == DDRACE_MODE)
 			str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
 		else if (Extra == PASSIVE)
-			str_format(aMsg, sizeof(aMsg), "You are %s in %s", Remove ? "no longer" : "now", aItem);
+			str_format(aMsg, sizeof(aMsg), "You are %s in %s", Set ? "now" : "no longer", aItem);
 		else if (Extra == POLICE_HELPER)
-			str_format(aMsg, sizeof(aMsg), "You are %s a %s", Remove ? "no longer" : "now", aItem);
+			str_format(aMsg, sizeof(aMsg), "You are %s a %s", Set ? "now" : "no longer", aItem);
 		else if (Extra == ENDLESS_HOOK)
-			str_format(aMsg, sizeof(aMsg), "%s has been %s", aItem, Remove ? "deactivated" : "activated");
+			str_format(aMsg, sizeof(aMsg), "%s has been %s", aItem, Set ? "activated" : "deactivated");
 		else if (Extra == INFINITE_JUMPS)
-			str_format(aMsg, sizeof(aMsg), "You %shave %s", Remove ? "don't" : "", aItem);
+			str_format(aMsg, sizeof(aMsg), "You %shave %s", Set ? "" : "don't", aItem);
 		else
-			str_format(aMsg, sizeof(aMsg), "You %s %s", Remove ? "lost" : "have", aItem);
+			str_format(aMsg, sizeof(aMsg), "You %s %s", Set ? "have" : "lost", aItem);
 	}
 
 	// message with a sender
 	else if (FromID >= 0)
-		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, Remove ? "removed from" : "given to", Server()->ClientName(ToID), Server()->ClientName(FromID));
+		str_format(aMsg, sizeof(aMsg), "%s was %s '%s' by '%s'", aItem, Set ? "given to" : "removed from", Server()->ClientName(ToID), Server()->ClientName(FromID));
 
 	return aMsg;
 }

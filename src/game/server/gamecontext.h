@@ -282,8 +282,8 @@ public:
 	const char *GetWeaponName(int Weapon);
 	int GetRealWeapon(int Weapon);
 
-	void SendExtraMessage(int Extra, int ToID, bool Remove, int FromID, bool Silent, int Special = 0);
-	const char *CreateExtraMessage(int Extra, bool Remove, int FromID, int ToID, int Special);
+	void SendExtraMessage(int Extra, int ToID, bool Set, int FromID, bool Silent, int Special = 0);
+	const char *CreateExtraMessage(int Extra, bool Set, int FromID, int ToID, int Special);
 	const char *GetExtraName(int Extra, int Special = 0);
 
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
