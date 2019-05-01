@@ -195,21 +195,15 @@ void CPickup::Tick()
 	else if (m_Owner >= 0)
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
-		if (pChr)
-		{
-			m_Pos.x = pChr->m_Pos.x;
-			m_Pos.y = pChr->m_Pos.y - 50;
-
-			if (!pChr->m_Passive)
-			{
-				m_CanRemove = true;
-				Reset();
-			}
-		}
-		else
+		if (!pChr || !pChr->m_Passive)
 		{
 			m_CanRemove = true;
 			Reset();
+		}
+		else
+		{
+			m_Pos.x = pChr->m_Pos.x;
+			m_Pos.y = pChr->m_Pos.y - 50;
 		}
 	}
 }
