@@ -1276,8 +1276,6 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 
 	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
 	{
-		//m_Core.m_Vel += Force;
-
 		// m_pPlayer only inflicts half damage on self
 		if(From == m_pPlayer->GetCID())
 			Dmg = max(1, Dmg/2);
