@@ -529,7 +529,7 @@ void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 	{
 		char aBuf[64];
 		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
 		return;
 	}
 	else
@@ -559,7 +559,8 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 		{
 			char aBuf[64];
 			str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
-			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+			return;
 		}
 		else if (pChr && pChr->GetPlayer()->m_IsDummy)
 			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
@@ -568,7 +569,7 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	{
 		char aBuf[64];
 		str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
 	}
 }
 
