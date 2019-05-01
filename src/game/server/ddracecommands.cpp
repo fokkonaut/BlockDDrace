@@ -689,9 +689,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, in
 
 	int Amount = (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
-	bool Spread = pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : pChr->m_aSpreadWeapon[Weapon];
-	if (Remove)
-		Spread = false;
+	bool Spread = Remove ? false : pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : Weapon >= 0 ? pChr->m_aSpreadWeapon[Weapon] : false;
 
 	if (Weapon == -1)
 	{

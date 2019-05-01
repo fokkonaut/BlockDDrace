@@ -3035,15 +3035,16 @@ void CCharacter::DropWeapon(int WeaponID)
 		CWeapon *Weapon = new CWeapon(GameWorld(), WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
 
-		if (!m_aSpreadWeapon[WeaponID] && !m_Jetpack)
+		if (!m_Jetpack)
+		{
 			m_aWeapons[WeaponID].m_Got = false;
+			SetWeapon(WEAPON_GUN);
+		}
 		if (m_aSpreadWeapon[WeaponID])
-			SpreadWeapon(WeaponID, true);
+			SpreadWeapon(WeaponID, false);
 		if (WeaponID == WEAPON_GUN && m_Jetpack)
-			Jetpack(true);
+			Jetpack(false);
 	}
-
-	SetWeapon(WEAPON_GUN);
 }
 
 void CCharacter::SetSpookyGhost()
