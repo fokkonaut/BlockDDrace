@@ -2823,6 +2823,8 @@ void CCharacter::DDRaceInit()
 	m_HookPower = HOOK_NORMAL;
 	m_Passive = false;
 	m_PoliceHelper = false;
+	for (int i = 0; i < NUM_WEAPONS; i++)
+		m_aSpreadWeapon[i] = false;
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
