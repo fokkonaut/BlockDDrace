@@ -2107,7 +2107,7 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if (m_EnteredShop)
 		{
-			Passive(false, -1, true);
+			Passive(true, -1, true);
 			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
 				m_EnteredShop = false;
 			else if (m_EnteredShop)
@@ -2948,7 +2948,7 @@ void CCharacter::BlockDDraceTick()
 			m_PurchaseState = 0;
 			m_ShopWindowPage = -1;
 
-			Passive(true, -1, true);
+			Passive(false, -1, true);
 			m_InShop = false;
 		}
 	}
