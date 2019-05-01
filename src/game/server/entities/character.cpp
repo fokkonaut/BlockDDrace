@@ -455,20 +455,15 @@ void CCharacter::FireWeapon()
 
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
+	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
+	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
+		NumShots = 1;
 
-	for (int i = 0; i < g_Config.m_SvNumSpreadShots; i++)
+	for (int i = 0; i < NumShots; i++)
 	{
 		float Angle = GetAngle(TempDirection);
 		Angle += Spread[i];
 		vec2 Direction = vec2(cosf(Angle), sinf(Angle));
-
-		if (
-			!m_aSpreadWeapon[GetActiveWeapon()]
-			||GetActiveWeapon() == WEAPON_HAMMER
-			|| (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
-			|| GetActiveWeapon() == WEAPON_NINJA
-			)
-			i = g_Config.m_SvNumSpreadShots; // we dont want spread shots for these weapons
 
 		switch (GetActiveWeapon())
 		{
@@ -3400,6 +3395,9 @@ void CCharacter::InfiniteJumps(bool Remove, int FromID, bool Silent)
 
 void CCharacter::SpreadWeapon(int Type, bool Remove, int FromID, bool Silent)
 {
+	if (Type == WEAPON_HAMMER || Type == WEAPON_NINJA)
+		return;
+
 	m_aSpreadWeapon[Type] = !Remove;
 	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Remove, FromID, Silent, Type);
 }
