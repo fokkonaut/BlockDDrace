@@ -288,6 +288,8 @@ public:
 
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
 
+	bool IsValidHookPower(int HookPower);
+
 private:
 
 	bool m_VoteWillPass;

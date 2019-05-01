@@ -3968,3 +3968,16 @@ int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
 	}
 	return count;
 }
+
+bool CGameContext::IsValidHookPower(int HookPower)
+{
+	if (
+		HookPower == HOOK_NORMAL
+		|| HookPower == RAINBOW
+		|| HookPower == BLOODY
+		|| HookPower == ATOM
+		|| HookPower == TRAIL
+		)
+		return true;
+	return false;
+}

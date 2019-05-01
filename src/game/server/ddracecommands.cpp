@@ -4,6 +4,7 @@
 #include <game/server/teams.h>
 #include <game/server/gamemodes/DDRace.h>
 #include <game/version.h>
+#include <string>
 #if defined(CONF_SQL)
 #include <game/server/score/sql_score.h>
 #endif
@@ -384,27 +385,33 @@ void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->GetVictim();
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	bool ShowInfo = false;
 	if (pChr)
 	{
-		int Power = HOOK_NORMAL;
-		char Str[32];
-		str_format(Str, sizeof(Str), "%s", pResult->GetString(1));
-
-		if (!str_comp_nocase(Str, "normal"))
-			Power = HOOK_NORMAL;
-		else if (!str_comp_nocase(Str, "rainbow"))
-			Power = RAINBOW;
-		else if (!str_comp_nocase(Str, "bloody"))
-			Power = BLOODY;
-		else if (!str_comp_nocase(Str, "atom"))
-			Power = ATOM;
-		else if (!str_comp_nocase(Str, "trail"))
-			Power = TRAIL;
-
-		if (pChr->m_HookPower == Power)
-			Power = HOOK_NORMAL;
-
-		pChr->HookPower(Power, pResult->m_ClientID);
+		int Power = -1;
+		for (int i = 0; i < NUM_EXTRAS; i++)
+		{
+			if (!str_comp_nocase(pResult->GetString(0), pSelf->GetExtraName(i)))
+				if (pSelf->IsValidHookPower(i))
+					Power = i;
+		}
+		if (Power == -1)
+			ShowInfo = true;
+		else
+		{
+			if (pChr->m_HookPower == Power)
+				Power = HOOK_NORMAL;
+			pChr->HookPower(Power, pResult->m_ClientID);
+		}
+	}
+	if (!pResult->NumArguments() || ShowInfo)
+	{
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available hook powers:");
+		for (int i = 0; i < NUM_EXTRAS; i++)
+		{
+			if (pSelf->IsValidHookPower(i))
+				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", pSelf->GetExtraName(i));
+		}
 	}
 }
 
