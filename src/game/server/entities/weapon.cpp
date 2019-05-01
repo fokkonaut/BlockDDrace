@@ -2,7 +2,6 @@
 #include <game/server/gamecontext.h>
 #include "weapon.h"
 #include "pickup.h"
-
 #include <game/server/teams.h>
 
 CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack)
