@@ -11,9 +11,6 @@
 
 #include <game/gamecore.h>
 
-#define V3_OFFSET_X 0 * 32 //was 277
-#define V3_OFFSET_Y 0 * 32 //was 48
-
 #define NUM_ATOMS 6
 #define NUM_TRAILS 20
 #define TRAIL_DIST 20

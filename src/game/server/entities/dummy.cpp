@@ -1,6 +1,9 @@
 #include "character.h"
 #include <game/server/player.h>
 
+#define V3_OFFSET_X 0 * 32 //was 277
+#define V3_OFFSET_Y 0 * 32 //was 48
+
 void CCharacter::DummyTick()
 {
 	if (!m_pPlayer->m_IsDummy)
