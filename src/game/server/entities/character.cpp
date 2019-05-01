@@ -2906,7 +2906,7 @@ void CCharacter::BlockDDraceTick()
 		m_LastHitWeapon = -1;
 	}
 
-	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS)
+	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS) // the newer clients use the DDNet network character to know whether they can collide or not
 	{
 		CCharacter *pPas = GameServer()->m_World.ClosestCharacter(m_Pos, 50.0f, this);
 		if (pPas && pPas->m_Passive)
