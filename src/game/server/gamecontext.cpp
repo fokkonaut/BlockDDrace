@@ -1648,11 +1648,11 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				{
 					if (pChr->m_InShop)
 					{
-						if (pChr->m_PurchaseState == 2)
+						if (pChr->m_PurchaseState == SHOP_STATE_CONFIRM)
 							pChr->PurchaseEnd(false);
-						else if (pChr->m_PurchaseState == 1)
+						else if (pChr->m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
 						{
-							if ((pChr->m_ShopWindowPage != -1) && (pChr->m_ShopWindowPage != 0))
+							if ((pChr->m_ShopWindowPage != SHOP_PAGE_NONE) && (pChr->m_ShopWindowPage != SHOP_PAGE_MAIN))
 								pChr->ConfirmPurchase();
 						}
 					}
@@ -1676,12 +1676,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				{
 					if (pChr->m_InShop)
 					{
-						if (pChr->m_PurchaseState == 2)
+						if (pChr->m_PurchaseState == SHOP_STATE_CONFIRM)
 							pChr->PurchaseEnd(true);
-						else if(pChr->m_ShopWindowPage == -1)
+						else if(pChr->m_ShopWindowPage == SHOP_PAGE_NONE)
 						{
 							pChr->ShopWindow(0);
-							pChr->m_PurchaseState = 1;
+							pChr->m_PurchaseState = SHOP_STATE_OPENED_WINDOW;
 						}
 					}
 					else

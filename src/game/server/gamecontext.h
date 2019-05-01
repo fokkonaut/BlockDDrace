@@ -53,6 +53,15 @@ enum
 	NUM_TUNEZONES = 256
 };
 
+enum
+{
+	SHOP_PAGE_NONE = -1,
+	SHOP_PAGE_MAIN,
+
+	SHOP_STATE_OPENED_WINDOW = 1,
+	SHOP_STATE_CONFIRM,
+};
+
 
 class IConsole;
 class IEngine;
