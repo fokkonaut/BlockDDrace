@@ -671,8 +671,7 @@ void CGameContext::ConRemoveWeapon(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, pResult->GetInteger(0), true, true);
 }
 
-void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
-		int Weapon, bool Remove, bool AddRemoveCommand)
+void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, int Weapon, bool Remove, bool AddRemoveCommand)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Offset = AddRemoveCommand ? 1 : 0;
@@ -691,6 +690,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 	int Amount = (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
 	bool Spread = pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : pChr->m_aSpreadWeapon[Weapon];
+	if (Remove)
+		Spread = false;
 
 	if (Weapon == -1)
 	{
@@ -719,7 +720,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData,
 	else
 	{
 		if (Weapon == WEAPON_NINJA && pChr->m_ScrollNinja && Remove)
-			pChr->ScrollNinja(Remove);
+			pChr->ScrollNinja(false);
 		pChr->GiveWeapon(Weapon, Remove, Amount);
 
 		if (pChr->m_aSpreadWeapon[Weapon] != Spread)
