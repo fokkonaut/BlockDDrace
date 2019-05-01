@@ -38,7 +38,7 @@ void CDragger::Move()
 	mem_zero(m_SoloEnts, sizeof(m_SoloEnts));
 	CCharacter *TempEnts[MAX_CLIENTS];
 
-	int Num = GameServer()->m_World.FindEntities(m_Pos, g_Config.m_SvDraggerRange,
+	int Num = GameWorld()->FindEntities(m_Pos, g_Config.m_SvDraggerRange,
 			(CEntity**) m_SoloEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 	mem_copy(TempEnts, m_SoloEnts, sizeof(TempEnts));
 
@@ -253,7 +253,7 @@ void CDragger::Drag()
 
 void CDragger::Reset()
 {
-	GameServer()->m_World.DestroyEntity(this);
+	GameWorld()->DestroyEntity(this);
 }
 
 void CDragger::Tick()

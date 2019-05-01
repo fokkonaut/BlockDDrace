@@ -23,8 +23,7 @@ CLight::CLight(CGameWorld *pGameWorld, vec2 Pos, float Rotation, int Length,
 
 bool CLight::HitCharacter()
 {
-	std::list<CCharacter *> HitCharacters =
-			GameServer()->m_World.IntersectedCharacters(m_Pos, m_To, 0.0f, 0);
+	std::list<CCharacter *> HitCharacters = GameWorld()->IntersectedCharacters(m_Pos, m_To, 0.0f, 0);
 	if (HitCharacters.empty())
 		return false;
 	for (std::list<CCharacter *>::iterator i = HitCharacters.begin();
@@ -77,7 +76,7 @@ void CLight::Step()
 
 void CLight::Reset()
 {
-	GameServer()->m_World.DestroyEntity(this);
+	GameWorld()->DestroyEntity(this);
 }
 
 void CLight::Tick()

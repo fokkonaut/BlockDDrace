@@ -14,7 +14,7 @@ CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 	m_ProximityRadius = ms_PhysSize;
 	m_PrevPos = m_Pos;
 
-	GameServer()->m_World.InsertEntity(this);
+	GameWorld()->InsertEntity(this);
 
 	Reset();
 }
@@ -73,7 +73,7 @@ void CFlag::Grab(CCharacter *pChr)
 
 void CFlag::Tick()
 {
-	if (GameServer()->m_World.m_ResetRequested || GameServer()->m_World.m_Paused)
+	if (GameWorld()->m_ResetRequested || GameWorld()->m_Paused)
 		return;
 
 	// flag hits death-tile or left the game layer, reset it
@@ -97,7 +97,7 @@ void CFlag::Tick()
 	else
 	{
 		CCharacter *apCloseCCharacters[MAX_CLIENTS];
-		int Num = GameServer()->m_World.FindEntities(m_Pos, ms_PhysSize, (CEntity**)apCloseCCharacters, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+		int Num = GameWorld()->FindEntities(m_Pos, ms_PhysSize, (CEntity**)apCloseCCharacters, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 		for (int i = 0; i < Num; i++)
 		{
 			if (!apCloseCCharacters[i] || apCloseCCharacters[i]->GetPlayer()->GetTeam() == TEAM_SPECTATORS || GameServer()->Collision()->IntersectLine(m_Pos, apCloseCCharacters[i]->m_Pos, NULL, NULL))

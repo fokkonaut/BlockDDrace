@@ -45,7 +45,7 @@ void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 		GameServer()->CreateDeath(m_Pos, -1);
 
 	Server()->SnapFreeID(m_ID2);
-	GameServer()->m_World.DestroyEntity(this);
+	GameWorld()->DestroyEntity(this);
 }
 
 void CWeapon::Tick()

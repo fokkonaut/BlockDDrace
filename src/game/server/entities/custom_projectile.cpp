@@ -32,7 +32,7 @@ CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos
 
 void CCustomProjectile::Reset()
 {
-	GameServer()->m_World.DestroyEntity(this);
+	GameWorld()->DestroyEntity(this);
 }
 
 void CCustomProjectile::Tick()
@@ -90,7 +90,7 @@ void CCustomProjectile::Move()
 void CCustomProjectile::HitCharacter()
 {
 	vec2 NewPos = m_Pos + m_Core;
-	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
+	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
 	if (!pHit)
 		return;
 

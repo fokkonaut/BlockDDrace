@@ -25,7 +25,7 @@ CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Own
 
 void CStraightGrenade::Reset()
 {
-	GameServer()->m_World.DestroyEntity(this);
+	GameWorld()->DestroyEntity(this);
 }
 
 void CStraightGrenade::Tick()
@@ -64,7 +64,7 @@ void CStraightGrenade::Move()
 void CStraightGrenade::HitCharacter()
 {
 	vec2 NewPos = m_Pos + m_Core;
-	CCharacter* pHit = GameServer()->m_World.IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
+	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
 	if (!pHit)
 		return;
 

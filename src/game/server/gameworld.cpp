@@ -322,7 +322,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, float Radius, CEntity *pNotTh
 	float ClosestRange = Radius*2;
 	CCharacter *pClosest = 0;
 
-	CCharacter *p = (CCharacter *)GameServer()->m_World.FindFirst(ENTTYPE_CHARACTER);
+	CCharacter *p = (CCharacter *)FindFirst(ENTTYPE_CHARACTER);
 	for(; p; p = (CCharacter *)p->TypeNext())
 	{
 		if(p == pNotThis)
@@ -351,7 +351,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Mod
 	float ClosestRange = 0.f;
 	CCharacter *pClosest = 0;
 
-	CCharacter *p = (CCharacter *)GameServer()->m_World.FindFirst(ENTTYPE_CHARACTER);
+	CCharacter *p = (CCharacter *)FindFirst(ENTTYPE_CHARACTER);
 	for (; p; p = (CCharacter *)p->TypeNext())
 	{
 		if (p == pNotThis)
