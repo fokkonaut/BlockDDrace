@@ -337,15 +337,16 @@ void CPlayer::Snap(int SnappingClient)
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
-	m_ShowName = true;
-
 	//spooky ghost
 	const char *pClan;
 	if (m_SpookyGhost)
-		pClan = m_RealName;
+		pClan = Server()->ClientName(m_ClientID);
 	else
-		pClan = m_RealClan;
+		pClan = Server()->ClientClan(m_ClientID);
 	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
+
+
+	m_ShowName = true;
 
 	if (m_SpookyGhost)
 		m_ShowName = false;
