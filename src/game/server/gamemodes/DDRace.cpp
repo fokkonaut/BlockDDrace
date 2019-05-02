@@ -80,7 +80,7 @@ void CGameControllerDDRace::ForceFlagOwner(int ClientID, int Team)
 {
 	CFlag *F = m_apFlags[Team];
 	CCharacter *pChr = GameServer()->GetPlayerChar(ClientID);
-	if (!F || (!pChr && ClientID >= 0))
+	if (!F || (Team != TEAM_RED && Team != TEAM_BLUE) || (!pChr && ClientID >= 0))
 		return;
 	if (ClientID >= 0 && HasFlag(pChr) == -1)
 	{

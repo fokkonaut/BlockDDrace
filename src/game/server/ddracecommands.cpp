@@ -427,8 +427,7 @@ void CGameContext::ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : pResult->m_ClientID;
-	if (pResult->GetInteger(0) == TEAM_RED || pResult->GetInteger(0) == TEAM_BLUE)
-		((CGameControllerDDRace*)pSelf->m_pController)->ForceFlagOwner(Victim, pResult->GetInteger(0));
+	((CGameControllerDDRace*)pSelf->m_pController)->ForceFlagOwner(Victim, pResult->GetInteger(0));
 }
 
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
