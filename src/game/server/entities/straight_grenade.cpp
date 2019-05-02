@@ -1,8 +1,9 @@
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include "straight_grenade.h"
-
 #include <game/server/teams.h>
+#include <game/server/gamemodes/DDRace.h>
+#include <engine/shared/config.h>
 
 CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Owner, float Force, vec2 Dir)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
@@ -52,6 +53,20 @@ void CStraightGrenade::Tick()
 
 	Move();
 	HitCharacter();
+
+	// weapon teleport
+	int x = GameServer()->Collision()->GetIndex(m_PrevPos, m_Pos);
+	int z;
+	if (g_Config.m_SvOldTeleportWeapons)
+		z = GameServer()->Collision()->IsTeleport(x);
+	else
+		z = GameServer()->Collision()->IsTeleportWeapon(x);
+	if (z && ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size())
+	{
+		int Num = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size();
+		m_Pos = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1][(!Num) ? Num : rand() % Num];
+		m_StartTick = Server()->Tick();
+	}
 
 	m_PrevPos = m_Pos;
 }

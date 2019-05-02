@@ -2,6 +2,8 @@
 #include <game/server/gamecontext.h>
 #include <game/server/teams.h>
 #include "custom_projectile.h"
+#include <game/server/gamemodes/DDRace.h>
+#include <engine/shared/config.h>
 
 CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
 		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int Type, float Lifetime, float Accel, float Speed) :
@@ -77,6 +79,20 @@ void CCustomProjectile::Tick()
 	}
 	else if(m_CollisionState == COLLIDED_ONCE)
 		m_CollisionState = COLLIDED_TWICE;
+
+	// weapon teleport
+	int x = GameServer()->Collision()->GetIndex(m_PrevPos, m_Pos);
+	int z;
+	if (g_Config.m_SvOldTeleportWeapons)
+		z = GameServer()->Collision()->IsTeleport(x);
+	else
+		z = GameServer()->Collision()->IsTeleportWeapon(x);
+	if (z && ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size())
+	{
+		int Num = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size();
+		m_Pos = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1][(!Num) ? Num : rand() % Num];
+		m_EvalTick = Server()->Tick();
+	}
 
 	m_PrevPos = m_Pos;
 }
