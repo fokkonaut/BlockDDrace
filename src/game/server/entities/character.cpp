@@ -2001,7 +2001,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_JETPACK) || (m_LastIndexFrontTile == TILE_JETPACK))
 			return;
-		Jetpack(!(m_Jetpack && g_Config.m_SvExtraTilesToggle));
+		Jetpack(!m_Jetpack);
 	}
 
 	//rainbow toggle
@@ -2009,7 +2009,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_RAINBOW) || (m_LastIndexFrontTile == TILE_RAINBOW))
 			return;
-		Rainbow(!((m_Rainbow || m_pPlayer->m_InfRainbow) && g_Config.m_SvExtraTilesToggle));
+		Rainbow(!(m_Rainbow || m_pPlayer->m_InfRainbow));
 	}
 
 	//atom toggle
@@ -2017,7 +2017,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_ATOM) || (m_LastIndexFrontTile == TILE_ATOM))
 			return;
-		Atom(!((m_Atom || m_pPlayer->m_InfAtom) && g_Config.m_SvExtraTilesToggle));
+		Atom(!(m_Atom || m_pPlayer->m_InfAtom));
 	}
 
 	//trail toggle
@@ -2025,7 +2025,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_TRAIL) || (m_LastIndexFrontTile == TILE_TRAIL))
 			return;
-		Trail(!((m_Trail || m_pPlayer->m_InfTrail) && g_Config.m_SvExtraTilesToggle));
+		Trail(!(m_Trail || m_pPlayer->m_InfTrail));
 	}
 
 	//spooky ghost toggle
@@ -2033,7 +2033,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST) || m_pPlayer->m_aHasItem[SPOOKY_GHOST])
 			return;
-		SpookyGhost(!(m_pPlayer->m_HasSpookyGhost && g_Config.m_SvExtraTilesToggle));
+		SpookyGhost(!m_pPlayer->m_HasSpookyGhost);
 	}
 
 	//add meteor
@@ -2057,7 +2057,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_PASSIVE) || (m_LastIndexFrontTile == TILE_PASSIVE))
 			return;
-		Passive(!(m_Passive && g_Config.m_SvExtraTilesToggle));
+		Passive(!m_Passive);
 	}
 
 	//vanilla mode
@@ -2081,7 +2081,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_BLOODY) || (m_LastIndexFrontTile == TILE_BLOODY))
 			return;
-		Bloody(!((m_Bloody || m_StrongBloody) && g_Config.m_SvExtraTilesToggle));
+		Bloody(!(m_Bloody || m_StrongBloody));
 	}
 
 	m_LastIndexTile = m_TileIndex;
