@@ -2594,6 +2594,17 @@ void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUse
 	}
 }
 
+void CGameContext::ConchainNumSpreadShots(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pfnCallback(pResult, pCallbackUserData);
+	if (pResult->NumArguments())
+	{
+		if (g_Config.m_SvNumSpreadShots % 2 == 0)
+			g_Config.m_SvNumSpreadShots += 1; //no even numbers, as the spread gun would be not mirrored otherwise
+	}
+}
+
 void CGameContext::OnConsoleInit()
 {
 	m_pServer = Kernel()->RequestInterface<IServer>();
@@ -2631,8 +2642,8 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("vote", "r['yes'|'no']", CFGFLAG_SERVER, ConVote, this, "Force a vote to yes/no");
 
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
-
 	Console()->Chain("sv_vanilla_shotgun", ConchainVanillaShotgun, this);
+	Console()->Chain("sv_num_spread_shots", ConchainNumSpreadShots, this);
 
 	#define CONSOLE_COMMAND(name, params, flags, callback, userdata, help) m_pConsole->Register(name, params, flags, callback, userdata, help);
 	#include <game/ddracecommands.h>
