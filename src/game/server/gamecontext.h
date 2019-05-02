@@ -419,6 +419,8 @@ private:
 	static void ConDummymode(IConsole::IResult *pResult, void *pUserData);
 	static void ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);

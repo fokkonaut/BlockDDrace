@@ -17,11 +17,17 @@ CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 
 	GameWorld()->InsertEntity(this);
 
-	Reset();
+	Reset(true);
 }
 
-void CFlag::Reset()
+void CFlag::Reset(bool Init)
 {
+	if (!Init)
+	{
+		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
+		if (g_Config.m_SvFlagSounds)
+			GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
+	}
 	m_pCarrier = NULL;
 	m_pLastCarrier = NULL;
 	m_AtStand = 1;
@@ -65,7 +71,6 @@ void CFlag::Grab(CCharacter *pChr)
 		else if (m_Team == TEAM_BLUE)
 			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL);
 	}
-
 	if (m_AtStand)
 		m_GrabTick = Server()->Tick();
 	m_AtStand = false;
@@ -81,9 +86,6 @@ void CFlag::Tick()
 	// flag hits death-tile or left the game layer, reset it
 	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
 	{
-		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
-		if (g_Config.m_SvFlagSounds)
-			GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
 		Reset();
 		return;
 	}
@@ -121,10 +123,8 @@ void CFlag::Tick()
 	{
 		if (Server()->Tick() > m_DropTick + Server()->TickSpeed() * 90)
 		{
-			GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
-			if (g_Config.m_SvFlagSounds)
-				GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
 			Reset();
+			return;
 		}
 		else
 			HandleDropped();

@@ -76,6 +76,22 @@ void CGameControllerDDRace::ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter 
 	}
 }
 
+void CGameControllerDDRace::ForceFlagOwner(int ClientID, int Team)
+{
+	CFlag *F = m_apFlags[Team];
+	CCharacter *pChr = GameServer()->GetPlayerChar(ClientID);
+	if (!F || (!pChr && ClientID >= 0))
+		return;
+	if (ClientID >= 0 && HasFlag(pChr) == -1)
+	{
+		if (F->GetCarrier())
+			F->SetLastCarrier(F->GetCarrier());
+		F->Grab(pChr);
+	}
+	else if (ClientID == -1)
+		F->Reset();
+}
+
 int CGameControllerDDRace::HasFlag(CCharacter *pChr)
 {
 	if (!pChr)

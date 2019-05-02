@@ -21,6 +21,7 @@ public:
 	virtual bool OnEntity(int Index, vec2 Pos);
 	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon, bool Suicide);
 
+	void ForceFlagOwner(int ClientID, int Team);
 	void ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter *pNewCarrier);
 	int HasFlag(CCharacter *pChr);
 
