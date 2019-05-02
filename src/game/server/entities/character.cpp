@@ -410,7 +410,7 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 	{
 		WillFire = true;
-		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GetActiveWeapon() == WEAPON_GUN)
+		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
 			m_CountSpookyGhostInputs = true;
 
 		if (m_ShopWindowPage != -1 && m_PurchaseState == 1)
@@ -576,23 +576,6 @@ void CCharacter::FireWeapon()
 				if (Sound)
 					GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 			}
-
-			//spooky ghost
-			if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GetActiveWeapon() == WEAPON_GUN && m_CountSpookyGhostInputs)
-			{
-				m_TimesShot++;
-				if ((m_pPlayer->m_HasSpookyGhost || m_pPlayer->m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
-				{
-					SetSpookyGhost();
-					m_TimesShot = 0;
-				}
-				else if (m_TimesShot == 2 && m_pPlayer->m_SpookyGhost)
-				{
-					UnsetSpookyGhost();
-					m_TimesShot = 0;
-				}
-				m_CountSpookyGhostInputs = false;
-			}
 		} break;
 
 		case WEAPON_SHOTGUN:
@@ -739,9 +722,9 @@ void CCharacter::FireWeapon()
 				0,						//freeze
 				0,						//explosive
 				0,						//unfreeze
-				0,						//bloody
-				0,						//ghost
-				0,						//spooky
+				m_pPlayer->m_SpookyGhost,//bloody
+				m_pPlayer->m_SpookyGhost,//ghost
+				m_pPlayer->m_SpookyGhost,//spooky
 				WEAPON_HEART_GUN,		//type
 				6,						//lifetime
 				1.0f,					//accel
@@ -775,6 +758,23 @@ void CCharacter::FireWeapon()
 		else
 			GameServer()->TuningList()[m_TuneZone].Get(38 + GetActiveWeapon(), &FireDelay);
 		m_ReloadTimer = FireDelay * Server()->TickSpeed() / 1000;
+	}
+
+	//spooky ghost
+	if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN && m_CountSpookyGhostInputs)
+	{
+		m_TimesShot++;
+		if ((m_pPlayer->m_HasSpookyGhost || m_pPlayer->m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
+		{
+			SetSpookyGhost();
+			m_TimesShot = 0;
+		}
+		else if (m_TimesShot == 2 && m_pPlayer->m_SpookyGhost)
+		{
+			UnsetSpookyGhost();
+			m_TimesShot = 0;
+		}
+		m_CountSpookyGhostInputs = false;
 	}
 }
 
@@ -2698,12 +2698,11 @@ bool CCharacter::Freeze(int Seconds)
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
 	{
 		BackupWeapons(BACKUP_FREEZE);
+		for (int i = 0; i < NUM_WEAPONS; i++)
+			m_aWeapons[i].m_Ammo = 0;
 
 		if (m_FreezeTick == 0 || m_FirstFreezeTick == 0)
-		{
 			m_FirstFreezeTick = Server()->Tick();
-		}
-
 		m_FreezeTime = Seconds == -1 ? Seconds : Seconds * Server()->TickSpeed();
 		m_FreezeTick = Server()->Tick();
 		return true;
@@ -2969,9 +2968,6 @@ void CCharacter::BackupWeapons(int Type)
 			{
 				m_aWeaponsBackupGot[i][Type] = m_aWeapons[i].m_Got;
 				m_aWeaponsBackup[i][Type] = m_aWeapons[i].m_Ammo;
-				m_aWeapons[i].m_Ammo = 0;
-				if (Type == BACKUP_SPOOKY_GHOST)
-					m_aWeapons[i].m_Got = false;
 			}
 		}
 		m_WeaponsBackupped[Type] = true;
@@ -3062,8 +3058,9 @@ void CCharacter::DropWeapon(int WeaponID)
 void CCharacter::SetSpookyGhost()
 {
 	BackupWeapons(BACKUP_SPOOKY_GHOST);
-	m_aWeapons[WEAPON_GUN].m_Got = true;
-	m_aWeapons[WEAPON_GUN].m_Ammo = -1;
+	for (int i = 0; i < NUM_WEAPONS; i++)
+		if (GameServer()->GetRealWeapon(i) != WEAPON_GUN)
+			m_aWeapons[i].m_Got = false;
 	str_copy(m_pPlayer->m_TeeInfos.m_SkinName, "ghost", sizeof(m_pPlayer->m_TeeInfos.m_SkinName));
 	m_pPlayer->m_TeeInfos.m_UseCustomColor = 0;
 	m_pPlayer->m_SpookyGhost = true;

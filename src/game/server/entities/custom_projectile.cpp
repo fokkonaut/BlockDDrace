@@ -58,16 +58,19 @@ void CCustomProjectile::Tick()
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 		}
 
-		if (m_CollisionState == COLLIDED_NOT)
-			m_CollisionState = COLLIDED_ONCE;
-
 		if (m_Bloody)
 		{
-			if (m_Ghost && m_CollisionState == COLLIDED_ONCE && Server()->Tick() % 5 == 0)
-				GameServer()->CreateDeath(m_PrevPos, m_Owner);
+			if (m_Ghost && m_CollisionState == COLLIDED_ONCE)
+			{
+				if (Server()->Tick() % 5 == 0)
+					GameServer()->CreateDeath(m_PrevPos, m_Owner);
+			}
 			else
 				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 		}
+
+		if (m_CollisionState == COLLIDED_NOT)
+			m_CollisionState = COLLIDED_ONCE;
 
 		if (m_CollisionState == COLLIDED_TWICE || !m_Ghost)
 			Reset();
