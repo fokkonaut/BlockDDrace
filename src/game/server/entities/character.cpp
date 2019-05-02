@@ -458,6 +458,7 @@ void CCharacter::FireWeapon()
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
 	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
 		NumShots = 1;
+	bool Sound = true;
 
 	for (int i = 0; i < NumShots; i++)
 	{
@@ -471,7 +472,8 @@ void CCharacter::FireWeapon()
 		{
 			// reset objects Hit
 			m_NumObjectsHit = 0;
-			GameServer()->CreateSound(m_Pos, SOUND_HAMMER_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_HAMMER_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
 			if (m_Hit&DISABLE_HIT_HAMMER) break;
 
@@ -571,7 +573,8 @@ void CCharacter::FireWeapon()
 					Msg.AddInt(((int *)&p)[i]);
 
 				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
-				GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+				if (Sound)
+					GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 			}
 
 			//spooky ghost
@@ -635,7 +638,8 @@ void CCharacter::FireWeapon()
 
 				new CLaser(GameWorld(), m_Pos, Direction, LaserReach, m_pPlayer->GetCID(), WEAPON_SHOTGUN);
 			}
-			GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_GRENADE:
@@ -671,7 +675,8 @@ void CCharacter::FireWeapon()
 				Msg.AddInt(((int *)&p)[i]);
 			Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 
-			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_RIFLE:
@@ -683,7 +688,8 @@ void CCharacter::FireWeapon()
 				LaserReach = GameServer()->TuningList()[m_TuneZone].m_LaserReach;
 
 			new CLaser(GameWorld(), m_Pos, Direction, LaserReach, m_pPlayer->GetCID(), WEAPON_RIFLE);
-			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_NINJA:
@@ -695,7 +701,8 @@ void CCharacter::FireWeapon()
 			m_Ninja.m_CurrentMoveTime = g_pData->m_Weapons.m_Ninja.m_Movetime * Server()->TickSpeed() / 1000;
 			m_Ninja.m_OldVelAmount = length(m_Core.m_Vel);
 
-			GameServer()->CreateSound(m_Pos, SOUND_NINJA_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_NINJA_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_PLASMA_RIFLE:
@@ -717,7 +724,8 @@ void CCharacter::FireWeapon()
 				1.0f,					//accel
 				10.0f					//speed
 			);
-			GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_RIFLE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_HEART_GUN:
@@ -739,15 +747,19 @@ void CCharacter::FireWeapon()
 				1.0f,					//accel
 				10.0f					//speed
 			);
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
 		case WEAPON_STRAIGHT_GRENADE:
 		{
 			new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
-			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+			if (Sound)
+				GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 		}
+
+		Sound = false;
 	}
 
 	m_AttackTick = Server()->Tick();
