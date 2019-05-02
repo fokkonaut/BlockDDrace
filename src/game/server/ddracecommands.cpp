@@ -382,7 +382,7 @@ void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->GetVictim();
+	int Victim = pResult->NumArguments() > 1 ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 	bool ShowInfo = false;
 	if (pChr)
