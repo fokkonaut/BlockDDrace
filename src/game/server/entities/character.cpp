@@ -3373,3 +3373,9 @@ void CCharacter::SpreadWeapon(int Type, bool Set, int FromID, bool Silent)
 	m_aSpreadWeapon[Type] = Set;
 	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Set, FromID, Silent, Type);
 }
+
+void CCharacter::FreezeHammer(bool Set, int FromID, bool Silent)
+{
+	m_FreezeHammer = Set;
+	GameServer()->SendExtraMessage(FREEZE_HAMMER, m_pPlayer->GetCID(), Set, FromID, Silent);
+}

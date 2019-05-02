@@ -59,6 +59,7 @@ enum
 	ENDLESS_HOOK,
 	INFINITE_JUMPS,
 	SPREAD_WEAPON,
+	FREEZE_HAMMER,
 	NUM_EXTRAS
 };
 
@@ -154,6 +155,7 @@ public:
 	void EndlessHook(bool Set = true, int FromID = -1, bool Silent = false);
 	void InfiniteJumps(bool Set = true, int FromID = -1, bool Silent = false);
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
+	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
 
 
 private:

@@ -414,6 +414,15 @@ void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConFreezeHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->FreezeHammer(!pChr->m_FreezeHammer, pResult->m_ClientID);
+}
+
 void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -1125,7 +1134,6 @@ void CGameContext::ConList(IConsole::IResult *pResult, void *pUserData)
 		pSelf->List(ClientID, &zerochar);
 }
 
-
 void CGameContext::ConSetDDRTeam(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -1148,41 +1156,6 @@ void CGameContext::ConUninvite(IConsole::IResult *pResult, void *pUserData)
 	pController->m_Teams.SetClientInvited(pResult->GetInteger(1), pResult->GetVictim(), false);
 }
 
-void CGameContext::ConFreezeHammer(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	int Victim = pResult->GetVictim();
-
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-
-	if (!pChr)
-		return;
-
-	char aBuf[128];
-	str_format(aBuf, sizeof aBuf, "'%s' got freeze hammer!",
-			pSelf->Server()->ClientName(Victim));
-	pSelf->SendChat(-1, CHAT_ALL, aBuf);
-
-	pChr->m_FreezeHammer = true;
-}
-
-void CGameContext::ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *) pUserData;
-	int Victim = pResult->GetVictim();
-
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-
-	if (!pChr)
-		return;
-
-	char aBuf[128];
-	str_format(aBuf, sizeof aBuf, "'%s' lost freeze hammer!",
-			pSelf->Server()->ClientName(Victim));
-	pSelf->SendChat(-1, CHAT_ALL, aBuf);
-
-	pChr->m_FreezeHammer = false;
-}
 void CGameContext::ConVoteNo(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
