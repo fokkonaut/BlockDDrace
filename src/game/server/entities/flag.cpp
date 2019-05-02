@@ -4,6 +4,7 @@
 #include <engine/shared/config.h>
 #include <game/server/teams.h>
 #include "flag.h"
+#include <game/server/gamemodes/DDRace.h>
 
 CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_FLAG)
@@ -28,6 +29,7 @@ void CFlag::Reset()
 	m_Vel = vec2(0,0);
 	m_GrabTick = 0;
 	m_DropFreezeTick = 0;
+	m_TeleCheckpoint = 0;
 }
 
 void CFlag::TickPaused()
@@ -160,14 +162,12 @@ void CFlag::HandleDropped()
 	//Gravity
 	m_Vel.y += GameServer()->Tuning()->m_Gravity;
 
-	//Friction
-	vec2 TempVel = m_Vel;
-
 	//Speedups
 	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
 	{
 		int Force, MaxSpeed = 0;
 		vec2 Direction, MaxVel;
+		vec2 TempVel = m_Vel;
 		float TeeAngle, SpeederAngle, DiffAngle, SpeedLeft, TeeSpeed;
 		GameServer()->Collision()->GetSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos), &Direction, &Force, &MaxSpeed);
 
@@ -215,10 +215,10 @@ void CFlag::HandleDropped()
 			}
 			else
 				TempVel += Direction * Force;
+			m_Vel = TempVel;
 		}
 	}
 
-	//stopper
 	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
 	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
 	if (!Indices.empty())
@@ -228,14 +228,7 @@ void CFlag::HandleDropped()
 	{
 		HandleTiles(CurrentIndex);
 	}
-
-	if (TempVel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
-		TempVel.x = 0;
-	if (TempVel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
-		TempVel.x = 0;
-	m_Vel = TempVel;
 	IsGrounded(true);
-
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
 }
 
@@ -261,6 +254,7 @@ void CFlag::Snap(int SnappingClient)
 
 void CFlag::HandleTiles(int Index)
 {
+	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
 	int MapIndex = Index;
 	float Offset = 4.0f;
 	MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));
@@ -287,4 +281,74 @@ void CFlag::HandleTiles(int Index)
 	m_TileFFlagsB = GameServer()->Collision()->GetFTileFlags(MapIndexB);
 	m_TileFIndexT = GameServer()->Collision()->GetFTileIndex(MapIndexT);
 	m_TileFFlagsT = GameServer()->Collision()->GetFTileFlags(MapIndexT);
+
+	// teleporters
+	int tcp = GameServer()->Collision()->IsTCheckpoint(MapIndex);
+	if (tcp)
+		m_TeleCheckpoint = tcp;
+
+	int z = GameServer()->Collision()->IsTeleport(MapIndex);
+	if (z && Controller->m_TeleOuts[z - 1].size())
+	{
+		int Num = Controller->m_TeleOuts[z - 1].size();
+		m_Pos = Controller->m_TeleOuts[z - 1][(!Num) ? Num : rand() % Num];
+		return;
+	}
+	int evilz = GameServer()->Collision()->IsEvilTeleport(MapIndex);
+	if (evilz && Controller->m_TeleOuts[evilz - 1].size())
+	{
+		int Num = Controller->m_TeleOuts[evilz - 1].size();
+		m_Pos = Controller->m_TeleOuts[evilz - 1][(!Num) ? Num : rand() % Num];
+		m_Vel.x = 0;
+		m_Vel.y = 0;
+		return;
+	}
+	if (GameServer()->Collision()->IsCheckEvilTeleport(MapIndex))
+	{
+		// first check if there is a TeleCheckOut for the current recorded checkpoint, if not check previous checkpoints
+		for (int k = m_TeleCheckpoint - 1; k >= 0; k--)
+		{
+			if (Controller->m_TeleCheckOuts[k].size())
+			{
+				int Num = Controller->m_TeleCheckOuts[k].size();
+				m_Pos = Controller->m_TeleCheckOuts[k][(!Num) ? Num : rand() % Num];
+				m_Vel.x = 0;
+				m_Vel.y = 0;
+				return;
+			}
+		}
+		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
+		vec2 SpawnPos;
+		if (GameServer()->m_pController->CanSpawn(0, &SpawnPos))
+		{
+			m_Pos = SpawnPos;
+			m_Vel.x = 0;
+			m_Vel.y = 0;
+		}
+		return;
+	}
+	if (GameServer()->Collision()->IsCheckTeleport(MapIndex))
+	{
+		// first check if there is a TeleCheckOut for the current recorded checkpoint, if not check previous checkpoints
+		for (int k = m_TeleCheckpoint - 1; k >= 0; k--)
+		{
+			if (Controller->m_TeleCheckOuts[k].size())
+			{
+				int Num = Controller->m_TeleCheckOuts[k].size();
+				m_Pos = Controller->m_TeleCheckOuts[k][(!Num) ? Num : rand() % Num];
+				return;
+			}
+		}
+		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
+		vec2 SpawnPos;
+		if (GameServer()->m_pController->CanSpawn(0, &SpawnPos))
+			m_Pos = SpawnPos;
+		return;
+	}
+
+	// stopper
+	if (m_Vel.x > 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_270) || (m_TileIndexL == TILE_STOP && m_TileFlagsL == ROTATION_270) || (m_TileIndexL == TILE_STOPS && (m_TileFlagsL == ROTATION_90 || m_TileFlagsL == ROTATION_270)) || (m_TileIndexL == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_270) || (m_TileFIndexL == TILE_STOP && m_TileFFlagsL == ROTATION_270) || (m_TileFIndexL == TILE_STOPS && (m_TileFFlagsL == ROTATION_90 || m_TileFFlagsL == ROTATION_270)) || (m_TileFIndexL == TILE_STOPA)))
+		m_Vel.x = 0;
+	if (m_Vel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
+		m_Vel.x = 0;
 }

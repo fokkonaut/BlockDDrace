@@ -21,6 +21,7 @@ private:
 	vec2 m_StandPos;
 	vec2 m_PrevPos;
 
+	int m_TeleCheckpoint;
 	void HandleTiles(int Index);
 	int MapIndexL;
 	int MapIndexR;

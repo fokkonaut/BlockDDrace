@@ -36,6 +36,7 @@ private:
 	// have to define a new ID variable for the bullet
 	int m_ID2;
 
+	int m_TeleCheckpoint;
 	void HandleTiles(int Index);
 	int MapIndexL;
 	int MapIndexR;
