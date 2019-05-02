@@ -3011,7 +3011,7 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 
 void CCharacter::DropWeapon(int WeaponID)
 {
-	if ((IsFrozen) || (m_FreezeTime) || !g_Config.m_SvAllowDroppingWeapons || (WeaponID == WEAPON_NINJA))
+	if (IsFrozen || m_FreezeTime || !g_Config.m_SvAllowDroppingWeapons || WeaponID == WEAPON_NINJA)
 		return;
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)

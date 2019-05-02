@@ -1690,10 +1690,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						}
 					}
 					else
-					{
-						if (g_Config.m_SvAllowDroppingWeapons)
-							pChr->DropWeapon(pChr->GetActiveWeapon()); // drop the weapon youre holding
-					}
+						pChr->DropWeapon(pChr->GetActiveWeapon());
 				}
 			}
 
