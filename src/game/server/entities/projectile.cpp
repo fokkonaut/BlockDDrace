@@ -180,7 +180,7 @@ void CProjectile::Tick()
 
 		if (pTargetChr && m_Spooky)
 		{
-			pTargetChr->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed());
+			pTargetChr->SetEmote(EMOTE_SURPRISE, Server()->Tick() + 2 * Server()->TickSpeed());
 			GameServer()->SendEmoticon(pTargetChr->GetPlayer()->GetCID(), EMOTICON_GHOST);
 		}
 

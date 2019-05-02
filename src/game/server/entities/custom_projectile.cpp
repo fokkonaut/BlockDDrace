@@ -101,7 +101,7 @@ void CCustomProjectile::HitCharacter()
 
 	if (m_Spooky)
 	{
-		pHit->SetEmote(3, Server()->Tick() + 2 * Server()->TickSpeed());
+		pHit->SetEmote(EMOTE_SURPRISE, Server()->Tick() + 2 * Server()->TickSpeed());
 		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), EMOTICON_GHOST);
 	}
 
