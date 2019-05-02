@@ -174,6 +174,8 @@ void CPickup::Tick()
 						{
 							//nothing here yet
 						}
+						break;
+
 					default:
 						break;
 				};
