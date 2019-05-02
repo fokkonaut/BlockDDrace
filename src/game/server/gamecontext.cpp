@@ -2593,7 +2593,6 @@ void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUse
 
 void CGameContext::ConchainNumSpreadShots(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
-	CGameContext *pSelf = (CGameContext *)pUserData;
 	pfnCallback(pResult, pCallbackUserData);
 	if (pResult->NumArguments())
 	{
