@@ -3020,16 +3020,16 @@ void CCharacter::DropWeapon(int WeaponID)
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
 	}
 
-	int m_CountWeapons = 0;
+	int WeaponCount = 0;
 	for (int i = 0; i < NUM_WEAPONS; i++)
 	{
 		if (i == WEAPON_NINJA)
 			continue;
 		if (m_aWeapons[i].m_Got)
-			m_CountWeapons++;
+			WeaponCount++;
 	}
 
-	if (m_CountWeapons > 1)
+	if (WeaponCount > 1)
 	{
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		CWeapon *Weapon = new CWeapon(GameWorld(), WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
