@@ -143,7 +143,7 @@ void CCharacter::SetWeapon(int W)
 	GameServer()->CreateSound(m_Pos, SOUND_WEAPON_SWITCH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
 	if(GetActiveWeapon() < 0 || GetActiveWeapon() >= NUM_WEAPONS)
-		SetActiveWeapon(0);
+		SetActiveWeapon(WEAPON_GUN);
 }
 
 void CCharacter::SetSolo(bool Solo)
@@ -2745,6 +2745,8 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 		return;
 	}
 
+	m_aWeapons[Weapon].m_Got = !Remove;
+
 	if (Remove)
 	{
 		if (GetActiveWeapon() == Weapon)
@@ -2757,8 +2759,6 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 		else
 			m_aWeaponsBackup[Weapon][BACKUP_FREEZE] = Ammo;
 	}
-
-	m_aWeapons[Weapon].m_Got = !Remove;
 }
 
 void CCharacter::GiveAllWeapons()
