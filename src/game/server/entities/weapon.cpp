@@ -3,6 +3,7 @@
 #include "weapon.h"
 #include "pickup.h"
 #include <game/server/teams.h>
+#include <engine/shared/config.h>
 #include <game/server/gamemodes/DDRace.h>
 
 CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack)
@@ -54,7 +55,7 @@ void CWeapon::Tick()
 	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
 		pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if (m_Owner >= 0 && !GameServer()->m_apPlayers[m_Owner])
+	if (m_Owner >= 0 && !GameServer()->m_apPlayers[m_Owner] && g_Config.m_SvDestroyDropsOnLeave)
 		Reset();
 
 	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
