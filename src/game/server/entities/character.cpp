@@ -2684,7 +2684,7 @@ void CCharacter::DDRacePostCoreTick()
 		m_IsBlueTeleGunTeleport = false;
 	}
 
-	if (!(IsFrozen))
+	if (!IsFrozen)
 		m_FirstFreezeTick = 0;
 
 	HandleBroadcast();
