@@ -172,7 +172,8 @@ void CProjectile::Tick()
 		}
 		else if(pTargetChr && m_Freeze && ((m_Layer == LAYER_SWITCH && GameServer()->Collision()->m_pSwitchers[m_Number].m_Status[pTargetChr->Team()]) || m_Layer != LAYER_SWITCH))
 			pTargetChr->Freeze();
-		else if (pTargetChr)
+
+		if (!m_Explosive && pTargetChr)
 		{
 			int Dmg = (pTargetChr && pTargetChr->m_Passive) ? 0 : g_pData->m_Weapons.m_aId[m_Weapon].m_Damage;
 			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), Dmg, m_Owner, m_Weapon);
