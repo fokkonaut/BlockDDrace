@@ -1938,9 +1938,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						break;
 				}
 				if (pPlayer->m_SpookyGhost)
-				{
 					pChr->SetEmoteType(EMOTE_SURPRISE);
-				}
 				pChr->SetEmoteStop(Server()->Tick() + 2 * Server()->TickSpeed());
 			}
 		}
