@@ -1415,12 +1415,12 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked port '%s'", aData);
+	dbg_msg("acc", "checked port '%d'", atoi(aData));
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked login state '%s'", aData);
-	if (aData[0] == '1')
+	dbg_msg("acc", "checked login state '%d'", atoi(aData));
+	if (atoi(aData) == 1)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in");
 		AccFile.close();
@@ -1429,8 +1429,8 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked disabled state '%s'", aData);
-	if (aData[0] == '1')
+	dbg_msg("acc", "checked disabled state '%d'", atoi(aData));
+	if (atoi(aData) == 1)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is disabled");
 		AccFile.close();
