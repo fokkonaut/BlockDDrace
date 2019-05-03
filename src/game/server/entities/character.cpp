@@ -2736,6 +2736,15 @@ bool CCharacter::UnFreeze()
 
 void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 {
+	for (int i = 0; i < NUM_BACKUPS; i++)
+	{
+		m_aWeaponsBackupGot[Weapon][i] = !Remove;
+		m_aWeaponsBackup[Weapon][i] = Ammo;
+	}
+
+	if (m_pPlayer->m_SpookyGhost)
+		return;
+
 	if (Weapon == WEAPON_NINJA)
 	{
 		if (Remove)
@@ -2756,8 +2765,6 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 	{
 		if (!m_FreezeTime)
 			m_aWeapons[Weapon].m_Ammo = Ammo;
-		else
-			m_aWeaponsBackup[Weapon][BACKUP_FREEZE] = Ammo;
 	}
 }
 
