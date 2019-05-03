@@ -789,6 +789,8 @@ void CGameContext::ConTeleport(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	int Tele = pResult->GetVictim();
 	int TeleTo = pResult->NumArguments() == 2 ? pResult->GetInteger(1) : pResult->m_ClientID;
+	if (pResult->NumArguments() < 2 && Tele != pResult->m_ClientID)
+		return;
 
 	CCharacter *pChr = pSelf->GetPlayerChar(Tele);
 	if (pChr && pSelf->GetPlayerChar(TeleTo))
