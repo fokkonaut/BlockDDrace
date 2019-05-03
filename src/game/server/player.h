@@ -267,7 +267,7 @@ public:
 
 	int64 m_ShopBotAntiSpamTick;
 
-	int m_AllowTimeScore;
+	bool m_AllowTimeScore;
 	int m_DisplayScore;
 
 	bool IsHooked(int Power = -1);
