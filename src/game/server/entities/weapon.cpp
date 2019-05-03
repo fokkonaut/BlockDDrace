@@ -383,7 +383,7 @@ void CWeapon::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(0, &SpawnPos))
+		if (GameServer()->m_pController->CanSpawn(pOwner ? pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
 		{
 			m_Pos = SpawnPos;
 			m_Vel.x = 0;
@@ -405,7 +405,7 @@ void CWeapon::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(0, &SpawnPos))
+		if (GameServer()->m_pController->CanSpawn(pOwner ? pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
 			m_Pos = SpawnPos;
 		return;
 	}
