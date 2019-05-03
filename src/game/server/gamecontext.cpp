@@ -1049,7 +1049,7 @@ void CGameContext::OnClientEnter(int ClientID)
 	Score()->PlayerData(ClientID)->Reset();
 
 	// level score is the default score
-	m_apPlayers[ClientID]->m_DisplayScore = 1;
+	m_apPlayers[ClientID]->m_DisplayScore = SCORE_TIME;
 
 	// Can't set score here as LoadScore() is threaded, run it in
 	// LoadScoreThreaded() instead

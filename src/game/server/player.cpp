@@ -448,9 +448,9 @@ void CPlayer::Snap(int SnappingClient)
 	// send 0 if times of others are not shown
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 		pPlayerInfo->m_Score = -9999;
-	else if (pSnapping->m_DisplayScore != 0) // race time
+	else if (pSnapping->m_DisplayScore != SCORE_TIME) // race time
 	{
-		if (pSnapping->m_DisplayScore == 1) // level
+		if (pSnapping->m_DisplayScore == SCORE_LEVEL) // level
 		{
 			if (m_IsLoggedIn)
 				pPlayerInfo->m_Score = m_Level;

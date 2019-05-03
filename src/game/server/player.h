@@ -30,6 +30,12 @@ enum
 	MODE_VANILLA
 };
 
+enum
+{
+	SCORE_TIME = 0,
+	SCORE_LEVEL
+};
+
 
 // player object
 class CPlayer

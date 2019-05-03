@@ -1232,14 +1232,14 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 
 	if (!str_comp_nocase(pResult->GetString(0), "time"))
 	{
-		pPlayer->m_AllowTimeScore = 1;
-		pPlayer->m_DisplayScore = 0;
+		pPlayer->m_AllowTimeScore = true;
+		pPlayer->m_DisplayScore = SCORE_TIME;
 		pSelf->SendChatTarget(pResult->m_ClientID, "Changed displayed score to 'time'.");
 	}
 	else if (!str_comp_nocase(pResult->GetString(0), "level"))
 	{
-		pPlayer->m_AllowTimeScore = 0;
-		pPlayer->m_DisplayScore = 1;
+		pPlayer->m_AllowTimeScore = false;
+		pPlayer->m_DisplayScore = SCORE_LEVEL;
 		pSelf->SendChatTarget(pResult->m_ClientID, "Changed displayed score to 'level'.");
 	}
 	else
