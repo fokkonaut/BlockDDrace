@@ -40,7 +40,7 @@ void CCustomProjectile::Tick()
 	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
 		pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if (m_Owner >= 0 && !pOwner)
+	if (m_Owner >= 0 && !pOwner && g_Config.m_SvDestroyBulletsOnDeath)
 		Reset();
 
 	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
