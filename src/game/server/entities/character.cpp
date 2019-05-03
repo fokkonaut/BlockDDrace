@@ -2763,10 +2763,9 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 
 void CCharacter::GiveAllWeapons()
 {
-	for(int i=WEAPON_GUN;i<NUM_WEAPONS-1;i++)
-	{
-		GiveWeapon(i);
-	}
+	for(int i=WEAPON_GUN;i<NUM_WEAPONS;i++)
+		if (i != WEAPON_NINJA)
+			GiveWeapon(i);
 }
 
 void CCharacter::Pause(bool Pause)
