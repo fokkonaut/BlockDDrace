@@ -1279,7 +1279,6 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	char aBuf[512];
 	char aUsername[32];
 	char aPassword[32];
 	char aPassword2[32];
