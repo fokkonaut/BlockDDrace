@@ -463,9 +463,9 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
 	else
 		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Dead");
-	if (pPlayer->m_IsLoggedIn)
+	if (pPlayer->GetAccID() > 0)
 	{
-		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pPlayer->m_AccountName);
+		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pSelf->m_Accounts[pPlayer->GetAccID()].m_Username);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
 	else

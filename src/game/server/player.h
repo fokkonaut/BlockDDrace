@@ -12,13 +12,6 @@
 
 enum
 {
-	SPOOKY_GHOST,
-	POLICE,
-	NUM_ITEMS
-};
-
-enum
-{
 	FIX_SET_NAME_ONLY = 0,
 	FIX_CHAT_MSG,
 	FIX_KILL_MSG
@@ -244,23 +237,8 @@ public:
 	bool m_HasSpookyGhost;
 	int m_InfMeteors;
 
-	bool m_IsLoggedIn;
-	bool m_AccountDisabled;
-	char m_AccountName[32];
-	char m_AccountPassword[32];
-	int m_Level;
-	int m_XP;
-	int m_NeededXP;
-	int m_Money;
-	int m_Kills;
-	int m_Deaths;
-	int m_PoliceLevel;
-
-	bool m_aHasItem[NUM_ITEMS];
-
-	void SaveAccountStats(bool SetLoggedIn);
-	void Logout();
-
+	//account
+	int GetAccID();
 	void CheckLevel();
 	void MoneyTransaction(int Amount, const char *Description);
 	char m_aLastMoneyTransaction[10][256];

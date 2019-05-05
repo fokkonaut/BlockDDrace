@@ -764,7 +764,7 @@ void CCharacter::FireWeapon()
 	if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN && m_CountSpookyGhostInputs)
 	{
 		m_TimesShot++;
-		if ((m_pPlayer->m_HasSpookyGhost || m_pPlayer->m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
+		if ((m_pPlayer->m_HasSpookyGhost || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
 		{
 			SetSpookyGhost();
 			m_TimesShot = 0;
@@ -1221,8 +1221,8 @@ void CCharacter::Die(int Killer, int Weapon)
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
 		if (GameServer()->m_apPlayers[Killer])
-			GameServer()->m_apPlayers[Killer]->m_Kills++;
-		m_pPlayer->m_Deaths++;
+			GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_Kills++;
+		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 		Suicide = false;
 	}
 
@@ -2043,7 +2043,7 @@ void CCharacter::HandleTiles(int Index)
 	//spooky ghost toggle
 	if ((m_TileIndex == TILE_SPOOKY_GHOST) || (m_TileFIndex == TILE_SPOOKY_GHOST))
 	{
-		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST) || m_pPlayer->m_aHasItem[SPOOKY_GHOST])
+		if ((m_LastIndexTile == TILE_SPOOKY_GHOST) || (m_LastIndexFrontTile == TILE_SPOOKY_GHOST) || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST])
 			return;
 		SpookyGhost(!m_pPlayer->m_HasSpookyGhost);
 	}

@@ -23,6 +23,11 @@
 #if defined(CONF_SQL)
 #include "score/sql_score.h"
 #endif
+#include <fstream>
+#include <limits>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
 
 enum
 {
@@ -929,6 +934,10 @@ void CGameContext::OnTick()
 			}
 		}
 
+	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
+		for (int i = 1; i < m_Accounts.size(); i++)
+			Logout(i);
+
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
 	{
@@ -1143,7 +1152,8 @@ void CGameContext::OnClientConnected(int ClientID)
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
-	m_apPlayers[ClientID]->Logout();
+	if (m_apPlayers[ClientID]->GetAccID() > 0)
+		Logout(m_apPlayers[ClientID]->GetAccID());
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);
 	delete m_apPlayers[ClientID];
@@ -2948,8 +2958,8 @@ void CGameContext::OnInit()
 		}
 	}
 
-	if (g_Config.m_SvDefaultBots)
-		ConnectDefaultBots();
+	//if (g_Config.m_SvDefaultBots)
+	//	ConnectDefaultBots();
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -2960,6 +2970,9 @@ void CGameContext::OnInit()
 		}
 	}
 #endif
+
+	AddAccount();
+	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
 }
 
 void CGameContext::DeleteTempfile()
@@ -3115,11 +3128,8 @@ void CGameContext::OnShutdown(bool FullShutdown)
 		aio_free(m_pTeeHistorianFile);
 	}
 
-	for (int i = 0; i < MAX_CLIENTS; i++)
-	{
-		if (m_apPlayers[i])
-			m_apPlayers[i]->Logout();
-	}
+	for (int i = 1; i < m_Accounts.size(); i++)
+		Logout(i);
 
 	DeleteTempfile();
 	Console()->ResetServerGameSettings();
@@ -3655,6 +3665,172 @@ void CGameContext::ForceVote(int EnforcerID, bool Success)
 	SendChatTarget(-1, aBuf);
 	str_format(aBuf, sizeof(aBuf), "forcing vote %s", pOption);
 	Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
+}
+
+int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser)
+{
+	CGameContext *pSelf = (CGameContext *)pUser;
+
+	if (!IsDir && str_endswith(pName, ".acc"))
+	{
+		char aUsername[32];
+		str_copy(aUsername, pName, str_length(pName) - 3);
+
+		int ID = pSelf->AddAccount();
+		pSelf->ReadAccountStats(ID, aUsername);
+
+		std::string data;
+		char aData[32];
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
+		std::fstream AccFile(aBuf);
+
+		getline(AccFile, data);
+		str_copy(aData, data.c_str(), sizeof(aData));
+		int Port = atoi(aData);
+
+		getline(AccFile, data);
+		str_copy(aData, data.c_str(), sizeof(aData));
+		if (atoi(aData) == 1)
+		{
+			pSelf->Logout(ID);
+			dbg_msg("acc", "logged out account '%s'", aUsername);
+		}
+		AccFile.close();
+	}
+
+	return 0;
+}
+
+int CGameContext::AddAccount()
+{
+	m_Accounts.push_back(AccountInfo());
+
+	int ID = m_Accounts.size()-1;
+	m_Accounts[ID].m_Port = 0;
+	m_Accounts[ID].m_LoggedIn = 0;
+	m_Accounts[ID].m_Disabled = 0;
+	m_Accounts[ID].m_Password[0] = 0;
+	m_Accounts[ID].m_Username[0] = 0;
+	m_Accounts[ID].m_ClientID = -1;
+	m_Accounts[ID].m_Level = 0;
+	m_Accounts[ID].m_XP = 0;
+	m_Accounts[ID].m_NeededXP = 0;
+	m_Accounts[ID].m_Money = 0;
+	m_Accounts[ID].m_Kills = 0;
+	m_Accounts[ID].m_Deaths = 0;
+	for (int i = 0; i < NUM_ITEMS; i++)
+		m_Accounts[ID].m_aHasItem[i] = false;
+	m_Accounts[ID].m_PoliceLevel = 0;
+
+	return ID;
+}
+
+void CGameContext::ReadAccountStats(int ID, char *pName)
+{
+	std::string data;
+	char aData[32];
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, pName);
+	std::fstream AccFile(aBuf);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Port = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_LoggedIn = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Disabled = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	str_copy(m_Accounts[ID].m_Password, aData, sizeof(m_Accounts[ID].m_Password));
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_Username, aData, sizeof(m_Accounts[ID].m_Username));
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_ClientID = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Level = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_XP = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_NeededXP = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Money = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Kills = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_Deaths = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_aHasItem[SPOOKY_GHOST] = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_aHasItem[POLICE] = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_PoliceLevel = atoi(aData);
+}
+
+void CGameContext::WriteAccountStats(int ID)
+{
+	std::string data;
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, m_Accounts[ID].m_Username);
+	std::ofstream AccFile(aBuf);
+
+	if (AccFile.is_open())
+	{
+		AccFile << g_Config.m_SvPort << "\n";
+		AccFile << m_Accounts[ID].m_LoggedIn << "\n";
+		AccFile << m_Accounts[ID].m_Disabled << "\n";
+		AccFile << m_Accounts[ID].m_Password << "\n";
+		AccFile << m_Accounts[ID].m_Username << "\n";
+		AccFile << m_Accounts[ID].m_ClientID << "\n";
+		AccFile << m_Accounts[ID].m_Level << "\n";
+		AccFile << m_Accounts[ID].m_XP << "\n";
+		AccFile << m_Accounts[ID].m_NeededXP << "\n";
+		AccFile << m_Accounts[ID].m_Money << "\n";
+		AccFile << m_Accounts[ID].m_Kills << "\n";
+		AccFile << m_Accounts[ID].m_Deaths << "\n";
+		for (int i = 0; i < NUM_ITEMS; i++)
+			AccFile << m_Accounts[ID].m_aHasItem[i] << "\n";
+		AccFile << m_Accounts[ID].m_PoliceLevel << "\n";
+
+		dbg_msg("acc", "saved acc '%s'", m_Accounts[ID].m_Username);
+	}
+	AccFile.close();
+}
+
+void CGameContext::Logout(int ID)
+{
+	if (m_Accounts[ID].m_ClientID >= 0)
+		SendChatTarget(m_Accounts[ID].m_ClientID, "Successfully logged out");
+	m_Accounts[ID].m_LoggedIn = false;
+	m_Accounts[ID].m_ClientID = -1;
+	WriteAccountStats(ID);
 }
 
 int CGameContext::GetNextClientID()

@@ -6,13 +6,6 @@
 #include <game/server/teams.h>
 #include <game/server/gamemodes/DDRace.h>
 #include <game/version.h>
-
-#include <fstream>
-#include <limits>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-
 #if defined(CONF_SQL)
 #include <game/server/score/sql_score.h>
 #endif
@@ -1340,34 +1333,20 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
-	if (std::ifstream(aBuf))
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
-		return;
-	}
-	std::ofstream AccFile(aBuf);
-	if (!AccFile)
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "An error occured, please report this error code to an admin: #100");
-		dbg_msg("acc", "error #100 writing file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
-		AccFile.close();
-		return;
-	}
+	for (int i = 1; i < pSelf->m_Accounts.size(); i++)
+		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
+		{
+			pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
+			return;
+		}
 
-	if (AccFile.is_open())
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "Successfully registered an account, you can login now");
-		AccFile << "\n\n\n" << aPassword << "\n";	//password is in line 4
-		dbg_msg("acc", "account created file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
-	}
-	else
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "An error occured, pls report this error code to an admin: #101");
-		dbg_msg("acc", "error #101 writing the file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
-	}
+	int ID = pSelf->AddAccount();
+	str_copy(pSelf->m_Accounts[ID].m_Password, aPassword, sizeof(pSelf->m_Accounts[ID].m_Password));
+	str_copy(pSelf->m_Accounts[ID].m_Username, aUsername, sizeof(pSelf->m_Accounts[ID].m_Username));
+	pSelf->WriteAccountStats(ID);
 
-	AccFile.close();
+	pSelf->SendChatTarget(pResult->m_ClientID, "Successfully registered an account, you can login now");
+	dbg_msg("acc", "account created, file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
 }
 
 void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
@@ -1386,7 +1365,7 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	str_copy(aUsername, pResult->GetString(0), sizeof(aUsername));
 	str_copy(aPassword, pResult->GetString(1), sizeof(aPassword));
 
-	if (pPlayer->m_IsLoggedIn)
+	if (pPlayer->GetAccID() > 0)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You are already logged in");
 		return;
@@ -1398,115 +1377,44 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	std::string data;
-	char aData[32];
-	char aBuf[128];
-	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
-	std::fstream AccFile(aBuf);
+	int ID = 0;
+	for (int i = 1; i < pSelf->m_Accounts.size(); i++)
+		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
+		{
+			ID = i;
+			break;
+		}
 
-	///////////CHECKS
-
-	if (!std::ifstream(aBuf))
+	if (ID == 0)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesnt exist, please register first");
-		AccFile.close();
 		return;
 	}
 
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked port '%d'", atoi(aData));
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked login state '%d'", atoi(aData));
-	if (atoi(aData) == 1)
+	if (pSelf->m_Accounts[ID].m_LoggedIn)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in");
-		AccFile.close();
 		return;
 	}
 
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "checked disabled state '%d'", atoi(aData));
-	if (atoi(aData) == 1)
+	if (pSelf->m_Accounts[ID].m_Disabled)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is disabled");
-		AccFile.close();
 		return;
 	}
 
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	if (str_comp(aData, aPassword))
+	if (str_comp(pSelf->m_Accounts[ID].m_Password, aPassword))
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Wrong password");
-		AccFile.close();
 		return;
 	}
 
-	///////////CHECKS
+	pSelf->m_Accounts[ID].m_Port = g_Config.m_SvPort;
+	pSelf->m_Accounts[ID].m_LoggedIn = true;
+	pSelf->m_Accounts[ID].m_ClientID = pResult->m_ClientID;
+	pSelf->WriteAccountStats(ID);
 
-	///////////STATS
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded level '%d'", atoi(aData));
-	pPlayer->m_Level = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded xp '%d'", atoi(aData));
-	pPlayer->m_XP = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded needed xp '%d'", atoi(aData));
-	pPlayer->m_NeededXP = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded money '%d'", atoi(aData));
-	pPlayer->m_Money = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded kills '%d'", atoi(aData));
-	pPlayer->m_Kills = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded deaths '%d'", atoi(aData));
-	pPlayer->m_Deaths = atoi(aData);
-
-	///////////STATS
-
-	///////////ITEMS
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded spooky ghost '%d'", atoi(aData));
-	pPlayer->m_aHasItem[SPOOKY_GHOST] = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded police '%d'", atoi(aData));
-	pPlayer->m_aHasItem[POLICE] = atoi(aData);
-
-	getline(AccFile, data);
-	str_copy(aData, data.c_str(), sizeof(aData));
-	dbg_msg("acc", "loaded police level '%d'", atoi(aData));
-	pPlayer->m_PoliceLevel = atoi(aData);
-
-	///////////ITEMS
-
-	str_copy(pPlayer->m_AccountName, aUsername, sizeof(pPlayer->m_AccountName));
-	str_copy(pPlayer->m_AccountPassword, aPassword, sizeof(pPlayer->m_AccountPassword));
-	pPlayer->m_IsLoggedIn = true;
-	pPlayer->SaveAccountStats(true);
 	pSelf->SendChatTarget(pResult->m_ClientID, "Successfully logged in");
-	AccFile.close();
 }
 
 void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
@@ -1514,19 +1422,19 @@ void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
 
-	if (!g_Config.m_SvAccounts && !pPlayer->m_IsLoggedIn)
+	if (!g_Config.m_SvAccounts && pPlayer->GetAccID() <= 0)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Accounts are not supported on this server");
 		return;
 	}
 
-	if (!pPlayer->m_IsLoggedIn)
+	if (pPlayer->GetAccID() <= 0)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You are not logged in");
 		return;
 	}
 
-	pPlayer->Logout();
+	pSelf->Logout(pPlayer->GetAccID());
 }
 
 void CGameContext::ConPoliceInfo(IConsole::IResult *pResult, void *pUserData)

@@ -275,9 +275,6 @@ void CPlayer::Tick()
 	}
 
 	CheckLevel();
-
-	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
-		SaveAccountStats(true);
 }
 
 void CPlayer::FixForNoName(int ID)
@@ -452,10 +449,10 @@ void CPlayer::Snap(int SnappingClient)
 	{
 		if (pSnapping->m_DisplayScore == SCORE_LEVEL) // level
 		{
-			if (m_IsLoggedIn)
-				pPlayerInfo->m_Score = m_Level;
-			else
-				pPlayerInfo->m_Score = 0;
+			//if (GetAccID() > 0)
+				//pPlayerInfo->m_Score = GameServer()->m_Accounts[GetAccID()].m_Level;
+			//else
+				//pPlayerInfo->m_Score = 0;
 		}
 	}
 	else
@@ -928,113 +925,41 @@ void CPlayer::SpectatePlayerName(const char *pName)
 	}
 }
 
-void CPlayer::Logout()
+int CPlayer::GetAccID()
 {
-	if (!m_IsLoggedIn)
-		return;
-
-	std::string data;
-	char aBuf[128];
-	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, m_AccountName);
-	std::ofstream AccFile(aBuf);
-
-	if (AccFile.is_open())
-	{
-		SaveAccountStats(false);
-
-		m_IsLoggedIn = false;
-		str_copy(m_AccountName, "", sizeof(m_AccountName));
-		str_copy(m_AccountPassword, "", sizeof(m_AccountPassword));
-		m_AccountDisabled = false;
-		m_Level = 0;
-		m_XP = 0;
-		m_NeededXP = 0;
-		m_Money = 0;
-		m_Kills = 0;
-		m_Deaths = 0;
-		m_PoliceLevel = 0;
-
-		for (int i = 0; i < NUM_ITEMS; i++)
-			m_aHasItem[i] = false;
-
-		GameServer()->SendChatTarget(m_ClientID, "Successfully logged out");
-	}
-	else
-	{
-		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #102");
-		dbg_msg("acc", "error #102 account '%s' (%s) failed to save", m_AccountName, aBuf);
-	}
-	AccFile.close();
-}
-
-void CPlayer::SaveAccountStats(bool SetLoggedIn)
-{
-	if (!m_IsLoggedIn)
-		return;
-
-	std::string data;
-	char aBuf[128];
-	str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, m_AccountName);
-	std::ofstream AccFile(aBuf);
-
-	if (!std::ifstream(aBuf))
-	{
-		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #103");
-		dbg_msg("acc", "error #103 account '%s' (%s) failed to save", m_AccountName, aBuf);
-		AccFile.close();
-		return;
-	}
-
-	if (AccFile.is_open())
-	{
-		dbg_msg("acc", "saved acc '%s'", m_AccountName);
-
-		AccFile << g_Config.m_SvPort << "\n";
-		AccFile << SetLoggedIn << "\n";
-		AccFile << m_AccountDisabled << "\n";
-		AccFile << m_AccountPassword << "\n";
-		AccFile << m_Level << "\n";
-		AccFile << m_XP << "\n";
-		AccFile << m_NeededXP << "\n";
-		AccFile << m_Money << "\n";
-		AccFile << m_Kills << "\n";
-		AccFile << m_Deaths << "\n";
-		AccFile << m_aHasItem[SPOOKY_GHOST] << "\n";
-		AccFile << m_aHasItem[POLICE] << "\n";
-		AccFile << m_PoliceLevel << "\n";
-	}
-	else
-	{
-		GameServer()->SendChatTarget(m_ClientID, "An error occured, pls report this error code to an admin: #102");
-		dbg_msg("acc", "error #102 account '%s' (%s) failed to save", m_AccountName, aBuf);
-	}
-	AccFile.close();
+	for (int i = 1; i < GameServer()->m_Accounts.size(); i++)
+		if (GameServer()->m_Accounts[i].m_ClientID == m_ClientID)
+			return i;
+	return 0;
 }
 
 void CPlayer::CheckLevel()
 {
-	if (!m_IsLoggedIn)
+	if (GetAccID() <= 0)
 		return;
 
-	m_NeededXP = 1;
+	GameServer()->m_Accounts[GetAccID()].m_NeededXP = 1;
 
-	if (m_XP >= m_NeededXP)
+	if (GameServer()->m_Accounts[GetAccID()].m_XP >= GameServer()->m_Accounts[GetAccID()].m_NeededXP)
 	{
-		m_Level++;
+		GameServer()->m_Accounts[GetAccID()].m_Level++;
 
 		char aBuf[256];
-		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", m_Level);
+		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", GameServer()->m_Accounts[GetAccID()].m_Level);
 		GameServer()->SendChatTarget(m_ClientID, aBuf);
 
-		m_NeededXP += 2;
+		GameServer()->m_Accounts[GetAccID()].m_NeededXP += 2;
 
-		dbg_msg("acc", "Level: %d, NeededXP: %d", m_Level, m_NeededXP);
+		dbg_msg("acc", "Level: %d, NeededXP: %d", GameServer()->m_Accounts[GetAccID()].m_Level, GameServer()->m_Accounts[GetAccID()].m_NeededXP);
 	}
 }
 
 void CPlayer::MoneyTransaction(int Amount, const char *Description)
 {
-	m_Money += Amount;
+	if (GetAccID() <= 0)
+		return;
+
+	GameServer()->m_Accounts[GetAccID()].m_Money += Amount;
 
 	str_format(m_aLastMoneyTransaction[9], sizeof(m_aLastMoneyTransaction[9]), "%s", m_aLastMoneyTransaction[8]);
 	str_format(m_aLastMoneyTransaction[8], sizeof(m_aLastMoneyTransaction[8]), "%s", m_aLastMoneyTransaction[7]);

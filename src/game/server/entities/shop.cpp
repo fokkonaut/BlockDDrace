@@ -155,6 +155,7 @@ void CCharacter::BuyItem(int ItemID)
 	}
 
 	char aBuf[256];
+	int ID = m_pPlayer->GetAccID();
 
 	if (ItemID == 1)
 	{
@@ -164,11 +165,11 @@ void CCharacter::BuyItem(int ItemID)
 			return;
 		}
 
-		if (m_pPlayer->m_Level < 5)
+		if (GameServer()->m_Accounts[ID].m_Level < 5)
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 5 to buy rainbow.");
 		else
 		{
-			if (m_pPlayer->m_Money >= 1500)
+			if (GameServer()->m_Accounts[ID].m_Money >= 1500)
 			{
 				m_pPlayer->MoneyTransaction(-1500, "-1.500 money. (bought 'rainbow')");
 				Rainbow(false, -1, true);
@@ -186,11 +187,11 @@ void CCharacter::BuyItem(int ItemID)
 			return;
 		}
 
-		if (m_pPlayer->m_Level < 15)
+		if (GameServer()->m_Accounts[ID].m_Level < 15)
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 15 to buy bloody.");
 		else
 		{
-			if (m_pPlayer->m_Money >= 3500)
+			if (GameServer()->m_Accounts[ID].m_Money >= 3500)
 			{
 				m_pPlayer->MoneyTransaction(-3500, "-3.500 money. (bought 'bloody')");
 				Bloody(false, -1, true);
@@ -202,56 +203,56 @@ void CCharacter::BuyItem(int ItemID)
 	}
 	else if (ItemID == 3)
 	{
-		if (!m_pPlayer->m_aHasItem[POLICE])
+		if (!GameServer()->m_Accounts[ID].m_aHasItem[POLICE])
 		{
-			if (m_pPlayer->m_Level < 18)
+			if (GameServer()->m_Accounts[ID].m_Level < 18)
 			{
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 18 to buy police.");
 				return;
 			}
 		}
-		else if (m_pPlayer->m_PoliceLevel == 1)
+		else if (GameServer()->m_Accounts[ID].m_PoliceLevel == 1)
 		{
-			if (m_pPlayer->m_Level < 25)
+			if (GameServer()->m_Accounts[ID].m_Level < 25)
 			{
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 25 to upgrade to police rank 2.");
 				return;
 			}
 		}
-		else if (m_pPlayer->m_PoliceLevel == 2)
+		else if (GameServer()->m_Accounts[ID].m_PoliceLevel == 2)
 		{
-			if (m_pPlayer->m_Level < 30)
+			if (GameServer()->m_Accounts[ID].m_Level < 30)
 			{
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 30 to upgrade to police rank 3.");
 				return;
 			}
 		}
-		else if (m_pPlayer->m_PoliceLevel == 3)
+		else if (GameServer()->m_Accounts[ID].m_PoliceLevel == 3)
 		{
-			if (m_pPlayer->m_Level < 40)
+			if (GameServer()->m_Accounts[ID].m_Level < 40)
 			{
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 40 to upgrade to police rank 4.");
 				return;
 			}
 		}
-		else if (m_pPlayer->m_PoliceLevel == 4)
+		else if (GameServer()->m_Accounts[ID].m_PoliceLevel == 4)
 		{
-			if (m_pPlayer->m_Level < 50)
+			if (GameServer()->m_Accounts[ID].m_Level < 50)
 			{
 				GameServer()->SendChatTarget(m_pPlayer->GetCID(), "Your level is too low! You need to be level 50 to upgrade to police rank 5.");
 				return;
 			}
 		}
-		if (m_pPlayer->m_PoliceLevel >= 5)
+		if (GameServer()->m_Accounts[ID].m_PoliceLevel >= 5)
 		{
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the highest police rank.");
 			return;
 		}
-		if (m_pPlayer->m_Money >= 100000)
+		if (GameServer()->m_Accounts[ID].m_Money >= 100000)
 		{
 			m_pPlayer->MoneyTransaction(-100000, "-100.000 money. (bought 'police')");
-			m_pPlayer->m_PoliceLevel++;
-			str_format(aBuf, sizeof(aBuf), "You bought Police Level %d", m_pPlayer->m_PoliceLevel);
+			GameServer()->m_Accounts[ID].m_PoliceLevel++;
+			str_format(aBuf, sizeof(aBuf), "You bought Police Level %d", GameServer()->m_Accounts[ID].m_PoliceLevel);
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), aBuf);
 		}
 		else

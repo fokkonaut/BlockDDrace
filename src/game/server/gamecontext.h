@@ -11,6 +11,8 @@
 #include <game/mapbugs.h>
 #include <game/voting.h>
 
+#include <vector>
+
 #include "eventhandler.h"
 #include "gamecontroller.h"
 #include "gameworld.h"
@@ -60,6 +62,13 @@ enum
 
 	SHOP_STATE_OPENED_WINDOW = 1,
 	SHOP_STATE_CONFIRM,
+};
+
+enum
+{
+	SPOOKY_GHOST,
+	POLICE,
+	NUM_ITEMS
 };
 
 
@@ -267,6 +276,31 @@ public:
 	// Returns true if someone is actively moderating.
 	bool PlayerModerating();
 	void ForceVote(int EnforcerID, bool Success);
+
+	static int AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser);
+	int AddAccount();
+	int m_NumAccounts;
+	void ReadAccountStats(int ID, char *pName);
+	void WriteAccountStats(int ID);
+	void Logout(int ID);
+	struct AccountInfo
+	{
+		int m_Port;
+		bool m_LoggedIn;
+		bool m_Disabled;
+		char m_Password[32];
+		char m_Username[32];
+		int m_ClientID;
+		int m_Level;
+		int m_XP;
+		int m_NeededXP;
+		int m_Money;
+		int m_Kills;
+		int m_Deaths;
+		bool m_aHasItem[NUM_ITEMS];
+		int m_PoliceLevel;
+	};
+	std::vector<AccountInfo> m_Accounts;
 
 	void FixMotd();
 	char m_aMotd[900];
