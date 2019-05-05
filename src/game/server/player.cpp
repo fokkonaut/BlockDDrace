@@ -449,10 +449,10 @@ void CPlayer::Snap(int SnappingClient)
 	{
 		if (pSnapping->m_DisplayScore == SCORE_LEVEL) // level
 		{
-			//if (GetAccID() > 0)
-				//pPlayerInfo->m_Score = GameServer()->m_Accounts[GetAccID()].m_Level;
-			//else
-				//pPlayerInfo->m_Score = 0;
+			if (GetAccID() > 0)
+				pPlayerInfo->m_Score = GameServer()->m_Accounts[GetAccID()].m_Level;
+			else
+				pPlayerInfo->m_Score = 0;
 		}
 	}
 	else
