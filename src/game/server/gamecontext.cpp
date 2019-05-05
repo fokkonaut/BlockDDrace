@@ -2958,8 +2958,8 @@ void CGameContext::OnInit()
 		}
 	}
 
-	//if (g_Config.m_SvDefaultBots)
-	//	ConnectDefaultBots();
+	if (g_Config.m_SvDefaultBots)
+		ConnectDefaultBots();
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
