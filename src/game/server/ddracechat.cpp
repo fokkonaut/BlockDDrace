@@ -1333,7 +1333,7 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	for (int i = 1; i < pSelf->m_Accounts.size(); i++)
+	for (unsigned int i = 1; i < pSelf->m_Accounts.size(); i++)
 		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
 		{
 			pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
@@ -1378,7 +1378,7 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	}
 
 	int ID = 0;
-	for (int i = 1; i < pSelf->m_Accounts.size(); i++)
+	for (unsigned int i = 1; i < pSelf->m_Accounts.size(); i++)
 		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
 		{
 			ID = i;

@@ -935,7 +935,7 @@ void CGameContext::OnTick()
 		}
 
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
-		for (int i = 1; i < m_Accounts.size(); i++)
+		for (unsigned int i = 1; i < m_Accounts.size(); i++)
 			Logout(i);
 
 #ifdef CONF_DEBUG
@@ -3128,7 +3128,7 @@ void CGameContext::OnShutdown(bool FullShutdown)
 		aio_free(m_pTeeHistorianFile);
 	}
 
-	for (int i = 1; i < m_Accounts.size(); i++)
+	for (unsigned int i = 1; i < m_Accounts.size(); i++)
 		Logout(i);
 
 	DeleteTempfile();
@@ -3691,7 +3691,7 @@ int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int Stor
 
 		getline(AccFile, data);
 		str_copy(aData, data.c_str(), sizeof(aData));
-		if (atoi(aData) == 1)
+		if (atoi(aData) == 1 && Port == g_Config.m_SvPort)
 		{
 			pSelf->Logout(ID);
 			dbg_msg("acc", "logged out account '%s'", aUsername);

@@ -927,7 +927,7 @@ void CPlayer::SpectatePlayerName(const char *pName)
 
 int CPlayer::GetAccID()
 {
-	for (int i = 1; i < GameServer()->m_Accounts.size(); i++)
+	for (unsigned int i = 1; i < GameServer()->m_Accounts.size(); i++)
 		if (GameServer()->m_Accounts[i].m_ClientID == m_ClientID)
 			return i;
 	return 0;
