@@ -7,6 +7,13 @@
 #include "entities/character.h"
 #include "gamecontext.h"
 
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 #include "entities/weapon.h"
 #include <vector>
 
@@ -28,6 +35,12 @@ enum
 	SCORE_TIME = 0,
 	SCORE_LEVEL
 };
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 
 // player object
@@ -115,7 +128,10 @@ public:
 		int m_ColorFeet;
 	} m_TeeInfos;
 
+	// BlockDDrace
 	int m_RespawnTick;
+	// BlockDDrace
+
 	int m_DieTick;
 	int m_Score;
 	int m_JoinTick;
@@ -200,6 +216,37 @@ public:
 	int m_ChatScore;
 	bool m_Moderating;
 
+	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
+	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
+	int64 m_LastPlaytime;
+	int64 m_LastEyeEmote;
+	int64 m_LastBroadcast;
+	bool m_LastBroadcastImportance;
+	int m_LastTarget_x;
+	int m_LastTarget_y;
+	CNetObj_PlayerInput m_LastTarget;
+	int m_Sent1stAfkWarning; // afk timer's 1st warning after 50% of sv_max_afk_time
+	int m_Sent2ndAfkWarning; // afk timer's 2nd warning after 90% of sv_max_afk_time
+	char m_pAfkMsg[160];
+	bool m_EyeEmote;
+	int m_TimerType;
+	int m_DefEmote;
+	int m_DefEmoteReset;
+	bool m_Halloween;
+	bool m_FirstPacket;
+#if defined(CONF_SQL)
+	int64 m_LastSQLQuery;
+#endif
+	bool m_NotEligibleForFinish;
+	int64 m_EligibleForFinishCheck;
+
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	bool m_SnapFixVanilla;
 	bool m_SnapFixDDNet;
 
@@ -249,30 +296,6 @@ public:
 	int m_DisplayScore;
 
 	bool IsHooked(int Power = -1);
-
-	bool AfkTimer(int new_target_x, int new_target_y); //returns true if kicked
-	void AfkVoteTimer(CNetObj_PlayerInput *NewTarget);
-	int64 m_LastPlaytime;
-	int64 m_LastEyeEmote;
-	int64 m_LastBroadcast;
-	bool m_LastBroadcastImportance;
-	int m_LastTarget_x;
-	int m_LastTarget_y;
-	CNetObj_PlayerInput m_LastTarget;
-	int m_Sent1stAfkWarning; // afk timer's 1st warning after 50% of sv_max_afk_time
-	int m_Sent2ndAfkWarning; // afk timer's 2nd warning after 90% of sv_max_afk_time
-	char m_pAfkMsg[160];
-	bool m_EyeEmote;
-	int m_TimerType;
-	int m_DefEmote;
-	int m_DefEmoteReset;
-	bool m_Halloween;
-	bool m_FirstPacket;
-#if defined(CONF_SQL)
-	int64 m_LastSQLQuery;
-#endif
-	bool m_NotEligibleForFinish;
-	int64 m_EligibleForFinishCheck;
 };
 
 #endif

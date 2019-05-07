@@ -54,6 +54,8 @@ void CPlayer::Reset()
 	m_LastInvited = 0;
 	m_WeakHookSpawn = false;
 
+	// BlockDDrace
+
 	m_SnapFixDDNet = GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS;
 	m_SnapFixVanilla = false;
 
@@ -246,6 +248,13 @@ void CPlayer::Tick()
 		GameServer()->SendTuningParams(m_ClientID, m_TuneZone);
 	}
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	if (m_Team != TEAM_SPECTATORS)
 	{
 		if (m_IsDummy && g_Config.m_SvHideBots == 2 && ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(GetCharacter()) == -1)
@@ -276,14 +285,6 @@ void CPlayer::Tick()
 
 	CheckLevel();
 }
-
-void CPlayer::FixForNoName(int ID)
-{
-	m_FixNameID = ID;
-	m_SetRealName = true;
-	m_SetRealNameTick = Server()->Tick() + Server()->TickSpeed() / 20;
-}
-
 
 void CPlayer::PostTick()
 {
@@ -393,6 +394,12 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pPlayerInfo)
 		return;
 
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	m_SnapFixDDNet = false;
 	m_SnapFixVanilla = false;
 	if (m_ClientVersion >= VERSION_DDNET_OLD)
@@ -420,6 +427,13 @@ void CPlayer::Snap(int SnappingClient)
 	}
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
@@ -442,6 +456,8 @@ void CPlayer::Snap(int SnappingClient)
 		pSpectatorInfo->m_Y = m_ViewPos.y;
 	}
 
+
+	// BlockDDrace
 	// send 0 if times of others are not shown
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 		pPlayerInfo->m_Score = -9999;
@@ -457,11 +473,13 @@ void CPlayer::Snap(int SnappingClient)
 	}
 	else
 		pPlayerInfo->m_Score = abs(m_Score) * -1;
+	// BlockDDrace
 
 	CNetObj_AuthInfo *pAuthInfo = static_cast<CNetObj_AuthInfo *>(Server()->SnapNewItem(NETOBJTYPE_AUTHINFO, id, sizeof(CNetObj_AuthInfo)));
 	if(!pAuthInfo)
 		return;
 
+	// BlockDDrace
 	if (g_Config.m_SvAuthedPlayersColored)
 		pAuthInfo->m_AuthLevel = Server()->GetAuthedState(id);
 	else
@@ -473,10 +491,12 @@ void CPlayer::FakeSnap()
 	// This is problematic when it's sent before we know whether it's a non-64-player-client
 	// Then we can't spectate players at the start
 
+	// BlockDDrace
 	if(!m_SnapFixDDNet && !m_SnapFixVanilla)
 		return;
 
 	int FakeID = (m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) - 1;
+	// BlockDDrace
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, FakeID, sizeof(CNetObj_ClientInfo)));
 
@@ -923,6 +943,20 @@ void CPlayer::SpectatePlayerName(const char *pName)
 			return;
 		}
 	}
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+void CPlayer::FixForNoName(int ID)
+{
+	m_FixNameID = ID;
+	m_SetRealName = true;
+	m_SetRealNameTick = Server()->Tick() + Server()->TickSpeed() / 20;
 }
 
 int CPlayer::GetAccID()
