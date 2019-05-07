@@ -279,7 +279,6 @@ public:
 
 	static int AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser);
 	int AddAccount();
-	int m_NumAccounts;
 	void ReadAccountStats(int ID, char *pName);
 	void WriteAccountStats(int ID);
 	void Logout(int ID);
