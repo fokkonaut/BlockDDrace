@@ -419,8 +419,6 @@ elseif(TARGET_OS STREQUAL "mac")
   set(PLATFORM_CLIENT
     src/osx/notification.h
     src/osx/notification.mm
-    src/osxlaunch/client.h
-    src/osxlaunch/client.m
   )
   set(PLATFORM_CLIENT_LIBS ${COCOA} ${OPENGL})
   set(PLATFORM_LIBS ${CARBON} ${SECURITY})
@@ -592,7 +590,6 @@ set_glob(BASE GLOB_RECURSE src/base
   vmath.h
 )
 set_glob(ENGINE_INTERFACE GLOB src/engine
-  client.h
   config.h
   console.h
   demo.h
