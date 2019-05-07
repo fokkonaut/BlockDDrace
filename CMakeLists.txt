@@ -613,6 +613,7 @@ set_glob(ENGINE_INTERFACE GLOB src/engine
   uuid.h
 )
 set_glob(ENGINE_SHARED GLOB src/engine/shared
+  client_variables.h
   compression.cpp
   compression.h
   config.cpp
