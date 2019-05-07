@@ -3704,7 +3704,9 @@ int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int Stor
 
 int CGameContext::AddAccount()
 {
-	int ID = m_Accounts.size();
+	m_Accounts.push_back(AccountInfo());
+
+	int ID = m_Accounts.size()-1;
 	m_Accounts[ID].m_Port = 0;
 	m_Accounts[ID].m_LoggedIn = 0;
 	m_Accounts[ID].m_Disabled = 0;
@@ -3721,7 +3723,6 @@ int CGameContext::AddAccount()
 		m_Accounts[ID].m_aHasItem[i] = false;
 	m_Accounts[ID].m_PoliceLevel = 0;
 
-	m_Accounts.push_back(AccountInfo());
 	return ID;
 }
 
