@@ -590,6 +590,7 @@ set_glob(BASE GLOB_RECURSE src/base
   vmath.h
 )
 set_glob(ENGINE_INTERFACE GLOB src/engine
+  client.h
   config.h
   console.h
   demo.h
