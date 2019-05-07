@@ -1,5 +1,3 @@
-#include "././game/variables.h"
-
 // these variables are required for the server to get some stuff correctly done, they are not used.
 
 MACRO_CONFIG_STR(PlayerName, player_name, 16, "nameless tee", CFGFLAG_SAVE|CFGFLAG_CLIENT, "Name of the player")
