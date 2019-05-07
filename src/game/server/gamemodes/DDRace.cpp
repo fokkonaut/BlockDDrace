@@ -36,78 +36,6 @@ bool CGameControllerDDRace::OnEntity(int Index, vec2 Pos)
 	return true;
 }
 
-int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID, bool Suicide)
-{
-	int HadFlag = 0;
-
-	// drop flags
-	for (int i = 0; i < 2; i++)
-	{
-		CFlag *F = m_apFlags[i];
-		if (!F || !pKiller || !pKiller->GetCharacter())
-			continue;
-
-		if (F->GetCarrier() == pKiller->GetCharacter())
-			HadFlag |= 2;
-		if (F->GetCarrier() == pVictim)
-		{
-			if (Suicide || HasFlag(pKiller->GetCharacter()) != -1)
-				F->Drop();
-			HadFlag |= 1;
-		}
-		if (pKiller->GetCharacter() == pVictim)
-			F->SetLastCarrier(0);
-	}
-
-	return HadFlag;
-}
-
-void CGameControllerDDRace::ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter *pNewCarrier)
-{
-	for (int i = 0; i < 2; i++)
-	{
-		CFlag *F = m_apFlags[i];
-
-		if (!F || !pNewCarrier)
-			return;
-
-		if (F->GetCarrier() == pOldCarrier && HasFlag(pNewCarrier) == -1)
-			F->Grab(pNewCarrier);
-	}
-}
-
-void CGameControllerDDRace::ForceFlagOwner(int ClientID, int Team)
-{
-	CFlag *F = m_apFlags[Team];
-	CCharacter *pChr = GameServer()->GetPlayerChar(ClientID);
-	if (!F || (Team != TEAM_RED && Team != TEAM_BLUE) || (!pChr && ClientID >= 0))
-		return;
-	if (ClientID >= 0 && HasFlag(pChr) == -1)
-	{
-		if (F->GetCarrier())
-			F->SetLastCarrier(F->GetCarrier());
-		F->Grab(pChr);
-	}
-	else if (ClientID == -1)
-		F->Reset();
-}
-
-int CGameControllerDDRace::HasFlag(CCharacter *pChr)
-{
-	if (!pChr)
-		return -1;
-
-	for (int i = 0; i < 2; i++)
-	{
-		if (!m_apFlags[i])
-			continue;
-
-		if (m_apFlags[i]->GetCarrier() == pChr)
-			return i;
-	}
-	return -1;
-}
-
 void CGameControllerDDRace::Tick()
 {
 	IGameController::Tick();
@@ -203,4 +131,83 @@ void CGameControllerDDRace::InitTeleporter()
 			}
 		}
 	}
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID, bool Suicide)
+{
+	int HadFlag = 0;
+
+	// drop flags
+	for (int i = 0; i < 2; i++)
+	{
+		CFlag *F = m_apFlags[i];
+		if (!F || !pKiller || !pKiller->GetCharacter())
+			continue;
+
+		if (F->GetCarrier() == pKiller->GetCharacter())
+			HadFlag |= 2;
+		if (F->GetCarrier() == pVictim)
+		{
+			if (Suicide || HasFlag(pKiller->GetCharacter()) != -1)
+				F->Drop();
+			HadFlag |= 1;
+		}
+		if (pKiller->GetCharacter() == pVictim)
+			F->SetLastCarrier(0);
+	}
+
+	return HadFlag;
+}
+
+void CGameControllerDDRace::ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter *pNewCarrier)
+{
+	for (int i = 0; i < 2; i++)
+	{
+		CFlag *F = m_apFlags[i];
+
+		if (!F || !pNewCarrier)
+			return;
+
+		if (F->GetCarrier() == pOldCarrier && HasFlag(pNewCarrier) == -1)
+			F->Grab(pNewCarrier);
+	}
+}
+
+void CGameControllerDDRace::ForceFlagOwner(int ClientID, int Team)
+{
+	CFlag *F = m_apFlags[Team];
+	CCharacter *pChr = GameServer()->GetPlayerChar(ClientID);
+	if (!F || (Team != TEAM_RED && Team != TEAM_BLUE) || (!pChr && ClientID >= 0))
+		return;
+	if (ClientID >= 0 && HasFlag(pChr) == -1)
+	{
+		if (F->GetCarrier())
+			F->SetLastCarrier(F->GetCarrier());
+		F->Grab(pChr);
+	}
+	else if (ClientID == -1)
+		F->Reset();
+}
+
+int CGameControllerDDRace::HasFlag(CCharacter *pChr)
+{
+	if (!pChr)
+		return -1;
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (!m_apFlags[i])
+			continue;
+
+		if (m_apFlags[i]->GetCarrier() == pChr)
+			return i;
+	}
+	return -1;
 }

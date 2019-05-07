@@ -103,6 +103,7 @@ void CCharacterCore::Reset()
 	m_Hook = true;
 	m_Collision = true;
 
+	// BlockDDrace
 	m_Passive = false;
 
 	// DDNet Character
@@ -124,6 +125,7 @@ void CCharacterCore::Reset()
 	m_DeepFrozen = false;
 }
 
+// BlockDDrace
 void CCharacterCore::SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Carried)
 {
 	m_FlagPos[Team] = Pos;
@@ -131,9 +133,11 @@ void CCharacterCore::SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Ca
 	m_FlagVel[Team] = Vel;
 	m_Carried[Team] = Carried;
 }
+// BlockDDrace
 
 void CCharacterCore::Tick(bool UseInput)
 {
+	// BlockDDrace
 	m_UpdateFlagVel = 0;
 
 	if (m_LastHookedTick != -1)
@@ -144,6 +148,7 @@ void CCharacterCore::Tick(bool UseInput)
 		m_LastHookedPlayer = -1;
 		m_LastHookedTick = -1;
 	}
+	// BlockDDrace
 
 	float PhysSize = 28.0f;
 	int MapIndex = Collision()->GetPureMapIndex(m_Pos);
@@ -351,7 +356,7 @@ void CCharacterCore::Tick(bool UseInput)
 					}
 				}
 			}
-			//Check against Flags
+			// BlockDDrace //Check against Flags
 			for (int i = 0; i < 2; i++)
 			{
 				vec2 ClosestPoint;
@@ -370,7 +375,7 @@ void CCharacterCore::Tick(bool UseInput)
 					}
 				}
 			}
-			//Check against Flags
+			// BlockDDrace //Check against Flags
 		}
 
 		if(m_HookState == HOOK_FLYING)
@@ -407,7 +412,7 @@ void CCharacterCore::Tick(bool UseInput)
 
 	if(m_HookState == HOOK_GRABBED)
 	{
-		// UPDATE HOOK POS ON FLAG POS!!!!!
+		// BlockDDrace //UPDATE HOOK POS ON FLAG POS!!!!!
 		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			for (int i = 0; i < 2; i++)
@@ -425,7 +430,7 @@ void CCharacterCore::Tick(bool UseInput)
 				}
 			}
 		}
-		// UPDATE HOOK POS ON FLAG POS!!!!!
+		// BlockDDrace //UPDATE HOOK POS ON FLAG POS!!!!!
 
 		else if (m_HookedPlayer != -1)
 		{
@@ -478,6 +483,7 @@ void CCharacterCore::Tick(bool UseInput)
 			m_HookPos = m_Pos;
 		}
 
+		// BlockDDrace
 		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			for (int i = 0; i < 2; i++)
@@ -493,6 +499,7 @@ void CCharacterCore::Tick(bool UseInput)
 				}
 			}
 		}
+		// BlockDDrace
 	}
 
 	if (m_LastHookedPlayer != -1 && !m_pWorld->m_apCharacters[m_LastHookedPlayer])
@@ -582,6 +589,13 @@ void CCharacterCore::Tick(bool UseInput)
 			}
 		}
 
+
+		/*************************************************
+		*                                                *
+		*              B L O C K D D R A C E             *
+		*                                                *
+		**************************************************/
+		
 		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
 			float Distance;
@@ -627,6 +641,12 @@ void CCharacterCore::Tick(bool UseInput)
 				m_Vel = Temp;
 			}
 		}
+
+		/*************************************************
+		*                                                *
+		*              B L O C K D D R A C E             *
+		*                                                *
+		**************************************************/
 
 		if (m_HookState != HOOK_FLYING)
 		{
@@ -720,6 +740,7 @@ void CCharacterCore::Write(CNetObj_CharacterCore *pObjCore)
 	pObjCore->m_HookY = round_to_int(m_HookPos.y);
 	pObjCore->m_HookDx = round_to_int(m_HookDir.x*256.0f);
 	pObjCore->m_HookDy = round_to_int(m_HookDir.y*256.0f);
+	// BlockDDrace
 	if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		pObjCore->m_HookedPlayer = -1;
 	else
@@ -741,6 +762,7 @@ void CCharacterCore::Read(const CNetObj_CharacterCore *pObjCore)
 	m_HookPos.y = pObjCore->m_HookY;
 	m_HookDir.x = pObjCore->m_HookDx/256.0f;
 	m_HookDir.y = pObjCore->m_HookDy/256.0f;
+	// BlockDrace
 	if (m_HookedPlayer != FLAG_RED && m_HookedPlayer != FLAG_BLUE)
 		m_HookedPlayer = pObjCore->m_HookedPlayer;
 	m_Jumped = pObjCore->m_Jumped;

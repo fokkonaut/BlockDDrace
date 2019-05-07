@@ -1218,6 +1218,13 @@ void CGameContext::ConProtectedKill(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

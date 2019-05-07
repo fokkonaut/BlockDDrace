@@ -1,3 +1,9 @@
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 #ifndef GAME_SERVER_ENTITIES_WEAPON_H
 #define GAME_SERVER_ENTITIES_WEAPON_H
 

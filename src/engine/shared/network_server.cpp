@@ -691,8 +691,10 @@ int CNetServer::Send(CNetChunk *pChunk)
 	}
 	else
 	{
+		// BlockDDrace
 		if (m_aSlots[pChunk->m_ClientID].m_Connection.State() == NET_CONNSTATE_BOT)
 			return -1;
+		// BlockDDrace
 
 		int Flags = 0;
 		dbg_assert(pChunk->m_ClientID >= 0, "errornous client id");
@@ -761,6 +763,13 @@ const char *CNetServer::ErrorString(int ClientID)
 {
 	return m_aSlots[ClientID].m_Connection.ErrorString();
 }
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 void CNetServer::BotInit(int BotID)
 {

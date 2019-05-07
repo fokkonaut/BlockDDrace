@@ -64,7 +64,9 @@ enum
 	NET_CONNSTATE_ONLINE=3,
 	NET_CONNSTATE_ERROR=4,
 
+	// BlockDDrace
 	NET_CONNSTATE_BOT = 5,
+	// BlockDDrace
 
 	NET_PACKETFLAG_CONTROL=1,
 	NET_PACKETFLAG_CONNLESS=2,
@@ -237,8 +239,10 @@ public:
 	void SetUnknownSeq() { m_UnknownSeq = true; }
 	void SetSequence(int Sequence) { m_Sequence = Sequence; }
 
+	// BlockDDrace
 	void BotConnect();
 	void BotDrop();
+	// BlockDDrace
 };
 
 class CConsoleNetConnection

@@ -94,6 +94,13 @@ enum
 	//Doors
 	ENTITY_DOOR=49,
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	ENTITY_WEAPON_GUN,
 	ENTITY_WEAPON_HAMMER,
 	ENTITY_WEAPON_PLASMA_RIFLE,
@@ -174,6 +181,12 @@ enum
 	TILE_TELE_LASER_DISABLE = 129,
 	TILE_ENTITIES_OFF_1 = 190,
 	TILE_ENTITIES_OFF_2,
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
 
 	TILE_JETPACK = 144,
 	TILE_RAINBOW,

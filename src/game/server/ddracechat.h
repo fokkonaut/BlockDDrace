@@ -48,6 +48,13 @@ CHAT_COMMAND("rescue", "", CFGFLAG_CHAT, ConRescue, this, "Teleport yourself out
 
 CHAT_COMMAND("kill", "", CFGFLAG_CHAT, ConProtectedKill, this, "Kill yourself")
 
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 CHAT_COMMAND("score", "?s", CFGFLAG_CHAT, ConScore, this, "Changes the displayed score in scoreboard")
 CHAT_COMMAND("spookyghost", "", CFGFLAG_CHAT, ConSpookyGhostChat, this, "Shows information about the spooky ghost")
 CHAT_COMMAND("register", "?s[name] ?s[password] ?s[password]", CFGFLAG_CHAT, ConRegister, this, "Register an account")
@@ -55,5 +62,4 @@ CHAT_COMMAND("login", "?s[name] ?s[password]", CFGFLAG_CHAT, ConLogin, this, "Lo
 CHAT_COMMAND("logout", "", CFGFLAG_CHAT, ConLogout, this, "Log out of an account")
 CHAT_COMMAND("policeinfo", "?i", CFGFLAG_CHAT, ConPoliceInfo, this, "Shows information about police")
 CHAT_COMMAND("weaponindicator", "", CFGFLAG_CHAT, ConWeaponIndicator, this, "Tells you which weapon you are holding under the heart and armor bar")
-
 #undef CHAT_COMMAND

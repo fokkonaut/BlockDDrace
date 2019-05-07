@@ -1,3 +1,9 @@
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include "weapon.h"

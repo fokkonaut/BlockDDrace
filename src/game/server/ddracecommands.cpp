@@ -169,445 +169,6 @@ void CGameContext::ConRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, false);
 }
 
-void CGameContext::ConHammer(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, false);
-}
-
-void CGameContext::ConGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, false);
-}
-
-void CGameContext::ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, false);
-}
-
-void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, false);
-}
-
-void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, false);
-}
-
-void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->ScrollNinja(!pChr->m_ScrollNinja, pResult->m_ClientID);
-}
-
-void CGameContext::ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfiniteJumps(!pChr->m_SuperJump, pResult->m_ClientID);
-}
-
-void CGameContext::ConEndlessHook(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->EndlessHook(!pChr->m_EndlessHook, pResult->m_ClientID);
-}
-
-void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Jetpack(!pChr->m_Jetpack, pResult->m_ClientID);
-}
-
-void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Rainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
-}
-
-void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfRainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
-}
-
-void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Atom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
-}
-
-void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfAtom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
-}
-
-void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Trail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
-}
-
-void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfTrail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
-}
-
-void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->SpookyGhost(!pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
-}
-
-void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Meteor(true, pResult->m_ClientID);
-}
-
-void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfMeteor(true, pResult->m_ClientID);
-}
-
-void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Meteor(false, pResult->m_ClientID);
-}
-
-void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Passive(!pChr->m_Passive, pResult->m_ClientID);
-}
-
-void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->VanillaMode(pResult->m_ClientID);
-}
-
-void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->DDraceMode(pResult->m_ClientID);
-}
-
-void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Bloody(!(pChr->m_Bloody || pChr->m_StrongBloody), pResult->m_ClientID);
-}
-
-void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->StrongBloody(!pChr->m_StrongBloody, pResult->m_ClientID);
-}
-
-void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->PoliceHelper(!pChr->m_PoliceHelper, pResult->m_ClientID);
-}
-
-void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() > 1 ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	bool ShowInfo = false;
-	if (pChr)
-	{
-		int Power = -1;
-		for (int i = 0; i < NUM_EXTRAS; i++)
-		{
-			if (!str_comp_nocase(pResult->GetString(0), pSelf->GetExtraName(i)))
-				if (pSelf->IsValidHookPower(i))
-					Power = i;
-		}
-		if (Power == -1)
-			ShowInfo = true;
-		else
-		{
-			if (pChr->m_HookPower == Power)
-				Power = HOOK_NORMAL;
-			pChr->HookPower(Power, pResult->m_ClientID);
-		}
-	}
-	if (!pResult->NumArguments() || ShowInfo)
-	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available hook powers:");
-		for (int i = 0; i < NUM_EXTRAS; i++)
-		{
-			if (pSelf->IsValidHookPower(i))
-				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", pSelf->GetExtraName(i));
-		}
-	}
-}
-
-void CGameContext::ConFreezeHammer(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->FreezeHammer(!pChr->m_FreezeHammer, pResult->m_ClientID);
-}
-
-void CGameContext::ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : pResult->m_ClientID;
-	((CGameControllerDDRace*)pSelf->m_pController)->ForceFlagOwner(Victim, pResult->GetInteger(0));
-}
-
-void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-
-	if (pSelf->Server()->GetAuthedState(pResult->m_ClientID) != AUTHED_ADMIN)
-	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "Missing permission");
-		return;
-	}
-
-	int ID = pSelf->GetCIDByName(pResult->GetString(0));
-	if (ID < 0)
-		return;
-
-	CCharacter* pChr = pSelf->GetPlayerChar(ID);
-	CPlayer* pPlayer = pSelf->m_apPlayers[ID];
-
-	char aBuf[64];
-	str_format(aBuf, sizeof(aBuf), "==== [PLAYER INFO] '%s' ====", pResult->GetString(0));
-	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	if (pSelf->Server()->GetAuthedState(ID) != AUTHED_NO)
-	{
-		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(ID));
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	}
-	str_format(aBuf, sizeof(aBuf), "ClientID: %d", ID);
-	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	if (pChr)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
-	else if (pPlayer->GetTeam() == TEAM_SPECTATORS)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
-	else
-		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Dead");
-	if (pPlayer->GetAccID() > 0)
-	{
-		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pSelf->m_Accounts[pPlayer->GetAccID()].m_Username);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	}
-	else
-		pSelf->SendChatTarget(pResult->m_ClientID, "Account: Not logged in");
-	if (pPlayer->m_InfRainbow)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Rainbow: True");
-	if (pPlayer->m_InfAtom)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Atom: True");
-	if (pPlayer->m_InfTrail)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Trail: True");
-	if (pPlayer->m_InfMeteors > 0)
-	{
-		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	}
-	if (pPlayer->m_Gamemode == MODE_DDRACE)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: DDrace");
-	else if (pPlayer->m_Gamemode == MODE_VANILLA)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: Vanilla");
-
-	if (pChr)
-	{
-		if (pChr->HasFlag() == TEAM_RED)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Red");
-		if (pChr->HasFlag() == TEAM_BLUE)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Blue");
-		if (pChr->m_DeepFreeze)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
-		else if (pChr->IsFrozen)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
-		else if (pChr->m_FreezeTime)
-		{
-			str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pChr->m_FreezeTime);
-			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-		}
-		if (pChr->m_SuperJump)
-			pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
-		if (pChr->m_EndlessHook)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
-		if (pChr->m_Jetpack)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
-		if (pChr->m_Rainbow)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
-		if (pChr->m_Atom)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
-		if (pChr->m_Trail)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
-		if (pChr->m_Bloody)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Bloody: True");
-		if (pChr->m_StrongBloody)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Strong Bloody: True");
-		if (pChr->m_Meteors > 0)
-		{
-			str_format(aBuf, sizeof(aBuf), "Meteors: %d", pChr->m_Meteors);
-			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-		}
-		if (pChr->m_Passive)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
-		if (pChr->m_PoliceHelper)
-			pSelf->SendChatTarget(pResult->m_ClientID, "Police Helper: True");
-		for (int i = 0; i < NUM_WEAPONS; i++)
-		{
-			if (pChr->m_aSpreadWeapon[i])
-			{
-				str_format(aBuf, sizeof(aBuf), "Spread %s: True", pSelf->GetWeaponName(i));
-				pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-			}
-		}
-		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
-		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
-	}
-}
-
-void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Amount = pResult->GetInteger(0);
-	int Dummymode = pResult->GetInteger(1);
-
-	if (!Amount)
-		Amount = 1;
-
-	if (Dummymode == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
-	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
-		return;
-	}
-	else
-	{
-		for (int i = 0; i < Amount; i++)
-			pSelf->ConnectDummy(Dummymode);
-	}
-}
-
-void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int ID = pResult->GetVictim();
-	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
-		pSelf->Server()->BotLeave(ID);
-}
-
-void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->GetVictim();
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-
-	if (pResult->NumArguments() == 2)
-	{
-		if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
-		{
-			char aBuf[64];
-			str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
-			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
-			return;
-		}
-		else if (pChr && pChr->GetPlayer()->m_IsDummy)
-			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
-	}
-	else if (pChr && pChr->GetPlayer()->m_IsDummy)
-	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
-	}
-}
-
-void CGameContext::ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ConnectDefaultBots();
-}
-
-void CGameContext::ConExtraWeapons(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, -2, false);
-}
-
 void CGameContext::ConWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
@@ -632,46 +193,10 @@ void CGameContext::ConUnRifle(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_RIFLE, true);
 }
 
-void CGameContext::ConUnHammer(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, true);
-}
-
-void CGameContext::ConUnGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, true);
-}
-
-void CGameContext::ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, true);
-}
-
-void CGameContext::ConUnHeartGun(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, true);
-}
-
-void CGameContext::ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, true);
-}
-
 void CGameContext::ConUnWeapons(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *) pUserData;
 	pSelf->ModifyWeapons(pResult, pUserData, -1, true);
-}
-
-void CGameContext::ConUnExtraWeapons(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ModifyWeapons(pResult, pUserData, -2, true);
 }
 
 void CGameContext::ConAddWeapon(IConsole::IResult *pResult, void *pUserData)
@@ -1170,4 +695,486 @@ void CGameContext::ConVoteNo(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 
 	pSelf->ForceVote(pResult->m_ClientID, false);
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+void CGameContext::ConExtraWeapons(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, -2, false);
+}
+
+void CGameContext::ConUnExtraWeapons(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, -2, true);
+}
+
+void CGameContext::ConHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, false);
+}
+
+void CGameContext::ConUnHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HAMMER, true);
+}
+
+void CGameContext::ConGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, false);
+}
+
+void CGameContext::ConUnGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_GUN, true);
+}
+
+void CGameContext::ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, false);
+}
+
+void CGameContext::ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_PLASMA_RIFLE, true);
+}
+
+void CGameContext::ConHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, false);
+}
+
+void CGameContext::ConUnHeartGun(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_HEART_GUN, true);
+}
+
+void CGameContext::ConStraightGrenade(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, false);
+}
+
+void CGameContext::ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, true);
+}
+
+void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->ScrollNinja(!pChr->m_ScrollNinja, pResult->m_ClientID);
+}
+
+void CGameContext::ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfiniteJumps(!pChr->m_SuperJump, pResult->m_ClientID);
+}
+
+void CGameContext::ConEndlessHook(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->EndlessHook(!pChr->m_EndlessHook, pResult->m_ClientID);
+}
+
+void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Jetpack(!pChr->m_Jetpack, pResult->m_ClientID);
+}
+
+void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Rainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
+}
+
+void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfRainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
+}
+
+void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Atom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
+}
+
+void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfAtom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
+}
+
+void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Trail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
+}
+
+void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfTrail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
+}
+
+void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->SpookyGhost(!pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
+}
+
+void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Meteor(true, pResult->m_ClientID);
+}
+
+void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->InfMeteor(true, pResult->m_ClientID);
+}
+
+void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Meteor(false, pResult->m_ClientID);
+}
+
+void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Passive(!pChr->m_Passive, pResult->m_ClientID);
+}
+
+void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->VanillaMode(pResult->m_ClientID);
+}
+
+void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->DDraceMode(pResult->m_ClientID);
+}
+
+void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Bloody(!(pChr->m_Bloody || pChr->m_StrongBloody), pResult->m_ClientID);
+}
+
+void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->StrongBloody(!pChr->m_StrongBloody, pResult->m_ClientID);
+}
+
+void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->PoliceHelper(!pChr->m_PoliceHelper, pResult->m_ClientID);
+}
+
+void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() > 1 ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	bool ShowInfo = false;
+	if (pChr)
+	{
+		int Power = -1;
+		for (int i = 0; i < NUM_EXTRAS; i++)
+		{
+			if (!str_comp_nocase(pResult->GetString(0), pSelf->GetExtraName(i)))
+				if (pSelf->IsValidHookPower(i))
+					Power = i;
+		}
+		if (Power == -1)
+			ShowInfo = true;
+		else
+		{
+			if (pChr->m_HookPower == Power)
+				Power = HOOK_NORMAL;
+			pChr->HookPower(Power, pResult->m_ClientID);
+		}
+	}
+	if (!pResult->NumArguments() || ShowInfo)
+	{
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available hook powers:");
+		for (int i = 0; i < NUM_EXTRAS; i++)
+		{
+			if (pSelf->IsValidHookPower(i))
+				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", pSelf->GetExtraName(i));
+		}
+	}
+}
+
+void CGameContext::ConFreezeHammer(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->FreezeHammer(!pChr->m_FreezeHammer, pResult->m_ClientID);
+}
+
+void CGameContext::ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : pResult->m_ClientID;
+	((CGameControllerDDRace*)pSelf->m_pController)->ForceFlagOwner(Victim, pResult->GetInteger(0));
+}
+
+void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+
+	if (pSelf->Server()->GetAuthedState(pResult->m_ClientID) != AUTHED_ADMIN)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Missing permission");
+		return;
+	}
+
+	int ID = pSelf->GetCIDByName(pResult->GetString(0));
+	if (ID < 0)
+		return;
+
+	CCharacter* pChr = pSelf->GetPlayerChar(ID);
+	CPlayer* pPlayer = pSelf->m_apPlayers[ID];
+
+	char aBuf[64];
+	str_format(aBuf, sizeof(aBuf), "==== [PLAYER INFO] '%s' ====", pResult->GetString(0));
+	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	if (pSelf->Server()->GetAuthedState(ID) != AUTHED_NO)
+	{
+		str_format(aBuf, sizeof(aBuf), "Authed: %d", pSelf->Server()->GetAuthedState(ID));
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	str_format(aBuf, sizeof(aBuf), "ClientID: %d", ID);
+	pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	if (pChr)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Ingame");
+	else if (pPlayer->GetTeam() == TEAM_SPECTATORS)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Spectator");
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Status: Dead");
+	if (pPlayer->GetAccID() > 0)
+	{
+		str_format(aBuf, sizeof(aBuf), "AccountName: %s", pSelf->m_Accounts[pPlayer->GetAccID()].m_Username);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "Account: Not logged in");
+	if (pPlayer->m_InfRainbow)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Rainbow: True");
+	if (pPlayer->m_InfAtom)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Atom: True");
+	if (pPlayer->m_InfTrail)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Trail: True");
+	if (pPlayer->m_InfMeteors > 0)
+	{
+		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+	if (pPlayer->m_Gamemode == MODE_DDRACE)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: DDrace");
+	else if (pPlayer->m_Gamemode == MODE_VANILLA)
+		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: Vanilla");
+
+	if (pChr)
+	{
+		if (pChr->HasFlag() == TEAM_RED)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Red");
+		if (pChr->HasFlag() == TEAM_BLUE)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Blue");
+		if (pChr->m_DeepFreeze)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
+		else if (pChr->IsFrozen)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
+		else if (pChr->m_FreezeTime)
+		{
+			str_format(aBuf, sizeof(aBuf), "Frozen: Freezetime: %d", pChr->m_FreezeTime);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		if (pChr->m_SuperJump)
+			pSelf->SendChatTarget(pResult->m_ClientID, "SuperJump: True");
+		if (pChr->m_EndlessHook)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Endless: True");
+		if (pChr->m_Jetpack)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Jetpack: True");
+		if (pChr->m_Rainbow)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Rainbow: True");
+		if (pChr->m_Atom)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Atom: True");
+		if (pChr->m_Trail)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Trail: True");
+		if (pChr->m_Bloody)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Bloody: True");
+		if (pChr->m_StrongBloody)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Strong Bloody: True");
+		if (pChr->m_Meteors > 0)
+		{
+			str_format(aBuf, sizeof(aBuf), "Meteors: %d", pChr->m_Meteors);
+			pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+		}
+		if (pChr->m_Passive)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Passive Mode: True");
+		if (pChr->m_PoliceHelper)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Police Helper: True");
+		for (int i = 0; i < NUM_WEAPONS; i++)
+		{
+			if (pChr->m_aSpreadWeapon[i])
+			{
+				str_format(aBuf, sizeof(aBuf), "Spread %s: True", pSelf->GetWeaponName(i));
+				pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+			}
+		}
+		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
+		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
+	}
+}
+
+void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Amount = pResult->GetInteger(0);
+	int Dummymode = pResult->GetInteger(1);
+
+	if (!Amount)
+		Amount = 1;
+
+	if (Dummymode == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+	{
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < Amount; i++)
+			pSelf->ConnectDummy(Dummymode);
+	}
+}
+
+void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int ID = pResult->GetVictim();
+	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy)
+		pSelf->Server()->BotLeave(ID);
+}
+
+void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->GetVictim();
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+
+	if (pResult->NumArguments() == 2)
+	{
+		if (pResult->GetInteger(1) == 99 && pSelf->GetShopBot() != -1) // there can only be one shop bot
+		{
+			char aBuf[64];
+			str_format(aBuf, sizeof(aBuf), "There is already a shop bot: '%s'", pSelf->Server()->ClientName(pSelf->GetShopBot()));
+			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+			return;
+		}
+		else if (pChr && pChr->GetPlayer()->m_IsDummy)
+			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
+	}
+	else if (pChr && pChr->GetPlayer()->m_IsDummy)
+	{
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+	}
+}
+
+void CGameContext::ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ConnectDefaultBots();
 }

@@ -17,11 +17,13 @@
 #include "teamscore.h"
 #include "mapitems.h"
 
+// BlockDDrace
 enum
 {
 	FLAG_RED = MAX_CLIENTS,
 	FLAG_BLUE
 };
+// BlockDDrace
 
 
 class CTuneParam
@@ -225,6 +227,11 @@ public:
 	void Tick(bool UseInput);
 	void Move();
 
+	void Read(const CNetObj_CharacterCore *pObjCore);
+	void Write(CNetObj_CharacterCore *pObjCore);
+	void Quantize();
+
+	// BlockDDrace
 	void SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Carried);
 
 	vec2 m_FlagPos[2];
@@ -234,10 +241,7 @@ public:
 
 	int m_UpdateFlagVel;
 	vec2 m_UFlagVel;
-
-	void Read(const CNetObj_CharacterCore *pObjCore);
-	void Write(CNetObj_CharacterCore *pObjCore);
-	void Quantize();
+	// BlockDDrace
 
 	// DDRace
 

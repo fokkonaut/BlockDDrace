@@ -11,9 +11,11 @@
 
 #include <game/gamecore.h>
 
+// BlockDDrace
 #define NUM_ATOMS 6
 #define NUM_TRAILS 20
 #define TRAIL_DIST 20
+// BlockDDrace
 
 class CGameTeams;
 
@@ -34,6 +36,13 @@ enum
 	FAKETUNE_JETPACK = 32,
 	FAKETUNE_NOHAMMER = 64,
 };
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 enum
 {
@@ -69,6 +78,12 @@ enum
 	BACKUP_SPOOKY_GHOST,
 	NUM_BACKUPS
 };
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 
 class CCharacter : public CEntity
@@ -130,6 +145,13 @@ public:
 	bool IsPaused() const { return m_Paused; }
 	class CPlayer *GetPlayer() { return m_pPlayer; }
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	void DropWeapon(int WeaponID);
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir();
@@ -157,6 +179,12 @@ public:
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
 
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 
 private:
 	// player controlling this character
@@ -179,7 +207,9 @@ private:
 
 	} m_aWeapons[NUM_WEAPONS];
 
+	// BlockDDrace
 	int m_ActiveWeapon;
+	// BlockDDrace
 
 	int m_LastWeapon;
 	int m_QueuedWeapon;
@@ -247,8 +277,10 @@ private:
 	vec2 m_PrevSavePos;
 	bool m_Solo;
 
+	// BlockDDrace
 	void BlockDDraceTick();
 	void DummyTick();
+	// BlockDDrace
 
 public:
 	CGameTeams* Teams();
@@ -337,6 +369,35 @@ public:
 	bool m_IsBlueTeleGunTeleport;
 	int m_StrongWeakID;
 
+	// Setters/Getters because i don't want to modify vanilla vars access modifiers
+	int GetLastWeapon() { return m_LastWeapon; };
+	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
+	int GetActiveWeapon() { return m_ActiveWeapon; };
+	void SetActiveWeapon(int Weapon);
+	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
+	int GetArmor() { return m_Armor; };
+	void SetArmor(int Armor) {m_Armor = Armor; };
+	CCharacterCore GetCore() { return m_Core; };
+	void SetCore(CCharacterCore Core) {m_Core = Core; };
+	CCharacterCore* Core() { return &m_Core; };
+	bool GetWeaponGot(int Type) { return m_aWeapons[Type].m_Got; };
+	void SetWeaponGot(int Type, bool Value) { m_aWeapons[Type].m_Got = Value; };
+	int GetWeaponAmmo(int Type) { return m_aWeapons[Type].m_Ammo; };
+	void SetWeaponAmmo(int Type, int Value) { m_aWeapons[Type].m_Ammo = Value; };
+	bool IsAlive() { return m_Alive; };
+	void SetEmoteType(int EmoteType) { m_EmoteType = EmoteType; };
+	void SetEmoteStop(int EmoteStop) { m_EmoteStop = EmoteStop; };
+	void SetNinjaActivationDir(vec2 ActivationDir) { m_Ninja.m_ActivationDir = ActivationDir; };
+	void SetNinjaActivationTick(int ActivationTick) { m_Ninja.m_ActivationTick = ActivationTick; };
+	void SetNinjaCurrentMoveTime(int CurrentMoveTime) { m_Ninja.m_CurrentMoveTime = CurrentMoveTime; };
+
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	int m_LastIndexTile;
 	int m_LastIndexFrontTile;
 
@@ -351,9 +412,9 @@ public:
 
 	void BackupWeapons(int Type);
 	void LoadWeaponBackup(int Type);
-	int m_aWeaponsBackup[NUM_WEAPONS+2][NUM_BACKUPS];
+	int m_aWeaponsBackup[NUM_WEAPONS + 2][NUM_BACKUPS];
 	bool m_WeaponsBackupped[NUM_BACKUPS];
-	bool m_aWeaponsBackupGot[NUM_WEAPONS+2][NUM_BACKUPS];
+	bool m_aWeaponsBackupGot[NUM_WEAPONS + 2][NUM_BACKUPS];
 
 	//spooky ghost
 	void SetSpookyGhost();
@@ -409,28 +470,6 @@ public:
 
 	void UpdateWeaponIndicator();
 	bool m_WeaponIndicator;
-
-	// Setters/Getters because i don't want to modify vanilla vars access modifiers
-	int GetLastWeapon() { return m_LastWeapon; };
-	void SetLastWeapon(int LastWeap) {m_LastWeapon = LastWeap; };
-	int GetActiveWeapon() { return m_ActiveWeapon; };
-	void SetActiveWeapon(int Weapon);
-	void SetLastAction(int LastAction) {m_LastAction = LastAction; };
-	int GetArmor() { return m_Armor; };
-	void SetArmor(int Armor) {m_Armor = Armor; };
-	CCharacterCore GetCore() { return m_Core; };
-	void SetCore(CCharacterCore Core) {m_Core = Core; };
-	CCharacterCore* Core() { return &m_Core; };
-	bool GetWeaponGot(int Type) { return m_aWeapons[Type].m_Got; };
-	void SetWeaponGot(int Type, bool Value) { m_aWeapons[Type].m_Got = Value; };
-	int GetWeaponAmmo(int Type) { return m_aWeapons[Type].m_Ammo; };
-	void SetWeaponAmmo(int Type, int Value) { m_aWeapons[Type].m_Ammo = Value; };
-	bool IsAlive() { return m_Alive; };
-	void SetEmoteType(int EmoteType) { m_EmoteType = EmoteType; };
-	void SetEmoteStop(int EmoteStop) { m_EmoteStop = EmoteStop; };
-	void SetNinjaActivationDir(vec2 ActivationDir) { m_Ninja.m_ActivationDir = ActivationDir; };
-	void SetNinjaActivationTick(int ActivationTick) { m_Ninja.m_ActivationTick = ActivationTick; };
-	void SetNinjaCurrentMoveTime(int CurrentMoveTime) { m_Ninja.m_CurrentMoveTime = CurrentMoveTime; };
 
 
 	/////////dummymode variables
@@ -516,6 +555,12 @@ public:
 	int m_DummyEmoteTickNext;
 
 	/////////dummymode variables
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
 };
 
 enum

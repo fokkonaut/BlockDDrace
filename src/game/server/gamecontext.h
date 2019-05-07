@@ -277,6 +277,13 @@ public:
 	bool PlayerModerating();
 	void ForceVote(int EnforcerID, bool Success);
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	static int AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser);
 	int AddAccount();
 	void ReadAccountStats(int ID, char *pName);
@@ -426,8 +433,15 @@ private:
 	static void ConList(IConsole::IResult *pResult, void *pUserData);
 	static void ConSetDDRTeam(IConsole::IResult *pResult, void *pUserData);
 	static void ConUninvite(IConsole::IResult *pResult, void *pUserData);
+
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
-	static void ConUnFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConExtraWeapons(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnExtraWeapons(IConsole::IResult *pResult, void *pUserData);

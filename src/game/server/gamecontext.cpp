@@ -2794,14 +2794,8 @@ void CGameContext::OnInit()
 		m_pTeeHistorianFile = aio_new(File);
 
 		char aVersion[128];
-		if(GIT_SHORTREV_HASH)
-		{
-			str_format(aVersion, sizeof(aVersion), "%s (%s)", GAME_VERSION, GIT_SHORTREV_HASH);
-		}
-		else
-		{
-			str_format(aVersion, sizeof(aVersion), "%s", GAME_VERSION);
-		}
+		str_format(aVersion, sizeof(aVersion), "%s", GAME_VERSION);
+
 		CTeeHistorian::CGameInfo GameInfo;
 		GameInfo.m_GameUuid = m_GameUuid;
 		GameInfo.m_pServerVersion = aVersion;
@@ -3666,6 +3660,13 @@ void CGameContext::ForceVote(int EnforcerID, bool Success)
 	str_format(aBuf, sizeof(aBuf), "forcing vote %s", pOption);
 	Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", aBuf);
 }
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser)
 {

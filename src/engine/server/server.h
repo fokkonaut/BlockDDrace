@@ -125,7 +125,9 @@ public:
 			STATE_READY,
 			STATE_INGAME,
 
+			// BlockDDrace
 			STATE_BOT,
+			// BlockDDrace
 
 			SNAPRATE_INIT=0,
 			SNAPRATE_FULL,
@@ -369,9 +371,6 @@ public:
 
 	// DDRace
 
-	void BotJoin(int BotID);
-	void BotLeave(int BotID);
-
 	void GetClientAddr(int ClientID, NETADDR *pAddr);
 	int m_aPrevStates[MAX_CLIENTS];
 	const char *GetAnnouncementLine(char const *FileName);
@@ -396,6 +395,11 @@ public:
 
 	bool ErrorShutdown() const { return m_aErrorShutdownReason[0] != 0; }
 	void SetErrorShutdown(const char *pReason);
+
+	// BlockDDrace
+	void BotJoin(int BotID);
+	void BotLeave(int BotID);
+	// BlockDDrace
 
 #ifdef CONF_FAMILY_UNIX
 	enum CONN_LOGGING_CMD

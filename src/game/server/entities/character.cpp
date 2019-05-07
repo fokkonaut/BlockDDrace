@@ -11,11 +11,14 @@
 #include "character.h"
 #include "laser.h"
 #include "projectile.h"
+
+// BlockDDrace
 #include "flag.h"
 #include "custom_projectile.h"
 #include "meteor.h"
 #include "pickup.h"
 #include "straight_grenade.h"
+// BlockDDrace
 
 #include <stdio.h>
 #include <string.h>
@@ -95,6 +98,13 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	Server()->StartRecord(m_pPlayer->GetCID());
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+	
 	SaveRealInfos();
 	UnsetSpookyGhost();
 
@@ -117,6 +127,12 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
 
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	return true;
 }
 
@@ -129,11 +145,13 @@ void CCharacter::Destroy()
 
 void CCharacter::SetWeapon(int W)
 {
+	// BlockDDrace
 	if (!GetWeaponGot(W))
 	{
 		SetAvailableWeapon();
 		return;
 	}
+	// BlockDDrace
 
 	if(W == GetActiveWeapon())
 		return;
@@ -455,6 +473,7 @@ void CCharacter::FireWeapon()
 		return;
 	}
 
+	// BlockDDrace
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
@@ -762,6 +781,7 @@ void CCharacter::FireWeapon()
 		m_ReloadTimer = FireDelay * Server()->TickSpeed() / 1000;
 	}
 
+	// BlockDDrace
 	//spooky ghost
 	if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN && m_CountSpookyGhostInputs)
 	{
@@ -910,126 +930,15 @@ void CCharacter::Tick()
 	if (m_Paused)
 		return;
 
-	if (m_Atom || m_pPlayer->m_InfAtom || m_pPlayer->IsHooked(ATOM))
-	{
-		if (m_AtomProjs.empty())
-		{
-			for (int i = 0; i<NUM_ATOMS; i++)
-			{
-				m_AtomProjs.push_back(new CStableProjectile(GameWorld(), i % 2 ? WEAPON_GRENADE : WEAPON_SHOTGUN, m_pPlayer->GetCID()));
-			}
-			m_AtomPosition = 0;
-		}
-		if (++m_AtomPosition >= 60)
-		{
-			m_AtomPosition = 0;
-		}
-		vec2 AtomPos;
-		AtomPos.x = m_Pos.x + 200 * cos(m_AtomPosition*M_PI * 2 / 60);
-		AtomPos.y = m_Pos.y + 80 * sin(m_AtomPosition*M_PI * 2 / 60);
-		for (int i = 0; i<NUM_ATOMS; i++)
-		{
-			m_AtomProjs[i]->m_Pos = rotate_around_point(AtomPos, m_Pos, i*M_PI * 2 / NUM_ATOMS);
-		}
-	}
-	else if (!m_AtomProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_AtomProjs.begin(); it != m_AtomProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_AtomProjs.clear();
-	}
-
-	if (m_Trail || m_pPlayer->m_InfTrail || m_pPlayer->IsHooked(TRAIL))
-	{
-		if (m_TrailProjs.empty())
-		{
-			for (int i = 0; i<NUM_TRAILS; i++)
-			{
-				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN, m_pPlayer->GetCID()));
-			}
-			m_TrailHistory.clear();
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, 0.0f));
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, NUM_TRAILS*TRAIL_DIST));
-			m_TrailHistoryLength = NUM_TRAILS * TRAIL_DIST;
-		}
-		vec2 FrontPos = m_TrailHistory.front().m_Pos;
-		if (FrontPos != m_Pos)
-		{
-			float FrontLength = distance(m_Pos, FrontPos);
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, FrontLength));
-			m_TrailHistoryLength += FrontLength;
-		}
-
-		while (1)
-		{
-			float LastDist = m_TrailHistory.back().m_Dist;
-			if (m_TrailHistoryLength - LastDist >= NUM_TRAILS * TRAIL_DIST)
-			{
-				m_TrailHistory.pop_back();
-				m_TrailHistoryLength -= LastDist;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		int HistoryPos = 0;
-		float HistoryPosLength = 0.0f;
-		//float AdditionalLength = 0.0f;
-		for (int i = 0; i<NUM_TRAILS; i++)
-		{
-			float Length = (i + 1)*TRAIL_DIST;
-			float NextDist = 0.0f;
-			while (1)
-			{
-				// in case floating point arithmetic errors should fuck us up
-				// don't crash and recalculate total history length
-				if ((unsigned int)HistoryPos >= m_TrailHistory.size())
-				{
-					m_TrailHistoryLength = 0.0f;
-					for (std::deque<HistoryPoint>::iterator it = m_TrailHistory.begin(); it != m_TrailHistory.end(); ++it)
-					{
-						m_TrailHistoryLength += it->m_Dist;
-					}
-					break;
-				}
-				NextDist = m_TrailHistory[HistoryPos].m_Dist;
-
-				if (Length <= HistoryPosLength + NextDist)
-				{
-					//AdditionalLength = Length - HistoryPosLength;
-					break;
-				}
-				else
-				{
-					HistoryPos += 1;
-					HistoryPosLength += NextDist;
-					//AdditionalLength = 0;
-				}
-			}
-			m_TrailProjs[i]->m_Pos = m_TrailHistory[HistoryPos].m_Pos;
-			//the line under this comment crashed the server, dont know why but it works without that line too since the position gets set above this line too
-			//m_TrailProjs[i]->m_Pos += (m_TrailHistory[HistoryPos + 1].m_Pos - m_TrailProjs[i]->m_Pos)*(AdditionalLength / NextDist);
-		}
-	}
-	else if (!m_TrailProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_TrailProjs.clear();
-	}
-
+	// BlockDDrace
 	BlockDDraceTick();
 	DummyTick();
+	// BlockDDrace
 	DDRaceTick();
 
 	m_Core.m_Input = m_Input;
 
+	// BlockDDrace
 	for (int i = 0; i < 2; i++)
 	{
 		bool Carried = true;
@@ -1048,6 +957,7 @@ void CCharacter::Tick()
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
 	else if (m_Core.m_UpdateFlagVel == FLAG_BLUE)
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_BLUE]->SetVel(m_Core.m_UFlagVel);
+	// BlockDDrace
 
 	// handle Weapons
 	HandleWeapons();
@@ -1171,6 +1081,7 @@ bool CCharacter::IncreaseHealth(int Amount)
 
 bool CCharacter::IncreaseArmor(int Amount)
 {
+	// BlockDDrace
 	if(m_Armor >= 10 && !m_FreezeTime)
 		return false;
 	if (m_aWeaponsBackup[NUM_WEAPONS][1] >= 10 && m_FreezeTime)
@@ -1185,6 +1096,15 @@ bool CCharacter::IncreaseArmor(int Amount)
 
 void CCharacter::Die(int Killer, int Weapon)
 {
+	if (Server()->IsRecording(m_pPlayer->GetCID()))
+		Server()->StopRecord(m_pPlayer->GetCID());
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	// remove atom projectiles on death
 	if (!m_AtomProjs.empty())
 	{
@@ -1205,9 +1125,6 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_TrailProjs.clear();
 	}
 
-	if(Server()->IsRecording(m_pPlayer->GetCID()))
-		Server()->StopRecord(m_pPlayer->GetCID());
-
 	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon == -1))
 	{
 		m_LastToucherID = -1;
@@ -1227,6 +1144,12 @@ void CCharacter::Die(int Killer, int Weapon)
 		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 		Suicide = false;
 	}
+	
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
 
 	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon, Suicide);
 
@@ -1235,6 +1158,8 @@ void CCharacter::Die(int Killer, int Weapon)
 		Killer, Server()->ClientName(Killer),
 		m_pPlayer->GetCID(), Server()->ClientName(m_pPlayer->GetCID()), Weapon, ModeSpecial);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
+
+	// BlockDDrace
 
 	// send the kill message
 	if (!m_pPlayer->m_ShowName || (Killer >= 0 && GameServer()->m_apPlayers[Killer] && !GameServer()->m_apPlayers[Killer]->m_ShowName))
@@ -1249,7 +1174,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_pPlayer->m_MsgWeapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
 		m_pPlayer->FixForNoName(FIX_KILL_MSG);
-	}
+	} // BlockDDrace
 	else
 	{
 		CNetMsg_Sv_KillMsg Msg;
@@ -1260,6 +1185,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 	}
 
+	// BlockDDrace
 	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
 
 	// a nice sound
@@ -1279,6 +1205,12 @@ void CCharacter::Die(int Killer, int Weapon)
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 {
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	if (GameServer()->m_apPlayers[From])
 	{
 		if (From != m_pPlayer->GetCID())
@@ -1431,6 +1363,7 @@ void CCharacter::Snap(int SnappingClient)
 	if(!pCharacter)
 		return;
 
+	// BlockDDrace
 	if (m_StrongBloody)
 	{
 		for (int i = 0; i < 3; i++)
@@ -1441,6 +1374,7 @@ void CCharacter::Snap(int SnappingClient)
 		if (Server()->Tick() % 3 == 0)
 			GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID());
 	}
+	// BlockDDrace
 
 	// write down the m_Core
 	if(!m_ReckoningTick || GameWorld()->m_Paused)
@@ -2025,6 +1959,13 @@ void CCharacter::HandleTiles(int Index)
 				GameServer()->SendChatTarget(i, "Your team was unlocked by an unlock team tile");
 	}
 
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	//jetpack toggle
 	if ((m_TileIndex == TILE_JETPACK) || (m_TileFIndex == TILE_JETPACK))
 	{
@@ -2113,9 +2054,6 @@ void CCharacter::HandleTiles(int Index)
 		Bloody(!(m_Bloody || m_StrongBloody));
 	}
 
-	m_LastIndexTile = m_TileIndex;
-	m_LastIndexFrontTile = m_TileFIndex;
-
 	if (m_TileIndex == TILE_SHOP || m_TileFIndex == TILE_SHOP) // SHOP
 	{
 		if (!m_InShop)
@@ -2140,6 +2078,15 @@ void CCharacter::HandleTiles(int Index)
 		if (Server()->Tick() % 50 == 0)
 			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
+
+	m_LastIndexTile = m_TileIndex;
+	m_LastIndexFrontTile = m_TileFIndex;
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
 
 	// solo part
 	if(((m_TileIndex == TILE_SOLO_START) || (m_TileFIndex == TILE_SOLO_START)) && !Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
@@ -2753,6 +2700,7 @@ bool CCharacter::UnFreeze()
 
 void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 {
+	// BlockDDrace
 	for (int i = 0; i < NUM_BACKUPS; i++)
 	{
 		m_aWeaponsBackupGot[Weapon][i] = !Remove;
@@ -2761,6 +2709,7 @@ void CCharacter::GiveWeapon(int Weapon, bool Remove, int Ammo)
 
 	if (m_pPlayer->m_SpookyGhost)
 		return;
+	// BlockDDrace
 
 	if (Weapon == WEAPON_NINJA)
 	{
@@ -2836,6 +2785,7 @@ void CCharacter::DDRaceInit()
 	m_Jetpack = false;
 	m_Core.m_Jumps = 2;
 	m_FreezeHammer = false;
+	// BlockDDrace
 	m_Rainbow = false;
 	m_Atom = false;
 	m_Trail = false;
@@ -2848,6 +2798,7 @@ void CCharacter::DDRaceInit()
 	m_PoliceHelper = false;
 	for (int i = 0; i < NUM_WEAPONS; i++)
 		m_aSpreadWeapon[i] = false;
+	// BlockDDrace
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -2897,8 +2848,129 @@ void CCharacter::Rescue()
 	}
 }
 
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 void CCharacter::BlockDDraceTick()
 {
+	if (m_Atom || m_pPlayer->m_InfAtom || m_pPlayer->IsHooked(ATOM))
+	{
+		if (m_AtomProjs.empty())
+		{
+			for (int i = 0; i<NUM_ATOMS; i++)
+			{
+				m_AtomProjs.push_back(new CStableProjectile(GameWorld(), i % 2 ? WEAPON_GRENADE : WEAPON_SHOTGUN, m_pPlayer->GetCID()));
+			}
+			m_AtomPosition = 0;
+		}
+		if (++m_AtomPosition >= 60)
+		{
+			m_AtomPosition = 0;
+		}
+		vec2 AtomPos;
+		AtomPos.x = m_Pos.x + 200 * cos(m_AtomPosition*M_PI * 2 / 60);
+		AtomPos.y = m_Pos.y + 80 * sin(m_AtomPosition*M_PI * 2 / 60);
+		for (int i = 0; i<NUM_ATOMS; i++)
+		{
+			m_AtomProjs[i]->m_Pos = rotate_around_point(AtomPos, m_Pos, i*M_PI * 2 / NUM_ATOMS);
+		}
+	}
+	else if (!m_AtomProjs.empty())
+	{
+		for (std::vector<CStableProjectile *>::iterator it = m_AtomProjs.begin(); it != m_AtomProjs.end(); ++it)
+		{
+			GameWorld()->DestroyEntity(*it);
+		}
+		m_AtomProjs.clear();
+	}
+
+	if (m_Trail || m_pPlayer->m_InfTrail || m_pPlayer->IsHooked(TRAIL))
+	{
+		if (m_TrailProjs.empty())
+		{
+			for (int i = 0; i<NUM_TRAILS; i++)
+			{
+				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN, m_pPlayer->GetCID()));
+			}
+			m_TrailHistory.clear();
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, 0.0f));
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, NUM_TRAILS*TRAIL_DIST));
+			m_TrailHistoryLength = NUM_TRAILS * TRAIL_DIST;
+		}
+		vec2 FrontPos = m_TrailHistory.front().m_Pos;
+		if (FrontPos != m_Pos)
+		{
+			float FrontLength = distance(m_Pos, FrontPos);
+			m_TrailHistory.push_front(HistoryPoint(m_Pos, FrontLength));
+			m_TrailHistoryLength += FrontLength;
+		}
+
+		while (1)
+		{
+			float LastDist = m_TrailHistory.back().m_Dist;
+			if (m_TrailHistoryLength - LastDist >= NUM_TRAILS * TRAIL_DIST)
+			{
+				m_TrailHistory.pop_back();
+				m_TrailHistoryLength -= LastDist;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		int HistoryPos = 0;
+		float HistoryPosLength = 0.0f;
+		//float AdditionalLength = 0.0f;
+		for (int i = 0; i<NUM_TRAILS; i++)
+		{
+			float Length = (i + 1)*TRAIL_DIST;
+			float NextDist = 0.0f;
+			while (1)
+			{
+				// in case floating point arithmetic errors should fuck us up
+				// don't crash and recalculate total history length
+				if ((unsigned int)HistoryPos >= m_TrailHistory.size())
+				{
+					m_TrailHistoryLength = 0.0f;
+					for (std::deque<HistoryPoint>::iterator it = m_TrailHistory.begin(); it != m_TrailHistory.end(); ++it)
+					{
+						m_TrailHistoryLength += it->m_Dist;
+					}
+					break;
+				}
+				NextDist = m_TrailHistory[HistoryPos].m_Dist;
+
+				if (Length <= HistoryPosLength + NextDist)
+				{
+					//AdditionalLength = Length - HistoryPosLength;
+					break;
+				}
+				else
+				{
+					HistoryPos += 1;
+					HistoryPosLength += NextDist;
+					//AdditionalLength = 0;
+				}
+			}
+			m_TrailProjs[i]->m_Pos = m_TrailHistory[HistoryPos].m_Pos;
+			//the line under this comment crashed the server, dont know why but it works without that line too since the position gets set above this line too
+			//m_TrailProjs[i]->m_Pos += (m_TrailHistory[HistoryPos + 1].m_Pos - m_TrailProjs[i]->m_Pos)*(AdditionalLength / NextDist);
+		}
+	}
+	else if (!m_TrailProjs.empty())
+	{
+		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
+		{
+			GameWorld()->DestroyEntity(*it);
+		}
+		m_TrailProjs.clear();
+	}
+
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		CCharacter *pChar = GameServer()->GetPlayerChar(i);

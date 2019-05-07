@@ -45,6 +45,33 @@ void CFlag::TickPaused()
 		++m_GrabTick;
 }
 
+void CFlag::Snap(int SnappingClient)
+{
+	if(NetworkClipped(SnappingClient))
+		return;
+
+	if (GameServer()->GetPlayerChar(SnappingClient) && m_pCarrier)
+	{
+		if (!CmaskIsSet(m_pCarrier->Teams()->TeamMask(m_pCarrier->Team(), -1, m_pCarrier->GetPlayer()->GetCID()), SnappingClient))
+			return;
+	}
+
+	CNetObj_Flag *pFlag = (CNetObj_Flag *)Server()->SnapNewItem(NETOBJTYPE_FLAG, m_Team, sizeof(CNetObj_Flag));
+	if(!pFlag)
+		return;
+
+	pFlag->m_X = (int)m_Pos.x;
+	pFlag->m_Y = (int)m_Pos.y;
+	pFlag->m_Team = m_Team;
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 void CFlag::TickDefered()
 {
 	if (m_pCarrier && m_pCarrier->IsAlive())
@@ -230,26 +257,6 @@ void CFlag::HandleDropped()
 	}
 	IsGrounded(true);
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
-}
-
-void CFlag::Snap(int SnappingClient)
-{
-	if(NetworkClipped(SnappingClient))
-		return;
-
-	if (GameServer()->GetPlayerChar(SnappingClient) && m_pCarrier)
-	{
-		if (!CmaskIsSet(m_pCarrier->Teams()->TeamMask(m_pCarrier->Team(), -1, m_pCarrier->GetPlayer()->GetCID()), SnappingClient))
-			return;
-	}
-
-	CNetObj_Flag *pFlag = (CNetObj_Flag *)Server()->SnapNewItem(NETOBJTYPE_FLAG, m_Team, sizeof(CNetObj_Flag));
-	if(!pFlag)
-		return;
-
-	pFlag->m_X = (int)m_Pos.x;
-	pFlag->m_Y = (int)m_Pos.y;
-	pFlag->m_Team = m_Team;
 }
 
 void CFlag::HandleTiles(int Index)

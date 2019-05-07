@@ -496,6 +496,13 @@ void CNetConnection::SetTimedOut(const NETADDR *pAddr, int Sequence, int Ack, SE
 	}
 }
 
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 void CNetConnection::BotConnect()
 {
 	Reset();
