@@ -6,6 +6,20 @@
 // TODO: remove this
 #include "././game/variables.h"
 
+MACRO_CONFIG_INT(ClShowIDs, cl_show_ids, 0, 0, 1, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Whether to show client ids in scoreboard")
+MACRO_CONFIG_INT(ClScoreboardOnDeath, cl_scoreboard_on_death, 1, 0, 1, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Whether to show scoreboard after death or not")
+MACRO_CONFIG_INT(ClAutoRaceRecord, cl_auto_race_record, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Save the best demo of each race")
+MACRO_CONFIG_INT(ClRaceRecordServerControl, cl_race_record_server_control, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Let the server start the race recorder")
+MACRO_CONFIG_INT(ClDemoName, cl_demo_name, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Save the player name within the demo")
+MACRO_CONFIG_INT(ClDemoAssumeRace, cl_demo_assume_race, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Assume that demos are race demos")
+MACRO_CONFIG_INT(ClRaceGhost, cl_race_ghost, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable ghost")
+MACRO_CONFIG_INT(ClRaceGhostServerControl, cl_race_ghost_server_control, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Let the server start the ghost")
+MACRO_CONFIG_INT(ClRaceShowGhost, cl_race_show_ghost, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show ghost")
+MACRO_CONFIG_INT(ClRaceSaveGhost, cl_race_save_ghost, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Save ghost")
+MACRO_CONFIG_INT(ClDDRaceScoreBoard, cl_ddrace_scoreboard, 1, 0, 1, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Enable DDRace Scoreboard ")
+MACRO_CONFIG_INT(ClShowDecisecs, cl_show_decisecs, 1, 0, 1, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Show deciseconds in game time")
+MACRO_CONFIG_INT(ClShowOthers, cl_show_others, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show players in other teams")
+
 MACRO_CONFIG_STR(Password, password, 32, "", CFGFLAG_CLIENT|CFGFLAG_SERVER|CFGFLAG_NONTEEHISTORIC, "Password to the server")
 MACRO_CONFIG_STR(Logfile, logfile, 128, "", CFGFLAG_SAVE|CFGFLAG_CLIENT|CFGFLAG_SERVER, "Filename to log all output to")
 MACRO_CONFIG_INT(ConsoleOutputLevel, console_output_level, 0, 0, 2, CFGFLAG_CLIENT|CFGFLAG_SERVER, "Adjusts the amount of information in the console")
@@ -189,27 +203,6 @@ MACRO_CONFIG_INT(SvConnlimitTime, sv_connlimit_time, 20, 0, 1000, CFGFLAG_SERVER
 #if defined(CONF_FAMILY_UNIX)
 MACRO_CONFIG_STR(SvConnLoggingServer, sv_conn_logging_server, 128, "", CFGFLAG_SERVER, "Unix socket server for IP address logging")
 #endif
-
-MACRO_CONFIG_INT(ClUnpredictedShadow, cl_unpredicted_shadow, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show unpredicted shadow tee to estimate your delay")
-MACRO_CONFIG_INT(ClPredictDDRace, cl_predict_ddrace, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Predict some DDRace tiles")
-MACRO_CONFIG_INT(ClPredictFreeze, cl_predict_freeze, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Predict freeze tiles")
-MACRO_CONFIG_INT(ClShowNinja, cl_show_ninja, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show ninja skin")
-MACRO_CONFIG_INT(ClShowHookCollOther, cl_show_hook_coll_other, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show other players' hook collision line")
-MACRO_CONFIG_INT(ClShowHookCollOwn, cl_show_hook_coll_own, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show own players' hook collision line")
-MACRO_CONFIG_INT(ClShowHookCollAlways, cl_show_hook_coll_always, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show every players' hook collision line even if they're not using it")
-MACRO_CONFIG_INT(ClChatTeamColors, cl_chat_teamcolors, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Show names in chat in team colors")
-MACRO_CONFIG_INT(ClChatReset, cl_chat_reset, 1, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Reset chat when pressing escape")
-MACRO_CONFIG_INT(ClShowDirection, cl_show_direction, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Show tee direction")
-MACRO_CONFIG_INT(ClHttpMapDownload, cl_http_map_download, 1, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Try fast HTTP map download first")
-MACRO_CONFIG_INT(ClOldGunPosition, cl_old_gun_position, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Tees hold gun a bit higher like in TW 0.6.1 and older")
-MACRO_CONFIG_INT(ClConfirmDisconnect, cl_confirm_disconnect, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Confirmation popup before disconnecting")
-MACRO_CONFIG_STR(ClTimeoutCode, cl_timeout_code, 64, "", CFGFLAG_SAVE|CFGFLAG_CLIENT, "Timeout code to use")
-MACRO_CONFIG_STR(ClDummyTimeoutCode, cl_dummy_timeout_code, 64, "", CFGFLAG_SAVE|CFGFLAG_CLIENT, "Dummy Timeout code to use")
-MACRO_CONFIG_STR(ClTimeoutSeed, cl_timeout_seed, 64, "", CFGFLAG_SAVE|CFGFLAG_CLIENT, "Timeout seed")
-MACRO_CONFIG_STR(ClInputFifo, cl_input_fifo, 128, "", CFGFLAG_SAVE|CFGFLAG_CLIENT, "Fifo file to use as input for client console")
-MACRO_CONFIG_INT(ClShowConsole, cl_show_console, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Show console window (Windows only)")
-MACRO_CONFIG_INT(InpJoystick, inp_joystick, 0, 0, 1, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Try to use a joystick as input")
-MACRO_CONFIG_INT(ClConfigVersion, cl_config_version, 0, 0, 0, CFGFLAG_CLIENT|CFGFLAG_SAVE, "The config version. Helps newer clients fix bugs with older configs.")
 
 // demo editor
 MACRO_CONFIG_INT(ClDemoSliceBegin, cl_demo_slice_begin, -1, 0, 0, CFGFLAG_SAVE|CFGFLAG_CLIENT, "Begin marker for demo slice")
