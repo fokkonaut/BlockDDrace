@@ -150,7 +150,7 @@ bool CFlag::IsGrounded(bool SetVel)
 	int index = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + ms_PhysSize + 4));
 	int tile = GameServer()->Collision()->GetTileIndex(index);
 	int flags = GameServer()->Collision()->GetTileFlags(index);
-	if (tile == TILE_STOPA || (tile == TILE_STOP && flags == ROTATION_0) || (tile == TILE_STOPS && (flags == ROTATION_0 || flags == ROTATION_180)))
+	if (GameServer()->Collision()->GetDTileIndex(index) == TILE_STOPA || tile == TILE_STOPA || (tile == TILE_STOP && flags == ROTATION_0) || (tile == TILE_STOPS && (flags == ROTATION_0 || flags == ROTATION_180)))
 	{
 		if (SetVel)
 			m_Vel.x *= 0.925f;
