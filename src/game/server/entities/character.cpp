@@ -302,6 +302,8 @@ void CCharacter::HandleNinja()
 			{
 				if (aEnts[i] == this)
 					continue;
+				if (aEnts[i]->m_Passive || m_Passive)
+					continue;
 
 				// Don't hit players in other teams
 				if (Team() != aEnts[i]->Team())
@@ -331,8 +333,7 @@ void CCharacter::HandleNinja()
 				if(m_NumObjectsHit < 10)
 					m_apHitObjects[m_NumObjectsHit++] = aEnts[i];
 
-				if (!aEnts[i]->m_Passive && !m_Passive)
-					aEnts[i]->TakeDamage(vec2(0, -10.0f), g_pData->m_Weapons.m_Ninja.m_pBase->m_Damage, m_pPlayer->GetCID(), WEAPON_NINJA);
+				aEnts[i]->TakeDamage(vec2(0, -10.0f), g_pData->m_Weapons.m_Ninja.m_pBase->m_Damage, m_pPlayer->GetCID(), WEAPON_NINJA);
 			}
 		}
 
@@ -2986,8 +2987,8 @@ void CCharacter::BlockDDraceTick()
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr)
 	{
-		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 50 && pChr->m_Pos.y > m_Core.m_Pos.y - 50)
-			if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
+		if (pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
+			if (!m_Passive && !pChr->m_Passive && IsGrounded() && pChr->IsGrounded() && pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
 				m_LastToucherID = pChr->GetPlayer()->GetCID();
 	}
 

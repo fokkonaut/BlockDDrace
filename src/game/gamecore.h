@@ -253,6 +253,7 @@ public:
 	int m_Colliding;
 	bool m_LeftWall;
 	
+	// BlockDDrace
 	bool m_Passive;
 
 	// DDNet Character
