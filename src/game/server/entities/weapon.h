@@ -70,10 +70,14 @@ private:
 	int m_TileFlagsT;
 	int m_TileFIndexT;
 	int m_TileFFlagsT;
+	int m_TileSIndexT;
+	int m_TileSFlagsT;
 	int m_TileIndexB;
 	int m_TileFlagsB;
 	int m_TileFIndexB;
 	int m_TileFFlagsB;
+	int m_TileSIndexB;
+	int m_TileSFlagsB;
 };
 
 #endif
