@@ -261,72 +261,6 @@ void CWeapon::HandleDropped()
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
 }
 
-void CWeapon::Snap(int SnappingClient)
-{
-	if(NetworkClipped(SnappingClient))
-		return;
-
-	if (GameServer()->GetPlayerChar(SnappingClient))
-	{
-		if (!CmaskIsSet(m_TeamMask, SnappingClient))
-			return;
-	}
-
-	CNetObj_Pickup *pP = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
-	if(!pP)
-		return;
-
-	pP->m_X = (int)m_Pos.x;
-	pP->m_Y = (int)m_Pos.y;
-	pP->m_Type = POWERUP_WEAPON;
-	pP->m_Subtype = GameServer()->GetRealWeapon(m_Type);
-
-	if (m_Jetpack)
-	{
-		CNetObj_Projectile *pJetpackIndicator = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
-		if (pJetpackIndicator)
-		{
-			pJetpackIndicator->m_X = pP->m_X;
-			pJetpackIndicator->m_Y = pP->m_Y - 25;
-			pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
-			pJetpackIndicator->m_StartTick = Server()->Tick();
-		}
-	}
-	else if (m_Type == WEAPON_PLASMA_RIFLE)
-	{
-		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID2, sizeof(CNetObj_Laser)));
-		if (!pLaser)
-			return;
-
-		pLaser->m_X = pP->m_X;
-		pLaser->m_Y = pP->m_Y - 30;
-		pLaser->m_FromX = pP->m_X;
-		pLaser->m_FromY = pP->m_Y - 30;
-		pLaser->m_StartTick = Server()->Tick();
-	}
-	else if (m_Type == WEAPON_HEART_GUN)
-	{
-		CNetObj_Pickup *pPickup = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID2, sizeof(CNetObj_Pickup)));
-		if (!pPickup)
-			return;
-
-		pPickup->m_X = pP->m_X;
-		pPickup->m_Y = pP->m_Y - 30;
-		pPickup->m_Type = POWERUP_HEALTH;
-	}
-	else if (m_Type == WEAPON_STRAIGHT_GRENADE)
-	{
-		CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
-		if (!pProj)
-			return;
-
-		pProj->m_X = pP->m_X;
-		pProj->m_Y = pP->m_Y - 30;
-		pProj->m_StartTick = Server()->Tick();
-		pProj->m_Type = WEAPON_GRENADE;
-	}
-}
-
 void CWeapon::HandleTiles(int Index)
 {
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
@@ -422,4 +356,70 @@ void CWeapon::HandleTiles(int Index)
 		m_Vel.x = 0;
 	if (m_Vel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
 		m_Vel.x = 0;
+}
+
+void CWeapon::Snap(int SnappingClient)
+{
+	if (NetworkClipped(SnappingClient))
+		return;
+
+	if (GameServer()->GetPlayerChar(SnappingClient))
+	{
+		if (!CmaskIsSet(m_TeamMask, SnappingClient))
+			return;
+	}
+
+	CNetObj_Pickup *pP = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID, sizeof(CNetObj_Pickup)));
+	if (!pP)
+		return;
+
+	pP->m_X = (int)m_Pos.x;
+	pP->m_Y = (int)m_Pos.y;
+	pP->m_Type = POWERUP_WEAPON;
+	pP->m_Subtype = GameServer()->GetRealWeapon(m_Type);
+
+	if (m_Jetpack)
+	{
+		CNetObj_Projectile *pJetpackIndicator = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
+		if (pJetpackIndicator)
+		{
+			pJetpackIndicator->m_X = pP->m_X;
+			pJetpackIndicator->m_Y = pP->m_Y - 25;
+			pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
+			pJetpackIndicator->m_StartTick = Server()->Tick();
+		}
+	}
+	else if (m_Type == WEAPON_PLASMA_RIFLE)
+	{
+		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID2, sizeof(CNetObj_Laser)));
+		if (!pLaser)
+			return;
+
+		pLaser->m_X = pP->m_X;
+		pLaser->m_Y = pP->m_Y - 30;
+		pLaser->m_FromX = pP->m_X;
+		pLaser->m_FromY = pP->m_Y - 30;
+		pLaser->m_StartTick = Server()->Tick();
+	}
+	else if (m_Type == WEAPON_HEART_GUN)
+	{
+		CNetObj_Pickup *pPickup = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID2, sizeof(CNetObj_Pickup)));
+		if (!pPickup)
+			return;
+
+		pPickup->m_X = pP->m_X;
+		pPickup->m_Y = pP->m_Y - 30;
+		pPickup->m_Type = POWERUP_HEALTH;
+	}
+	else if (m_Type == WEAPON_STRAIGHT_GRENADE)
+	{
+		CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
+		if (!pProj)
+			return;
+
+		pProj->m_X = pP->m_X;
+		pProj->m_Y = pP->m_Y - 30;
+		pProj->m_StartTick = Server()->Tick();
+		pProj->m_Type = WEAPON_GRENADE;
+	}
 }

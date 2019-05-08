@@ -1,5 +1,12 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 #include <game/server/gamecontext.h>
 #include <engine/shared/config.h>
 #include <game/server/teams.h>
@@ -44,33 +51,6 @@ void CFlag::TickPaused()
 	if(m_GrabTick)
 		++m_GrabTick;
 }
-
-void CFlag::Snap(int SnappingClient)
-{
-	if(NetworkClipped(SnappingClient))
-		return;
-
-	if (GameServer()->GetPlayerChar(SnappingClient) && m_pCarrier)
-	{
-		if (!CmaskIsSet(m_pCarrier->Teams()->TeamMask(m_pCarrier->Team(), -1, m_pCarrier->GetPlayer()->GetCID()), SnappingClient))
-			return;
-	}
-
-	CNetObj_Flag *pFlag = (CNetObj_Flag *)Server()->SnapNewItem(NETOBJTYPE_FLAG, m_Team, sizeof(CNetObj_Flag));
-	if(!pFlag)
-		return;
-
-	pFlag->m_X = (int)m_Pos.x;
-	pFlag->m_Y = (int)m_Pos.y;
-	pFlag->m_Team = m_Team;
-}
-
-
-/*************************************************
-*                                                *
-*              B L O C K D D R A C E             *
-*                                                *
-**************************************************/
 
 void CFlag::TickDefered()
 {
@@ -359,4 +339,24 @@ void CFlag::HandleTiles(int Index)
 		m_Vel.x = 0;
 	if (m_Vel.x < 0 && ((m_TileIndex == TILE_STOP && m_TileFlags == ROTATION_90) || (m_TileIndexR == TILE_STOP && m_TileFlagsR == ROTATION_90) || (m_TileIndexR == TILE_STOPS && (m_TileFlagsR == ROTATION_90 || m_TileFlagsR == ROTATION_270)) || (m_TileIndexR == TILE_STOPA) || (m_TileFIndex == TILE_STOP && m_TileFFlags == ROTATION_90) || (m_TileFIndexR == TILE_STOP && m_TileFFlagsR == ROTATION_90) || (m_TileFIndexR == TILE_STOPS && (m_TileFFlagsR == ROTATION_90 || m_TileFFlagsR == ROTATION_270)) || (m_TileFIndexR == TILE_STOPA)))
 		m_Vel.x = 0;
+}
+
+void CFlag::Snap(int SnappingClient)
+{
+	if (NetworkClipped(SnappingClient))
+		return;
+
+	if (GameServer()->GetPlayerChar(SnappingClient) && m_pCarrier)
+	{
+		if (!CmaskIsSet(m_pCarrier->Teams()->TeamMask(m_pCarrier->Team(), -1, m_pCarrier->GetPlayer()->GetCID()), SnappingClient))
+			return;
+	}
+
+	CNetObj_Flag *pFlag = (CNetObj_Flag *)Server()->SnapNewItem(NETOBJTYPE_FLAG, m_Team, sizeof(CNetObj_Flag));
+	if (!pFlag)
+		return;
+
+	pFlag->m_X = (int)m_Pos.x;
+	pFlag->m_Y = (int)m_Pos.y;
+	pFlag->m_Team = m_Team;
 }
