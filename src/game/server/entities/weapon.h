@@ -44,10 +44,6 @@ private:
 
 	int m_TeleCheckpoint;
 	void HandleTiles(int Index);
-	int MapIndexL;
-	int MapIndexR;
-	int MapIndexT;
-	int MapIndexB;
 	int m_TileIndex;
 	int m_TileFlags;
 	int m_TileFIndex;
