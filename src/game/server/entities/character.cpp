@@ -3106,10 +3106,11 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 {
 	if (GetWeaponGot(PreferedWeapon))
 		SetWeapon(PreferedWeapon);
-	else for (int i = NUM_WEAPONS-1; i>-1; i--)
+	else for (int i = NUM_WEAPONS; i > -1; i--)
 	{
-		if (GetWeaponGot(i))
-			SetWeapon(i);
+		if (i != WEAPON_NINJA)
+			if (GetWeaponGot(i))
+				SetWeapon(i);
 	}
 	UpdateWeaponIndicator();
 }
