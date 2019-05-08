@@ -950,9 +950,11 @@ void CCharacter::Tick()
 			Carried = false;
 		m_Core.SetFlagPos(i, F->m_Pos, F->IsAtStand(), F->GetVel(), Carried);
 	}
+	// BlockDDrace
 
 	m_Core.Tick(true);
 
+	// BlockDDrace
 	if (m_Core.m_UpdateFlagVel == FLAG_RED)
 		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
 	else if (m_Core.m_UpdateFlagVel == FLAG_BLUE)
