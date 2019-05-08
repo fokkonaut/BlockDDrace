@@ -247,7 +247,7 @@ void CWeapon::HandleDropped()
 		}
 	}
 
-	//stopper
+	// tiles
 	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
 	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
 	if (!Indices.empty())
