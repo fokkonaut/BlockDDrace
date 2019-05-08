@@ -38,7 +38,7 @@ void CStraightGrenade::Reset()
 void CStraightGrenade::Tick()
 {
 	pOwner = 0;
-	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
+	if (GameServer()->GetPlayerChar(m_Owner))
 		pOwner = GameServer()->GetPlayerChar(m_Owner);
 
 	if (m_Owner >= 0 && !pOwner && g_Config.m_SvDestroyBulletsOnDeath)
