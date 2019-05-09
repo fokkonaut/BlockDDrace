@@ -298,7 +298,7 @@ void CCharacter::HandleNinja()
 			if (Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
 				return;
 
-			// check that we're not in passive mode
+			// check that we're not in passive mode // BlockDDrace
 			if (m_Passive)
 				return;
 
@@ -311,7 +311,7 @@ void CCharacter::HandleNinja()
 				if (Team() != aEnts[i]->Team())
 					continue;
 
-				// Dont't hit players in passive mode
+				// Dont't hit players in passive mode // BlockDDrace
 				if (aEnts[i]->m_Passive)
 					continue;
 

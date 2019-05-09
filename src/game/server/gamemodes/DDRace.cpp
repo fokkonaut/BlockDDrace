@@ -16,6 +16,7 @@ CGameControllerDDRace::CGameControllerDDRace(class CGameContext *pGameServer) :
 	m_apFlags[0] = 0;
 	m_apFlags[1] = 0;
 
+	// BlockDDrace
 	m_GameFlags = GAMEFLAG_FLAGS;
 
 	m_pGameType = g_Config.m_SvTestingCommands ? TEST_NAME : GAME_NAME;
@@ -49,6 +50,7 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	if (!pGameDataObj)
 		return;
 
+	// BlockDDrace
 	CPlayer* pSnap = GameServer()->m_apPlayers[SnappingClient];
 
 	bool FlagPosFix[2];
