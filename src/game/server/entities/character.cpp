@@ -298,15 +298,21 @@ void CCharacter::HandleNinja()
 			if (Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
 				return;
 
+			// check that we're not in passive mode
+			if (m_Passive)
+				return;
+
 			for (int i = 0; i < Num; ++i)
 			{
 				if (aEnts[i] == this)
 					continue;
-				if (aEnts[i]->m_Passive || m_Passive)
-					continue;
 
 				// Don't hit players in other teams
 				if (Team() != aEnts[i]->Team())
+					continue;
+
+				// Dont't hit players in passive mode
+				if (aEnts[i]->m_Passive)
 					continue;
 
 				// Don't hit players in solo parts
