@@ -36,7 +36,23 @@ void CPickup::Reset()
 
 void CPickup::Tick()
 {
-	if (m_Owner < 0)
+	// BlockDDrace
+	if (m_Owner >= 0)
+	{
+		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
+		if (!pChr || !pChr->m_Passive)
+		{
+			m_CanRemove = true;
+			Reset();
+		}
+		else
+		{
+			m_Pos.x = pChr->m_Pos.x;
+			m_Pos.y = pChr->m_Pos.y - 50;
+		}
+	}
+	// BlockDDrace
+	else
 	{
 		Move();
 		// wait for respawn
@@ -67,16 +83,19 @@ void CPickup::Tick()
 				switch (m_Type)
 				{
 					case POWERUP_HEALTH:
+						// BlockDDrace
 						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseHealth(1))
 						{
 							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH);
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 						}
+						// BlockDDrace
 						else if(pChr->Freeze()) GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, pChr->Teams()->TeamMask(pChr->Team()));
 						break;
 
 					case POWERUP_ARMOR:
 						if(pChr->Team() == TEAM_SUPER) continue;
+						// BlockDDrace
 						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseArmor(1))
 						{
 							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
@@ -94,6 +113,7 @@ void CPickup::Tick()
 								pChr->m_aWeaponsBackupGot[i][BACKUP_SPOOKY_GHOST] = false;
 							}
 						}
+						// BlockDDrace
 						else
 						{
 							for (int i = WEAPON_SHOTGUN; i < NUM_WEAPONS; i++)
@@ -125,6 +145,7 @@ void CPickup::Tick()
 
 						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime)))))
 						{
+							// BlockDDrace
 							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
 								pChr->GiveWeapon(m_Subtype, false, 10);
 							else if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
@@ -168,6 +189,7 @@ void CPickup::Tick()
 							break;
 						}
 
+					// BlockDDrace
 					case POWERUP_AMMO:
 
 						if (true)
@@ -175,6 +197,7 @@ void CPickup::Tick()
 							//nothing here yet
 						}
 						break;
+					// BlockDDrace
 
 					default:
 						break;
@@ -192,20 +215,6 @@ void CPickup::Tick()
 					}
 				}
 			}
-		}
-	}
-	else if (m_Owner >= 0)
-	{
-		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
-		if (!pChr || !pChr->m_Passive)
-		{
-			m_CanRemove = true;
-			Reset();
-		}
-		else
-		{
-			m_Pos.x = pChr->m_Pos.x;
-			m_Pos.y = pChr->m_Pos.y - 50;
 		}
 	}
 }
@@ -236,6 +245,7 @@ void CPickup::Snap(int SnappingClient)
 					&& (!Tick))
 		return;
 
+	// BlockDDrace
 	if (pOwner && Char)
 	{
 		int64_t TeamMask = pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner);
