@@ -440,12 +440,12 @@ void CCharacter::FireWeapon()
 		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
 			m_CountSpookyGhostInputs = true;
 
-		if (m_ShopWindowPage != -1 && m_PurchaseState == 1)
+		if (m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
 			m_ChangeShopPage = true;
 	}
 
 	// shop window
-	if (m_ChangeShopPage && m_ShopWindowPage != -1 && m_PurchaseState == 1)
+	if (m_ChangeShopPage && m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
 	{
 		ShopWindow(GetAimDir());
 		m_ChangeShopPage = false;
@@ -2996,9 +2996,7 @@ void CCharacter::BlockDDraceTick()
 	}
 
 	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
-	{
 		m_LastHitWeapon = -1;
-	}
 	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
 
 	if (!GameServer()->m_apPlayers[m_LastToucherID])
@@ -3024,8 +3022,8 @@ void CCharacter::BlockDDraceTick()
 
 	if (m_ShopMotdTick < Server()->Tick())
 	{
-		m_ShopWindowPage = -1;
-		m_PurchaseState = 0;
+		m_ShopWindowPage = SHOP_PAGE_NONE;
+		m_PurchaseState = SHOP_STATE_NONE;
 	}
 
 	if (m_InShop)
@@ -3035,19 +3033,16 @@ void CCharacter::BlockDDraceTick()
 			if (m_pPlayer->m_ShopBotAntiSpamTick < Server()->Tick())
 			{
 				GameServer()->SendChat(GameServer()->GetShopBot(), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
-
 				m_pPlayer->m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
 			}
 
-			if (m_ShopWindowPage != -1)
-			{
+			if (m_ShopWindowPage != SHOP_PAGE_NONE)
 				GameServer()->SendMotd("", GetPlayer()->GetCID());
-			}
 
 			GameServer()->SendBroadcast("", m_pPlayer->GetCID());
 
-			m_PurchaseState = 0;
-			m_ShopWindowPage = -1;
+			m_PurchaseState = SHOP_STATE_NONE;
+			m_ShopWindowPage = SHOP_PAGE_NONE;
 
 			Passive(false, -1, true);
 			m_InShop = false;
