@@ -4,6 +4,8 @@
 *                                                *
 **************************************************/
 
+// made by fokkonaut
+
 #ifndef GAME_SERVER_ENTITIES_STRAIGHT_GRENADE_H
 #define GAME_SERVER_ENTITIES_STRAIGHT_GRENADE_H
 

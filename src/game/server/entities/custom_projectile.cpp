@@ -4,6 +4,8 @@
 *                                                *
 **************************************************/
 
+// made by fokkonaut
+
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include <game/server/teams.h>
@@ -77,7 +79,7 @@ void CCustomProjectile::Tick()
 				GameServer()->CreateDeath(m_PrevPos, m_Owner);
 		}
 
-		if (m_CollisionState == COLLIDED_NOT)
+		if (m_CollisionState == NOT_COLLIDED)
 			m_CollisionState = COLLIDED_ONCE;
 
 		if (m_CollisionState == COLLIDED_TWICE || !m_Ghost)

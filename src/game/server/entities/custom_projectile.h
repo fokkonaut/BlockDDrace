@@ -4,6 +4,8 @@
 *                                                *
 **************************************************/
 
+// made by fokkonaut
+
 #ifndef GAME_SERVER_ENTITIES_CUSTOM_PROJECTILE_H
 #define GAME_SERVER_ENTITIES_CUSTOM_PROJECTILE_H
 
@@ -11,7 +13,7 @@
 
 enum
 {
-	COLLIDED_NOT = 0,
+	NOT_COLLIDED = 0,
 	COLLIDED_ONCE,
 	COLLIDED_TWICE
 };
