@@ -38,7 +38,6 @@ private:
 	int m_LifeSpan;
 	int m_Owner;
 	int m_Type;
-	//int m_Damage;
 	int m_SoundImpact;
 	int m_Weapon;
 	float m_Force;
@@ -51,6 +50,7 @@ private:
 	bool m_Freeze;
 	int m_TuneZone;
 
+	// BlockDDrace
 	bool m_Spooky;
 
 public:

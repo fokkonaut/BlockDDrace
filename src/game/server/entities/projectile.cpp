@@ -34,7 +34,6 @@ CProjectile::CProjectile
 	m_LifeSpan = Span;
 	m_Owner = Owner;
 	m_Force = Force;
-	//m_Damage = Damage;
 	m_SoundImpact = SoundImpact;
 	m_Weapon = Weapon;
 	m_StartTick = Server()->Tick();
@@ -155,7 +154,7 @@ void CProjectile::Tick()
 
 	if( ((pTargetChr && !pTargetChr->m_Passive && (pOwnerChar ? !(pOwnerChar->m_Hit&CCharacter::DISABLE_HIT_GRENADE) : g_Config.m_SvHit || m_Owner == -1 || pTargetChr == pOwnerChar)) || Collide || GameLayerClipped(CurPos)) && !IsWeaponCollide)
 	{
-		if(m_Explosive/*??*/ && (!pTargetChr || (pTargetChr && (!m_Freeze || (m_Weapon == WEAPON_SHOTGUN && Collide)))))
+		if(m_Explosive && (!pTargetChr || (pTargetChr && (!m_Freeze || (m_Weapon == WEAPON_SHOTGUN && Collide)))))
 		{
 			int Number = 1;
 			if(GameServer()->EmulateBug(BUG_GRENADE_DOUBLEEXPLOSION) && m_LifeSpan == -1 && m_InitialLifeSpan == 0)
@@ -173,17 +172,18 @@ void CProjectile::Tick()
 		else if(pTargetChr && m_Freeze && ((m_Layer == LAYER_SWITCH && GameServer()->Collision()->m_pSwitchers[m_Number].m_Status[pTargetChr->Team()]) || m_Layer != LAYER_SWITCH))
 			pTargetChr->Freeze();
 
+		// BlockDDrace
 		if (!m_Explosive && pTargetChr)
 		{
 			int Dmg = (pTargetChr && pTargetChr->m_Passive) ? 0 : g_pData->m_Weapons.m_aId[m_Weapon].m_Damage;
 			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), Dmg, m_Owner, m_Weapon);
 		}
-
 		if (pTargetChr && m_Spooky)
 		{
 			pTargetChr->SetEmote(EMOTE_SURPRISE, Server()->Tick() + 2 * Server()->TickSpeed());
 			GameServer()->SendEmoticon(pTargetChr->GetPlayer()->GetCID(), EMOTICON_GHOST);
 		}
+		// BlockDDrace
 
 		if (pOwnerChar && ColPos && !GameLayerClipped(ColPos) &&
 			((m_Type == WEAPON_GRENADE && pOwnerChar->m_HasTeleGrenade) || (m_Type == WEAPON_GUN && pOwnerChar->m_HasTeleGun)))
