@@ -65,7 +65,7 @@ void CFlag::Drop(int Dir)
 	m_DropTick = Server()->Tick();
 	m_DropFreezeTick = Server()->Tick();
 	m_pLastCarrier = m_pCarrier;
-	m_pCarrier = 0;
+	m_pCarrier = NULL;
 	m_Vel = vec2(5 * Dir, Dir == 0 ? 0 : -5);
 }
 
