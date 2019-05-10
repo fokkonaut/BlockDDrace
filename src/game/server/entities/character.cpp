@@ -2605,7 +2605,10 @@ void CCharacter::DDRaceTick()
 
 void CCharacter::DDRacePostCoreTick()
 {
+	// BlockDDrace
 	IsFrozen = false;
+	// BlockDDrace
+
 	m_Time = (float)(Server()->Tick() - m_StartTime) / ((float)Server()->TickSpeed());
 
 	if (m_pPlayer->m_DefEmoteReset >= 0 && m_pPlayer->m_DefEmoteReset <= Server()->Tick())
@@ -2659,8 +2662,10 @@ void CCharacter::DDRacePostCoreTick()
 		m_IsBlueTeleGunTeleport = false;
 	}
 
+	// BlockDDrace
 	if (!IsFrozen)
 		m_FirstFreezeTick = 0;
+	// BlockDDrace
 
 	HandleBroadcast();
 }
@@ -2672,6 +2677,7 @@ bool CCharacter::Freeze(int Seconds)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
 	{
+		// BlockDDrace
 		BackupWeapons(BACKUP_FREEZE);
 		for (int i = 0; i < NUM_WEAPONS; i++)
 			m_aWeapons[i].m_Ammo = 0;
@@ -2694,6 +2700,7 @@ bool CCharacter::UnFreeze()
 {
 	if (m_FreezeTime > 0)
 	{
+		// BlockDDrace
 		LoadWeaponBackup(BACKUP_FREEZE);
 
 		if(!m_aWeapons[GetActiveWeapon()].m_Got)
