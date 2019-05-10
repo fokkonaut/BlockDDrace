@@ -500,9 +500,6 @@ void CCharacter::FireWeapon()
 		{
 		case WEAPON_HAMMER:
 		{
-			if (!m_pPlayer->m_IsDummy)
-				new CClock(GameWorld(), m_Pos);
-
 			// reset objects Hit
 			m_NumObjectsHit = 0;
 			if (Sound)

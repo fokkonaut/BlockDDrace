@@ -74,6 +74,7 @@ int CClock::GetID(int Hand)
 	case HOUR:
 		return m_ID3;
 	}
+	return m_ID;
 }
 
 void CClock::Snap(int SnappingClient)
