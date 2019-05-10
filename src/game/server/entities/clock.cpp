@@ -47,7 +47,7 @@ void CClock::Step()
 	{
 		vec2 dir(sin(m_Hand[i].m_Rotation), cos(m_Hand[i].m_Rotation));
 		vec2 to2 = m_Pos + normalize(dir) * m_Hand[i].m_Length;
-		GameServer()->Collision()->IntersectNoLaser(m_Pos, to2, &m_Hand[i].m_To, 0);
+		GameServer()->Collision()->IntersectLine(m_Pos, to2, &m_Hand[i].m_To, 0);
 	}
 }
 
