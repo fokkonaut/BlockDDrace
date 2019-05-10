@@ -15,6 +15,7 @@
 #include "entities/projectile.h"
 #include "entities/plasma.h"
 #include "entities/door.h"
+#include "entities/clock.h"
 #include <game/layers.h>
 
 
@@ -243,6 +244,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 		Type = POWERUP_WEAPON;
 		SubType = WEAPON_RIFLE;
 	}
+	// BlockDDrace
 	else if (Index == ENTITY_WEAPON_GUN)
 	{
 		Type = POWERUP_WEAPON;
@@ -272,11 +274,14 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	{
 		Type = POWERUP_AMMO;
 	}
-	//else if(Index == ENTITY_POWERUP_NINJA && g_Config.m_SvPowerups)
 	else if(Index == ENTITY_POWERUP_NINJA)
 	{
 		Type = POWERUP_NINJA;
 		SubType = WEAPON_NINJA;
+	}
+	else if (Index == ENTITY_CLOCK)
+	{
+		new CClock(&GameServer()->m_World, Pos);
 	}
 	else if(Index >= ENTITY_LASER_FAST_CW && Index <= ENTITY_LASER_FAST_CCW)
 	{
@@ -334,7 +339,6 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 					Lgt->m_CurveLength = Lgt->m_Length;
 			}
 		}
-
 	}
 	else if(Index >= ENTITY_DRAGGER_WEAK && Index <= ENTITY_DRAGGER_STRONG)
 	{

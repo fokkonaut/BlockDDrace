@@ -769,6 +769,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   ddracecommands.cpp
   entities/character.cpp
   entities/character.h
+  entities/clock.cpp
+  entities/clock.h
   entities/custom_projectile.cpp
   entities/custom_projectile.h
   entities/door.cpp

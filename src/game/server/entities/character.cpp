@@ -26,6 +26,8 @@
 #include <game/server/score.h>
 #include "light.h"
 
+#include "clock.h"
+
 MACRO_ALLOC_POOL_ID_IMPL(CCharacter, MAX_CLIENTS)
 
 // Character, "physical" player's part
@@ -498,6 +500,9 @@ void CCharacter::FireWeapon()
 		{
 		case WEAPON_HAMMER:
 		{
+			if (!m_pPlayer->m_IsDummy)
+				new CClock(GameWorld(), m_Pos);
+
 			// reset objects Hit
 			m_NumObjectsHit = 0;
 			if (Sound)
