@@ -20,6 +20,7 @@ CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int N
 	m_SnapPos = m_Pos;
 	Reset();
 
+	m_ID2 = Server()->SnapNewID();
 	GameWorld()->InsertEntity(this);
 }
 
@@ -31,7 +32,10 @@ void CPickup::Reset()
 		m_SpawnTick = -1;
 
 	if (m_CanRemove)
+	{
+		Server()->SnapFreeID(m_ID2);
 		GameWorld()->DestroyEntity(this);
+	}
 }
 
 void CPickup::Tick()

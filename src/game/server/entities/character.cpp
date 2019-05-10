@@ -2984,7 +2984,7 @@ void CCharacter::BlockDDraceTick()
 
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
-		if (pChr->IsGrounded() && IsGrounded() && pChr->m_FreezeTime == 0 && !m_Passive && !pChr->m_Passive && CanCollide(pChr->GetPlayer()->GetCID()))
+		if (pChr->m_FreezeTime == 0 && !m_Passive && !pChr->m_Passive && CanCollide(pChr->GetPlayer()->GetCID()))
 			m_LastToucherID = pChr->GetPlayer()->GetCID();
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
