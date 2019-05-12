@@ -972,19 +972,21 @@ void CPlayer::CheckLevel()
 	if (GetAccID() <= 0)
 		return;
 
-	GameServer()->m_Accounts[GetAccID()].m_NeededXP = 1;
+	CGameContext::AccountInfo Account = GameServer()->m_Accounts[GetAccID()];
 
-	if (GameServer()->m_Accounts[GetAccID()].m_XP >= GameServer()->m_Accounts[GetAccID()].m_NeededXP)
+	Account.m_NeededXP = 1;
+
+	if (Account.m_XP >= Account.m_NeededXP)
 	{
-		GameServer()->m_Accounts[GetAccID()].m_Level++;
+		Account.m_Level++;
 
 		char aBuf[256];
-		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", GameServer()->m_Accounts[GetAccID()].m_Level);
+		str_format(aBuf, sizeof(aBuf), "You are now Level %d!", Account.m_Level);
 		GameServer()->SendChatTarget(m_ClientID, aBuf);
 
-		GameServer()->m_Accounts[GetAccID()].m_NeededXP += 2;
+		Account.m_NeededXP += 2;
 
-		dbg_msg("acc", "Level: %d, NeededXP: %d", GameServer()->m_Accounts[GetAccID()].m_Level, GameServer()->m_Accounts[GetAccID()].m_NeededXP);
+		dbg_msg("acc", "Level: %d, NeededXP: %d", Account.m_Level, Account.m_NeededXP);
 	}
 }
 
