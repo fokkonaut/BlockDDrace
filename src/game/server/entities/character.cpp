@@ -1095,13 +1095,13 @@ bool CCharacter::IncreaseArmor(int Amount)
 	// BlockDDrace
 	if(m_Armor >= 10 && !m_FreezeTime)
 		return false;
-	if (m_aWeaponsBackup[NUM_WEAPONS][1] >= 10 && m_FreezeTime)
+	if (m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] >= 10 && m_FreezeTime)
 		return false;
 
 	if (!m_FreezeTime)
 		m_Armor = clamp(m_Armor+Amount, 0, 10);
 	else
-		m_aWeaponsBackup[NUM_WEAPONS][1] = clamp(m_aWeaponsBackup[NUM_WEAPONS][1] + Amount, 0, 10);
+		m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] = clamp(m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] + Amount, 0, 10);
 	return true;
 }
 
