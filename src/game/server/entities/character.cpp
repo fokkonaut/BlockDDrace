@@ -1874,7 +1874,7 @@ void CCharacter::HandleTiles(int Index)
 	if(((m_TileIndex == TILE_EHOOK_START) || (m_TileFIndex == TILE_EHOOK_START)) && !m_EndlessHook)
 		EndlessHook();
 	else if(((m_TileIndex == TILE_EHOOK_END) || (m_TileFIndex == TILE_EHOOK_END)) && m_EndlessHook)
-		EndlessHook(true);
+		EndlessHook(false);
 
 	// hit others
 	if(((m_TileIndex == TILE_HIT_END) || (m_TileFIndex == TILE_HIT_END)) && m_Hit != (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN))
@@ -1940,7 +1940,7 @@ void CCharacter::HandleTiles(int Index)
 	if(((m_TileIndex == TILE_SUPER_START) || (m_TileFIndex == TILE_SUPER_START)) && !m_SuperJump)
 		InfiniteJumps();
 	else if(((m_TileIndex == TILE_SUPER_END) || (m_TileFIndex == TILE_SUPER_END)) && m_SuperJump)
-		InfiniteJumps(true);
+		InfiniteJumps(false);
 
 	// walljump
 	if((m_TileIndex == TILE_WALLJUMP) || (m_TileFIndex == TILE_WALLJUMP))
