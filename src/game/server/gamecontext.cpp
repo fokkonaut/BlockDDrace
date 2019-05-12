@@ -3698,24 +3698,11 @@ int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int Stor
 		int ID = pSelf->AddAccount();
 		pSelf->ReadAccountStats(ID, aUsername);
 
-		std::string data;
-		char aData[32];
-		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), "%s/%s.acc", g_Config.m_SvAccFilePath, aUsername);
-		std::fstream AccFile(aBuf);
-
-		getline(AccFile, data);
-		str_copy(aData, data.c_str(), sizeof(aData));
-		int Port = atoi(aData);
-
-		getline(AccFile, data);
-		str_copy(aData, data.c_str(), sizeof(aData));
-		if (atoi(aData) == 1 && Port == g_Config.m_SvPort)
+		if (pSelf->m_Accounts[ID].m_LoggedIn && pSelf->m_Accounts[ID].m_Port == g_Config.m_SvPort)
 		{
 			pSelf->Logout(ID);
 			dbg_msg("acc", "logged out account '%s'", aUsername);
 		}
-		AccFile.close();
 	}
 
 	return 0;
