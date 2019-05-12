@@ -635,6 +635,7 @@ void CGameTeams::OnFinish(CPlayer* Player, float Time)
 void CGameTeams::OnCharacterSpawn(int ClientID)
 {
 	m_Core.SetSolo(ClientID, false);
+	m_Core.SetPassive(ClientID, false);
 
 	if (m_Core.Team(ClientID) >= TEAM_SUPER || !m_TeamLocked[m_Core.Team(ClientID)])
 		SetForceCharacterTeam(ClientID, 0);
@@ -643,6 +644,7 @@ void CGameTeams::OnCharacterSpawn(int ClientID)
 void CGameTeams::OnCharacterDeath(int ClientID, int Weapon)
 {
 	m_Core.SetSolo(ClientID, false);
+	m_Core.SetPassive(ClientID, false);
 
 	int Team = m_Core.Team(ClientID);
 	bool Locked = TeamLocked(Team) && Weapon != WEAPON_GAME;

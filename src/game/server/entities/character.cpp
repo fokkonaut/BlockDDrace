@@ -295,30 +295,14 @@ void CCharacter::HandleNinja()
 			vec2 Center = OldPos + Dir * 0.5f;
 			int Num = GameWorld()->FindEntities(Center, Radius, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 
-			// check that we're not in solo part
-			if (Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
-				return;
-
-			// check that we're not in passive mode // BlockDDrace
-			if (m_Passive)
-				return;
-
 			for (int i = 0; i < Num; ++i)
 			{
 				if (aEnts[i] == this)
 					continue;
 
-				// Don't hit players in other teams
-				if (Team() != aEnts[i]->Team())
+				// check that we can collide with the other player
+				if (!CanCollide(aEnts[i]->m_pPlayer->GetCID()))
 					continue;
-
-				// Dont't hit players in passive mode // BlockDDrace
-				if (aEnts[i]->m_Passive)
-					continue;
-
-				// Don't hit players in solo parts
-				if (Teams()->m_Core.GetSolo(aEnts[i]->m_pPlayer->GetCID()))
-					return;
 
 				// make sure we haven't Hit this object before
 				bool bAlreadyHit = false;
@@ -514,8 +498,7 @@ void CCharacter::FireWeapon()
 			{
 				CCharacter *pTarget = apEnts[i];
 
-				//if ((pTarget == this) || GameServer()->Collision()->IntersectLine(ProjStartPos, pTarget->m_Pos, NULL, NULL))
-				if (pTarget == this || (pTarget->IsAlive() && (pTarget->m_Passive || !CanCollide(pTarget->GetPlayer()->GetCID()))))
+				if (pTarget == this || !CanCollide(pTarget->GetPlayer()->GetCID()))
 					continue;
 
 				// set his velocity to fast upward (for now)
@@ -529,8 +512,6 @@ void CCharacter::FireWeapon()
 					Dir = normalize(pTarget->m_Pos - m_Pos);
 				else
 					Dir = vec2(0.f, -1.f);
-				/*pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 10.0f, g_pData->m_Weapons.m_Hammer.m_pBase->m_Damage,
-					m_pPlayer->GetCID(), GetActiveWeapon());*/
 
 				float Strength;
 				if (!m_TuneZone)
@@ -548,9 +529,10 @@ void CCharacter::FireWeapon()
 				if (Temp.y > 0 && ((pTarget->m_TileIndex == TILE_STOP && pTarget->m_TileFlags == ROTATION_0) || (pTarget->m_TileIndexT == TILE_STOP && pTarget->m_TileFlagsT == ROTATION_0) || (pTarget->m_TileIndexT == TILE_STOPS && (pTarget->m_TileFlagsT == ROTATION_0 || pTarget->m_TileFlagsT == ROTATION_180)) || (pTarget->m_TileIndexT == TILE_STOPA) || (pTarget->m_TileFIndex == TILE_STOP && pTarget->m_TileFFlags == ROTATION_0) || (pTarget->m_TileFIndexT == TILE_STOP && pTarget->m_TileFFlagsT == ROTATION_0) || (pTarget->m_TileFIndexT == TILE_STOPS && (pTarget->m_TileFFlagsT == ROTATION_0 || pTarget->m_TileFFlagsT == ROTATION_180)) || (pTarget->m_TileFIndexT == TILE_STOPA) || (pTarget->m_TileSIndex == TILE_STOP && pTarget->m_TileSFlags == ROTATION_0) || (pTarget->m_TileSIndexT == TILE_STOP && pTarget->m_TileSFlagsT == ROTATION_0) || (pTarget->m_TileSIndexT == TILE_STOPS && (pTarget->m_TileSFlagsT == ROTATION_0 || pTarget->m_TileSFlagsT == ROTATION_180)) || (pTarget->m_TileSIndexT == TILE_STOPA)))
 					Temp.y = 0;
 				Temp -= pTarget->m_Core.m_Vel;
+
+				pTarget->UnFreeze();
 				pTarget->TakeDamage((vec2(0.f, -1.0f) + Temp) * Strength, g_pData->m_Weapons.m_Hammer.m_pBase->m_Damage,
 					m_pPlayer->GetCID(), GetActiveWeapon());
-				pTarget->UnFreeze();
 
 				if (m_FreezeHammer)
 					pTarget->Freeze();
@@ -1278,7 +1260,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		m_DamageTakenTick = Server()->Tick();
 
 		// do damage Hit sound
-		if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From] && !m_Passive)
+		if(From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
 		{
 			int64_t Mask = CmaskOne(From);
 			for(int i = 0; i < MAX_CLIENTS; i++)
@@ -1354,15 +1336,15 @@ void CCharacter::Snap(int SnappingClient)
 		CPlayer* SnapPlayer = GameServer()->m_apPlayers[SnappingClient];
 
 		if((SnapPlayer->GetTeam() == TEAM_SPECTATORS || SnapPlayer->IsPaused()) && SnapPlayer->m_SpectatorID != -1
-			&& !CanCollide(SnapPlayer->m_SpectatorID) && !SnapPlayer->m_ShowOthers)
+			&& !CanCollide(SnapPlayer->m_SpectatorID) && !SnapPlayer->m_ShowOthers && !m_Passive && !SnapChar->m_Passive)
 			return;
 
 		if( SnapPlayer->GetTeam() != TEAM_SPECTATORS && !SnapPlayer->IsPaused() && SnapChar && !SnapChar->m_Super
-			&& !CanCollide(SnappingClient) && !SnapPlayer->m_ShowOthers)
+			&& !CanCollide(SnappingClient) && !SnapPlayer->m_ShowOthers && !m_Passive && !SnapChar->m_Passive)
 			return;
 
 		if((SnapPlayer->GetTeam() == TEAM_SPECTATORS || SnapPlayer->IsPaused()) && SnapPlayer->m_SpectatorID == -1
-			&& !CanCollide(SnappingClient) && SnapPlayer->m_SpecTeam)
+			&& !CanCollide(SnappingClient) && SnapPlayer->m_SpecTeam && !m_Passive && !SnapChar->m_Passive)
 			return;
 	}
 
@@ -2099,12 +2081,12 @@ void CCharacter::HandleTiles(int Index)
 	**************************************************/
 
 	// solo part
-	if(((m_TileIndex == TILE_SOLO_START) || (m_TileFIndex == TILE_SOLO_START)) && !Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
+	if(((m_TileIndex == TILE_SOLO_START) || (m_TileFIndex == TILE_SOLO_START)) && !m_Solo)
 	{
 		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You are now in a solo part");
 		SetSolo(true);
 	}
-	else if(((m_TileIndex == TILE_SOLO_END) || (m_TileFIndex == TILE_SOLO_END)) && Teams()->m_Core.GetSolo(m_pPlayer->GetCID()))
+	else if(((m_TileIndex == TILE_SOLO_END) || (m_TileFIndex == TILE_SOLO_END)) && m_Solo)
 	{
 		GameServer()->SendChatTarget(GetPlayer()->GetCID(), "You are now out of the solo part");
 		SetSolo(false);
@@ -2990,7 +2972,7 @@ void CCharacter::BlockDDraceTick()
 
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
-		if (pChr->m_FreezeTime == 0 && !m_Passive && !pChr->m_Passive && CanCollide(pChr->GetPlayer()->GetCID()))
+		if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
 			m_LastToucherID = pChr->GetPlayer()->GetCID();
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
@@ -3016,16 +2998,11 @@ void CCharacter::BlockDDraceTick()
 	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS) // the newer clients use the DDNet network character to know whether they can collide or not
 	{
 		CCharacter *pPas = GameWorld()->ClosestCharacter(m_Pos, 50.0f, this);
-		if (pPas && pPas->m_Passive)
-		{
+		if (pPas && (pPas->m_Passive || m_Passive) && !(pPas->m_Super || m_Super))
 			m_NeededFaketuning |= FAKETUNE_NOCOLL;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
 		else if (!m_Passive)
-		{
 			m_NeededFaketuning &= ~FAKETUNE_NOCOLL;
-			GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
-		}
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 	}
 
 	if (m_ShopMotdTick < Server()->Tick())
@@ -3329,6 +3306,17 @@ void CCharacter::InfMeteor(bool Set, int FromID, bool Silent)
 
 void CCharacter::Passive(bool Set, int FromID, bool Silent)
 {
+	m_Passive = Set;
+	m_Core.m_Passive = Set;
+	Teams()->m_Core.SetPassive(m_pPlayer->GetCID(), Set);
+	PassiveCollision(Set);
+
+	new CPickup(GameWorld(), POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
+	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Set, FromID, Silent);
+}
+
+void CCharacter::PassiveCollision(bool Set)
+{
 	if (Set)
 	{
 		m_NeededFaketuning |= FAKETUNE_NOCOLL;
@@ -3340,8 +3328,6 @@ void CCharacter::Passive(bool Set, int FromID, bool Silent)
 		m_NeededFaketuning &= ~FAKETUNE_NOHAMMER;
 	}
 
-	m_Passive = Set;
-	m_Core.m_Passive = Set;
 	m_Core.m_Collision = !Set;
 	m_Core.m_NoCollision = Set;
 	m_Hit = Set ? (DISABLE_HIT_GRENADE|DISABLE_HIT_HAMMER|DISABLE_HIT_RIFLE|DISABLE_HIT_SHOTGUN) : HIT_ALL;
@@ -3351,10 +3337,8 @@ void CCharacter::Passive(bool Set, int FromID, bool Silent)
 	m_Core.m_NoRifleHit = Set;
 	m_Core.m_Hook = !Set;
 	m_Core.m_NoHookHit = Set;
-	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 
-	new CPickup(GameWorld(), POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
-	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Set, FromID, Silent);
+	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone); // update tunings
 }
 
 void CCharacter::VanillaMode(int FromID, bool Silent)

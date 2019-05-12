@@ -111,6 +111,8 @@ void CGameContext::ConSuper(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_TeamBeforeSuper = pChr->Team();
 		pChr->Teams()->SetCharacterTeam(Victim, TEAM_SUPER);
 		pChr->m_DDRaceState = DDRACE_CHEAT;
+		if (pChr->m_Passive)
+			pChr->PassiveCollision(false);
 	}
 }
 
@@ -126,6 +128,8 @@ void CGameContext::ConUnSuper(IConsole::IResult *pResult, void *pUserData)
 		pChr->m_Super = false;
 		pChr->Core()->m_Super = false;
 		pChr->Teams()->SetForceCharacterTeam(Victim, pChr->m_TeamBeforeSuper);
+		if (pChr->m_Passive)
+			pChr->PassiveCollision(true);
 	}
 }
 

@@ -115,15 +115,7 @@ void CCustomProjectile::HitCharacter()
 {
 	vec2 NewPos = m_Pos + m_Core;
 	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
-	if (!pHit)
-		return;
-
-	if (
-		pHit->GetPlayer()->GetCID() == m_Owner
-		|| pHit->m_Passive
-		|| pOwner->m_Passive
-		|| pHit->Team() != pOwner->Team()
-		)
+	if (!pHit || pHit->GetPlayer()->GetCID() == m_Owner)
 		return;
 
 	if (m_Spooky)

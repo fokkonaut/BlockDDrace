@@ -36,6 +36,9 @@ bool CTeamsCore::CanCollide(int ClientID1, int ClientID2)
 		return true;
 	if (m_IsSolo[ClientID1] || m_IsSolo[ClientID2])
 		return false;
+	// BlockDDrace
+	if (m_IsPassive[ClientID1] || m_IsPassive[ClientID2])
+		return false;
 	return m_Team[ClientID1] == m_Team[ClientID2];
 }
 
@@ -47,5 +50,7 @@ void CTeamsCore::Reset()
 	{
 		m_Team[i] = TEAM_FLOCK;
 		m_IsSolo[i] = false;
+		// BlockDDrace
+		m_IsPassive[i] = false;
 	}
 }

@@ -91,7 +91,7 @@ void CStraightGrenade::HitCharacter()
 	if (!pHit)
 		return;
 
-	if (distance(m_Pos, pHit->m_Pos) < 40.f && !pHit->m_Passive && !pOwner->m_Passive)
+	if (distance(m_Pos, pHit->m_Pos) < 40.f)
 	{
 		GameServer()->CreateExplosion(m_Pos, m_Owner, WEAPON_STRAIGHT_GRENADE, m_Owner == -1, pHit ? pHit->Team() : -1, m_TeamMask);
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);

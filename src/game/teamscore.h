@@ -13,6 +13,7 @@ class CTeamsCore
 {
 	int m_Team[MAX_CLIENTS];
 	bool m_IsSolo[MAX_CLIENTS];
+	bool m_IsPassive[MAX_CLIENTS];
 public:
 	bool m_IsDDRace16;
 
@@ -35,6 +36,16 @@ public:
 	bool GetSolo(int ClientID)
 	{
 		return m_IsSolo[ClientID];
+	}
+
+	void SetPassive(int ClientID, bool Value)
+	{
+		m_IsPassive[ClientID] = Value;
+	}
+
+	bool GetPassive(int ClientID)
+	{
+		return m_IsPassive[ClientID];
 	}
 };
 
