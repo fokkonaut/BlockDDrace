@@ -396,7 +396,7 @@ void CGameWorld::ReleaseHooked(int ClientID)
 *                                                *
 **************************************************/
 
-CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Mode)
+CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int CollideWith, int Mode)
 {
 	// Find other players
 	float ClosestRange = 0.f;
@@ -406,6 +406,9 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Mod
 	for (; p; p = (CCharacter *)p->TypeNext())
 	{
 		if (p == pNotThis)
+			continue;
+
+		if (CollideWith != -1 && !p->CanCollide(CollideWith))
 			continue;
 
 		if (Mode == 1) //BlmapChill police freeze hole

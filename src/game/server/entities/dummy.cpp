@@ -24,7 +24,7 @@ void CCharacter::DummyTick()
 	}
 	else if (m_pPlayer->m_Dummymode == -6)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
 	{
-		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 		if (pChr && pChr->IsAlive())
 		{
 			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -439,7 +439,7 @@ void CCharacter::DummyTick()
 			//Checken ob der bot far im race ist
 			if (m_DummyCollectedWeapons && m_Core.m_Pos.x > 470 * 32 && m_Core.m_Pos.y < 200 * 32)
 			{
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 7);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 7);
 				if (pChr && pChr->IsAlive())
 				{
 					//
@@ -459,7 +459,7 @@ void CCharacter::DummyTick()
 			}
 			else //sonst normal relativ schnell killen
 			{
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 				if (pChr && pChr->IsAlive())
 				{
 					if (!IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
@@ -668,7 +668,7 @@ void CCharacter::DummyTick()
 
 			if (1 == 0.5 + 0.5)
 			{
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 				if (pChr && pChr->IsAlive())
 				{
 					if (pChr->m_Pos.y < 165 * 32 && pChr->m_Pos.x > 451 * 32 - 10 && pChr->m_Pos.x < 454 * 32 + 10)
@@ -679,7 +679,7 @@ void CCharacter::DummyTick()
 			//Hammerfly
 			if (m_Core.m_Pos.x > 447 * 32)
 			{
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 				if (pChr && pChr->IsAlive())
 				{
 					//unfreezemates on platform
@@ -730,7 +730,7 @@ void CCharacter::DummyTick()
 						if (Server()->Tick() % 20 == 0)
 							SetWeapon(0);
 
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 8); //only search freezed tees --> so even if others get closer he still has his mission 
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 8); //only search freezed tees --> so even if others get closer he still has his mission 
 						if (pChr && pChr->IsAlive())
 						{
 							m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -863,7 +863,7 @@ void CCharacter::DummyTick()
 						if (Server()->Tick() % 20 == 0)
 							SetWeapon(0);
 
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 						if (pChr && pChr->IsAlive())
 						{
 							m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -920,7 +920,7 @@ void CCharacter::DummyTick()
 			if (m_Core.m_Pos.y < 200 * 32)
 			{
 				//check ob der mate fail ist
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 				if (pChr && pChr->IsAlive())
 				{
 					if ((pChr->m_Pos.y > 198 * 32 + 10 && pChr->IsGrounded()) ||
@@ -943,7 +943,7 @@ void CCharacter::DummyTick()
 
 				if (m_Core.m_Pos.x > 466 * 32)
 				{
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 					if (pChr && pChr->IsAlive())
 					{
 						m_LatestInput.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -1502,7 +1502,7 @@ void CCharacter::DummyTick()
 						if (m_Core.m_Pos.x <= 514 * 32 - 5 && pChr->m_Pos.y < 198 * 32)
 							SetWeapon(0);
 
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 8);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 8);
 						if (pChr && pChr->IsAlive())
 						{
 							if (pChr->m_Pos.x > 490 * 32 + 2) //newly added this to improve the m_DummyRaceState = 5 skills (go on edge if mate made the part)
@@ -1638,7 +1638,7 @@ void CCharacter::DummyTick()
 					if (m_Core.m_Pos.x > 491 * 32)
 					{
 						SetWeapon(0);
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 						if (pChr && pChr->IsAlive())
 						{
 							m_LatestInput.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -1690,7 +1690,7 @@ void CCharacter::DummyTick()
 	{
 		if (m_DummyBoredCounter > 2)
 		{
-			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 2);
+			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 2);
 			if (pChr && pChr->IsAlive())
 			{
 				//
@@ -1709,7 +1709,7 @@ void CCharacter::DummyTick()
 
 		if (m_Core.m_Pos.y > 214 * 32 && m_Core.m_Pos.x > 424 * 32)
 		{
-			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 3);
+			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 3);
 			if (pChr && pChr->IsAlive())
 				m_DummyBlockMode = 1;
 		}
@@ -1726,7 +1726,7 @@ void CCharacter::DummyTick()
 			//testy wenn der dummy in den special defend mode gesetzt wird pusht das sein adrenalin und ihm is nicht mehr lw
 			m_DummyBoredCounter = 0;
 
-			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 2);
+			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 2);
 			if (pChr && pChr->IsAlive())
 			{
 				m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -1803,7 +1803,7 @@ void CCharacter::DummyTick()
 					Die(m_pPlayer->GetCID(), WEAPON_SELF);
 			}
 
-			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 4);
+			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 4);
 			if (pChr && pChr->IsAlive())
 			{
 				//Check ob an notstand mode18 = 0 übergeben
@@ -1863,7 +1863,7 @@ void CCharacter::DummyTick()
 			}
 			else
 			{
-				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 3);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 3);
 				if (pChr && pChr->IsAlive())
 				{
 					if (pChr->m_Pos.x < 436 * 32) //wenn er ganz weit über dem freeze auf der kante ist (hooke direkt)
@@ -1881,7 +1881,7 @@ void CCharacter::DummyTick()
 						m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
 					}
 
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 5);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 5);
 					if (pChr && pChr->IsAlive())
 					{
 						//wenn jemand im tunnel is check ob du nicht ausversehen den hookst anstatt des ziels in der WB area
@@ -1915,7 +1915,7 @@ void CCharacter::DummyTick()
 			m_Input.m_Fire = 0;
 
 			//Check ob jemand in der linken freeze wand is
-			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 6);
+			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 6);
 			if (pChr && pChr->IsAlive()) // wenn ein spieler rechts im freeze lebt //----> versuche im notstand nicht den gegner auch da rein zu hauen da ist ja jetzt voll
 				m_DummyLeftFreezeFull = true;
 			else // wenn da keiner is fülle diesen spot (linke freeze wand im ruler spot)
@@ -2066,7 +2066,7 @@ void CCharacter::DummyTick()
 				}
 				if (m_Core.m_Pos.x < 415 * 32)
 				{
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 					if (pChr && pChr->IsAlive())
 					{
 						if (pChr->m_Core.m_Pos.x > m_Core.m_Pos.x - 100 && pChr->m_Core.m_Pos.x < m_Core.m_Pos.x + 100 && pChr->m_Core.m_Pos.y > m_Core.m_Pos.y - 100 && pChr->m_Core.m_Pos.y < m_Core.m_Pos.y + 100)
@@ -2101,7 +2101,7 @@ void CCharacter::DummyTick()
 
 				if (!m_DummyPlannedMovement)
 				{
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 5);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 5);
 					if (pChr && pChr->IsAlive())
 					{
 						if (pChr->m_Core.m_Vel.x < 3.3f) //found a slow bob in tunnel
@@ -2146,7 +2146,7 @@ void CCharacter::DummyTick()
 					//CheckFatsOnSpawn
 					if (m_Core.m_Pos.x < 406 * 32)
 					{
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 						if (pChr && pChr->IsAlive())
 						{
 							m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -2204,7 +2204,7 @@ void CCharacter::DummyTick()
 						if (rr > 420)
 							SetWeapon(0);
 
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 						if (pChr && pChr->IsAlive())
 						{
 							int r = rand() % 10 - 10;
@@ -2232,7 +2232,7 @@ void CCharacter::DummyTick()
 					//CheckSlowDudesInTunnel
 					if (m_Core.m_Pos.x > 415 * 32 && m_Core.m_Pos.y > 214 * 32) //wenn bot im tunnel ist
 					{
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 5);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 5);
 						if (pChr && pChr->IsAlive())
 						{
 							if (pChr->m_Core.m_Vel.x < 7.8f) //wenn der nächste spieler im tunnel ein slowdude is 
@@ -2326,7 +2326,7 @@ void CCharacter::DummyTick()
 				//if (m_Core.m_Pos.y < 213 * 32) //old new added a x check idk why the was no
 				if (m_Core.m_Pos.y < 213 * 32 && m_Core.m_Pos.x > 415 * 32)
 				{
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 2);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 2);
 					if (pChr && pChr->IsAlive())
 					{
 						//sometimes walk to enemys.   to push them in freeze or super hammer them away
@@ -2579,7 +2579,7 @@ void CCharacter::DummyTick()
 								m_Input.m_Direction = 0;
 
 								// normal wayblock
-								CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 2);
+								CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 2);
 								if (pChr && pChr->IsAlive())
 								{
 									//Trick[4] clears the left freeze
@@ -2642,7 +2642,7 @@ void CCharacter::DummyTick()
 					//TRICKS
 					if (1 == 1)
 					{
-						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 2);
+						CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 2);
 						if (pChr && pChr->IsAlive())
 						{
 							if (!m_DummyEmergency && m_Core.m_Pos.x > 415 && m_Core.m_Pos.y < 213 * 32 && m_DummyFreezeBlockTrick != 0) //as long as no enemy is unfreeze in base --->  do some trickzz
@@ -2947,7 +2947,7 @@ void CCharacter::DummyTick()
 						m_Input.m_Direction = 1;
 					if (m_Core.m_Vel.x < -0.8f && m_Core.m_Pos.x < 450 * 32 && IsGrounded())
 						m_Input.m_Jump = 1;
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 					if (pChr && pChr->IsAlive())
 					{
 						if (m_Core.m_Pos.x < 451 * 32)
@@ -3102,7 +3102,7 @@ void CCharacter::DummyTick()
 				Die(m_pPlayer->GetCID(), WEAPON_SELF);
 		}
 
-		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 		if (pChr && pChr->IsAlive())
 		{
 			m_DummyChillClosestPolice = false;
@@ -3790,7 +3790,7 @@ void CCharacter::DummyTick()
 				{
 					m_DummyHelpMode = 0;
 					//check if officer needs help
-					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, 1);
+					CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 1);
 					if (pChr && pChr->IsAlive())
 					{
 						if (m_Core.m_Pos.y > 435 * 32) // setting the destination of dummy to top left police entry bcs otherwise bot fails when trying to help --> walks into jail wall xd
@@ -4025,7 +4025,7 @@ void CCharacter::DummyTick()
 	}
 	else if (m_pPlayer->m_Dummymode == 99) // shop bot
 	{
-		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this);
+		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 		if (pChr && pChr->m_InShop)
 		{
 			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
