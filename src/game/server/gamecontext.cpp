@@ -935,7 +935,7 @@ void CGameContext::OnTick()
 		}
 
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
-		for (unsigned int i = 1; i < m_Accounts.size(); i++)
+		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 			Logout(i);
 
 #ifdef CONF_DEBUG
@@ -3122,7 +3122,7 @@ void CGameContext::OnShutdown(bool FullShutdown)
 		aio_free(m_pTeeHistorianFile);
 	}
 
-	for (unsigned int i = 1; i < m_Accounts.size(); i++)
+	for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 		Logout(i);
 
 	DeleteTempfile();

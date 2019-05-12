@@ -72,6 +72,8 @@ enum
 	NUM_ITEMS
 };
 
+#define ACC_START 1 // account ids start with 1, 0 means not logged in
+
 
 class IConsole;
 class IEngine;
