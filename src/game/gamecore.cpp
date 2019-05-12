@@ -358,21 +358,24 @@ void CCharacterCore::Tick(bool UseInput)
 				}
 			}
 			// BlockDDrace //Check against Flags
-			for (int i = 0; i < 2; i++)
+			if (g_Config.m_SvFlagHooking)
 			{
-				vec2 ClosestPoint;
-				ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos[i]);
-				if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != FLAG_RED && m_HookedPlayer != FLAG_BLUE)
+				for (int i = 0; i < 2; i++)
 				{
-					if (m_HookedPlayer == -1)
+					vec2 ClosestPoint;
+					ClosestPoint = closest_point_on_line(m_HookPos, NewPos, m_FlagPos[i]);
+					if (distance(m_FlagPos[i], ClosestPoint) < PhysSize + 2.0f && !m_AtStand[i] && !m_Carried[i] && m_HookedPlayer != FLAG_RED && m_HookedPlayer != FLAG_BLUE)
 					{
-						m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
-						m_HookState = HOOK_GRABBED;
-						if (i == TEAM_RED)
-							m_HookedPlayer = FLAG_RED;
-						if (i == TEAM_BLUE)
-							m_HookedPlayer = FLAG_BLUE;
-						Distance = distance(m_HookPos, m_FlagPos[i]);
+						if (m_HookedPlayer == -1)
+						{
+							m_TriggeredEvents |= COREEVENT_HOOK_ATTACH_PLAYER;
+							m_HookState = HOOK_GRABBED;
+							if (i == TEAM_RED)
+								m_HookedPlayer = FLAG_RED;
+							if (i == TEAM_BLUE)
+								m_HookedPlayer = FLAG_BLUE;
+							Distance = distance(m_HookPos, m_FlagPos[i]);
+						}
 					}
 				}
 			}
