@@ -154,7 +154,7 @@ public:
 
 	void DropWeapon(int WeaponID);
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
-	int GetAimDir();
+	int GetAimDir() { return m_Input.m_TargetX < 0 ? -1 : 1; };
 
 	void Jetpack(bool Set = true, int FromID = -1, bool Silent = false);
 	void Rainbow(bool Set = true, int FromID = -1, bool Silent = false);

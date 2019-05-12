@@ -3100,15 +3100,6 @@ void CCharacter::LoadWeaponBackup(int Type)
 	}
 }
 
-int CCharacter::GetAimDir()
-{
-	if (m_Input.m_TargetX < 0)
-		return -1;
-	else
-		return 1;
-	return 0;
-}
-
 void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 {
 	if (GetWeaponGot(PreferedWeapon))
