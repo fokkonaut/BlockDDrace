@@ -2982,7 +2982,7 @@ void CGameContext::OnInit()
 	}
 #endif
 
-	AddAccount();
+	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
 }
 
