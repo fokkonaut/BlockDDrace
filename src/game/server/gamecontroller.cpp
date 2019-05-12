@@ -244,6 +244,11 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 		Type = POWERUP_WEAPON;
 		SubType = WEAPON_RIFLE;
 	}
+	else if (Index == ENTITY_POWERUP_NINJA)
+	{
+		Type = POWERUP_NINJA;
+		SubType = WEAPON_NINJA;
+	}
 	// BlockDDrace
 	else if (Index == ENTITY_WEAPON_GUN)
 	{
@@ -273,11 +278,6 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	else if (Index == ENTITY_PICKUP_AMMO)
 	{
 		Type = POWERUP_AMMO;
-	}
-	else if(Index == ENTITY_POWERUP_NINJA)
-	{
-		Type = POWERUP_NINJA;
-		SubType = WEAPON_NINJA;
 	}
 	else if (Index == ENTITY_CLOCK)
 	{
