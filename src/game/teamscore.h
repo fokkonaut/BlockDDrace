@@ -22,7 +22,7 @@ public:
 	bool SameTeam(int ClientID1, int ClientID2);
 
 	bool CanKeepHook(int ClientID1, int ClientID2);
-	bool CanCollide(int ClientID1, int ClientID2);
+	bool CanCollide(int ClientID1, int ClientID2, bool CheckPassive = true);
 
 	int Team(int ClientID);
 	void Team(int ClientID, int Team);

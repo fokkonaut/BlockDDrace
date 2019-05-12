@@ -29,7 +29,7 @@ bool CTeamsCore::CanKeepHook(int ClientID1, int ClientID2)
 	return m_Team[ClientID1] == m_Team[ClientID2];
 }
 
-bool CTeamsCore::CanCollide(int ClientID1, int ClientID2)
+bool CTeamsCore::CanCollide(int ClientID1, int ClientID2, bool CheckPassive)
 {
 	if (m_Team[ClientID1] == (m_IsDDRace16 ? VANILLA_TEAM_SUPER : TEAM_SUPER) || m_Team[ClientID2] == (m_IsDDRace16 ? VANILLA_TEAM_SUPER : TEAM_SUPER)
 			|| ClientID1 == ClientID2)
@@ -37,7 +37,7 @@ bool CTeamsCore::CanCollide(int ClientID1, int ClientID2)
 	if (m_IsSolo[ClientID1] || m_IsSolo[ClientID2])
 		return false;
 	// BlockDDrace
-	if (m_IsPassive[ClientID1] || m_IsPassive[ClientID2])
+	if (CheckPassive && (m_IsPassive[ClientID1] || m_IsPassive[ClientID2]))
 		return false;
 	return m_Team[ClientID1] == m_Team[ClientID2];
 }

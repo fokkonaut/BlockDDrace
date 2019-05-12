@@ -1552,9 +1552,9 @@ int CCharacter::NetworkClipped(int SnappingClient, vec2 CheckPos)
 
 // DDRace
 
-bool CCharacter::CanCollide(int ClientID)
+bool CCharacter::CanCollide(int ClientID, bool CheckPassive)
 {
-	return Teams()->m_Core.CanCollide(GetPlayer()->GetCID(), ClientID);
+	return Teams()->m_Core.CanCollide(GetPlayer()->GetCID(), ClientID, CheckPassive);
 }
 bool CCharacter::SameTeam(int ClientID)
 {

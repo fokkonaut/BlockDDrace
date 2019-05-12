@@ -124,7 +124,7 @@ int CWeapon::IsCharacterNear()
 
 		if (
 			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
-			|| (!pChr->CanCollide(m_Owner))
+			|| (!pChr->CanCollide(m_Owner, false))
 			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
 			|| (pChr->GetWeaponGot(m_Type) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
 			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
