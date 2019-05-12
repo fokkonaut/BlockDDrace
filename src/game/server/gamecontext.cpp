@@ -2049,14 +2049,20 @@ void CGameContext::ConTuneParam(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	const char *pParamName = pResult->GetString(0);
-	float NewValue = pResult->GetFloat(1);
+	float NewValue = pResult->NumArguments() == 2 ? pResult->GetFloat(1) : -1;
+	char aBuf[256];
+	float Value;
 
-	if(pSelf->Tuning()->Set(pParamName, NewValue))
+	if(NewValue != -1 && pSelf->Tuning()->Set(pParamName, NewValue))
 	{
-		char aBuf[256];
 		str_format(aBuf, sizeof(aBuf), "%s changed to %.2f", pParamName, NewValue);
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "tuning", aBuf);
 		pSelf->SendTuningParams(-1);
+	}
+	else if (pSelf->Tuning()->Get(pParamName, &Value))
+	{
+		str_format(aBuf, sizeof(aBuf), "Value: %.2f", Value);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
 	}
 	else
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "tuning", "No such tuning parameter");
@@ -2639,7 +2645,7 @@ void CGameContext::OnConsoleInit()
 
 	m_ChatPrintCBIndex = Console()->RegisterPrintCallback(0, SendChatResponse, this);
 
-	Console()->Register("tune", "s[tuning] i[value]", CFGFLAG_SERVER|CFGFLAG_GAME, ConTuneParam, this, "Tune variable to value");
+	Console()->Register("tune", "s[tuning] ?i[value]", CFGFLAG_SERVER|CFGFLAG_GAME, ConTuneParam, this, "Tune variable to value");
 	Console()->Register("toggle_tune", "s[tuning] i[value 1] i[value 2]", CFGFLAG_SERVER|CFGFLAG_GAME, ConToggleTuneParam, this, "Toggle tune variable");
 	Console()->Register("tune_reset", "", CFGFLAG_SERVER, ConTuneReset, this, "Reset tuning");
 	Console()->Register("tune_dump", "", CFGFLAG_SERVER, ConTuneDump, this, "Dump tuning");
