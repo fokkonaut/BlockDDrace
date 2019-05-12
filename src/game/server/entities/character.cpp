@@ -26,7 +26,6 @@
 #include <game/server/score.h>
 #include "light.h"
 
-#include "clock.h"
 
 MACRO_ALLOC_POOL_ID_IMPL(CCharacter, MAX_CLIENTS)
 
