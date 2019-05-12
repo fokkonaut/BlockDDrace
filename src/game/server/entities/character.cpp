@@ -1336,15 +1336,15 @@ void CCharacter::Snap(int SnappingClient)
 		CPlayer* SnapPlayer = GameServer()->m_apPlayers[SnappingClient];
 
 		if((SnapPlayer->GetTeam() == TEAM_SPECTATORS || SnapPlayer->IsPaused()) && SnapPlayer->m_SpectatorID != -1
-			&& !CanCollide(SnapPlayer->m_SpectatorID) && !SnapPlayer->m_ShowOthers && !m_Passive && !SnapChar->m_Passive)
+			&& !CanCollide(SnapPlayer->m_SpectatorID, false) && !SnapPlayer->m_ShowOthers)
 			return;
 
 		if( SnapPlayer->GetTeam() != TEAM_SPECTATORS && !SnapPlayer->IsPaused() && SnapChar && !SnapChar->m_Super
-			&& !CanCollide(SnappingClient) && !SnapPlayer->m_ShowOthers && !m_Passive && !SnapChar->m_Passive)
+			&& !CanCollide(SnappingClient, false) && !SnapPlayer->m_ShowOthers)
 			return;
 
 		if((SnapPlayer->GetTeam() == TEAM_SPECTATORS || SnapPlayer->IsPaused()) && SnapPlayer->m_SpectatorID == -1
-			&& !CanCollide(SnappingClient) && SnapPlayer->m_SpecTeam && !m_Passive && !SnapChar->m_Passive)
+			&& !CanCollide(SnappingClient, false) && SnapPlayer->m_SpecTeam)
 			return;
 	}
 
