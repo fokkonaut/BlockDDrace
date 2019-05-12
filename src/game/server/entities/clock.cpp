@@ -79,7 +79,7 @@ int CClock::GetID(int Hand)
 
 void CClock::Snap(int SnappingClient)
 {
-	// send hands in swapped order to have the second hand over ther minute and hour hand
+	// send hands in swapped order to have the second hand over the minute and hour hand
 	for (int i = 2; i > -1; i--)
 	{
 		if (NetworkClipped(SnappingClient, m_Pos) && NetworkClipped(SnappingClient, m_Hand[i].m_To))
