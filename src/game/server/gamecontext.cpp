@@ -3628,14 +3628,6 @@ void CGameContext::List(int ClientID, const char *pFilter)
 	SendChatTarget(ClientID, aBuf);
 }
 
-bool CGameContext::IsSnapFixVanilla(int ClientID) {
-	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixVanilla : false;
-}
-
-bool CGameContext::IsSnapFixDDNet(int ClientID) {
-	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixDDNet : false;
-}
-
 int CGameContext::GetClientVersion(int ClientID) {
 	return m_apPlayers[ClientID]
 		? m_apPlayers[ClientID]->m_ClientVersion
@@ -3684,6 +3676,16 @@ void CGameContext::ForceVote(int EnforcerID, bool Success)
 *              B L O C K D D R A C E             *
 *                                                *
 **************************************************/
+
+bool CGameContext::IsSnapFixVanilla(int ClientID)
+{
+	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixVanilla : false;
+}
+
+bool CGameContext::IsSnapFixDDNet(int ClientID)
+{
+	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixDDNet : false;
+}
 
 int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser)
 {
