@@ -412,15 +412,6 @@ private:
 	static void ConRescue(IConsole::IResult *pResult, void *pUserData);
 	static void ConProtectedKill(IConsole::IResult *pResult, void *pUserData);
 
-	static void ConScore(IConsole::IResult *pResult, void *pUserData);
-	static void ConSpookyGhostChat(IConsole::IResult *pResult, void *pUserData);
-	static void ConPoliceInfo(IConsole::IResult *pResult, void *pUserData);
-	static void ConWeaponIndicator(IConsole::IResult *pResult, void *pUserData);
-
-	static void ConLogin(IConsole::IResult *pResult, void *pUserData);
-	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
-	static void ConRegister(IConsole::IResult *pResult, void *pUserData);
-
 	static void ConVoteMute(IConsole::IResult *pResult, void *pUserData);
 	static void ConVoteUnmute(IConsole::IResult *pResult, void *pUserData);
 	static void ConVoteMutes(IConsole::IResult *pResult, void *pUserData);
@@ -442,6 +433,17 @@ private:
 	*                                                *
 	**************************************************/
 
+	//chat
+	static void ConScore(IConsole::IResult *pResult, void *pUserData);
+	static void ConSpookyGhostInfo(IConsole::IResult *pResult, void *pUserData);
+	static void ConPoliceInfo(IConsole::IResult *pResult, void *pUserData);
+	static void ConWeaponIndicator(IConsole::IResult *pResult, void *pUserData);
+
+	static void ConLogin(IConsole::IResult *pResult, void *pUserData);
+	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
+	static void ConRegister(IConsole::IResult *pResult, void *pUserData);
+
+	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConExtraWeapons(IConsole::IResult *pResult, void *pUserData);

@@ -1249,7 +1249,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 	}
 }
 
-void CGameContext::ConSpookyGhostChat(IConsole::IResult * pResult, void * pUserData)
+void CGameContext::ConSpookyGhostInfo(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SendChatTarget(pResult->m_ClientID, "The Spooky Ghost is an extra, that can be toggled like this:");
