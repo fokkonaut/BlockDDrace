@@ -1393,7 +1393,7 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 
 	if (ID == 0)
 	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesnt exist, please register first");
+		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesn't exist, please register first");
 		return;
 	}
 
