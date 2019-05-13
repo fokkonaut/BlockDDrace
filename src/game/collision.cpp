@@ -1174,6 +1174,8 @@ int CCollision::GetFCustTile(int x, int y)
 
 vec2 CCollision::GetRandomTile(int Tile)
 {
+	m_vRandomTile[Tile].clear();
+
 	for (int y = 0; y < m_Height; y++)
 		for (int x = 0; x < m_Width; x++)
 		{
