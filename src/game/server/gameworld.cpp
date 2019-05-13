@@ -408,7 +408,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Col
 		if (p == pNotThis)
 			continue;
 
-		if (CollideWith != -1 && !p->CanCollide(CollideWith))
+		if (CollideWith != -1 && !p->CanCollide(CollideWith, false))
 			continue;
 
 		if (Mode == 1) //BlmapChill police freeze hole
