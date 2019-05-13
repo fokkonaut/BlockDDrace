@@ -131,7 +131,8 @@ void CCollision::Init(class CLayers *pLayers)
 	}
 
 	// BlockDDrace
-	m_vRandomTile.resize(TILE_END_CUSTOM);
+	m_vRandomTile.resize(NUM_INDICES);
+	FindTiles();
 }
 
 int CCollision::GetTile(int x, int y)
@@ -1171,24 +1172,27 @@ int CCollision::GetFCustTile(int x, int y)
 	return m_pFront[pos].m_Index;
 }
 
-
-vec2 CCollision::GetRandomTile(int Tile)
+void CCollision::FindTiles()
 {
-	m_vRandomTile[Tile].clear();
+	for (int i = 0; i < NUM_INDICES; i++)
+		for (int y = 0; y < m_Height; y++)
+			for (int x = 0; x < m_Width; x++)
+			{
+				vec2 Pos(x*32.0f + 16.0f, y*32.0f + 16.0f);
+				if (GetCustTile(Pos.x, Pos.y) == i || GetFCustTile(Pos.x, Pos.y) == i)
+					m_vRandomTile[i].push_back(Pos);
+			}
+}
 
-	for (int y = 0; y < m_Height; y++)
-		for (int x = 0; x < m_Width; x++)
-		{
-			vec2 Pos(x*32.0f + 16.0f, y*32.0f + 16.0f);
+vec2 CCollision::GetRandomTile(int Index, bool Entity)
+{
+	if (Entity)
+		Index += ENTITY_OFFSET;
 
-			if (GetCustTile(Pos.x, Pos.y) == Tile || GetFCustTile(Pos.x, Pos.y) == Tile)
-				m_vRandomTile[Tile].push_back(Pos);
-		}
-
-	if (m_vRandomTile[Tile].size())
+	if (m_vRandomTile[Index].size())
 	{
-		int Rand = rand() % m_vRandomTile[Tile].size();
-		return m_vRandomTile[Tile][Rand];
+		int Rand = rand() % m_vRandomTile[Index].size();
+		return m_vRandomTile[Index][Rand];
 	}
 
 	return vec2(-1, -1);

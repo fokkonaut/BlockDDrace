@@ -2912,9 +2912,6 @@ void CGameContext::OnInit()
 				m_Tuning.Set("player_hooking", 0);
 				dbg_msg("game layer", "found no player hooking tile");
 			}
-			else if (Index == TILE_SHOP_BOT_SPAWN)
-				m_SpawnShopBot = true;
-
 			if(Index >= ENTITY_OFFSET)
 			{
 				vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
@@ -2950,8 +2947,6 @@ void CGameContext::OnInit()
 					m_Tuning.Set("player_hooking", 0);
 					dbg_msg("front layer", "found no player hooking tile");
 				}
-				else if (Index == TILE_SHOP_BOT_SPAWN)
-					m_SpawnShopBot = true;
 				if(Index >= ENTITY_OFFSET)
 				{
 					vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);

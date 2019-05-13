@@ -249,6 +249,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 		Type = POWERUP_NINJA;
 		SubType = WEAPON_NINJA;
 	}
+
 	// BlockDDrace
 	else if (Index == ENTITY_WEAPON_GUN)
 	{
@@ -283,6 +284,10 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	{
 		new CClock(&GameServer()->m_World, Pos);
 	}
+	else if (Index == ENTITY_SHOP_BOT_SPAWN)
+		GameServer()->m_SpawnShopBot = true;
+	// BlockDDrace
+
 	else if(Index >= ENTITY_LASER_FAST_CW && Index <= ENTITY_LASER_FAST_CCW)
 	{
 		int sides2[8];
