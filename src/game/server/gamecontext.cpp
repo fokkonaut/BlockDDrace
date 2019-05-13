@@ -2604,6 +2604,7 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	}
 }
 
+// BlockDDrace
 void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -2635,6 +2636,7 @@ void CGameContext::ConchainNumSpreadShots(IConsole::IResult *pResult, void *pUse
 			g_Config.m_SvNumSpreadShots += 1; //no even numbers, as the spread gun would be not mirrored otherwise
 	}
 }
+// BlockDDrace
 
 void CGameContext::OnConsoleInit()
 {
