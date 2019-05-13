@@ -100,8 +100,8 @@ public:
 	// BlockDDrace
 	int GetCustTile(int x, int y);
 	int GetFCustTile(int x, int y);
-	std::vector< std::vector<vec2> > m_vRandomTile;;
 	vec2 GetRandomTile(int Tile);
+	std::vector< std::vector<vec2> > m_vRandomTile;;
 	// BlockDDrace
 
 private:
