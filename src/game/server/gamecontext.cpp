@@ -2622,6 +2622,7 @@ void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUse
 			pSelf->Tuning()->Set("shotgun_speeddiff", 0.0f);
 			pSelf->Tuning()->Set("shotgun_curvature", 0.0f);
 		}
+		pSelf->SendTuningParams(-1);
 	}
 }
 
