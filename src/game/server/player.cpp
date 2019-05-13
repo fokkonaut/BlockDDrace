@@ -722,6 +722,13 @@ void CPlayer::TryRespawn()
 	if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
 		return;
 
+	if (m_Dummymode == 99)
+	{
+		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomTile(TILE_SHOP_BOT_SPAWN);
+		if (ShopBotSpawn != vec2(-1, -1))
+			SpawnPos = ShopBotSpawn;
+	}
+
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
 
 	m_WeakHookSpawn = false;

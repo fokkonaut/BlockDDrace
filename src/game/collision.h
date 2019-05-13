@@ -7,6 +7,7 @@
 #include <engine/shared/protocol.h>
 
 #include <list>
+#include <vector>
 
 class CCollision
 {
@@ -98,6 +99,8 @@ public:
 
 	// BlockDDrace
 	int GetCustTile(int x, int y);
+	int GetFCustTile(int x, int y);
+	std::vector< std::vector<vec2> > m_vRandomTile;;
 	vec2 GetRandomTile(int Tile);
 	// BlockDDrace
 
