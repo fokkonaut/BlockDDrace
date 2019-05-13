@@ -1174,6 +1174,7 @@ int CCollision::GetFCustTile(int x, int y)
 
 void CCollision::FindTiles()
 {
+	dbg_msg("collision", "finding map tiles, copy them to cache");
 	for (int i = 0; i < NUM_INDICES; i++)
 		for (int y = 0; y < m_Height; y++)
 			for (int x = 0; x < m_Width; x++)
