@@ -284,6 +284,10 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	{
 		new CClock(&GameServer()->m_World, Pos);
 	}
+	else if (Index == ENTITY_SHOP_BOT_SPAWN)
+	{
+		GameServer()->m_SpawnShopBot = true;
+	}
 	// BlockDDrace
 
 	else if(Index >= ENTITY_LASER_FAST_CW && Index <= ENTITY_LASER_FAST_CCW)

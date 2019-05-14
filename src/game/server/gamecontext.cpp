@@ -937,6 +937,9 @@ void CGameContext::OnTick()
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 			Logout(i);
 
+	if (GetShopBot() >= 0 && Server()->Tick() == m_ShopBotSpawnTick)
+		m_apPlayers[GetShopBot()]->KillCharacter();
+
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
 	{
@@ -2968,8 +2971,12 @@ void CGameContext::OnInit()
 		}
 	}
 
+	m_ShopBotSpawnTick = Server()->Tick();
 	if (g_Config.m_SvDefaultBots)
+	{
 		ConnectDefaultBots();
+		m_ShopBotSpawnTick = Server()->Tick()+200;
+	}
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -3986,7 +3993,7 @@ void CGameContext::ConnectDefaultBots()
 		ConnectDummy(32); //police
 	}
 
-	if (Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1) && GetShopBot() == -1)
+	if (m_SpawnShopBot && GetShopBot() == -1)
 		ConnectDummy(99); // shop bot
 }
 

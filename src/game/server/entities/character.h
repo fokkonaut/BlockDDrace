@@ -463,7 +463,7 @@ public:
 
 	void ShopWindow(int Dir);
 	int m_ShopWindowPage;
-	int64 m_ShopMotdTick;
+	int m_ShopMotdTick;
 	void BuyItem(int ItemID);
 	void ConfirmPurchase();
 	int m_PurchaseState;
