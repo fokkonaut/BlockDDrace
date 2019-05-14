@@ -3713,9 +3713,9 @@ int CGameContext::AddAccount()
 	m_Accounts.push_back(AccountInfo());
 
 	int ID = m_Accounts.size()-1;
-	m_Accounts[ID].m_Port = 0;
-	m_Accounts[ID].m_LoggedIn = 0;
-	m_Accounts[ID].m_Disabled = 0;
+	m_Accounts[ID].m_Port = g_Config.m_SvPort;
+	m_Accounts[ID].m_LoggedIn = false;
+	m_Accounts[ID].m_Disabled = false;
 	m_Accounts[ID].m_Password[0] = 0;
 	m_Accounts[ID].m_Username[0] = 0;
 	m_Accounts[ID].m_ClientID = -1;
