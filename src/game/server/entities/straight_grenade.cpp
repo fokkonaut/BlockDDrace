@@ -13,23 +13,16 @@
 #include <game/server/gamemodes/DDRace.h>
 #include <engine/shared/config.h>
 
-CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Owner, float Force, vec2 Dir)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
+CStraightGrenade::CStraightGrenade(CGameWorld *pGameWorld, int Lifetime, int Owner, vec2 Pos, vec2 Dir)
+: CStableProjectile(pGameWorld, WEAPON_STRAIGHT_GRENADE, Owner, Pos)
 {
 	m_Owner = Owner;
 	m_StartTick = Server()->Tick();
 	m_Lifetime = Server()->TickSpeed() * Lifetime;
 	m_Direction = Dir;
-	m_Force = Force;
-	m_LastResetPos = GameServer()->GetPlayerChar(Owner)->m_Pos;
-	m_LastResetTick = Server()->Tick();
-	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
+	m_Pos = Pos;
 	m_PrevPos = m_Pos;
-
 	m_Core = m_Direction * 15;
-	m_CalculatedVel = false;
-
-	GameWorld()->InsertEntity(this);
 }
 
 void CStraightGrenade::Reset()
@@ -97,55 +90,4 @@ void CStraightGrenade::HitCharacter()
 		GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 		Reset();
 	}
-}
-
-void CStraightGrenade::TickDefered()
-{
-	if (Server()->Tick() % 4 == 1)
-	{
-		m_LastResetPos = m_Pos;
-		m_LastResetTick = Server()->Tick();
-	}
-	m_CalculatedVel = false;
-}
-
-void CStraightGrenade::CalculateVel()
-{
-	float Time = (Server()->Tick() - m_LastResetTick) / (float)Server()->TickSpeed();
-	float Curvature = 0;
-	float Speed = 0;
-
-	Curvature = 0;
-	Speed = 1000;
-
-	m_VelX = ((m_Pos.x - m_LastResetPos.x) / Time / Speed) * 100;
-	m_VelY = ((m_Pos.y - m_LastResetPos.y) / Time / Speed - Time * Speed*Curvature / 10000) * 100;
-
-	m_CalculatedVel = true;
-}
-
-void CStraightGrenade::Snap(int SnappingClient)
-{
-	if (NetworkClipped(SnappingClient))
-		return;
-
-	if (GameServer()->GetPlayerChar(SnappingClient))
-	{
-		if (!CmaskIsSet(m_TeamMask, SnappingClient))
-			return;
-	}
-
-	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
-	if (!pProj)
-		return;
-
-	if (!m_CalculatedVel)
-		CalculateVel();
-
-	pProj->m_X = (int)m_LastResetPos.x;
-	pProj->m_Y = (int)m_LastResetPos.y;
-	pProj->m_VelX = m_VelX;
-	pProj->m_VelY = m_VelY;
-	pProj->m_StartTick = m_LastResetTick;
-	pProj->m_Type = WEAPON_GRENADE;
 }

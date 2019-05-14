@@ -5,7 +5,7 @@
 CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
-	m_Type = Type;
+	m_Type = GameServer()->GetRealWeapon(Type);
 	m_Pos = Pos;
 	m_LastResetPos = Pos;
 	m_Owner = Owner;

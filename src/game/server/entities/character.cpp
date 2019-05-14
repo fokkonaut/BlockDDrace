@@ -740,7 +740,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_STRAIGHT_GRENADE:
 		{
-			new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), 0, Direction);
+			new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), ProjStartPos, Direction);
 			if (Sound)
 				GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
