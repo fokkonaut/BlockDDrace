@@ -316,7 +316,6 @@ public:
 
 	void ConnectDummy(int Dummymode = 0);
 	int GetShopBot();
-	bool m_SpawnShopBot;
 	void ConnectDefaultBots();
 
 	int GetNextClientID();

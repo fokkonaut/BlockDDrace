@@ -3986,7 +3986,7 @@ void CGameContext::ConnectDefaultBots()
 		ConnectDummy(32); //police
 	}
 
-	if (m_SpawnShopBot && GetShopBot() == -1)
+	if (Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1) && GetShopBot() == -1)
 		ConnectDummy(99); // shop bot
 }
 

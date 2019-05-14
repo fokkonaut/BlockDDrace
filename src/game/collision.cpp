@@ -1174,14 +1174,22 @@ int CCollision::GetFCustTile(int x, int y)
 
 void CCollision::FindTiles()
 {
+	void *pFindTilesThread = thread_init(FindTilesThread, this);
+	thread_detach(pFindTilesThread);
+}
+
+void CCollision::FindTilesThread(void *pUser)
+{
+	CCollision *pSelf = (CCollision *)pUser;
 	dbg_msg("collision", "finding map tiles, copy them to cache");
+
 	for (int i = 0; i < NUM_INDICES; i++)
-		for (int y = 0; y < m_Height; y++)
-			for (int x = 0; x < m_Width; x++)
+		for (int y = 0; y < pSelf->m_Height; y++)
+			for (int x = 0; x < pSelf->m_Width; x++)
 			{
 				vec2 Pos(x*32.0f + 16.0f, y*32.0f + 16.0f);
-				if (GetCustTile(Pos.x, Pos.y) == i || GetFCustTile(Pos.x, Pos.y) == i)
-					m_vRandomTile[i].push_back(Pos);
+				if (pSelf->GetCustTile(Pos.x, Pos.y) == i || pSelf->GetFCustTile(Pos.x, Pos.y) == i)
+					pSelf->m_vRandomTile[i].push_back(Pos);
 			}
 }
 

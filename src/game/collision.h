@@ -102,6 +102,7 @@ public:
 	int GetFCustTile(int x, int y);
 
 	void FindTiles();
+	static void FindTilesThread(void *pUser);
 
 	vec2 GetRandomTile(int Index, bool Entity);
 	vec2 GetRandomTile(int Index) { return GetRandomTile(Index, false); };
