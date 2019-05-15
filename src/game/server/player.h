@@ -291,9 +291,8 @@ public:
 	void MoneyTransaction(int Amount, const char *Description);
 	char m_aLastMoneyTransaction[10][256];
 
-	int64 m_ShopBotAntiSpamTick;
+	int m_ShopBotAntiSpamTick;
 
-	bool m_AllowTimeScore;
 	int m_DisplayScore;
 
 	bool IsHooked(int Power = -1);
