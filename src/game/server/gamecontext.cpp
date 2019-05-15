@@ -935,7 +935,7 @@ void CGameContext::OnTick()
 
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
-			Logout(i);
+			WriteAccountStats(i);
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)

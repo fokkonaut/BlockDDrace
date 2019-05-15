@@ -24,6 +24,50 @@ CGameControllerDDRace::CGameControllerDDRace(class CGameContext *pGameServer) :
 	InitTeleporter();
 }
 
+CGameControllerDDRace::~CGameControllerDDRace()
+{
+	// Nothing to clean
+}
+
+void CGameControllerDDRace::Tick()
+{
+	IGameController::Tick();
+}
+
+void CGameControllerDDRace::InitTeleporter()
+{
+	if (!GameServer()->Collision()->Layers()->TeleLayer())
+		return;
+	int Width = GameServer()->Collision()->Layers()->TeleLayer()->m_Width;
+	int Height = GameServer()->Collision()->Layers()->TeleLayer()->m_Height;
+
+	for (int i = 0; i < Width * Height; i++)
+	{
+		int Number = GameServer()->Collision()->TeleLayer()[i].m_Number;
+		int Type = GameServer()->Collision()->TeleLayer()[i].m_Type;
+		if (Number > 0)
+		{
+			if (Type == TILE_TELEOUT)
+			{
+				m_TeleOuts[Number - 1].push_back(
+						vec2(i % Width * 32 + 16, i / Width * 32 + 16));
+			}
+			else if (Type == TILE_TELECHECKOUT)
+			{
+				m_TeleCheckOuts[Number - 1].push_back(
+						vec2(i % Width * 32 + 16, i / Width * 32 + 16));
+			}
+		}
+	}
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 bool CGameControllerDDRace::OnEntity(int Index, vec2 Pos)
 {
 	int Team = -1;
@@ -35,11 +79,6 @@ bool CGameControllerDDRace::OnEntity(int Index, vec2 Pos)
 	CFlag *F = new CFlag(&GameServer()->m_World, Team, Pos);
 	m_apFlags[Team] = F;
 	return true;
-}
-
-void CGameControllerDDRace::Tick()
-{
-	IGameController::Tick();
 }
 
 void CGameControllerDDRace::Snap(int SnappingClient)
@@ -102,45 +141,6 @@ void CGameControllerDDRace::Snap(int SnappingClient)
 	else
 		pGameDataObj->m_FlagCarrierBlue = FLAG_MISSING;
 }
-
-CGameControllerDDRace::~CGameControllerDDRace()
-{
-	// Nothing to clean
-}
-
-void CGameControllerDDRace::InitTeleporter()
-{
-	if (!GameServer()->Collision()->Layers()->TeleLayer())
-		return;
-	int Width = GameServer()->Collision()->Layers()->TeleLayer()->m_Width;
-	int Height = GameServer()->Collision()->Layers()->TeleLayer()->m_Height;
-
-	for (int i = 0; i < Width * Height; i++)
-	{
-		int Number = GameServer()->Collision()->TeleLayer()[i].m_Number;
-		int Type = GameServer()->Collision()->TeleLayer()[i].m_Type;
-		if (Number > 0)
-		{
-			if (Type == TILE_TELEOUT)
-			{
-				m_TeleOuts[Number - 1].push_back(
-						vec2(i % Width * 32 + 16, i / Width * 32 + 16));
-			}
-			else if (Type == TILE_TELECHECKOUT)
-			{
-				m_TeleCheckOuts[Number - 1].push_back(
-						vec2(i % Width * 32 + 16, i / Width * 32 + 16));
-			}
-		}
-	}
-}
-
-
-/*************************************************
-*                                                *
-*              B L O C K D D R A C E             *
-*                                                *
-**************************************************/
 
 int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID, bool Suicide)
 {
