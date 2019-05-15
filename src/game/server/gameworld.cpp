@@ -496,5 +496,5 @@ int CGameWorld::GetClosestShopBot(vec2 Pos, CCharacter *pNotThis, int CollideWit
 		}
 	}
 
-	return pClosest->GetPlayer()->GetCID();
+	return pClosest ? pClosest->GetPlayer()->GetCID() : -1;
 }
