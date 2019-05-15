@@ -208,6 +208,10 @@ enum
 	TILE_MONEY = 160,
 	TILE_SHOP,
 
+	TILE_HELPERS_ONLY = 173,
+	TILE_MODERATORS_ONLY,
+	TILE_ADMINS_ONLY,
+
 	TILE_END_CUSTOM,
 	//End of higher tiles
 	//Layers

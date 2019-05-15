@@ -2039,6 +2039,7 @@ void CCharacter::HandleTiles(int Index)
 		Bloody(!(m_Bloody || m_StrongBloody));
 	}
 
+	//shop
 	if (m_TileIndex == TILE_SHOP || m_TileFIndex == TILE_SHOP) // SHOP
 	{
 		if (!m_InShop)
@@ -2063,6 +2064,41 @@ void CCharacter::HandleTiles(int Index)
 		if (Server()->Tick() % 50 == 0)
 			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
+
+
+	// helper only
+	if ((m_TileIndex == TILE_HELPERS_ONLY) || (m_TileFIndex == TILE_HELPERS_ONLY))
+	{
+		if (Server()->GetAuthedState(m_pPlayer->GetCID()) < AUTHED_HELPER)
+		{
+			GameServer()->SendChatTarget(GetPlayer()->GetCID(), "This area is for helpers only");
+			Die(m_pPlayer->GetCID(), WEAPON_WORLD);
+			return;
+		}
+	}
+
+	// moderator only
+	if ((m_TileIndex == TILE_MODERATORS_ONLY) || (m_TileFIndex == TILE_MODERATORS_ONLY))
+	{
+		if (Server()->GetAuthedState(m_pPlayer->GetCID()) < AUTHED_MOD)
+		{
+			GameServer()->SendChatTarget(GetPlayer()->GetCID(), "This area is for moderators only");
+			Die(m_pPlayer->GetCID(), WEAPON_WORLD);
+			return;
+		}
+	}
+
+	// admin only
+	if ((m_TileIndex == TILE_ADMINS_ONLY) || (m_TileFIndex == TILE_ADMINS_ONLY))
+	{
+		if (Server()->GetAuthedState(m_pPlayer->GetCID()) < AUTHED_ADMIN)
+		{
+			GameServer()->SendChatTarget(GetPlayer()->GetCID(), "This area is for admins only");
+			Die(m_pPlayer->GetCID(), WEAPON_WORLD);
+			return;
+		}
+	}
+
 
 	m_LastIndexTile = m_TileIndex;
 	m_LastIndexFrontTile = m_TileFIndex;
