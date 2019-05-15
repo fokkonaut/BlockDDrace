@@ -476,6 +476,8 @@ public:
 
 	/////////dummymode variables
 
+	void Fire(bool Fire = true);
+
 	//dummymode 32 vars (BlmapChill police guard)
 	int m_DummyLovedX;
 	int m_DummyLovedY;

@@ -10,6 +10,20 @@
 #define V3_OFFSET_X 0 * 32 //was 277
 #define V3_OFFSET_Y 0 * 32 //was 48
 
+void CCharacter::Fire(bool Fire)
+{
+	if (Fire)
+	{
+		m_LatestInput.m_Fire++;
+		m_Input.m_Fire++;
+	}
+	else
+	{
+		m_LatestInput.m_Fire = 0;
+		m_Input.m_Fire = 0;
+	}
+}
+
 void CCharacter::DummyTick()
 {
 	if (!m_pPlayer->m_IsDummy)
@@ -54,10 +68,7 @@ void CCharacter::DummyTick()
 						if (absolute(pChr->m_Core.m_Vel.x) > 2.6f)
 						{
 							if (m_FreezeTime == 0)
-							{
-								m_LatestInput.m_Fire++;
-								m_Input.m_Fire++;
-							}
+								Fire();
 						}
 					}
 				}
@@ -122,10 +133,7 @@ void CCharacter::DummyTick()
 							if (pChr->m_Pos.y < m_Core.m_Pos.y + 90 && pChr->m_Pos.y > m_Core.m_Pos.y - 90)
 							{
 								if (m_FreezeTime == 0)
-								{
-									m_LatestInput.m_Fire++;
-									m_Input.m_Fire++;
-								}
+									Fire();
 							}
 						}
 					}
@@ -148,10 +156,7 @@ void CCharacter::DummyTick()
 							if (pChr->m_Pos.y > m_Core.m_Pos.y - 90 && pChr->m_Pos.y < m_Core.m_Pos.y + 90)
 							{
 								if (m_FreezeTime == 0)
-								{
-									m_LatestInput.m_Fire++;
-									m_Input.m_Fire++;
-								}
+									Fire();
 							}
 						}
 					}
@@ -495,8 +500,7 @@ void CCharacter::DummyTick()
 			if (m_Core.m_Pos.x < 388 * 32 && m_Core.m_Pos.y > 213 * 32) //jump to old spawn
 			{
 				m_Input.m_Jump = 1;
-				m_Input.m_Fire++;
-				m_LatestInput.m_Fire++;
+				Fire();
 				m_Input.m_Hook = 1;
 				m_Input.m_TargetX = -200;
 				m_Input.m_TargetY = 0;
@@ -521,10 +525,7 @@ void CCharacter::DummyTick()
 						if (Server()->Tick() % 55 == 0)
 						{
 							if (m_FreezeTime == 0)
-							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
-							}
+								Fire();
 						}
 						if (Server()->Tick() % 200 == 0)
 							m_Input.m_Jump = 1;
@@ -617,10 +618,7 @@ void CCharacter::DummyTick()
 						}
 
 						if (m_Core.m_Pos.y > 210 * 32 + 10 && m_Core.m_Vel.y < -0.9f && !IsFrozen) //dann schiessen
-						{
-							m_LatestInput.m_Fire++;
-							m_Input.m_Fire++;
-						}
+							Fire();
 					}
 				}
 			}
@@ -644,8 +642,7 @@ void CCharacter::DummyTick()
 			if (m_Core.m_Pos.x < 452 * 32 && m_Core.m_Pos.y > 188 * 32 && m_Core.m_Pos.y < 192 * 32 && m_Core.m_Vel.y < 0.1f && m_DummyCollectedWeapons)
 			{
 				m_DummyRocketJumped = true;
-				m_LatestInput.m_Fire++;
-				m_Input.m_Fire++;
+				Fire();
 			}
 
 			//Fliegen nach rocketjump
@@ -699,8 +696,7 @@ void CCharacter::DummyTick()
 						{
 							if (GetActiveWeapon() == WEAPON_HAMMER && m_FreezeTime == 0)
 							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
+								Fire();
 								m_DummyHookAfterHammer = true;
 							}
 						}
@@ -766,10 +762,7 @@ void CCharacter::DummyTick()
 								if (pChr->m_Pos.x < m_Core.m_Pos.x + 60 && pChr->m_Pos.x > m_Core.m_Pos.x - 60 && pChr->m_Pos.y < m_Core.m_Pos.y + 60 && pChr->m_Pos.y > m_Core.m_Pos.y - 60)
 								{
 									if (m_FreezeTime == 0)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 							}
 							else if (pChr->m_Pos.x > 469 * 32 + 20 && pChr->m_Pos.x < 480 * 32 && pChr->m_Pos.y < 213 * 32 + 5 && pChr->m_Pos.y > 202 * 32)
@@ -814,10 +807,7 @@ void CCharacter::DummyTick()
 								if (pChr->m_Pos.x < m_Core.m_Pos.x + 60 && pChr->m_Pos.x > m_Core.m_Pos.x - 60 && pChr->m_Pos.y < m_Core.m_Pos.y + 60 && pChr->m_Pos.y > m_Core.m_Pos.y - 60)
 								{
 									if (m_FreezeTime == 0)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 							}
 							else if (pChr->m_Pos.x > 437 * 32 && pChr->m_Pos.x < 456 * 32 && pChr->m_Pos.y < 219 * 32 && pChr->m_Pos.y > 203 * 32) //left freeze becken
@@ -835,10 +825,7 @@ void CCharacter::DummyTick()
 									m_Input.m_Jump = 1;
 									m_DummyHelpBeforeHammerfly = true;
 									if (m_aWeapons[2].m_Got && m_FreezeTime == 0)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 
 								if (m_DummyHelpBeforeHammerfly)
@@ -887,8 +874,7 @@ void CCharacter::DummyTick()
 										m_pPlayer->m_LastEmote = Server()->Tick();
 										GameServer()->SendEmoticon(m_pPlayer->GetCID(), 7);
 
-										m_LatestInput.m_Fire++;
-										m_Input.m_Fire++;
+										Fire();
 
 										m_DummyEmoteTickNext = Server()->Tick() + Server()->TickSpeed() / 2;
 									}
@@ -907,8 +893,7 @@ void CCharacter::DummyTick()
 								}
 								else if (m_DummyFreezed == true) //if (m_DummyFreezed == false)
 								{
-									m_LatestInput.m_Fire = 0;
-									m_Input.m_Fire = 0;
+									Fire(false);
 									m_DummyFreezed = false;
 								}
 							}
@@ -1006,10 +991,7 @@ void CCharacter::DummyTick()
 									m_Input.m_Direction = -1;
 
 								if (pChr->m_Pos.x < 480 * 32) //wenn pChr weit gwenung zum hammern is
-								{
-									m_Input.m_Fire++;
-									m_LatestInput.m_Fire++;
-								}
+									Fire();
 
 								//testy stop mate if hammer was too hard and mate fly to far
 								if (pChr->m_Pos.x < 478 * 32)
@@ -1037,10 +1019,7 @@ void CCharacter::DummyTick()
 
 								//Now tricky part the unfreeze hammer
 								if (pChr->m_Pos.y - m_Core.m_Pos.y < 7 && m_FreezeTime == 0) //wenn der abstand der beiden tees nach oben weniger is als 7 ^^
-								{
-									m_Input.m_Fire++;
-									m_LatestInput.m_Fire++;
-								}
+									Fire();
 							}
 						}
 						
@@ -1071,10 +1050,7 @@ void CCharacter::DummyTick()
 								m_Input.m_Jump = 1;
 
 							if (m_Input.m_Direction == 1 && m_FreezeTime == 0)
-							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
-							}
+								Fire();
 						}
 
 						if (!m_DummyMateFailed && m_DummyRaceState == 5) //made the part --> help mate
@@ -1144,10 +1120,7 @@ void CCharacter::DummyTick()
 									SetWeapon(2); //switch to sg
 
 								if (m_FreezeTime == 0 && pChr->m_Core.m_Vel.y == 0.000000f && pChr->m_Core.m_Vel.x < 0.007f && pChr->m_Core.m_Vel.x > -0.007f && m_Core.m_Pos.x < 480 * 32)
-								{
-									m_Input.m_Fire++;
-									m_LatestInput.m_Fire++;
-								}
+									Fire();
 							}
 							else //if right enough to stop sg
 							{
@@ -1174,10 +1147,7 @@ void CCharacter::DummyTick()
 											if (m_DummyNothingHappensCounter > 4) //warning long time nothing happend! do crazy stuff
 											{
 												if (m_FreezeTime == 0)
-												{
-													m_Input.m_Fire++;
-													m_LatestInput.m_Fire++;
-												}
+													Fire();
 											}
 											if (m_DummyNothingHappensCounter > 5) //high warning mate coudl get bored --> swtich through all weapons and move angel back
 											{
@@ -1204,8 +1174,7 @@ void CCharacter::DummyTick()
 											m_Input.m_TargetY = 30;
 											m_LatestInput.m_TargetX = -200;
 											m_LatestInput.m_TargetY = 30;
-											m_Input.m_Fire++;
-											m_LatestInput.m_Fire++;
+											Fire();
 										}
 										else //if mate is too low --> change angel or move depnding on the x position
 										{
@@ -1239,10 +1208,7 @@ void CCharacter::DummyTick()
 																m_Input.m_TargetX = 200;
 																m_Input.m_TargetY = 7;
 																if (!m_FreezeTime)
-																{
-																	m_Input.m_Fire++;
-																	m_LatestInput.m_Fire++;
-																}
+																	Fire();
 															}
 														}
 
@@ -1256,10 +1222,7 @@ void CCharacter::DummyTick()
 																	m_Input.m_Jump = 1;
 																m_Input.m_Hook = 1;
 																if (!m_FreezeTime)
-																{
-																	m_Input.m_Fire++;
-																	m_LatestInput.m_Fire++;
-																}
+																	Fire();
 															}
 														}
 													}
@@ -1282,10 +1245,7 @@ void CCharacter::DummyTick()
 														if (m_Core.m_Pos.y < 192 * 32 - 30) //shoot
 														{
 															if (m_FreezeTime == 0 && GetActiveWeapon() == WEAPON_SHOTGUN && m_Core.m_Vel.y < -0.5f)
-															{
-																m_Input.m_Fire++;
-																m_LatestInput.m_Fire++;
-															}
+																Fire();
 														}
 													}
 
@@ -1320,10 +1280,7 @@ void CCharacter::DummyTick()
 													m_LatestInput.m_TargetX = 15;
 													m_LatestInput.m_TargetY = 300;
 													if (m_Core.m_Vel.x > -0.1f && m_FreezeTime == 0)
-													{
-														m_Input.m_Fire++;
-														m_LatestInput.m_Fire++;
-													}
+														Fire();
 
 													if (m_Core.m_Pos.y > 195 * 32 + 5)
 													{
@@ -1379,8 +1336,7 @@ void CCharacter::DummyTick()
 
 														if (m_Core.m_Pos.y > 196 * 32 + 25 || m_Core.m_Pos.x < 475 * 32 + 15)
 														{
-															m_Input.m_Fire++;
-															m_LatestInput.m_Fire++;
+															Fire();
 															m_Input.m_Jump = 1;
 														}
 
@@ -1416,10 +1372,7 @@ void CCharacter::DummyTick()
 							}
 
 							if (m_Core.m_Pos.y < pChr->m_Pos.y + 40 && pChr->m_Pos.x < 479 * 32 + 10 && m_FreezeTime == 0) //if the mate is near enough to hammer
-							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
-							}
+								Fire();
 
 							//do something if nothing happens cuz the bot is stuck somehow
 							if (Server()->Tick() % 100 == 0 && pChr->m_Core.m_Vel.y == 0.000000f && m_DummyNothingHappensCounter == 0) //if the mate stands still after 90secs the m_DummyNothingHappensCounter should get triggerd. but if not this if function turns true
@@ -1436,8 +1389,7 @@ void CCharacter::DummyTick()
 								m_Input.m_Hook = 0;
 								m_Input.m_Jump = 0;
 								m_Input.m_Direction = 0;
-								m_LatestInput.m_Fire = 0;
-								m_Input.m_Fire = 0;
+								Fire(false);
 
 								if (Server()->Tick() % 20 == 0)
 									GameServer()->SendEmoticon(m_pPlayer->GetCID(), 1);
@@ -1460,10 +1412,7 @@ void CCharacter::DummyTick()
 									m_Input.m_TargetX = 10;
 									m_Input.m_TargetY = -120;
 									if (!m_FreezeTime)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 								if (m_Core.m_Pos.y > 193 * 32 + 18) // don't jump in the freeze roof
 									m_Input.m_Jump = 1;
@@ -1486,10 +1435,7 @@ void CCharacter::DummyTick()
 								SetWeapon(2);
 
 							if (m_FreezeTime == 0)
-							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
-							}
+								Fire();
 						}
 					}
 				}
@@ -1547,10 +1493,7 @@ void CCharacter::DummyTick()
 
 									//Hammer
 									if (pChr->m_FreezeTime > 0 && pChr->m_Pos.y - m_Core.m_Pos.y < 18) //wenn der abstand kleiner als 10 is nach oben
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 								else
 									m_DummyHook = false; //reset hook if bot is freeze
@@ -1572,8 +1515,7 @@ void CCharacter::DummyTick()
 									if (m_Core.m_Pos.x > pChr->m_Pos.x - 2 && m_Core.m_Pos.x < pChr->m_Pos.x && m_Core.m_Vel.x > -0.3f && m_FreezeTime == 0)
 									{
 										m_Input.m_Direction = 1;
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
+										Fire();
 									}
 								}
 
@@ -1597,10 +1539,7 @@ void CCharacter::DummyTick()
 								{
 									SetWeapon(2); //shotgun
 									if (pChr->m_FreezeTime > 0 && m_FreezeTime == 0 && pChr->m_Core.m_Vel.y == 0.000000f)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 								//another hook if normal hook doesnt work
 								//to save mate if bot is finish
@@ -1609,8 +1548,7 @@ void CCharacter::DummyTick()
 									if (pChr->m_FreezeTime > 0 && m_FreezeTime == 0 && m_Core.m_Pos.y < pChr->m_Pos.y - 60 && m_Core.m_Pos.x > 514 * 32 - 5)
 									{
 										m_Input.m_Hook = 1;
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
+										Fire();
 										if (Server()->Tick() % 10 == 0)
 											GameServer()->SendEmoticon(m_pPlayer->GetCID(), 1);
 									}
@@ -1667,10 +1605,7 @@ void CCharacter::DummyTick()
 									m_Input.m_Jump = 1;
 
 								if (pChr->m_FreezeTime > 0 && pChr->m_Pos.y - m_Core.m_Pos.y < 18)
-								{
-									m_Input.m_Fire++;
-									m_LatestInput.m_Fire++;
-								}
+									Fire();
 							}
 							else
 								m_DummyHook = false;
@@ -1738,8 +1673,7 @@ void CCharacter::DummyTick()
 				m_Input.m_Hook = 0;
 				m_Input.m_Jump = 0;
 				m_Input.m_Direction = 0;
-				m_LatestInput.m_Fire = 0;
-				m_Input.m_Fire = 0;
+				Fire(false);
 				SetWeapon(1); //gun verwenden damit auch erkannt wird wann der mode getriggert wird
 
 				if (pChr->m_FreezeTime == 0)
@@ -1790,8 +1724,7 @@ void CCharacter::DummyTick()
 			m_Input.m_Hook = 0;
 			m_Input.m_Jump = 0;
 			m_Input.m_Direction = 0;
-			m_LatestInput.m_Fire = 0;
-			m_Input.m_Fire = 0;
+			Fire(false);
 			if (Server()->Tick() % 30 == 0)
 				SetWeapon(0);
 
@@ -1828,10 +1761,7 @@ void CCharacter::DummyTick()
 
 					m_Input.m_Direction = -1;
 				if (pChr->m_Pos.y < m_Core.m_Pos.y + 15)
-				{
-					m_LatestInput.m_Fire++;
-					m_Input.m_Fire++;
-				}
+					Fire();
 			}
 			else //lieblings position finden wenn nichts abgeht
 			{
@@ -1911,8 +1841,7 @@ void CCharacter::DummyTick()
 		{
 			m_Input.m_Jump = 0;
 			m_Input.m_Direction = 0;
-			m_LatestInput.m_Fire = 0;
-			m_Input.m_Fire = 0;
+			Fire(false);
 
 			//Check ob jemand in der linken freeze wand is
 			CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 6);
@@ -2072,10 +2001,7 @@ void CCharacter::DummyTick()
 						if (pChr->m_Core.m_Pos.x > m_Core.m_Pos.x - 100 && pChr->m_Core.m_Pos.x < m_Core.m_Pos.x + 100 && pChr->m_Core.m_Pos.y > m_Core.m_Pos.y - 100 && pChr->m_Core.m_Pos.y < m_Core.m_Pos.y + 100)
 						{
 							if (pChr->m_Core.m_Vel.y < -1.5f) //only boost and use existing up speed
-							{
-								m_Input.m_Fire++;
-								m_LatestInput.m_Fire++;
-							}
+								Fire();
 							if (Server()->Tick() % 3 == 0)
 								SetWeapon(0);
 						}
@@ -2092,8 +2018,7 @@ void CCharacter::DummyTick()
 				if (m_Core.m_Pos.x < 388 * 32 && m_Core.m_Pos.y > 213 * 32) //jump to old spawn
 				{
 					m_Input.m_Jump = 1;
-					m_Input.m_Fire++;
-					m_LatestInput.m_Fire++;
+					Fire();
 					m_Input.m_Hook = 1;
 					m_Input.m_TargetX = -200;
 					m_Input.m_TargetY = 0;
@@ -2161,10 +2086,7 @@ void CCharacter::DummyTick()
 								if (pChr->m_Pos.x - m_Core.m_Pos.x < 30) //wenn der typ nahe bei dem bot ist
 								{
 									if (m_FreezeTick == 0) //nicht rum schrein
-									{
-										m_LatestInput.m_Fire++;
-										m_Input.m_Fire++;
-									}
+										Fire();
 
 									if (Server()->Tick() % 10 == 0)
 										GameServer()->SendEmoticon(m_pPlayer->GetCID(), 9); //angry
@@ -2246,10 +2168,7 @@ void CCharacter::DummyTick()
 								m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
 
 								if (m_FreezeTick == 0) //nicht rum schrein
-								{
-									m_LatestInput.m_Fire++;
-									m_Input.m_Fire++;
-								}
+									Fire();
 
 								if (Server()->Tick() % 10 == 0)  //angry emotes machen
 									GameServer()->SendEmoticon(m_pPlayer->GetCID(), 9);
@@ -2276,10 +2195,7 @@ void CCharacter::DummyTick()
 								if (Server()->Tick() % 20 == 0)
 									SetWeapon(0);
 								if (Server()->Tick() % 25 == 0)
-								{
-									m_Input.m_Fire++;
-									m_LatestInput.m_Fire++;
-								}
+									Fire();
 							}
 						}
 						else //wenn weit genung links
@@ -2352,10 +2268,7 @@ void CCharacter::DummyTick()
 							m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
 
 							if (m_FreezeTime == 0)
-							{
-								m_LatestInput.m_Fire++;
-								m_Input.m_Fire++;
-							}
+								Fire();
 
 							m_DummyEmergency = true;
 
@@ -2435,26 +2348,17 @@ void CCharacter::DummyTick()
 
 											//Check ob der gegener freeze is
 											if (pChr->m_FreezeTime > 0)
-											{
-												m_LatestInput.m_Fire = 0; //nicht schiessen ofc xD (doch is schon besser xD)
-												m_Input.m_Fire = 0;
-											}
+												Fire(false);
 
 											//letzten stupser geben (sonst gibs bugs kb zu fixen)
 											if (pChr->IsFrozen) //wenn er schon im freeze is
-											{
-												m_LatestInput.m_Fire = 1; //hau ihn an die wand
-												m_Input.m_Fire = 1;
-											}
+												Fire();
 										}
 										else
 										{
 											m_Input.m_Direction = 1;
 											if (pChr->m_FreezeTime > 0)
-											{
-												m_LatestInput.m_Fire = 0; //nicht schiessen ofc xD (doch is schon besser xD)
-												m_Input.m_Fire = 0;
-											}
+												Fire(false);
 										}
 									}
 									else //wenn der gegner nicht tief genung ist
@@ -2462,10 +2366,7 @@ void CCharacter::DummyTick()
 										m_Input.m_Direction = 1;
 
 										if (pChr->m_FreezeTime > 0)
-										{
-											m_LatestInput.m_Fire = 0; //nicht schiessen ofc xD (doch is schon besser xD)
-											m_Input.m_Fire = 0;
-										}
+											Fire(false);
 									}
 								}
 							}
@@ -2499,26 +2400,19 @@ void CCharacter::DummyTick()
 
 							//Check ob der gegener freeze is
 							if (pChr->m_FreezeTime > 0 && pChr->m_Pos.y > 208 * 32 && !pChr->IsFrozen) //wenn der Gegner tief und freeze is macht es wenig sinn den frei zu hammern
-							{
-								m_LatestInput.m_Fire = 0; //nicht schiessen 
-								m_Input.m_Fire = 0;
-							}
+								Fire(false);
 
 							//Hau den weg (wie dummymode 21)
 							if (pChr->m_Pos.x > 418 * 32 && pChr->m_Pos.y > 209 * 32)  //das ganze findet nur im bereich statt wo sonst eh nichts passiert
 							{
 								//wenn der bot den gegner nicht boosten würde hammer den auch nich weg
-								m_LatestInput.m_Fire = 0;
-								m_Input.m_Fire = 0;
+								Fire(false);
 
 								if (pChr->m_Core.m_Vel.y < -0.5f && m_Core.m_Pos.y + 15 > pChr->m_Pos.y) //wenn der dude speed nach oben hat
 								{
 									m_Input.m_Jump = 1;
 									if (m_FreezeTime == 0)
-									{
-										m_LatestInput.m_Fire++;
-										m_Input.m_Fire++;
-									}
+										Fire();
 								}
 							}
 
@@ -2672,10 +2566,7 @@ void CCharacter::DummyTick()
 										SetWeapon(0);
 
 									if (pChr->m_Pos.x < m_Core.m_Pos.x && pChr->m_Pos.x > m_Core.m_Pos.x - 180) //if enemy is on the left in hammer distance
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 
 									if (m_Core.m_Pos.y < 210 * 32 + 10)
 										m_DummyStartHook = true;
@@ -2697,8 +2588,7 @@ void CCharacter::DummyTick()
 									m_Input.m_Hook = 0;
 									m_Input.m_Jump = 0;
 									m_Input.m_Direction = 0;
-									m_LatestInput.m_Fire = 0;
-									m_Input.m_Fire = 0;
+									Fire(false);
 
 									if (Server()->Tick() % 50 == 0)
 									{
@@ -2733,10 +2623,7 @@ void CCharacter::DummyTick()
 											//random shooting xD
 											int r = rand() % 200 + 10;
 											if (Server()->Tick() % r == 0 && m_FreezeTime == 0)
-											{
-												m_Input.m_Fire++;
-												m_LatestInput.m_Fire++;
-											}
+												Fire();
 										}
 									}
 
@@ -2827,8 +2714,7 @@ void CCharacter::DummyTick()
 									m_Input.m_Hook = 0;
 									m_Input.m_Jump = 0;
 									m_Input.m_Direction = 0;
-									m_LatestInput.m_Fire = 0;
-									m_Input.m_Fire = 0;
+									Fire(false);
 
 									if (!m_DummyTrick4HasStartPos)
 									{
@@ -2940,8 +2826,7 @@ void CCharacter::DummyTick()
 					m_Input.m_Hook = 0;
 					m_Input.m_Jump = 0;
 					m_Input.m_Direction = 0;
-					m_LatestInput.m_Fire = 0;
-					m_Input.m_Fire = 0;
+					Fire(false);
 
 					if (m_Core.m_Pos.x < 451 * 32 + 20 && IsGrounded() == false && m_Core.m_Jumped > 2)
 						m_Input.m_Direction = 1;
@@ -2997,10 +2882,7 @@ void CCharacter::DummyTick()
 									m_Input.m_TargetX = 5;
 									m_Input.m_TargetY = 200;
 									if (m_Core.m_Pos.x - 1 < pChr->m_Pos.x)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 								else
 								{
@@ -3024,10 +2906,7 @@ void CCharacter::DummyTick()
 									m_Input.m_TargetX = 5;
 									m_Input.m_TargetY = 200;
 									if (m_Core.m_Pos.x + 1 > pChr->m_Pos.x)
-									{
-										m_Input.m_Fire++;
-										m_LatestInput.m_Fire++;
-									}
+										Fire();
 								}
 								else
 								{
@@ -3153,10 +3032,7 @@ void CCharacter::DummyTick()
 					SetWeapon(0);
 
 				if (m_FreezeTime == 0 && pChr->m_FreezeTime == 0 && pChr->m_Core.m_Vel.y < -0.5 && pChr->m_Pos.x > m_Core.m_Pos.x - 3 * 32 && pChr->m_Pos.x < m_Core.m_Pos.x + 3 * 32)
-				{
-					m_Input.m_Fire++;
-					m_LatestInput.m_Fire++;
-				}
+					Fire();
 
 				m_DummyAttackMode = 0;
 				if (m_Core.m_Pos.x < 466 * 32 + 20 && pChr->m_Pos.x > 469 * 32 + 20) //hook enemy in air (rightside)
@@ -3218,10 +3094,7 @@ void CCharacter::DummyTick()
 						if (Server()->Tick() % 10 == 0)
 							SetWeapon(0);
 						if (m_FreezeTime == 0 && pChr->m_FreezeTime > 0)
-						{
-							m_Input.m_Fire++;
-							m_LatestInput.m_Fire++;
-						}
+							Fire();
 					}
 				}
 
@@ -3297,10 +3170,7 @@ void CCharacter::DummyTick()
 					if (m_Input.m_TargetX < -20)
 					{
 						if (m_FreezeTime == 0)
-						{
-							m_Input.m_Fire++;
-							m_LatestInput.m_Fire++;
-						}
+							Fire();
 					}
 					else if (m_Input.m_TargetX > 20)
 					{
@@ -3413,8 +3283,7 @@ void CCharacter::DummyTick()
 					if (m_Core.m_Pos.x > 31 * 32)
 					{
 						m_Input.m_Jump = 1;
-						m_LatestInput.m_Fire++;
-						m_Input.m_Fire++;
+						Fire();
 					}
 				}
 			}
@@ -3561,8 +3430,7 @@ void CCharacter::DummyTick()
 				m_Input.m_TargetY = -100;
 				m_LatestInput.m_TargetX = 0;
 				m_LatestInput.m_TargetY = -100;
-				m_LatestInput.m_Fire++;
-				m_Input.m_Fire++;
+				Fire();
 				m_DummyGrenadeJump = 1;
 			}
 			else if (m_Core.m_Vel.y > -7.6f && m_DummyGrenadeJump == 1) // jump in air // basically a timer for when the grenade comes down
@@ -3585,8 +3453,7 @@ void CCharacter::DummyTick()
 						m_Input.m_TargetY = 150;
 						m_LatestInput.m_TargetX = 100;
 						m_LatestInput.m_TargetY = 150;
-						m_LatestInput.m_Fire++;
-						m_Input.m_Fire++;
+						Fire();
 						m_DummyGrenadeJump = 3;
 					}
 					if (m_DummyGrenadeJump == 3)
@@ -3597,8 +3464,7 @@ void CCharacter::DummyTick()
 							m_Input.m_TargetY = -100;
 							m_LatestInput.m_TargetX = -100;
 							m_LatestInput.m_TargetY = -100;
-							m_LatestInput.m_Fire++;
-							m_Input.m_Fire++;
+							Fire();
 						}
 					}
 				}
@@ -3616,8 +3482,7 @@ void CCharacter::DummyTick()
 					m_Input.m_TargetY = 170;
 					m_LatestInput.m_TargetX = -100;
 					m_LatestInput.m_TargetY = 170;
-					m_LatestInput.m_Fire++;
-					m_Input.m_Fire++;
+					Fire();
 				}
 				if (m_Core.m_Pos.y < 130 * 32 && m_Core.m_Pos.y > 131 * 32)
 					m_Input.m_Jump = 1;
@@ -3637,8 +3502,7 @@ void CCharacter::DummyTick()
 			m_Input.m_TargetY = 0;
 			m_LatestInput.m_TargetX = -100;
 			m_LatestInput.m_TargetY = 0;
-			m_LatestInput.m_Fire++;
-			m_Input.m_Fire++;
+			Fire();
 			m_Input.m_Jump = 0;
 			if (m_Core.m_Pos.x > 333 * 32 && m_Core.m_Pos.x < 335 * 32) // hook up and get into the tunnel thingy
 			{
@@ -3677,10 +3541,7 @@ void CCharacter::DummyTick()
 			{
 				m_Input.m_Direction = -1;
 				if (m_Core.m_Pos.x < 338 * 32)
-				{
-					m_LatestInput.m_Fire++;
-					m_Input.m_Fire++;
-				}
+					Fire();
 			}
 			if (m_Core.m_Pos.x < 328 * 32 && m_Core.m_Pos.y < 60 * 32)
 				m_Input.m_Jump = 1;
