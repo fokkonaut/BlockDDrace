@@ -314,10 +314,8 @@ public:
 	void FixMotd();
 	char m_aMotd[900];
 
-	void ConnectDummy(int Dummymode = 0);
-	int GetShopBot();
-	int m_ShopBotSpawnTick;
-	bool m_SpawnShopBot;
+	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
+	bool IsShopBot(int ClientID);
 	void ConnectDefaultBots();
 
 	int GetNextClientID();

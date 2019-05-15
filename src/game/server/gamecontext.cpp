@@ -937,9 +937,6 @@ void CGameContext::OnTick()
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 			Logout(i);
 
-	if (GetShopBot() >= 0 && Server()->Tick() == m_ShopBotSpawnTick)
-		m_apPlayers[GetShopBot()]->KillCharacter();
-
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
 	{
@@ -2875,6 +2872,12 @@ void CGameContext::OnInit()
 #endif
 		m_pScore = new CFileScore(this);
 
+	// BlockDDrace
+	if (g_Config.m_SvDefaultBots)
+		ConnectDefaultBots();
+	// BlockDDrace
+
+
 	// create all entities from the game layer
 	CMapItemLayerTilemap *pTileMap = m_Layers.GameLayer();
 	CTile *pTiles = (CTile *)Kernel()->RequestInterface<IMap>()->GetData(pTileMap->m_Data);
@@ -2969,13 +2972,6 @@ void CGameContext::OnInit()
 				}
 			}
 		}
-	}
-
-	m_ShopBotSpawnTick = Server()->Tick();
-	if (g_Config.m_SvDefaultBots)
-	{
-		ConnectDefaultBots();
-		m_ShopBotSpawnTick = Server()->Tick()+200;
 	}
 
 #ifdef CONF_DEBUG
@@ -3928,7 +3924,7 @@ void CGameContext::FixMotd()
 		m_aMotd[0] = 0;
 }
 
-void CGameContext::ConnectDummy(int Dummymode)
+void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 {
 	int DummyID = GetNextClientID();
 	if (DummyID < 0)
@@ -3941,7 +3937,7 @@ void CGameContext::ConnectDummy(int Dummymode)
 		m_apPlayers[DummyID] = 0;
 	}
 
-	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
+	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED, Pos);
 
 	Server()->BotJoin(DummyID);
 	m_apPlayers[DummyID]->m_IsDummy = true;
@@ -3957,17 +3953,9 @@ void CGameContext::ConnectDummy(int Dummymode)
 	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", DummyID, Dummymode);
 }
 
-int CGameContext::GetShopBot()
+bool CGameContext::IsShopBot(int ClientID)
 {
-	for (int i = 0; i < MAX_CLIENTS; i++)
-	{
-		if (m_apPlayers[i])
-		{
-			if (m_apPlayers[i]->m_Dummymode == 99)
-				return i;
-		}
-	}
-	return -1;
+	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == 99;
 }
 
 void CGameContext::SendMotd(const char * pMsg, int ClientID)
@@ -3992,9 +3980,6 @@ void CGameContext::ConnectDefaultBots()
 	{
 		ConnectDummy(32); //police
 	}
-
-	if (m_SpawnShopBot && GetShopBot() == -1)
-		ConnectDummy(99); // shop bot
 }
 
 const char *CGameContext::GetWeaponName(int Weapon)

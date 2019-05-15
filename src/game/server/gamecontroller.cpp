@@ -286,7 +286,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	}
 	else if (Index == ENTITY_SHOP_BOT_SPAWN)
 	{
-		GameServer()->m_SpawnShopBot = true;
+		GameServer()->ConnectDummy(99, Pos);
 	}
 	// BlockDDrace
 

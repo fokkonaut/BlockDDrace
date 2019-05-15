@@ -110,8 +110,12 @@ public:
 			entity - Entity to add
 	*/
 
+	// BlockDDrace
 
-	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int CollideWith, int Mode = 0);
+	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int CollideWith = -1, int Mode = 0);
+	int GetClosestShopBot(vec2 Pos, CCharacter *pNotThis, int CollideWith = -1);
+
+	// BlockDDrace
 
 
 	void InsertEntity(CEntity *pEntity);

@@ -51,7 +51,7 @@ class CPlayer
 	friend class CSaveTee;
 
 public:
-	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
+	CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos = vec2(-1, -1));
 	~CPlayer();
 
 	void Reset();
@@ -253,6 +253,7 @@ public:
 	bool m_IsDummy;
 	int m_Dummymode;
 	int m_FakePing;
+	vec2 m_ForceSpawn;
 
 	int m_Gamemode;
 

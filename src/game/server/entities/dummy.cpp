@@ -4025,7 +4025,7 @@ void CCharacter::DummyTick()
 	}
 	else if (m_pPlayer->m_Dummymode == 99) // shop bot
 	{
-		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
+		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 9);
 		if (pChr && pChr->m_InShop)
 		{
 			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;

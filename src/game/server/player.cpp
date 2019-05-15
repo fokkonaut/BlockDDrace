@@ -23,7 +23,7 @@ MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
 
 IServer *CPlayer::Server() const { return m_pGameServer->Server(); }
 
-CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
+CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos)
 {
 	m_pGameServer = pGameServer;
 	m_ClientID = ClientID;
@@ -31,6 +31,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 	m_pCharacter = 0;
 	m_NumInputs = 0;
 	m_KillMe = 0;
+	m_ForceSpawn = Pos;
 	Reset();
 }
 
@@ -719,14 +720,20 @@ void CPlayer::TryRespawn()
 {
 	vec2 SpawnPos;
 
-	if(!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
-		return;
-
-	if (m_Dummymode == 99)
+	if (m_ForceSpawn != vec2(-1, -1))
+	{
+		SpawnPos = m_ForceSpawn;
+	}
+	else if (m_Dummymode == 99)
 	{
 		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
 		if (ShopBotSpawn != vec2(-1, -1))
 			SpawnPos = ShopBotSpawn;
+	}
+	else
+	{
+		if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
+			return;
 	}
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;

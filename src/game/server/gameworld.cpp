@@ -408,7 +408,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Col
 		if (p == pNotThis)
 			continue;
 
-		bool CheckPassive = CollideWith != GameServer()->GetShopBot();
+		bool CheckPassive = !GameServer()->IsShopBot(CollideWith);
 		if (CollideWith != -1 && !p->CanCollide(CollideWith, CheckPassive))
 			continue;
 
@@ -453,6 +453,11 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Col
 			if (p->m_FreezeTime == 0)
 				continue;
 		}
+		if (Mode == 9) //for shopbot
+		{
+			if (GameServer()->IsShopBot(p->GetPlayer()->GetCID()))
+				continue;
+		}
 
 		float Len = distance(Pos, p->m_Pos);
 		if (Len < ClosestRange || !ClosestRange)
@@ -463,4 +468,33 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int Col
 	}
 
 	return pClosest;
+}
+
+int CGameWorld::GetClosestShopBot(vec2 Pos, CCharacter *pNotThis, int CollideWith)
+{
+	// Find other players
+	float ClosestRange = 0.f;
+	CCharacter *pClosest = 0;
+
+	CCharacter *p = (CCharacter *)FindFirst(ENTTYPE_CHARACTER);
+	for (; p; p = (CCharacter *)p->TypeNext())
+	{
+		if (p == pNotThis)
+			continue;
+
+		if (!GameServer()->IsShopBot(p->GetPlayer()->GetCID()))
+			continue;
+
+		if (CollideWith != -1 && !p->CanCollide(CollideWith, false))
+			continue;
+
+		float Len = distance(Pos, p->m_Pos);
+		if (Len < ClosestRange || !ClosestRange)
+		{
+			ClosestRange = Len;
+			pClosest = p;
+		}
+	}
+
+	return pClosest->GetPlayer()->GetCID();
 }
