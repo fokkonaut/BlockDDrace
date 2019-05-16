@@ -1145,16 +1145,16 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->GetVictim();
-	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	CPlayer *pPlayer = pSelf->m_apPlayers[Victim];
 
-	if (pResult->NumArguments() > 0 && pChr && pChr->GetPlayer()->m_IsDummy)
+	if (pResult->NumArguments() > 0 && pPlayer && pPlayer->m_IsDummy)
 	{
 		if (pResult->NumArguments() == 2)
-			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
+			pPlayer->m_Dummymode = pResult->GetInteger(1);
 		else if (pResult->NumArguments() == 1)
 		{
 			char aBuf[64];
-			str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
+			str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pPlayer->m_Dummymode);
 			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
 		}
 	}
