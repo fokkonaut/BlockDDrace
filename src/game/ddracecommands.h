@@ -57,38 +57,38 @@ CONSOLE_COMMAND("vote_no", "", CFGFLAG_SERVER, ConVoteNo, this, "Same as \"vote 
 *                                                *
 **************************************************/
 
-CONSOLE_COMMAND("extraweapons", "?v[id] ?i[spread]", CFGFLAG_SERVER | CMDFLAG_TEST, ConExtraWeapons, this, "Gives all extra weapons to player v, or spread extra weapons")
-CONSOLE_COMMAND("unextraweapons", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConUnExtraWeapons, this, "Takes all extra weapons from player v")
+CONSOLE_COMMAND("extraweapons", "?v[id] ?i[spread]", CFGFLAG_SERVER|CMDFLAG_TEST, ConExtraWeapons, this, "Gives all extra weapons to player v, or spread extra weapons")
+CONSOLE_COMMAND("unextraweapons", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnExtraWeapons, this, "Takes all extra weapons from player v")
 
-CONSOLE_COMMAND("plasmarifle", "?v[id] ?i[spread]", CFGFLAG_SERVER | CMDFLAG_TEST, ConPlasmaRifle, this, "Gives a plasma rifle to player v, or spread plasma rifle")
-CONSOLE_COMMAND("unplasmarifle", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConUnPlasmaRifle, this, "Takes the plasma rifle from player v")
+CONSOLE_COMMAND("plasmarifle", "?v[id] ?i[spread]", CFGFLAG_SERVER|CMDFLAG_TEST, ConPlasmaRifle, this, "Gives a plasma rifle to player v, or spread plasma rifle")
+CONSOLE_COMMAND("unplasmarifle", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnPlasmaRifle, this, "Takes the plasma rifle from player v")
 CONSOLE_COMMAND("heartgun", "?v[id] ?i[spread]", CFGFLAG_SERVER, ConHeartGun, this, "Gives a heart gun to player v, or spread heart gun")
 CONSOLE_COMMAND("unheartgun", "?v[id]", CFGFLAG_SERVER, ConUnHeartGun, this, "Takes the heart gun from player v")
 CONSOLE_COMMAND("straightgrenade", "?v[id] ?i[spread]", CFGFLAG_SERVER, ConStraightGrenade, this, "Gives a straight grenade to player v, or spread straight grenade")
 CONSOLE_COMMAND("unstraightgrenade", "?v[id]", CFGFLAG_SERVER, ConUnStraightGrenade, this, "Takes the straight grenade from player v")
 
-CONSOLE_COMMAND("hammer", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConHammer, this, "Gives a hammer to player v")
-CONSOLE_COMMAND("gun", "?v[id] ?i[spread]", CFGFLAG_SERVER | CMDFLAG_TEST, ConGun, this, "Gives a gun to player v, or spread gun")
-CONSOLE_COMMAND("unhammer", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConUnHammer, this, "Takes the hammer from player v")
-CONSOLE_COMMAND("ungun", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConUnGun, this, "Takes the gun from player v")
+CONSOLE_COMMAND("hammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConHammer, this, "Gives a hammer to player v")
+CONSOLE_COMMAND("gun", "?v[id] ?i[spread]", CFGFLAG_SERVER|CMDFLAG_TEST, ConGun, this, "Gives a gun to player v, or spread gun")
+CONSOLE_COMMAND("unhammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnHammer, this, "Takes the hammer from player v")
+CONSOLE_COMMAND("ungun", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnGun, this, "Takes the gun from player v")
 
-CONSOLE_COMMAND("scrollninja", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConScrollNinja, this, "Gives a ninja to player v")
+CONSOLE_COMMAND("scrollninja", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConScrollNinja, this, "Gives a ninja to player v")
 
 CONSOLE_COMMAND("connectdummy", "?i[amount] ?i[dummymode]", CFGFLAG_SERVER, ConConnectDummy, this, "Connects i dummies")
 CONSOLE_COMMAND("disconnectdummy", "v[id]", CFGFLAG_SERVER, ConDisconnectDummy, this, "Disconnects dummy v")
 CONSOLE_COMMAND("dummymode", "?v[id] ?i[dummymode]", CFGFLAG_SERVER, ConDummymode, this, "Sets or shows the dummymode of dummy v")
 CONSOLE_COMMAND("connectdefaultdummies", "", CFGFLAG_SERVER, ConConnectDefaultDummies, this, "Connects default dummies")
 
-CONSOLE_COMMAND("forceflagowner", "i[flag] ?i[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConForceFlagOwner, this, "Gives flag i to player i (0 = red, 1 = blue) (to return flag, set id = -1)")
+CONSOLE_COMMAND("forceflagowner", "i[flag] ?i[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConForceFlagOwner, this, "Gives flag i to player i (0 = red, 1 = blue) (to return flag, set id = -1)")
 
-CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER | CFGFLAG_CHAT, ConPlayerInfo, this, "Shows information about the player s")
+CONSOLE_COMMAND("playerinfo", "s[name]", CFGFLAG_SERVER|CFGFLAG_CHAT, ConPlayerInfo, this, "Shows information about the player s")
 
 CONSOLE_COMMAND("hookpower", "?s[power] ?v[id]", CFGFLAG_SERVER, ConHookPower, this, "Sets hook power for player v")
-CONSOLE_COMMAND("freezehammer", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConFreezeHammer, this, "Toggles freeze hammer for player v")
+CONSOLE_COMMAND("freezehammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConFreezeHammer, this, "Toggles freeze hammer for player v")
 
-CONSOLE_COMMAND("infinitejumps", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConInfiniteJumps, this, "Toggles infinite jumps for player v")
-CONSOLE_COMMAND("endlesshook", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConEndlessHook, this, "Toggles endlesshook for player v")
-CONSOLE_COMMAND("jetpack", "?v[id]", CFGFLAG_SERVER | CMDFLAG_TEST, ConJetpack, this, "Toggles jetpack for player v")
+CONSOLE_COMMAND("infinitejumps", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInfiniteJumps, this, "Toggles infinite jumps for player v")
+CONSOLE_COMMAND("endlesshook", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConEndlessHook, this, "Toggles endlesshook for player v")
+CONSOLE_COMMAND("jetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConJetpack, this, "Toggles jetpack for player v")
 CONSOLE_COMMAND("rainbow", "?v[id]", CFGFLAG_SERVER, ConRainbow, this, "Toggles rainbow for player v")
 CONSOLE_COMMAND("infrainbow", "?v[id]", CFGFLAG_SERVER, ConInfRainbow, this, "Toggles infinite rainbow for player v")
 CONSOLE_COMMAND("atom", "?v[id]", CFGFLAG_SERVER, ConAtom, this, "Toggles atom for player v")
