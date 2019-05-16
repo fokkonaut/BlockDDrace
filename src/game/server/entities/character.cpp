@@ -91,42 +91,6 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone);
 
 	Server()->StartRecord(m_pPlayer->GetCID());
-
-
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
-	
-	SaveRealInfos();
-	UnsetSpookyGhost();
-
-	m_LastHitWeapon = -1;
-	m_LastToucherID = -1;
-	m_OldLastHookedPlayer = -1;
-
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
-		m_pPlayer->m_Gamemode = MODE_VANILLA;
-	else
-		m_pPlayer->m_Gamemode = MODE_DDRACE;
-
-	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
-	{
-		m_Armor = 0;
-		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
-	}
-	else
-		m_Armor = 10;
-
-	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
-
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
-
 	return true;
 }
 
@@ -2813,7 +2777,14 @@ void CCharacter::DDRaceInit()
 	m_Jetpack = false;
 	m_Core.m_Jumps = 2;
 	m_FreezeHammer = false;
-	// BlockDDrace
+	
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 	m_Rainbow = false;
 	m_Atom = false;
 	m_Trail = false;
@@ -2826,7 +2797,35 @@ void CCharacter::DDRaceInit()
 	m_PoliceHelper = false;
 	for (int i = 0; i < NUM_WEAPONS; i++)
 		m_aSpreadWeapon[i] = false;
-	// BlockDDrace
+
+	SaveRealInfos();
+	UnsetSpookyGhost();
+
+	m_LastHitWeapon = -1;
+	m_LastToucherID = -1;
+	m_OldLastHookedPlayer = -1;
+
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
+		m_pPlayer->m_Gamemode = MODE_VANILLA;
+	else
+		m_pPlayer->m_Gamemode = MODE_DDRACE;
+
+	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+	{
+		m_Armor = 0;
+		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
+	}
+	else
+		m_Armor = 10;
+
+	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
