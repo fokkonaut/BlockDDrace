@@ -3955,7 +3955,7 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 
 bool CGameContext::IsShopBot(int ClientID)
 {
-	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == 99;
+	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == DUMMYMODE_SHOP_BOT;
 }
 
 void CGameContext::SendMotd(const char * pMsg, int ClientID)

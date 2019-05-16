@@ -1147,16 +1147,27 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->GetVictim();
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
 
-	if (!pChr || !pChr->GetPlayer()->m_IsDummy)
-		return;
-
-	if (pResult->NumArguments() == 2)
-		pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
+	if (pResult->NumArguments() > 0 && pChr && pChr->GetPlayer()->m_IsDummy)
+	{
+		if (pResult->NumArguments() == 2)
+			pChr->GetPlayer()->m_Dummymode = pResult->GetInteger(1);
+		else if (pResult->NumArguments() == 1)
+		{
+			char aBuf[64];
+			str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
+			pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+		}
+	}
 	else
 	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "Dummymode of '%s': [%d]", pSelf->Server()->ClientName(pResult->GetInteger(0)), pChr->GetPlayer()->m_Dummymode);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available dummymodes:");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[0] Calm");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[-6] BlmapV3 1o1");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[23] ChillBlock5 Racer");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[29] ChillBlock5 Blocker");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[31] ChillBlock5 Police");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[32] BlmapChill Police");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[99] Shop Bot");
 	}
 }
 
