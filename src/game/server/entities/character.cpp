@@ -723,9 +723,9 @@ void CCharacter::FireWeapon()
 	{
 		float FireDelay;
 		if (!m_TuneZone)
-			GameServer()->Tuning()->Get(38 + GetActiveWeapon(), &FireDelay);
+			GameServer()->Tuning()->Get(OLD_TUNES + GetActiveWeapon(), &FireDelay);
 		else
-			GameServer()->TuningList()[m_TuneZone].Get(38 + GetActiveWeapon(), &FireDelay);
+			GameServer()->TuningList()[m_TuneZone].Get(OLD_TUNES + GetActiveWeapon(), &FireDelay);
 		m_ReloadTimer = FireDelay * Server()->TickSpeed() / 1000;
 	}
 
