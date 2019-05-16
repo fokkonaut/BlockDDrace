@@ -50,7 +50,6 @@ void CStableProjectile::CalculateVel()
 				Curvature = GameServer()->TuningList()[TuneZone].m_GrenadeCurvature;
 				Speed = GameServer()->TuningList()[TuneZone].m_GrenadeSpeed;
 			}
-
 			break;
 
 		case WEAPON_SHOTGUN:
@@ -64,7 +63,6 @@ void CStableProjectile::CalculateVel()
 				Curvature = GameServer()->TuningList()[TuneZone].m_ShotgunCurvature;
 				Speed = GameServer()->TuningList()[TuneZone].m_ShotgunSpeed;
 			}
-
 			break;
 
 		case WEAPON_GUN:

@@ -21,10 +21,11 @@ public:
 		int Weapon,
 		int Layer = 0,
 		int Number = 0,
-		bool Spooky = false
+		bool Spooky = false,
+		bool FakeVel = false
 	);
 
-	vec2 GetPos(float Time);
+	vec2 GetPos(float Time, bool CalculateVel = false);
 	void FillInfo(CNetObj_Projectile *pProj);
 
 	virtual void Reset();
@@ -53,10 +54,21 @@ private:
 	// BlockDDrace
 	bool m_Spooky;
 
+	vec2 m_LastResetPos;
+	int m_LastResetTick;
+	bool m_CalculatedVel;
+	int m_VelX;
+	int m_VelY;
+
 public:
 
 	void SetBouncing(int Value);
 	void FillExtraInfo(CNetObj_Projectile *pProj);
+
+	// BlockDDrace
+	virtual void TickDefered();
+	vec2 m_PrevPos;
+	bool m_FakeVel;
 };
 
 #endif

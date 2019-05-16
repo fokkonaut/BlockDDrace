@@ -23,7 +23,8 @@ CProjectile::CProjectile
 		int Weapon,
 		int Layer,
 		int Number,
-		bool Spooky
+		bool Spooky,
+		bool FakeVel
 	)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
@@ -39,12 +40,20 @@ CProjectile::CProjectile
 	m_StartTick = Server()->Tick();
 	m_Explosive = Explosive;
 
+	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
+
+	// BlockDDrace
 	m_Layer = Layer;
 	m_Number = Number;
 	m_Freeze = Freeze;
 	m_Spooky = Spooky;
 
-	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
+	m_LastResetPos = Pos;
+	m_LastResetTick = Server()->Tick();
+	m_CalculatedVel = false;
+	m_FakeVel = FakeVel;
+	m_PrevPos = Pos;
+	// BlockDDrace
 
 	GameWorld()->InsertEntity(this);
 }
@@ -55,7 +64,7 @@ void CProjectile::Reset()
 		GameWorld()->DestroyEntity(this);
 }
 
-vec2 CProjectile::GetPos(float Time)
+vec2 CProjectile::GetPos(float Time, bool CalculateVel)
 {
 	float Curvature = 0;
 	float Speed = 0;
@@ -73,7 +82,6 @@ vec2 CProjectile::GetPos(float Time)
 				Curvature = GameServer()->TuningList()[m_TuneZone].m_GrenadeCurvature;
 				Speed = GameServer()->TuningList()[m_TuneZone].m_GrenadeSpeed;
 			}
-
 			break;
 
 		case WEAPON_SHOTGUN:
@@ -87,7 +95,6 @@ vec2 CProjectile::GetPos(float Time)
 				Curvature = GameServer()->TuningList()[m_TuneZone].m_ShotgunCurvature;
 				Speed = GameServer()->TuningList()[m_TuneZone].m_ShotgunSpeed;
 			}
-
 			break;
 
 		case WEAPON_GUN:
@@ -104,6 +111,13 @@ vec2 CProjectile::GetPos(float Time)
 			break;
 	}
 
+	if (CalculateVel)
+	{
+		m_VelX = ((m_Pos.x - m_LastResetPos.x) / Time / Speed) * 100;
+		m_VelY = ((m_Pos.y - m_LastResetPos.y) / Time / Speed - Time * Speed*Curvature / 10000) * 100;
+		m_CalculatedVel = true;
+	}
+
 	return CalcPos(m_Pos, m_Direction, Curvature, Speed, Time);
 }
 
@@ -113,6 +127,20 @@ void CProjectile::Tick()
 	float Ct = (Server()->Tick()-m_StartTick)/(float)Server()->TickSpeed();
 	vec2 PrevPos = GetPos(Pt);
 	vec2 CurPos = GetPos(Ct);
+
+	// BlockDDrace
+	if (m_FakeVel)
+	{
+		if (m_Type == WEAPON_GUN)
+			m_Pos += m_Direction * GameServer()->Tuning()->m_DDraceGunSpeed / 50;
+		else if (m_Type == WEAPON_SHOTGUN)
+			m_Pos += m_Direction * GameServer()->Tuning()->m_DDraceShotgunSpeed / 50;
+
+		PrevPos = m_PrevPos;
+		CurPos = m_Pos;
+	}
+	// BlockDDrace
+
 	vec2 ColPos;
 	vec2 NewPos;
 	int Collide = GameServer()->Collision()->IntersectLine(PrevPos, CurPos, &ColPos, &NewPos);
@@ -291,6 +319,9 @@ void CProjectile::Tick()
 		m_Pos = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z-1][(!Num)?Num:rand() % Num];
 		m_StartTick = Server()->Tick();
 	}
+
+	// BlockDDrace
+	m_PrevPos = m_Pos;
 }
 
 void CProjectile::TickPaused()
@@ -298,21 +329,52 @@ void CProjectile::TickPaused()
 	++m_StartTick;
 }
 
+// BlockDDrace
+void CProjectile::TickDefered()
+{
+	if (Server()->Tick() % 4 == 1)
+	{
+		m_LastResetPos = m_Pos;
+		m_LastResetTick = Server()->Tick();
+	}
+	m_CalculatedVel = false;
+}
+// BlockDDrace
+
 void CProjectile::FillInfo(CNetObj_Projectile *pProj)
 {
-	pProj->m_X = (int)m_Pos.x;
-	pProj->m_Y = (int)m_Pos.y;
-	pProj->m_VelX = (int)(m_Direction.x*100.0f);
-	pProj->m_VelY = (int)(m_Direction.y*100.0f);
-	pProj->m_StartTick = m_StartTick;
 	pProj->m_Type = m_Type;
+
+	// BlockDDrace
+	if (m_FakeVel)
+	{
+		if (!m_CalculatedVel)
+		{
+			float Time = (Server()->Tick() - m_LastResetTick) / (float)Server()->TickSpeed();
+			GetPos(Time, true);
+		}
+
+		pProj->m_X = (int)m_LastResetPos.x;
+		pProj->m_Y = (int)m_LastResetPos.y;
+		pProj->m_VelX = m_VelX;
+		pProj->m_VelY = m_VelY;
+		pProj->m_StartTick = m_LastResetTick;
+	}
+	else
+	{
+		pProj->m_X = (int)m_Pos.x;
+		pProj->m_Y = (int)m_Pos.y;
+		pProj->m_VelX = (int)(m_Direction.x*100.0f);
+		pProj->m_VelY = (int)(m_Direction.y*100.0f);
+		pProj->m_StartTick = m_StartTick;
+	}
 }
 
 void CProjectile::Snap(int SnappingClient)
 {
 	float Ct = (Server()->Tick()-m_StartTick)/(float)Server()->TickSpeed();
 
-	if(NetworkClipped(SnappingClient, GetPos(Ct)))
+	if(NetworkClipped(SnappingClient, m_FakeVel ? m_Pos : GetPos(Ct)))
 		return;
 
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
@@ -333,13 +395,13 @@ void CProjectile::Snap(int SnappingClient)
 		return;
 
 	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
-	if(pProj)
-	{
-		if(!g_Config.m_SvVanillaShotgun && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
-			FillExtraInfo(pProj);
-		else
-			FillInfo(pProj);
-	}
+	if (!pProj)
+		return;
+
+	if(!g_Config.m_SvVanillaWeapons && !m_FakeVel && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
+		FillExtraInfo(pProj);
+	else
+		FillInfo(pProj);
 }
 
 // DDRace

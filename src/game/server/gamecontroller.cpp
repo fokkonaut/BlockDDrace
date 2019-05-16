@@ -190,7 +190,9 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 			(g_Config.m_SvShotgunBulletSound)?SOUND_GRENADE_EXPLODE:-1,//SoundImpact
 			WEAPON_SHOTGUN,//Weapon
 			Layer,
-			Number
+			Number,
+			false, //Spooky
+			true //FakeVel
 			);
 		bullet->SetBouncing(2 - (Dir % 2));
 	}
@@ -220,7 +222,9 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 			SOUND_GRENADE_EXPLODE,
 			WEAPON_SHOTGUN, //Weapon
 			Layer,
-			Number
+			Number,
+			false, //Spooky
+			true //FakeVel
 			);
 		bullet->SetBouncing(2 - (Dir % 2));
 	}

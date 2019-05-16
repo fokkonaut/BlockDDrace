@@ -426,7 +426,7 @@ void CCharacter::FireWeapon()
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
-	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
+	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaWeapons)
 		NumShots = 1;
 	bool Sound = true;
 
@@ -528,7 +528,8 @@ void CCharacter::FireWeapon()
 					WEAPON_GUN,//Weapon
 					0,
 					0,
-					m_pPlayer->m_SpookyGhost
+					m_pPlayer->m_SpookyGhost,
+					(m_pPlayer->m_Gamemode == MODE_DDRACE && g_Config.m_SvVanillaWeapons)
 				);
 
 				// pack the Projectile and send it to the client Directly
@@ -548,7 +549,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			if (m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaShotgun)
+			if (m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaWeapons)
 			{
 				int ShotSpread = 2;
 

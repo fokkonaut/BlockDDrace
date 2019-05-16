@@ -2605,20 +2605,24 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 }
 
 // BlockDDrace
-void CGameContext::ConchainVanillaShotgun(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
+void CGameContext::ConchainVanillaWeapons(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pfnCallback(pResult, pCallbackUserData);
 	if (pResult->NumArguments())
 	{
-		if (g_Config.m_SvVanillaShotgun)
+		if (g_Config.m_SvVanillaWeapons)
 		{
+			pSelf->Tuning()->Set("gun_speed", 2200.0f);
+			pSelf->Tuning()->Set("gun_curvature", 1.25f);
 			pSelf->Tuning()->Set("shotgun_curvature", 1.25f);
 			pSelf->Tuning()->Set("shotgun_speed", 2750.0f);
 			pSelf->Tuning()->Set("shotgun_speeddiff", 0.8f);
 		}
 		else
 		{
+			pSelf->Tuning()->Set("gun_speed", 1400.0f);
+			pSelf->Tuning()->Set("gun_curvature", 0.0f);
 			pSelf->Tuning()->Set("shotgun_speed", 500.0f);
 			pSelf->Tuning()->Set("shotgun_speeddiff", 0.0f);
 			pSelf->Tuning()->Set("shotgun_curvature", 0.0f);
@@ -2675,7 +2679,7 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("vote", "r['yes'|'no']", CFGFLAG_SERVER, ConVote, this, "Force a vote to yes/no");
 
 	Console()->Chain("sv_motd", ConchainSpecialMotdupdate, this);
-	Console()->Chain("sv_vanilla_shotgun", ConchainVanillaShotgun, this);
+	Console()->Chain("sv_vanilla_weapons", ConchainVanillaWeapons, this);
 	Console()->Chain("sv_num_spread_shots", ConchainNumSpreadShots, this);
 
 	#define CONSOLE_COMMAND(name, params, flags, callback, userdata, help) m_pConsole->Register(name, params, flags, callback, userdata, help);
@@ -2720,20 +2724,25 @@ void CGameContext::OnInit()
 	for (int i = 0; i < NUM_TUNEZONES; i++)
 	{
 		TuningList()[i] = TuningParams;
-		TuningList()[i].Set("gun_curvature", 0.0f);
-		TuningList()[i].Set("gun_speed", 1400.0f);
-		if (g_Config.m_SvVanillaShotgun)
+		if (g_Config.m_SvVanillaWeapons)
 		{
+			// BlockDDrace
+			TuningList()[i].Set("gun_curvature", 1.25f);
+			TuningList()[i].Set("gun_speed", 2200.0f);
 			TuningList()[i].Set("shotgun_curvature", 1.25f);
 			TuningList()[i].Set("shotgun_speed", 2750.0f);
 			TuningList()[i].Set("shotgun_speeddiff", 0.8f);
 		}
 		else
 		{
+			TuningList()[i].Set("gun_curvature", 0.0f);
+			TuningList()[i].Set("gun_speed", 1400.0f);
 			TuningList()[i].Set("shotgun_curvature", 0.0f);
 			TuningList()[i].Set("shotgun_speed", 500.0f);
 			TuningList()[i].Set("shotgun_speeddiff", 0.0f);
 		}
+		TuningList()[i].Set("ddrace_gun_speed", 1400.0f);;
+		TuningList()[i].Set("ddrace_shotgun_speed", 500.0f);
 	}
 
 	for (int i = 0; i < NUM_TUNEZONES; i++)
@@ -2749,16 +2758,21 @@ void CGameContext::OnInit()
 	}
 	else
 	{
-		Tuning()->Set("gun_speed", 1400.0f);
-		Tuning()->Set("gun_curvature", 0.0f);
-		if (g_Config.m_SvVanillaShotgun)
+		// BlockDDrace
+		Tuning()->Set("ddrace_gun_speed", 1400.0f);
+		Tuning()->Set("ddrace_shotgun_speed", 500.0f);
+		if (g_Config.m_SvVanillaWeapons)
 		{
+			Tuning()->Set("gun_speed", 2200.0f);
+			Tuning()->Set("gun_curvature", 1.25f);
 			Tuning()->Set("shotgun_curvature", 1.25f);
 			Tuning()->Set("shotgun_speed", 2750.0f);
 			Tuning()->Set("shotgun_speeddiff", 0.8f);
 		}
 		else
 		{
+			Tuning()->Set("gun_speed", 1400.0f);
+			Tuning()->Set("gun_curvature", 0.0f);
 			Tuning()->Set("shotgun_speed", 500.0f);
 			Tuning()->Set("shotgun_speeddiff", 0.0f);
 			Tuning()->Set("shotgun_curvature", 0.0f);
@@ -3390,18 +3404,23 @@ int CGameContext::GetDDRaceTeam(int ClientID)
 
 void CGameContext::ResetTuning()
 {
+	// BlockDDrace
 	CTuningParams TuningParams;
 	m_Tuning = TuningParams;
-	Tuning()->Set("gun_speed", 1400.0f);
-	Tuning()->Set("gun_curvature", 0.0f);
-	if (g_Config.m_SvVanillaShotgun)
+	Tuning()->Set("ddrace_gun_speed", 1400.0f);
+	Tuning()->Set("ddrace_shotgun_speed", 500.0f);
+	if (g_Config.m_SvVanillaWeapons)
 	{
+		Tuning()->Set("gun_speed", 2200.0f);
+		Tuning()->Set("gun_curvature", 1.25f);
 		Tuning()->Set("shotgun_curvature", 1.25f);
 		Tuning()->Set("shotgun_speed", 2750.0f);
 		Tuning()->Set("shotgun_speeddiff", 0.8f);
 	}
 	else
 	{
+		Tuning()->Set("gun_speed", 1400.0f);
+		Tuning()->Set("gun_curvature", 0.0f);
 		Tuning()->Set("shotgun_speed", 500.0f);
 		Tuning()->Set("shotgun_speeddiff", 0.0f);
 		Tuning()->Set("shotgun_curvature", 0.0f);

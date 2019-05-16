@@ -67,3 +67,6 @@ MACRO_TUNING_PARAM(StraightGrenadeFireDelay, straight_grenade_fire_delay, 500, "
 MACRO_TUNING_PARAM(MeteorFriction, meteor_friction, 5000, "Meteor friction")
 MACRO_TUNING_PARAM(MeteorMaxAccel, meteor_max_accel, 2000, "Max meteor acceleration per player in pixel/tick^2")
 MACRO_TUNING_PARAM(MeteorAccelPreserve, meteor_accel_preserve, 100000, "How much acceleration is preserved with growing distance to the player")
+
+MACRO_TUNING_PARAM(DDraceShotgunSpeed, ddrace_shotgun_speed, 500.0f, "DDrace shotgun speed")
+MACRO_TUNING_PARAM(DDraceGunSpeed, ddrace_gun_speed, 1400.0f, "DDrace gun speed")
