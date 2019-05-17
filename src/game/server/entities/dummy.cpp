@@ -42,18 +42,24 @@ void CCharacter::DummyTick()
 		if (IsFrozen && Server()->Tick() == m_FirstFreezeTick + 300)
 			Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
-		if (m_Core.m_Pos.x < V3_OFFSET_X-2 && !str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+		if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
 		{
-			m_Input.m_Direction = 1;
-			if (
-				(IsGrounded() && ((m_Core.m_Pos.x < 36 * 32 && m_Core.m_Vel.x < 5.0f) || (m_Core.m_Pos.x > 53 * 32 && m_Core.m_Pos.x < 55 * 32)))
-				|| (((IsGrounded() && m_Core.m_Vel.x > 5.0f) || (m_Core.m_Vel.x < 5.0f && !IsGrounded())) && m_Core.m_Pos.x > 72 * 32 && m_Core.m_Pos.x < V3_OFFSET_X * 32)
-				|| (m_Core.m_Pos.x > 69 * 32 && m_Core.m_Pos.x < 71 * 32)
-				)
-				m_Input.m_Jump = 1;
-			if (Server()->Tick() % 20 == 0)
-				m_Input.m_Jump = 0;
-			return;
+			if (m_Core.m_Pos.y > 50 * 32 || m_Core.m_Pos.x > 150 * 32 || m_Solo)
+				Die(m_pPlayer->GetCID(), WEAPON_SELF);
+
+			if (m_Core.m_Pos.x < V3_OFFSET_X - 2)
+			{
+				m_Input.m_Direction = 1;
+				if (
+					(IsGrounded() && ((m_Core.m_Pos.x < 36 * 32 && m_Core.m_Vel.x < 5.0f) || (m_Core.m_Pos.x > 53 * 32 && m_Core.m_Pos.x < 55 * 32)))
+					|| (((IsGrounded() && m_Core.m_Vel.x > 5.0f) || (m_Core.m_Vel.x < 5.0f && !IsGrounded())) && m_Core.m_Pos.x > 72 * 32 && m_Core.m_Pos.x < V3_OFFSET_X * 32)
+					|| (m_Core.m_Pos.x > 69 * 32 && m_Core.m_Pos.x < 71 * 32)
+					)
+					m_Input.m_Jump = 1;
+				if (Server()->Tick() % 20 == 0)
+					m_Input.m_Jump = 0;
+				return;
+			}
 		}
 
 		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
