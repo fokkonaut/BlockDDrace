@@ -40,12 +40,13 @@ CProjectile::CProjectile
 	m_StartTick = Server()->Tick();
 	m_Explosive = Explosive;
 
-	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
-
-	// BlockDDrace
 	m_Layer = Layer;
 	m_Number = Number;
 	m_Freeze = Freeze;
+
+	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
+
+	// BlockDDrace
 	m_Spooky = Spooky;
 
 	m_LastResetPos = Pos;
