@@ -185,7 +185,7 @@ void CProjectile::Tick()
 	{
 		TeamMask = pOwnerChar->Teams()->TeamMask(pOwnerChar->Team(), -1, m_Owner);
 	}
-	else if (m_Owner >= 0 && (m_Weapon != WEAPON_GRENADE || g_Config.m_SvDestroyBulletsOnDeath))
+	else if (m_Owner >= 0 && ((m_Weapon != WEAPON_GRENADE && m_Weapon != WEAPON_STRAIGHT_GRENADE) || g_Config.m_SvDestroyBulletsOnDeath))
 	{
 		GameWorld()->DestroyEntity(this);
 		return;
