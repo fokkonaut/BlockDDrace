@@ -2724,6 +2724,8 @@ void CGameContext::OnInit()
 	for (int i = 0; i < NUM_TUNEZONES; i++)
 	{
 		TuningList()[i] = TuningParams;
+		TuningList()[i].Set("ddrace_gun_speed", 1400.0f);;
+		TuningList()[i].Set("ddrace_shotgun_speed", 500.0f);
 		if (g_Config.m_SvVanillaWeapons)
 		{
 			// BlockDDrace
@@ -2741,8 +2743,6 @@ void CGameContext::OnInit()
 			TuningList()[i].Set("shotgun_speed", 500.0f);
 			TuningList()[i].Set("shotgun_speeddiff", 0.0f);
 		}
-		TuningList()[i].Set("ddrace_gun_speed", 1400.0f);;
-		TuningList()[i].Set("ddrace_shotgun_speed", 500.0f);
 	}
 
 	for (int i = 0; i < NUM_TUNEZONES; i++)
