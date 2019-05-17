@@ -1155,7 +1155,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	GameWorld()->RemoveEntity(this);
 	GameWorld()->m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
 	GameServer()->CreateDeath(m_Pos, m_pPlayer->GetCID(), Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-	Teams()->OnCharacterDeath(GetPlayer()->GetCID(), Weapon);
+	Teams()->OnCharacterDeath(m_pPlayer->GetCID(), Weapon);
 }
 
 bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
@@ -1240,9 +1240,9 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			Die(From, Weapon);
 
 			// set attacker's face to happy (taunt!)
-			if (From >= 0 && From != m_pPlayer->GetCID() && GameServer()->m_apPlayers[From])
+			if (From >= 0 && From != m_pPlayer->GetCID())
 			{
-				CCharacter *pChr = GameServer()->m_apPlayers[From]->GetCharacter();
+				CCharacter *pChr = GameServer()->GetPlayerChar(From);
 				if (pChr)
 				{
 					pChr->m_EmoteType = EMOTE_HAPPY;
