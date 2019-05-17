@@ -2724,8 +2724,6 @@ void CGameContext::OnInit()
 	for (int i = 0; i < NUM_TUNEZONES; i++)
 	{
 		TuningList()[i] = TuningParams;
-		TuningList()[i].Set("ddrace_gun_speed", 1400.0f);;
-		TuningList()[i].Set("ddrace_shotgun_speed", 500.0f);
 		if (g_Config.m_SvVanillaWeapons)
 		{
 			// BlockDDrace
@@ -2758,11 +2756,9 @@ void CGameContext::OnInit()
 	}
 	else
 	{
-		// BlockDDrace
-		Tuning()->Set("ddrace_gun_speed", 1400.0f);
-		Tuning()->Set("ddrace_shotgun_speed", 500.0f);
 		if (g_Config.m_SvVanillaWeapons)
 		{
+			// BlockDDrace
 			Tuning()->Set("gun_speed", 2200.0f);
 			Tuning()->Set("gun_curvature", 1.25f);
 			Tuning()->Set("shotgun_curvature", 1.25f);
@@ -3404,13 +3400,11 @@ int CGameContext::GetDDRaceTeam(int ClientID)
 
 void CGameContext::ResetTuning()
 {
-	// BlockDDrace
 	CTuningParams TuningParams;
 	m_Tuning = TuningParams;
-	Tuning()->Set("ddrace_gun_speed", 1400.0f);
-	Tuning()->Set("ddrace_shotgun_speed", 500.0f);
 	if (g_Config.m_SvVanillaWeapons)
 	{
+		// BlockDDrace
 		Tuning()->Set("gun_speed", 2200.0f);
 		Tuning()->Set("gun_curvature", 1.25f);
 		Tuning()->Set("shotgun_curvature", 1.25f);
