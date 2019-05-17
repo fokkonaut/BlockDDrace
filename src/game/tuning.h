@@ -64,11 +64,15 @@ MACRO_TUNING_PARAM(NinjaFireDelay, ninja_fire_delay, 800, "Delay of firing ninja
 // BlockDDrace
 MACRO_TUNING_PARAM(PlasmaRifleFireDelay, plasma_rifle_fire_delay, 500, "Delay of firing plasma rifle")
 MACRO_TUNING_PARAM(HeartGunFireDelay, heart_gun_fire_delay, 125, "Delay of firing heart gun")
+
 MACRO_TUNING_PARAM(StraightGrenadeFireDelay, straight_grenade_fire_delay, 500, "Delay of firing straight grenade")
+MACRO_TUNING_PARAM(StraightGrenadeSpeed, straight_grenade_speed, 750.0f, "Straight grenade speed")
+MACRO_TUNING_PARAM(StraightGrenadeLifetime, straight_grenade_lifetime, 5.0f, "Straight grenade lifetime")
+
+MACRO_TUNING_PARAM(DDraceShotgunSpeed, ddrace_shotgun_speed, 500.0f, "DDrace shotgun speed")
+MACRO_TUNING_PARAM(DDraceGunSpeed, ddrace_gun_speed, 1400.0f, "DDrace gun speed")
+MACRO_TUNING_PARAM(DDraceGunLifetime, ddrace_gun_lifetime, 2.0f, "DDrace gun lifetime")
 
 MACRO_TUNING_PARAM(MeteorFriction, meteor_friction, 5000, "Meteor friction")
 MACRO_TUNING_PARAM(MeteorMaxAccel, meteor_max_accel, 2000, "Max meteor acceleration per player in pixel/tick^2")
 MACRO_TUNING_PARAM(MeteorAccelPreserve, meteor_accel_preserve, 100000, "How much acceleration is preserved with growing distance to the player")
-
-MACRO_TUNING_PARAM(DDraceShotgunSpeed, ddrace_shotgun_speed, 500.0f, "DDrace shotgun speed")
-MACRO_TUNING_PARAM(DDraceGunSpeed, ddrace_gun_speed, 1400.0f, "DDrace gun speed")

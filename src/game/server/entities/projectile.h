@@ -22,7 +22,7 @@ public:
 		int Layer = 0,
 		int Number = 0,
 		bool Spooky = false,
-		bool FakeVel = false
+		bool Straight = false
 	);
 
 	vec2 GetPos(float Time, bool CalculateVel = false);
@@ -67,8 +67,9 @@ public:
 
 	// BlockDDrace
 	virtual void TickDefered();
+	void CalculateVel() { GetPos((Server()->Tick()-m_LastResetTick)/(float)Server()->TickSpeed(), true); };
 	vec2 m_PrevPos;
-	bool m_FakeVel;
+	bool m_Straight;
 };
 
 #endif

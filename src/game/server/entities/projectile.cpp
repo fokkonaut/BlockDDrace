@@ -24,7 +24,7 @@ CProjectile::CProjectile
 		int Layer,
 		int Number,
 		bool Spooky,
-		bool FakeVel
+		bool Straight
 	)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
@@ -52,7 +52,7 @@ CProjectile::CProjectile
 	m_LastResetPos = Pos;
 	m_LastResetTick = Server()->Tick();
 	m_CalculatedVel = false;
-	m_FakeVel = FakeVel;
+	m_Straight = Straight;
 	m_PrevPos = Pos;
 	// BlockDDrace
 
@@ -130,12 +130,22 @@ void CProjectile::Tick()
 	vec2 CurPos = GetPos(Ct);
 
 	// BlockDDrace
-	if (m_FakeVel)
+	if (m_Straight)
 	{
-		if (m_Type == WEAPON_GUN)
-			m_Pos += m_Direction * GameServer()->Tuning()->m_DDraceGunSpeed / 50;
-		else if (m_Type == WEAPON_SHOTGUN)
-			m_Pos += m_Direction * GameServer()->Tuning()->m_DDraceShotgunSpeed / 50;
+		float Speed = 0;
+		switch (m_Type)
+		{
+		case WEAPON_GUN:
+			Speed = GameServer()->Tuning()->m_DDraceGunSpeed;
+			break;
+		case WEAPON_SHOTGUN:
+			Speed = GameServer()->Tuning()->m_DDraceShotgunSpeed;
+			break;
+		case WEAPON_GRENADE:
+			Speed = GameServer()->Tuning()->m_StraightGrenadeSpeed;
+			break;
+		}
+		m_Pos += m_Direction * Speed / 50;
 
 		PrevPos = m_PrevPos;
 		CurPos = m_Pos;
@@ -347,13 +357,10 @@ void CProjectile::FillInfo(CNetObj_Projectile *pProj)
 	pProj->m_Type = m_Type;
 
 	// BlockDDrace
-	if (m_FakeVel)
+	if (m_Straight)
 	{
 		if (!m_CalculatedVel)
-		{
-			float Time = (Server()->Tick() - m_LastResetTick) / (float)Server()->TickSpeed();
-			GetPos(Time, true);
-		}
+			CalculateVel();
 
 		pProj->m_X = (int)m_LastResetPos.x;
 		pProj->m_Y = (int)m_LastResetPos.y;
@@ -375,7 +382,7 @@ void CProjectile::Snap(int SnappingClient)
 {
 	float Ct = (Server()->Tick()-m_StartTick)/(float)Server()->TickSpeed();
 
-	if(NetworkClipped(SnappingClient, m_FakeVel ? m_Pos : GetPos(Ct)))
+	if(NetworkClipped(SnappingClient, m_Straight ? m_Pos : GetPos(Ct)))
 		return;
 
 	CCharacter* pSnapChar = GameServer()->GetPlayerChar(SnappingClient);
@@ -399,7 +406,7 @@ void CProjectile::Snap(int SnappingClient)
 	if (!pProj)
 		return;
 
-	if(!g_Config.m_SvVanillaWeapons && !m_FakeVel && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
+	if(!g_Config.m_SvVanillaWeapons && !m_Straight && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
 		FillExtraInfo(pProj);
 	else
 		FillInfo(pProj);

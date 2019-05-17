@@ -17,7 +17,6 @@
 #include "custom_projectile.h"
 #include "meteor.h"
 #include "pickup.h"
-#include "straight_grenade.h"
 // BlockDDrace
 
 #include <stdio.h>
@@ -594,13 +593,18 @@ void CCharacter::FireWeapon()
 				GameServer()->CreateSound(m_Pos, SOUND_SHOTGUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 
+		case WEAPON_STRAIGHT_GRENADE:
 		case WEAPON_GRENADE:
 		{
+			bool Straight = false;
+			if (GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE)
+				Straight = true;
+
 			int Lifetime;
 			if (!m_TuneZone)
-				Lifetime = (int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GrenadeLifetime);
+				Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->Tuning()->m_StraightGrenadeLifetime : GameServer()->Tuning()->m_GrenadeLifetime));
 			else
-				Lifetime = (int)(Server()->TickSpeed()*GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime);
+				Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->TuningList()[m_TuneZone].m_StraightGrenadeLifetime : GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime));
 
 			CProjectile *pProj = new CProjectile
 			(
@@ -614,7 +618,11 @@ void CCharacter::FireWeapon()
 				true,//Explosive
 				0,//Force
 				SOUND_GRENADE_EXPLODE,//SoundImpact
-				WEAPON_GRENADE//Weapon
+				GetActiveWeapon(),//Weapon
+				0,//Layer
+				0,//Number
+				false,//Spooky
+				Straight//Straight
 			);//SoundImpact
 
 			// pack the Projectile and send it to the client Directly
@@ -701,13 +709,6 @@ void CCharacter::FireWeapon()
 			);
 			if (Sound)
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-		} break;
-
-		case WEAPON_STRAIGHT_GRENADE:
-		{
-			new CStraightGrenade(GameWorld(), 100, m_pPlayer->GetCID(), ProjStartPos, Direction);
-			if (Sound)
-				GameServer()->CreateSound(m_Pos, SOUND_GRENADE_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 		}
 
