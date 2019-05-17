@@ -6,9 +6,7 @@
 
 #include "character.h"
 #include <game/server/player.h>
-
-#define V3_OFFSET_X 0 * 32 //was 277
-#define V3_OFFSET_Y 0 * 32 //was 48
+#include <engine/shared/config.h>
 
 void CCharacter::Fire(bool Fire)
 {
@@ -29,6 +27,9 @@ void CCharacter::DummyTick()
 	if (!m_pPlayer->m_IsDummy)
 		return;
 
+	int V3_OFFSET_X = g_Config.m_V3OffsetX * 32;
+	int V3_OFFSET_Y = g_Config.m_V3OffsetY * 32;
+
 	ResetInput();
 	m_Input.m_Hook = 0;
 
@@ -36,8 +37,25 @@ void CCharacter::DummyTick()
 	{
 		// do nothing
 	}
-	else if (m_pPlayer->m_Dummymode == DUMMYMODE_V3)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_V3_BLOCKER)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
 	{
+		if (IsFrozen && Server()->Tick() == m_FirstFreezeTick + 300)
+			Die(m_pPlayer->GetCID(), WEAPON_SELF);
+
+		if (m_Core.m_Pos.x < V3_OFFSET_X-2 && !str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+		{
+			m_Input.m_Direction = 1;
+			if (
+				(IsGrounded() && ((m_Core.m_Pos.x < 36 * 32 && m_Core.m_Vel.x < 5.0f) || (m_Core.m_Pos.x > 53 * 32 && m_Core.m_Pos.x < 55 * 32)))
+				|| (((IsGrounded() && m_Core.m_Vel.x > 5.0f) || (m_Core.m_Vel.x < 5.0f && !IsGrounded())) && m_Core.m_Pos.x > 72 * 32 && m_Core.m_Pos.x < V3_OFFSET_X * 32)
+				|| (m_Core.m_Pos.x > 69 * 32 && m_Core.m_Pos.x < 71 * 32)
+				)
+				m_Input.m_Jump = 1;
+			if (Server()->Tick() % 20 == 0)
+				m_Input.m_Jump = 0;
+			return;
+		}
+
 		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 		if (pChr && pChr->IsAlive())
 		{
@@ -75,7 +93,7 @@ void CCharacter::DummyTick()
 			}
 
 			//attack in mid
-			if (pChr->m_Pos.x > 393 * 32 - 7 + V3_OFFSET_X && pChr->m_Pos.x < 396 * 32 + 7 + V3_OFFSET_X)
+			if (pChr->m_Pos.x > V3_OFFSET_X + 19 * 32 - 7 && pChr->m_Pos.x < V3_OFFSET_X + 22 * 32 + 7)
 			{
 				if (pChr->m_Pos.x < m_Core.m_Pos.x) // bot on the left
 				{
@@ -96,11 +114,11 @@ void CCharacter::DummyTick()
 			}
 
 			//attack bot in the middle and enemy in the air -> try to hook down
-			if (m_Core.m_Pos.y < 78 * 32 + V3_OFFSET_Y && m_Core.m_Pos.y > 70 * 32 + V3_OFFSET_Y && IsGrounded()) // if bot is in position
+			if (m_Core.m_Pos.y < V3_OFFSET_Y + 19 * 32 && m_Core.m_Pos.y > V3_OFFSET_Y + 11 * 32 && IsGrounded()) // if bot is in position
 			{
-				if (pChr->m_Pos.x < 389 * 32 + V3_OFFSET_X || pChr->m_Pos.x > 400 * 32 + V3_OFFSET_X) //enemy on the left side
+				if (pChr->m_Pos.x < V3_OFFSET_X + 15 * 32 || pChr->m_Pos.x > V3_OFFSET_X + 26 * 32) //enemy on the left side
 				{
-					if (pChr->m_Pos.y < 76 * 32 + V3_OFFSET_Y && pChr->m_Core.m_Vel.y > 4.2f)
+					if (pChr->m_Pos.y < V3_OFFSET_Y + 17 * 32 && pChr->m_Core.m_Vel.y > 4.2f)
 						m_Input.m_Hook = 1;
 				}
 
@@ -110,15 +128,15 @@ void CCharacter::DummyTick()
 				{
 					m_Input.m_Hook = 1;
 					//stay strong and walk agianst hook pull
-					if (m_Core.m_Pos.x < 392 * 32 + V3_OFFSET_X) //left side
+					if (m_Core.m_Pos.x < V3_OFFSET_X + 18 * 32) //left side
 						m_Input.m_Direction = 1;
-					else if (m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X) //right side
+					else if (m_Core.m_Pos.x > V3_OFFSET_X + 23 * 32) //right side
 						m_Input.m_Direction = -1;
 				}
 			}
 
 			// attack throw into left freeze wall
-			if (m_Core.m_Pos.x < 383 * 32 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 9 * 32)
 			{
 				if (pChr->m_Pos.y > m_Core.m_Pos.y + 190)
 					m_Input.m_Hook = 1;
@@ -141,7 +159,7 @@ void CCharacter::DummyTick()
 			}
 
 			// attack throw into right freeze wall
-			if (m_Core.m_Pos.x > 404 * 32 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x > V3_OFFSET_X + 30 * 32)
 			{
 				if (pChr->m_Pos.y > m_Core.m_Pos.y + 190)
 					m_Input.m_Hook = 1;
@@ -185,15 +203,15 @@ void CCharacter::DummyTick()
 			}
 
 			//Starty movement
-			if (m_Core.m_Pos.x < 389 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 79 * 32 + V3_OFFSET_Y && pChr->m_Pos.y > 79 * 32 + V3_OFFSET_Y && pChr->m_Pos.x > 398 * 32 + V3_OFFSET_X && IsGrounded() && pChr->IsGrounded())
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 15 * 32 && m_Core.m_Pos.y > V3_OFFSET_Y + 20 * 32 && pChr->m_Pos.y > V3_OFFSET_Y + 20 * 32 && pChr->m_Pos.x > V3_OFFSET_X + 24 * 32 && IsGrounded() && pChr->IsGrounded())
 				m_Input.m_Jump = 1;
-			if (m_Core.m_Pos.x < 389 * 32 + V3_OFFSET_X && pChr->m_Pos.x > 307 * 32 + V3_OFFSET_X && pChr->m_Pos.x > 398 * 32 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 15 * 32 && pChr->m_Pos.x > /*307 * 32 +*/ V3_OFFSET_X && pChr->m_Pos.x > V3_OFFSET_X + 24 * 32)
 				m_Input.m_Direction = 1;
 
 			//important freeze doges leave them last!:
 
 			//freeze prevention mainpart down right
-			if (m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X && m_Core.m_Pos.x < 401 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 78 * 32 + V3_OFFSET_Y)
+			if (m_Core.m_Pos.x > V3_OFFSET_X + 23 * 32 && m_Core.m_Pos.x < V3_OFFSET_X + 27 * 32 && m_Core.m_Pos.y > V3_OFFSET_Y + 19 * 32)
 			{
 				m_Input.m_Jump = 1;
 				m_Input.m_Hook = 1;
@@ -208,7 +226,7 @@ void CCharacter::DummyTick()
 			}
 
 			//freeze prevention mainpart down left
-			if (m_Core.m_Pos.x > 387 * 32 + V3_OFFSET_X && m_Core.m_Pos.x < 391 * 32 + V3_OFFSET_X && m_Core.m_Pos.y > 78 * 32 + V3_OFFSET_Y)
+			if (m_Core.m_Pos.x > V3_OFFSET_X + 13 * 32 && m_Core.m_Pos.x < V3_OFFSET_X + 17 * 32 && m_Core.m_Pos.y > V3_OFFSET_Y + 19 * 32)
 			{
 				m_Input.m_Jump = 1;
 				m_Input.m_Hook = 1;
@@ -223,7 +241,7 @@ void CCharacter::DummyTick()
 			}
 
 			//Freeze prevention top left
-			if (m_Core.m_Pos.x < 391 * 32 + V3_OFFSET_X && m_Core.m_Pos.y < 71 * 32 + V3_OFFSET_Y && m_Core.m_Pos.x > 387 * 32 - 10 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 17 * 32 && m_Core.m_Pos.y < V3_OFFSET_Y + 12 * 32 && m_Core.m_Pos.x > V3_OFFSET_X + 13 * 32 - 10)
 			{
 				m_Input.m_Direction = -1;
 				m_Input.m_Hook = 1;
@@ -239,7 +257,7 @@ void CCharacter::DummyTick()
 			}
 
 			//Freeze prevention top right
-			if (m_Core.m_Pos.x < 402 * 32 + 10 + V3_OFFSET_X && m_Core.m_Pos.y < 71 * 32 + V3_OFFSET_Y && m_Core.m_Pos.x > 397 * 32 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 28 * 32 + 10 && m_Core.m_Pos.y < V3_OFFSET_Y + 12 * 32 && m_Core.m_Pos.x > V3_OFFSET_X + 23 * 32)
 			{
 				m_Input.m_Direction = 1;
 				m_Input.m_Hook = 1;
@@ -247,7 +265,7 @@ void CCharacter::DummyTick()
 					m_Input.m_Hook = 0;
 				m_Input.m_TargetX = 200;
 				m_Input.m_TargetY = -87;
-				if (m_Core.m_Pos.y > 67 * 32 + 20 + V3_OFFSET_Y)
+				if (m_Core.m_Pos.y > V3_OFFSET_Y + 8 * 32 + 20)
 				{
 					m_Input.m_TargetX = 200;
 					m_Input.m_TargetY = -210;
@@ -255,14 +273,14 @@ void CCharacter::DummyTick()
 			}
 
 			//Freeze prevention mid
-			if (m_Core.m_Pos.x > 393 * 32 - 7 + V3_OFFSET_X && m_Core.m_Pos.x < 396 * 32 + 7 + V3_OFFSET_X)
+			if (m_Core.m_Pos.x > V3_OFFSET_X + 19 * 32 - 7 && m_Core.m_Pos.x < V3_OFFSET_X + 22 * 32 + 7)
 			{
 				if (m_Core.m_Vel.x < 0.0f)
 					m_Input.m_Direction = -1;
 				else
 					m_Input.m_Direction = 1;
 
-				if (m_Core.m_Pos.y > 77 * 32 - 1 + V3_OFFSET_Y && IsGrounded() == false)
+				if (m_Core.m_Pos.y > V3_OFFSET_Y + 18 * 32 - 1 && IsGrounded() == false)
 				{
 					m_Input.m_Jump = 1;
 					if (m_Core.m_Jumped > 2) //no jumps == rip   --> panic hook
@@ -275,11 +293,14 @@ void CCharacter::DummyTick()
 			}
 
 			//Freeze prevention left 
-			if (m_Core.m_Pos.x < 380 * 32 + V3_OFFSET_X || (m_Core.m_Pos.x < 382 * 32 + V3_OFFSET_X && m_Core.m_Vel.x < -8.4f))
+			if (m_Core.m_Pos.x < V3_OFFSET_X + 6 * 32 || (m_Core.m_Pos.x < V3_OFFSET_X + 8 * 32 && m_Core.m_Vel.x < -8.4f))
 				m_Input.m_Direction = 1;
 			//Freeze prevention right
-			if (m_Core.m_Pos.x > 408 * 32 + V3_OFFSET_X || (m_Core.m_Pos.x > 406 * 32 + V3_OFFSET_X && m_Core.m_Vel.x > 8.4f))
+			if (m_Core.m_Pos.x > V3_OFFSET_X + 34 * 32 || (m_Core.m_Pos.x > V3_OFFSET_X + 32 * 32 && m_Core.m_Vel.x > 8.4f))
 				m_Input.m_Direction = -1;
+			//Dont allow to hook blocks
+			if (m_Core.m_TriggeredEvents&COREEVENT_HOOK_ATTACH_GROUND)
+				m_Input.m_Hook = 0;
 		}
 	}
 	else if (m_pPlayer->m_Dummymode == DUMMYMODE_CHILLBLOCK5_RACER) //Race mode ChillBlock5 //by chillerdragon cleanup by fokkonaut

@@ -2885,6 +2885,7 @@ void CGameContext::OnInit()
 	// BlockDDrace
 	if (g_Config.m_SvDefaultBots)
 		ConnectDefaultBots();
+	SetV3Offset();
 	// BlockDDrace
 
 
@@ -2996,6 +2997,25 @@ void CGameContext::OnInit()
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
+}
+
+void CGameContext::SetV3Offset(int X, int Y)
+{
+	if (X == -1 && Y == -1)
+	{
+		if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
+		{
+			X = 374;
+			Y = 59;
+		}
+		else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+		{
+			X = 97;
+			Y = 19;
+		}
+	}
+	g_Config.m_V3OffsetX = X;
+	g_Config.m_V3OffsetY = Y;
 }
 
 void CGameContext::DeleteTempfile()
@@ -3983,15 +4003,19 @@ void CGameContext::ConnectDefaultBots()
 {
 	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
 	{
-		ConnectDummy(31); //police
-		ConnectDummy(29); //blocker
-		ConnectDummy(29); //blocker 2
-		ConnectDummy(23); //racer
-		ConnectDummy(-6); //blocker dm v3
+		ConnectDummy(DUMMYMODE_CHILLBOCK5_POLICE);
+		ConnectDummy(DUMMYMODE_CHILLBLOCK5_BLOCKER);
+		ConnectDummy(DUMMYMODE_CHILLBLOCK5_BLOCKER);
+		ConnectDummy(DUMMYMODE_CHILLBLOCK5_RACER);
+		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 	}
 	else if (!str_comp(g_Config.m_SvMap, "BlmapChill"))
 	{
-		ConnectDummy(32); //police
+		ConnectDummy(DUMMYMODE_BLMAPCHILL_POLICE);
+	}
+	else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+	{
+		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 	}
 }
 

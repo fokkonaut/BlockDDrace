@@ -75,7 +75,7 @@ enum
 enum
 {
 	DUMMYMODE_NULL = 0,
-	DUMMYMODE_V3 = -6,
+	DUMMYMODE_V3_BLOCKER = -6,
 	DUMMYMODE_CHILLBLOCK5_RACER = 23,
 	DUMMYMODE_CHILLBLOCK5_BLOCKER = 29,
 	DUMMYMODE_CHILLBOCK5_POLICE = 31,
@@ -329,6 +329,7 @@ public:
 	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
 	bool IsShopBot(int ClientID);
 	void ConnectDefaultBots();
+	void SetV3Offset(int X = -1, int Y = -1);
 
 	int GetNextClientID();
 	int GetCIDByName(const char *pName);
