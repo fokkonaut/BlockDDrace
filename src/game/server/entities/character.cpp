@@ -627,7 +627,7 @@ void CCharacter::FireWeapon()
 				0,//Number
 				false,//Spooky
 				Straight//Straight
-			);//SoundImpact
+			);
 
 			// pack the Projectile and send it to the client Directly
 			CNetObj_Projectile p;
