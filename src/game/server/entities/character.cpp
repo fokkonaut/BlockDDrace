@@ -506,11 +506,15 @@ void CCharacter::FireWeapon()
 		{
 			if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
 			{
+				bool Straight = false;
+				if (m_pPlayer->m_Gamemode == MODE_DDRACE && g_Config.m_SvVanillaWeapons)
+					Straight = true;
+
 				int Lifetime;
 				if (!m_TuneZone)
-					Lifetime = (int)(Server()->TickSpeed()*GameServer()->Tuning()->m_GunLifetime);
+					Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->Tuning()->m_DDraceGunLifetime : GameServer()->Tuning()->m_GunLifetime));
 				else
-					Lifetime = (int)(Server()->TickSpeed()*GameServer()->TuningList()[m_TuneZone].m_GunLifetime);
+					Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->TuningList()[m_TuneZone].m_DDraceGunLifetime : GameServer()->TuningList()[m_TuneZone].m_GunLifetime));
 
 				CProjectile *pProj = new CProjectile
 				(
@@ -528,7 +532,7 @@ void CCharacter::FireWeapon()
 					0,
 					0,
 					m_pPlayer->m_SpookyGhost,
-					(m_pPlayer->m_Gamemode == MODE_DDRACE && g_Config.m_SvVanillaWeapons)
+					Straight
 				);
 
 				// pack the Projectile and send it to the client Directly
