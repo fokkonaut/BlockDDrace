@@ -37,7 +37,7 @@ void CCharacter::DummyTick()
 	{
 		// do nothing
 	}
-	else if (m_pPlayer->m_Dummymode == DUMMYMODE_V3_BLOCKER)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_V3_BLOCKER)  //ChillBlock5 blmapv3 1o1 mode // made by chillerdragon // improved by fokkonaut
 	{
 		if (IsFrozen && Server()->Tick() == m_FirstFreezeTick + 300)
 			Die(m_pPlayer->GetCID(), WEAPON_SELF);
