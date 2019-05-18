@@ -99,9 +99,9 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 		{
 			if (Suicide || HasFlag(pKiller->GetCharacter()) != -1)
 				F->Drop();
+			F->SetLastCarrier(NULL);
 			HadFlag |= 1;
 		}
-		F->SetLastCarrier(NULL);
 	}
 
 	return HadFlag;
