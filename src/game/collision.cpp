@@ -131,6 +131,7 @@ void CCollision::Init(class CLayers *pLayers)
 	}
 
 	// BlockDDrace
+	m_vRandomTile.clear();
 	m_vRandomTile.resize(NUM_INDICES);
 	FindTiles();
 }
