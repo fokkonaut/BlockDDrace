@@ -2900,8 +2900,10 @@ void CGameContext::OnInit()
 	if(m_Layers.SwitchLayer())
 		pSwitch = (CSwitchTile *)Kernel()->RequestInterface<IMap>()->GetData(m_Layers.SwitchLayer()->m_Switch);
 
+	// BlockDDrace
 	Collision()->m_vRandomTile.clear();
 	Collision()->m_vRandomTile.resize(NUM_INDICES);
+	// BlockDDrace
 
 	for(int y = 0; y < pTileMap->m_Height; y++)
 	{
