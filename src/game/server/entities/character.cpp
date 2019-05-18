@@ -2020,7 +2020,7 @@ void CCharacter::HandleTiles(int Index)
 		if (m_EnteredShop)
 		{
 			Passive(true, -1, true);
-			if (m_pPlayer->m_ShopBotAntiSpamTick > Server()->Tick())
+			if (m_ShopBotAntiSpamTick > Server()->Tick())
 				m_EnteredShop = false;
 			else if (m_EnteredShop)
 			{
@@ -3049,10 +3049,10 @@ void CCharacter::BlockDDraceTick()
 	{
 		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
 		{
-			if (m_pPlayer->m_ShopBotAntiSpamTick < Server()->Tick())
+			if (m_ShopBotAntiSpamTick < Server()->Tick())
 			{
 				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
-				m_pPlayer->m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
+				m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
 			}
 
 			if (m_ShopWindowPage != SHOP_PAGE_NONE)
