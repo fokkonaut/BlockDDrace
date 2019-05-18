@@ -44,7 +44,7 @@ enum
 *                                                *
 **************************************************/
 
-enum
+enum Extra
 {
 	HOOK_NORMAL = 0,
 	JETPACK,
@@ -72,7 +72,7 @@ enum
 	NUM_EXTRAS
 };
 
-enum
+enum Backup
 {
 	BACKUP_FREEZE = 0,
 	BACKUP_SPOOKY_GHOST,
@@ -400,18 +400,16 @@ public:
 	*                                                *
 	**************************************************/
 
+	//last tile
 	int m_LastIndexTile;
 	int m_LastIndexFrontTile;
 
-	int HasFlag();
-
-	bool m_PoliceHelper;
-	bool m_Passive;
-
+	//last toucher
 	int m_LastHitWeapon;
 	int m_LastToucherID;
 	int m_OldLastHookedPlayer;
 
+	//backups
 	void BackupWeapons(int Type);
 	void LoadWeaponBackup(int Type);
 	int m_aWeaponsBackup[NUM_WEAPONS + 2][NUM_BACKUPS];
@@ -423,7 +421,6 @@ public:
 	void UnsetSpookyGhost();
 	void SaveRealInfos();
 	bool m_CountSpookyGhostInputs;
-
 	int m_TimesShot;
 
 	//extras
@@ -433,12 +430,12 @@ public:
 	int m_Meteors;
 	bool m_Bloody;
 	bool m_StrongBloody;
-
 	bool m_ScrollNinja;
-
 	int m_HookPower;
-
 	bool m_aSpreadWeapon[NUM_WEAPONS];
+
+	bool m_PoliceHelper;
+	bool m_Passive;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
@@ -461,6 +458,8 @@ public:
 	bool m_EnteredShop;
 	bool m_LeftShop;
 
+	int m_ShopBotAntiSpamTick;
+
 	void ShopWindow(int Dir);
 	int m_ShopWindowPage;
 	int m_ShopMotdTick;
@@ -470,8 +469,13 @@ public:
 	void PurchaseEnd(bool canceled);
 	bool m_ChangeShopPage;
 
+	//weapon indicator
 	void UpdateWeaponIndicator();
 	bool m_WeaponIndicator;
+
+	//others
+	int HasFlag();
+
 
 
 	/////////dummymode variables

@@ -17,23 +17,34 @@
 #include "entities/weapon.h"
 #include <vector>
 
-enum
+enum NoNameFix
 {
 	FIX_SET_NAME_ONLY = 0,
 	FIX_CHAT_MSG,
 	FIX_KILL_MSG
 };
 
-enum
+enum Gamemode
 {
 	MODE_DDRACE = 0,
 	MODE_VANILLA
 };
 
-enum
+enum Scoreformat
 {
 	SCORE_TIME = 0,
 	SCORE_LEVEL
+};
+
+enum Dummymode
+{
+	DUMMYMODE_NULL = 0,
+	DUMMYMODE_V3_BLOCKER = -6,
+	DUMMYMODE_CHILLBLOCK5_RACER = 23,
+	DUMMYMODE_CHILLBLOCK5_BLOCKER = 29,
+	DUMMYMODE_CHILLBOCK5_POLICE = 31,
+	DUMMYMODE_BLMAPCHILL_POLICE = 32,
+	DUMMYMODE_SHOP_BOT = 99,
 };
 
 /*************************************************
@@ -247,14 +258,17 @@ public:
 	*                                                *
 	**************************************************/
 
-	bool m_SnapFixVanilla;
-	bool m_SnapFixDDNet;
-
+	//dummy
 	bool m_IsDummy;
 	int m_Dummymode;
 	int m_FakePing;
 	vec2 m_ForceSpawn;
 
+	//snap fix
+	bool m_SnapFixVanilla;
+	bool m_SnapFixDDNet;
+
+	//gamemodes
 	int m_Gamemode;
 
 	//spooky ghost
@@ -262,23 +276,20 @@ public:
 	int m_RealUseCustomColor;
 	char m_RealSkinName[64];
 
-	//no name chat fix
+	//no name fix
 	void FixForNoName(int ID);
 	int m_FixNameID;
 	bool m_ShowName;
 	bool m_SetRealName;
 	int64 m_SetRealNameTick;
-	//ID == 1 // chat message
 	int m_ChatTeam;
 	char m_ChatText[256];
-	//ID == 2 // kill message
 	int m_MsgKiller;
 	int m_MsgWeapon;
 	int m_MsgModeSpecial;
 
-	int m_RainbowColor;
-
 	//extras
+	int m_RainbowColor;
 	bool m_InfRainbow;
 	bool m_InfAtom;
 	bool m_InfTrail;
@@ -291,10 +302,10 @@ public:
 	void MoneyTransaction(int Amount, const char *Description);
 	char m_aLastMoneyTransaction[10][256];
 
-	int m_ShopBotAntiSpamTick;
-
+	//score
 	int m_DisplayScore;
 
+	//others
 	bool IsHooked(int Power = -1);
 };
 

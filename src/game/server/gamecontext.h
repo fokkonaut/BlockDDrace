@@ -55,7 +55,13 @@ enum
 	NUM_TUNEZONES = 256
 };
 
-enum
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+enum Shop
 {
 	SHOP_PAGE_NONE = -1,
 	SHOP_PAGE_MAIN,
@@ -65,25 +71,20 @@ enum
 	SHOP_STATE_CONFIRM,
 };
 
-enum
+enum Item
 {
 	SPOOKY_GHOST,
 	POLICE,
 	NUM_ITEMS
 };
 
-enum
-{
-	DUMMYMODE_NULL = 0,
-	DUMMYMODE_V3_BLOCKER = -6,
-	DUMMYMODE_CHILLBLOCK5_RACER = 23,
-	DUMMYMODE_CHILLBLOCK5_BLOCKER = 29,
-	DUMMYMODE_CHILLBOCK5_POLICE = 31,
-	DUMMYMODE_BLMAPCHILL_POLICE = 32,
-	DUMMYMODE_SHOP_BOT = 99,
-};
-
 #define ACC_START 1 // account ids start with 1, 0 means not logged in
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
 
 
 class IConsole;
@@ -299,6 +300,15 @@ public:
 	*                                                *
 	**************************************************/
 
+	//dummy
+	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
+	bool IsShopBot(int ClientID);
+	void ConnectDefaultBots();
+	void SetV3Offset(int X = -1, int Y = -1);
+
+	int GetNextClientID();
+
+	//account
 	static int AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser);
 	int AddAccount();
 	void ReadAccountStats(int ID, char *pName);
@@ -323,28 +333,25 @@ public:
 	};
 	std::vector<AccountInfo> m_Accounts;
 
+	//motd
 	void FixMotd();
 	char m_aMotd[900];
 
-	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
-	bool IsShopBot(int ClientID);
-	void ConnectDefaultBots();
-	void SetV3Offset(int X = -1, int Y = -1);
+	//extras
+	void SendExtraMessage(int Extra, int ToID, bool Set, int FromID, bool Silent, int Special = 0);
+	const char *CreateExtraMessage(int Extra, bool Set, int FromID, int ToID, int Special);
+	const char *GetExtraName(int Extra, int Special = 0);
 
-	int GetNextClientID();
+	bool IsValidHookPower(int HookPower);
+
+	//others
 	int GetCIDByName(const char *pName);
 	void SendMotd(const char *pMsg, int ClientID);
 
 	const char *GetWeaponName(int Weapon);
 	int GetRealWeapon(int Weapon);
 
-	void SendExtraMessage(int Extra, int ToID, bool Set, int FromID, bool Silent, int Special = 0);
-	const char *CreateExtraMessage(int Extra, bool Set, int FromID, int ToID, int Special);
-	const char *GetExtraName(int Extra, int Special = 0);
-
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
-
-	bool IsValidHookPower(int HookPower);
 
 private:
 
