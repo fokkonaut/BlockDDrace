@@ -131,8 +131,10 @@ void CCollision::Init(class CLayers *pLayers)
 	}
 
 	// BlockDDrace
+	m_vRandomTile.clear();
 	m_vRandomTile.resize(NUM_INDICES);
 	FindTiles();
+	dbg_msg("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
 }
 
 int CCollision::GetTile(int x, int y)
@@ -1157,7 +1159,9 @@ int CCollision::GetCustTile(int x, int y)
 	int Ny = clamp(y / 32, 0, m_Height - 1);
 	int pos = Ny * m_Width + Nx;
 
-	return m_pTiles[pos].m_Index;
+	if (m_pTiles[pos].m_Index == ENTITY_SHOP_BOT_SPAWN+ENTITY_OFFSET)
+		return m_pTiles[pos].m_Index;
+	return 0;
 }
 
 int CCollision::GetFCustTile(int x, int y)
