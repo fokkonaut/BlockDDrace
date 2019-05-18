@@ -129,10 +129,6 @@ void CCollision::Init(class CLayers *pLayers)
 			}
 		}
 	}
-
-	// BlockDDrace
-	m_vRandomTile.resize(NUM_INDICES);
-	FindTiles();
 }
 
 int CCollision::GetTile(int x, int y)
@@ -1147,51 +1143,6 @@ int CCollision::IsFCheckpoint(int Index)
 *              B L O C K D D R A C E             *
 *                                                *
 **************************************************/
-
-int CCollision::GetCustTile(int x, int y)
-{
-	if (!m_pTiles)
-		return 0;
-
-	int Nx = clamp(x / 32, 0, m_Width - 1);
-	int Ny = clamp(y / 32, 0, m_Height - 1);
-	int pos = Ny * m_Width + Nx;
-
-	return m_pTiles[pos].m_Index;
-}
-
-int CCollision::GetFCustTile(int x, int y)
-{
-	if (!m_pFront)
-		return -1;
-
-	int Nx = clamp(x / 32, 0, m_Width - 1);
-	int Ny = clamp(y / 32, 0, m_Height - 1);
-	int pos = Ny * m_Width + Nx;
-
-	return m_pFront[pos].m_Index;
-}
-
-void CCollision::FindTiles()
-{
-	void *pFindTilesThread = thread_init(FindTilesThread, this);
-	thread_detach(pFindTilesThread);
-}
-
-void CCollision::FindTilesThread(void *pUser)
-{
-	CCollision *pSelf = (CCollision *)pUser;
-	dbg_msg("collision", "finding map tiles, copy them to cache");
-
-	for (int i = 0; i < NUM_INDICES; i++)
-		for (int y = 0; y < pSelf->m_Height; y++)
-			for (int x = 0; x < pSelf->m_Width; x++)
-			{
-				vec2 Pos(x*32.0f + 16.0f, y*32.0f + 16.0f);
-				if (pSelf->GetCustTile(Pos.x, Pos.y) == i || pSelf->GetFCustTile(Pos.x, Pos.y) == i)
-					pSelf->m_vRandomTile[i].push_back(Pos);
-			}
-}
 
 vec2 CCollision::GetRandomTile(int Index, bool Entity)
 {

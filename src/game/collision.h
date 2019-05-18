@@ -98,12 +98,6 @@ public:
 	int m_NumSwitchers;
 
 	// BlockDDrace
-	int GetCustTile(int x, int y);
-	int GetFCustTile(int x, int y);
-
-	void FindTiles();
-	static void FindTilesThread(void *pUser);
-
 	vec2 GetRandomTile(int Index, bool Entity);
 	vec2 GetRandomTile(int Index) { return GetRandomTile(Index, false); };
 	vec2 GetRandomEntity(int Index) { return GetRandomTile(Index, true); };
