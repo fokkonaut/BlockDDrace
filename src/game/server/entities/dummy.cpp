@@ -47,7 +47,7 @@ void CCharacter::DummyTick()
 			if (m_Core.m_Pos.y > 50 * 32 || m_Core.m_Pos.x > 150 * 32 || m_Solo)
 				Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
-			if (m_Core.m_Pos.x < V3_OFFSET_X - 2)
+			if (m_Core.m_Pos.x < V3_OFFSET_X - 2 * 32)
 			{
 				m_Input.m_Direction = 1;
 				if (
