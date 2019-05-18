@@ -302,7 +302,7 @@ public:
 	int m_TeamBeforeSuper;
 	int m_FreezeTime;
 	bool IsFrozen;
-	int m_FirstFreezeTick;
+	int64 m_FirstFreezeTick;
 	int m_FreezeTick;
 	bool m_DeepFreeze;
 	bool m_EndlessHook;
@@ -434,8 +434,8 @@ public:
 	int m_HookPower;
 	bool m_aSpreadWeapon[NUM_WEAPONS];
 
-	bool m_PoliceHelper;
 	bool m_Passive;
+	bool m_PoliceHelper;
 
 	// atom
 	std::vector<CStableProjectile *> m_AtomProjs;
@@ -458,11 +458,11 @@ public:
 	bool m_EnteredShop;
 	bool m_LeftShop;
 
-	int m_ShopBotAntiSpamTick;
+	int64 m_ShopBotAntiSpamTick;
 
 	void ShopWindow(int Dir);
 	int m_ShopWindowPage;
-	int m_ShopMotdTick;
+	int64 m_ShopMotdTick;
 	void BuyItem(int ItemID);
 	void ConfirmPurchase();
 	int m_PurchaseState;
@@ -471,7 +471,6 @@ public:
 
 	//weapon indicator
 	void UpdateWeaponIndicator();
-	bool m_WeaponIndicator;
 
 	//others
 	int HasFlag();

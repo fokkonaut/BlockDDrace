@@ -1083,9 +1083,6 @@ void CGameContext::OnClientEnter(int ClientID)
 			m_apPlayers[ClientID]->m_Score = Score()->PlayerData(ClientID)->m_BestTime;
 	}
 
-	// level score is the default score
-	m_apPlayers[ClientID]->m_DisplayScore = SCORE_TIME;
-
 	Score()->CheckBirthday(ClientID);
 
 	if(!Server()->ClientPrevIngame(ClientID))

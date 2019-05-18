@@ -464,6 +464,9 @@ private:
 	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
 	static void ConRegister(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConLeave(IConsole::IResult *pResult, void *pUserData);
+	static void ConBlock(IConsole::IResult *pResult, void *pUserData);
+
 	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 

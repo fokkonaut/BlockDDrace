@@ -305,6 +305,9 @@ public:
 	//score
 	int m_DisplayScore;
 
+	//weapon indicator
+	bool m_WeaponIndicator;
+
 	//others
 	bool IsHooked(int Power = -1);
 };

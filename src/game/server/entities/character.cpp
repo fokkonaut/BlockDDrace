@@ -2783,55 +2783,6 @@ void CCharacter::DDRaceInit()
 	m_Jetpack = false;
 	m_Core.m_Jumps = 2;
 	m_FreezeHammer = false;
-	
-
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
-
-	m_Rainbow = false;
-	m_Atom = false;
-	m_Trail = false;
-	m_Meteors = 0;
-	m_Bloody = false;
-	m_StrongBloody = false;
-	m_ScrollNinja = false;
-	m_HookPower = HOOK_NORMAL;
-	m_Passive = false;
-	m_PoliceHelper = false;
-	for (int i = 0; i < NUM_WEAPONS; i++)
-		m_aSpreadWeapon[i] = false;
-
-	SaveRealInfos();
-	UnsetSpookyGhost();
-
-	m_LastHitWeapon = -1;
-	m_LastToucherID = -1;
-	m_OldLastHookedPlayer = -1;
-
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
-		m_pPlayer->m_Gamemode = MODE_VANILLA;
-	else
-		m_pPlayer->m_Gamemode = MODE_DDRACE;
-
-	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
-	{
-		m_Armor = 0;
-		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
-	}
-	else
-		m_Armor = 10;
-
-	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
-
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
-
 
 	int Team = Teams()->m_Core.Team(m_Core.m_Id);
 
@@ -2851,6 +2802,62 @@ void CCharacter::DDRaceInit()
 			}
 		}
 	}
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
+
+	m_LastIndexTile = 0;
+	m_LastIndexFrontTile = 0;
+
+	m_LastHitWeapon = -1;
+	m_LastToucherID = -1;
+	m_OldLastHookedPlayer = -1;
+
+	m_CountSpookyGhostInputs = false;
+	m_TimesShot = 0;
+
+	m_Rainbow = false;
+	m_Atom = false;
+	m_Trail = false;
+	m_Meteors = 0;
+	m_Bloody = false;
+	m_StrongBloody = false;
+	m_ScrollNinja = false;
+	m_HookPower = HOOK_NORMAL;
+	for (int i = 0; i < NUM_WEAPONS; i++)
+		m_aSpreadWeapon[i] = false;
+	m_Passive = false;
+	m_PoliceHelper = false;
+
+	m_InShop = false;
+	m_EnteredShop = false;
+	m_LeftShop = false;
+
+	int64 Now = Server()->Tick();
+	m_ShopBotAntiSpamTick = Now;
+	m_ShopWindowPage = SHOP_PAGE_NONE;
+	m_ShopMotdTick = Now;
+	m_PurchaseState = SHOP_STATE_NONE;
+	m_ChangeShopPage = false;
+
+	SaveRealInfos();
+	UnsetSpookyGhost();
+
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
+		m_pPlayer->m_Gamemode = MODE_VANILLA;
+	else
+		m_pPlayer->m_Gamemode = MODE_DDRACE;
+
+	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+	{
+		m_Armor = 0;
+		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
+	}
+	else
+		m_Armor = 10;
 }
 
 void CCharacter::Rescue()
@@ -3208,7 +3215,7 @@ void CCharacter::SetActiveWeapon(int Weapon)
 
 void CCharacter::UpdateWeaponIndicator()
 {
-	if (!m_WeaponIndicator)
+	if (!m_pPlayer->m_WeaponIndicator)
 		return;
 
 	char aBuf[256];

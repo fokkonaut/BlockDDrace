@@ -149,6 +149,37 @@ void CPlayer::Reset()
 
 	m_NotEligibleForFinish = false;
 	m_EligibleForFinishCheck = 0;
+
+	// BlockDDrace
+	m_IsDummy = false;
+	m_Dummymode = DUMMYMODE_NULL;
+	m_FakePing = 0;
+
+	m_Gamemode = g_Config.m_SvVanillaModeStart ? MODE_VANILLA : MODE_DDRACE;
+	m_SpookyGhost = false;
+	m_RealUseCustomColor = 0;
+	m_RealSkinName[0] = '\0';
+
+	m_FixNameID = FIX_SET_NAME_ONLY;
+	m_ShowName = true;
+	m_SetRealName = false;
+	m_SetRealNameTick = Now;
+	m_ChatTeam = TEAM_RED;
+	m_ChatText[0] = '\0';
+	m_MsgKiller = -1;
+	m_MsgWeapon = -1;
+	m_MsgModeSpecial = 0;
+
+	m_RainbowColor = 0;
+	m_InfRainbow = false;
+	m_InfAtom = false;
+	m_InfTrail = false;
+	m_HasSpookyGhost = false;
+	m_InfMeteors = 0;
+
+	m_DisplayScore = SCORE_TIME;
+
+	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
 }
 
 void CPlayer::Tick()

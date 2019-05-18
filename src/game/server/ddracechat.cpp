@@ -1262,13 +1262,13 @@ void CGameContext::ConSpookyGhostInfo(IConsole::IResult * pResult, void * pUserD
 void CGameContext::ConWeaponIndicator(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	CCharacter *pChr = pSelf->GetPlayerChar(pResult->m_ClientID);
-	if (!pChr)
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
 		return;
 
-	pChr->m_WeaponIndicator ^= true;
+	pPlayer->m_WeaponIndicator ^= true;
 
-	if (pChr->m_WeaponIndicator)
+	if (pPlayer->m_WeaponIndicator)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Weapon indicator enabled");
 	else
 		pSelf->SendChatTarget(pResult->m_ClientID, "Weapon indicator disabled");
