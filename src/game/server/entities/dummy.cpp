@@ -62,7 +62,7 @@ void CCharacter::DummyTick()
 			}
 		}
 
-		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
+		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, (float)30*32, this, m_pPlayer->GetCID());
 		if (pChr && pChr->IsAlive())
 		{
 			m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
