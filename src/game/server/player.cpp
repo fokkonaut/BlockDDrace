@@ -720,21 +720,25 @@ void CPlayer::TryRespawn()
 {
 	vec2 SpawnPos;
 
+	bool Failed = true;
 	if (m_ForceSpawn != vec2(-1, -1))
 	{
 		SpawnPos = m_ForceSpawn;
+		Failed = false;
 	}
 	else if (m_Dummymode == 99)
 	{
 		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
 		if (ShopBotSpawn != vec2(-1, -1))
+		{
 			SpawnPos = ShopBotSpawn;
+			Failed = false;
+		}
 	}
-	else
-	{
+
+	if (Failed)
 		if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
 			return;
-	}
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
 
