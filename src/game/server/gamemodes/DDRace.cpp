@@ -102,7 +102,7 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 			HadFlag |= 1;
 		}
 		if (pKiller->GetCharacter() == pVictim)
-			F->SetLastCarrier(0);
+			F->SetLastCarrier(NULL);
 	}
 
 	return HadFlag;

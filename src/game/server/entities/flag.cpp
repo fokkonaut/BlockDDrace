@@ -249,7 +249,7 @@ void CFlag::HandleDropped()
 void CFlag::HandleTiles(int Index)
 {
 	int Team = 0;
-	if (m_pLastCarrier)
+	if (m_pLastCarrier && m_pLastCarrier->GetPlayer()) // wtf? i had to add a player check aswell, because otherwise the server would crash if a player kills a player which has a flag // player is nulltptr somehow
 		Team = m_pLastCarrier->Team();
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
