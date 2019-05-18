@@ -69,4 +69,8 @@ CHAT_COMMAND("logout", "", CFGFLAG_CHAT, ConLogout, this, "Log out of an account
 
 //extras
 CHAT_COMMAND("weaponindicator", "", CFGFLAG_CHAT, ConWeaponIndicator, this, "Tells you which weapon you are holding under the heart and armor bar")
+
+//minigames
+CHAT_COMMAND("leave", "", CFGFLAG_CHAT, ConLeave, this, "Leaves the current minigame")
+CHAT_COMMAND("block", "", CFGFLAG_CHAT, ConBlock, this, "Joins the block minigame")
 #undef CHAT_COMMAND

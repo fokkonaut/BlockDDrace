@@ -180,6 +180,8 @@ void CPlayer::Reset()
 	m_DisplayScore = SCORE_TIME;
 
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
+
+	m_Minigame = MINIGAME_NONE;
 }
 
 void CPlayer::Tick()
@@ -750,6 +752,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 void CPlayer::TryRespawn()
 {
 	vec2 SpawnPos;
+	vec2 TileSpawnPos = vec2(-1, -1);
 
 	bool Failed = true;
 	if (m_ForceSpawn != vec2(-1, -1))
@@ -758,13 +761,14 @@ void CPlayer::TryRespawn()
 		Failed = false;
 	}
 	else if (m_Dummymode == 99)
+		TileSpawnPos = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
+	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
+		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_MINIGAME_BLOCK);
+
+	if (TileSpawnPos != vec2(-1, -1))
 	{
-		vec2 ShopBotSpawn = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
-		if (ShopBotSpawn != vec2(-1, -1))
-		{
-			SpawnPos = ShopBotSpawn;
-			Failed = false;
-		}
+		SpawnPos = TileSpawnPos;
+		Failed = false;
 	}
 
 	if (Failed)

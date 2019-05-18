@@ -351,6 +351,8 @@ public:
 	const char *GetWeaponName(int Weapon);
 	int GetRealWeapon(int Weapon);
 
+	const char *GetMinigameName(int Minigame);
+
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
 
 private:
@@ -464,6 +466,7 @@ private:
 	static void ConLogout(IConsole::IResult *pResult, void *pUserData);
 	static void ConRegister(IConsole::IResult *pResult, void *pUserData);
 
+	void SetMinigame(IConsole::IResult *pResult, void *pUserData, int Minigame);
 	static void ConLeave(IConsole::IResult *pResult, void *pUserData);
 	static void ConBlock(IConsole::IResult *pResult, void *pUserData);
 

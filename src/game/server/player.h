@@ -47,6 +47,12 @@ enum Dummymode
 	DUMMYMODE_SHOP_BOT = 99,
 };
 
+enum Minigames
+{
+	MINIGAME_NONE=0,
+	MINIGAME_BLOCK,
+};
+
 /*************************************************
 *                                                *
 *              B L O C K D D R A C E             *
@@ -310,6 +316,9 @@ public:
 
 	//others
 	bool IsHooked(int Power = -1);
+
+	//minigames
+	int m_Minigame;
 };
 
 #endif

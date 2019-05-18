@@ -1229,6 +1229,8 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
 	char aFormat[32];
 	str_copy(aFormat, pResult->GetString(0), sizeof(aFormat));
 	bool Changed = true;
@@ -1362,6 +1364,8 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
 
 	if (!g_Config.m_SvAccounts)
 	{
@@ -1430,6 +1434,8 @@ void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
 
 	if (!g_Config.m_SvAccounts && pPlayer->GetAccID() <= 0)
 	{
@@ -1535,4 +1541,52 @@ void CGameContext::ConPoliceInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
 			aBuf);
 	}
+}
+
+void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int Minigame)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	CPlayer* pPlayer = m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
+
+	char aMsg[64];
+	if (pPlayer->m_Minigame == Minigame)
+	{
+		if (Minigame == MINIGAME_NONE)
+			pSelf->SendChatTarget(pResult->m_ClientID, "You are not in a minigame");
+		else
+		{
+			str_format(aMsg, sizeof(aMsg), "You are already in minigame '%s'", pSelf->GetMinigameName(Minigame));
+			pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		}
+		return;
+	}
+
+	if (Minigame == MINIGAME_NONE)
+	{
+		str_format(aMsg, sizeof(aMsg), "You left the minigame '%s'", pSelf->GetMinigameName(pPlayer->m_Minigame));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+	}
+	else
+	{
+		str_format(aMsg, sizeof(aMsg), "You joined the minigame '%s'", pSelf->GetMinigameName(Minigame));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+		pSelf->SendChatTarget(pResult->m_ClientID, "Say '/leave' to join the normal area again");
+	}
+
+	pPlayer->m_Minigame = Minigame;
+	pPlayer->KillCharacter();
+}
+
+void CGameContext::ConLeave(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SetMinigame(pResult, pUserData, MINIGAME_NONE);
+}
+
+void CGameContext::ConBlock(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SetMinigame(pResult, pUserData, MINIGAME_BLOCK);
 }

@@ -2947,6 +2947,11 @@ void CGameContext::OnInit()
 			if(pFront)
 			{
 				Index = pFront[y * pTileMap->m_Width + x].m_Index;
+
+				// BlockDDrace
+				Collision()->m_vRandomTile[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
+				// BlockDDrace
+
 				if(Index == TILE_OLDLASER)
 				{
 					g_Config.m_SvOldLaser = 1;
@@ -4213,4 +4218,16 @@ bool CGameContext::IsValidHookPower(int HookPower)
 		)
 		return true;
 	return false;
+}
+
+const char *CGameContext::GetMinigameName(int Minigame)
+{
+	switch (Minigame)
+	{
+	case MINIGAME_NONE:
+		return "None";
+	case MINIGAME_BLOCK:
+		return "Block";
+	}
+	return "Unknown";
 }

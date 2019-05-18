@@ -212,6 +212,8 @@ enum
 	TILE_MODERATORS_ONLY,
 	TILE_ADMINS_ONLY,
 
+	TILE_MINIGAME_BLOCK = 176,
+
 	TILE_END_CUSTOM,
 	//End of higher tiles
 	//Layers
