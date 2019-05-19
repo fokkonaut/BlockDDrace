@@ -1579,6 +1579,27 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 	pPlayer->KillCharacter();
 }
 
+void CGameContext::ConMinigames(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	char aMinigames[256];
+	char aTemp2[256];
+	aMinigames[0] = 0;
+	aTemp2[0] = 0;
+	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+	{
+		if (i != MINIGAME_BLOCK)
+			str_format(aTemp2, sizeof(aTemp2), "%s, ", aMinigames);
+		str_format(aMinigames, sizeof(aMinigames), "%s%s", aTemp2, pSelf->GetMinigameName(i));
+	}
+
+	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Minigames ~~~");
+	pSelf->SendChatTarget(pResult->m_ClientID, "You can join any minigame using '/<minigame>'");
+	pSelf->SendChatTarget(pResult->m_ClientID, "To leave a minigame, just type '/leave'");
+	pSelf->SendChatTarget(pResult->m_ClientID, "Here is a list of all minigames:");
+	pSelf->SendChatTarget(pResult->m_ClientID, aMinigames);
+}
+
 void CGameContext::ConLeave(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

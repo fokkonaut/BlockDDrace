@@ -51,6 +51,7 @@ enum Minigames
 {
 	MINIGAME_NONE=0,
 	MINIGAME_BLOCK,
+	NUM_MINIGAMES
 };
 
 /*************************************************
