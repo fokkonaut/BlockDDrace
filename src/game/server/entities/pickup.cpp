@@ -88,10 +88,13 @@ void CPickup::Tick()
 				{
 					case POWERUP_HEALTH:
 						// BlockDDrace
-						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseHealth(1))
+						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 						{
-							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH);
-							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+							if (pChr->IncreaseHealth(1))
+							{
+								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH);
+								RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+							}
 						}
 						// BlockDDrace
 						else if(pChr->Freeze()) GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, pChr->Teams()->TeamMask(pChr->Team()));
