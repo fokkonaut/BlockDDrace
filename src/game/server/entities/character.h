@@ -152,7 +152,7 @@ public:
 	*                                                *
 	**************************************************/
 
-	void DropWeapon(int WeaponID);
+	void DropWeapon(int WeaponID, int Dir);
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir() { return m_Input.m_TargetX < 0 ? -1 : 1; };
 

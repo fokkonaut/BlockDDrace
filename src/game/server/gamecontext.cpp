@@ -1717,7 +1717,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						}
 					}
 					else
-						pChr->DropWeapon(pChr->GetActiveWeapon());
+						pChr->DropWeapon(pChr->GetActiveWeapon(), pChr->GetAimDir());
 				}
 			}
 

@@ -3131,9 +3131,9 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 	UpdateWeaponIndicator();
 }
 
-void CCharacter::DropWeapon(int WeaponID)
+void CCharacter::DropWeapon(int WeaponID, int Dir)
 {
-	if (IsFrozen || m_FreezeTime || !g_Config.m_SvAllowDroppingWeapons || WeaponID == WEAPON_NINJA)
+	if (IsFrozen || m_FreezeTime || !g_Config.m_SvAllowDroppingWeapons || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
 		return;
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)
@@ -3151,13 +3151,13 @@ void CCharacter::DropWeapon(int WeaponID)
 			WeaponCount++;
 	}
 
-	if (WeaponCount > 1)
+	if (WeaponCount > 1 || (WeaponID == WEAPON_GUN && m_Jetpack))
 	{
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-		CWeapon *Weapon = new CWeapon(GameWorld(), WeaponID, 300, m_pPlayer->GetCID(), GetAimDir(), m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
+		CWeapon *Weapon = new CWeapon(GameWorld(), WeaponID, 300, m_pPlayer->GetCID(), Dir, m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
 
-		if (!m_Jetpack)
+		if (WeaponID != WEAPON_GUN || !m_Jetpack)
 		{
 			m_aWeapons[WeaponID].m_Got = false;
 			SetWeapon(WEAPON_GUN);
