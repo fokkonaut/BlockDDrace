@@ -3188,7 +3188,7 @@ void CCharacter::DropPickup(int Type, int Amount)
 
 void CCharacter::DropLoot()
 {
-	if (!g_Config.m_SvDropWeaponsOnDeath)
+	if (!g_Config.m_SvDropsOnDeath)
 		return;
 
 	if (m_pPlayer->m_Minigame == MINIGAME_SURVIVAL)
