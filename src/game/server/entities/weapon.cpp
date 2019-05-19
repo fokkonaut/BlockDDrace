@@ -39,15 +39,9 @@ void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 	{
 		CPlayer* pOwner = GameServer()->m_apPlayers[m_Owner];
 		if (pOwner)
-		{
 			for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
-			{
 				if (pOwner->m_vWeaponLimit[m_Type][i] == this)
-				{
 					pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
-				}
-			}
-		}
 	}
 
 	if (!Picked)
@@ -59,14 +53,14 @@ void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 
 void CWeapon::Tick()
 {
-	pOwner = 0;
+	m_pOwner = 0;
 	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
-		pOwner = GameServer()->GetPlayerChar(m_Owner);
+		m_pOwner = GameServer()->GetPlayerChar(m_Owner);
 
 	if (m_Owner >= 0 && !GameServer()->m_apPlayers[m_Owner] && g_Config.m_SvDestroyDropsOnLeave)
 		Reset();
 
-	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
+	m_TeamMask = m_pOwner ? m_pOwner->Teams()->TeamMask(m_pOwner->Team(), -1, m_Owner) : -1LL;
 
 	// weapon hits death-tile or left the game layer, reset it
 	if (GameServer()->Collision()->GetCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameServer()->Collision()->GetFCollisionAt(m_Pos.x, m_Pos.y) == TILE_DEATH || GameLayerClipped(m_Pos))
@@ -275,8 +269,8 @@ void CWeapon::HandleDropped()
 void CWeapon::HandleTiles(int Index)
 {
 	int Team = 0;
-	if (pOwner)
-		Team = pOwner->Team();
+	if (m_pOwner)
+		Team = m_pOwner->Team();
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
 	int MapIndex = Index;
@@ -349,7 +343,7 @@ void CWeapon::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(pOwner ? pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
+		if (GameServer()->m_pController->CanSpawn(m_pOwner ? m_pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
 		{
 			m_Pos = SpawnPos;
 			m_Vel.x = 0;
@@ -371,7 +365,7 @@ void CWeapon::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(pOwner ? pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
+		if (GameServer()->m_pController->CanSpawn(m_pOwner ? m_pOwner->GetPlayer()->GetTeam() : TEAM_RED, &SpawnPos))
 			m_Pos = SpawnPos;
 		return;
 	}
@@ -410,13 +404,13 @@ void CWeapon::Snap(int SnappingClient)
 	if (m_Jetpack)
 	{
 		CNetObj_Projectile *pJetpackIndicator = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
-		if (pJetpackIndicator)
-		{
-			pJetpackIndicator->m_X = pP->m_X;
-			pJetpackIndicator->m_Y = pP->m_Y - 25;
-			pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
-			pJetpackIndicator->m_StartTick = Server()->Tick();
-		}
+		if (!pJetpackIndicator)
+			return;
+
+		pJetpackIndicator->m_X = pP->m_X;
+		pJetpackIndicator->m_Y = pP->m_Y - 25;
+		pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
+		pJetpackIndicator->m_StartTick = Server()->Tick();
 	}
 	else if (m_Type == WEAPON_PLASMA_RIFLE)
 	{

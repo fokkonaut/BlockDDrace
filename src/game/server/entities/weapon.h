@@ -30,7 +30,7 @@ private:
 	vec2 m_Vel;
 
 	int64_t m_TeamMask;
-	CCharacter* pOwner;
+	CCharacter* m_pOwner;
 	int m_Owner;
 
 	int m_Type;
