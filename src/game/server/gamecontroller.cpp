@@ -448,7 +448,8 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 	pChr->IncreaseHealth(10);
 
 	// give default weapons
-	pChr->GiveWeapon(WEAPON_HAMMER);
+	if (pChr->GetPlayer()->m_Minigame != MINIGAME_SURVIVAL)
+		pChr->GiveWeapon(WEAPON_HAMMER);
 	pChr->GiveWeapon(WEAPON_GUN);
 }
 
