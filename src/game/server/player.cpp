@@ -752,6 +752,8 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 void CPlayer::TryRespawn()
 {
 	vec2 SpawnPos;
+
+	// BlockDDrace
 	vec2 TileSpawnPos = vec2(-1, -1);
 
 	if (m_ForceSpawn != vec2(-1, -1))
@@ -767,6 +769,7 @@ void CPlayer::TryRespawn()
 	{
 		SpawnPos = TileSpawnPos;
 	}
+	// BlockDDrace
 
 	if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
 		return;
