@@ -1080,7 +1080,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_TrailProjs.clear();
 	}
 
-	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon == -1))
+	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon < 0))
 	{
 		m_LastToucherID = -1;
 		m_LastHitWeapon = -1;
