@@ -1460,87 +1460,52 @@ void CGameContext::ConPoliceInfo(IConsole::IResult *pResult, void *pUserData)
 	int MaxPages = 4;	//////UPDATE THIS WITH EVERY PAGE YOU ADD
 	if (!Page || Page > MaxPages)
 		Page = 1;
-	char aBuf[256];
-	str_format(aBuf, sizeof(aBuf), "-- Page %d/%d --", Page, MaxPages);
 
-	if (Page == 2)
+	char aInfo[128];
+	char aPage[128];
+	str_format(aInfo, sizeof(aInfo), "Use '/policeinfo <page>' to check out what other police ranks can do.");
+	str_format(aPage, sizeof(aPage), "-- Page %d/%d --", Page, MaxPages);
+
+	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Police Info ~~~");
+	if (Page >= 2 && Page <= MaxPages)
 	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"~~~ Police Info ~~~");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"[POLICE 1]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Level needed to buy: [LVL 18]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Benefits:");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"- The police bot will help you");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"------------------------");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Use '/policeinfo <page>' to check out what other police ranks can do.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			aBuf);
-	}
-	else if (Page == 3)
-	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"~~~ Police Info ~~~");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"[POLICE 2]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Level needed to buy: [LVL 25]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Benefits:");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"- '/policehelper'");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"------------------------");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Use '/policeinfo <page>' to check out what other police ranks can do.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			aBuf);
-	}
-	else if (Page == 4)
-	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"~~~ Police Info ~~~");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"[POLICE 3]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Level needed to buy: [LVL 30]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Benefits:");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"- taser license ('/taser')");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"------------------------");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Use '/policeinfo <page>' to check out what other police ranks can do.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			aBuf);
+		int Level = 0;
+		int Policelevel = Page - 1;
+		char aPolice[32];
+		char aLevel[64];
+
+		if (Policelevel == 1)
+			Level = 18;
+		else if (Policelevel == 2)
+			Level = 25;
+		else if (Policelevel == 3)
+			Level = 30;
+
+		str_format(aPolice, sizeof(aPolice), "[POLICE %d]", Policelevel);
+		pSelf->SendChatTarget(pResult->m_ClientID, aPolice);
+
+		str_format(aPolice, sizeof(aPolice), "Level needed to buy: [LVL %d]", Level);
+		pSelf->SendChatTarget(pResult->m_ClientID, aPolice);
+
+		pSelf->SendChatTarget(pResult->m_ClientID, "Benefits:");
+		if (Policelevel == 1)
+			pSelf->SendChatTarget(pResult->m_ClientID, "- The police bot will help you");
+		else if (Policelevel == 2)
+			pSelf->SendChatTarget(pResult->m_ClientID, "- '/policehelper'");
+		else if (Policelevel == 3)
+			pSelf->SendChatTarget(pResult->m_ClientID, "- taser license ('/taser')");
 	}
 	else
 	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"~~~ Police Info ~~~");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"[GENERAL INFORMATION]");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Police can be bought in shop using '/buy police'.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"There are multiple police ranks, each cost 100.000 money.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"The policebot will help every police officer.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Every police rank will give you more benefits.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"------------------------");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			"Use '/policeinfo <page>' to check out what other police ranks can do.");
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "policeinfo",
-			aBuf);
+		pSelf->SendChatTarget(pResult->m_ClientID, "[GENERAL INFORMATION]");
+		pSelf->SendChatTarget(pResult->m_ClientID, "Police can be bought in shop using '/buy police'.");
+		pSelf->SendChatTarget(pResult->m_ClientID, "There are multiple police ranks, each cost 100.000 money.");
+		pSelf->SendChatTarget(pResult->m_ClientID, "The policebot will help every police officer.");
+		pSelf->SendChatTarget(pResult->m_ClientID, "Every police rank will give you more benefits.");
 	}
+	pSelf->SendChatTarget(pResult->m_ClientID, "------------------------");
+	pSelf->SendChatTarget(pResult->m_ClientID, "Use '/policeinfo <page>' for information about other ranks");
+	pSelf->SendChatTarget(pResult->m_ClientID, aPage);
 }
 
 void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int Minigame)
