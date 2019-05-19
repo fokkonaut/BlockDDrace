@@ -1542,7 +1542,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 	}
 
 	pPlayer->m_Minigame = Minigame;
-	pPlayer->KillCharacter();
+	pPlayer->KillCharacter(WEAPON_GAME);
 }
 
 void CGameContext::ConMinigames(IConsole::IResult *pResult, void *pUserData)
