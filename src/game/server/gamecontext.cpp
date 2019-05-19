@@ -1717,7 +1717,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						}
 					}
 					else
-						pChr->DropWeapon(pChr->GetActiveWeapon(), pChr->GetAimDir());
+						pChr->DropWeapon(pChr->GetActiveWeapon());
 				}
 			}
 
@@ -3006,6 +3006,9 @@ void CGameContext::OnInit()
 	}
 #endif
 
+	// BlockDDrace
+	m_vPickupDropLimit.resize(2);
+
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
 }
@@ -4228,6 +4231,8 @@ const char *CGameContext::GetMinigameName(int Minigame)
 		return "None";
 	case MINIGAME_BLOCK:
 		return "Block";
+	case MINIGAME_SURVIVAL:
+		return "Survival";
 	}
 	return "Unknown";
 }

@@ -8,16 +8,17 @@
 
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
-#include "weapon.h"
+#include "pickup_drop.h"
 #include "pickup.h"
 #include <game/server/teams.h>
 #include <engine/shared/config.h>
 #include <game/server/gamemodes/DDRace.h>
 
-CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack)
+CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, int Direction, int Weapon, int Lifetime, int Bullets, bool SpreadWeapon, bool Jetpack)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
-	m_Type = Weapon;
+	m_Type = Type;
+	m_Weapon = Weapon;
 	m_Lifetime = Server()->TickSpeed() * Lifetime;
 	m_Pos = GameServer()->GetPlayerChar(Owner)->m_Pos;
 	m_Jetpack = Jetpack;
@@ -33,15 +34,15 @@ CWeapon::CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, in
 	GameWorld()->InsertEntity(this);
 }
 
-void CWeapon::Reset(bool EreaseWeapon, bool Picked)
+void CPickupDrop::Reset(bool EreaseWeapon, bool Picked)
 {
-	if (EreaseWeapon)
+	if (EreaseWeapon && m_Type == POWERUP_WEAPON)
 	{
 		CPlayer* pOwner = GameServer()->m_apPlayers[m_Owner];
 		if (pOwner)
-			for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Type].size(); i++)
-				if (pOwner->m_vWeaponLimit[m_Type][i] == this)
-					pOwner->m_vWeaponLimit[m_Type].erase(pOwner->m_vWeaponLimit[m_Type].begin() + i);
+			for (unsigned i = 0; i < pOwner->m_vWeaponLimit[m_Weapon].size(); i++)
+				if (pOwner->m_vWeaponLimit[m_Weapon][i] == this)
+					pOwner->m_vWeaponLimit[m_Weapon].erase(pOwner->m_vWeaponLimit[m_Weapon].begin() + i);
 	}
 
 	if (!Picked)
@@ -51,7 +52,7 @@ void CWeapon::Reset(bool EreaseWeapon, bool Picked)
 	GameWorld()->DestroyEntity(this);
 }
 
-void CWeapon::Tick()
+void CPickupDrop::Tick()
 {
 	m_pOwner = 0;
 	if (m_Owner != -1 && GameServer()->GetPlayerChar(m_Owner))
@@ -74,40 +75,48 @@ void CWeapon::Tick()
 		m_PickupDelay--;
 
 	Pickup();
-	IsShieldNear();
+	if (m_Type == POWERUP_WEAPON)
+		IsShieldNear();
 	HandleDropped();
 
 	m_PrevPos = m_Pos;
 }
 
-void CWeapon::Pickup()
+void CPickupDrop::Pickup()
 {
 	int ID = IsCharacterNear();
 	if (ID != -1)
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(ID);
 
-		int Ammo = pChr->GetPlayer()->m_Gamemode == MODE_VANILLA ? m_Bullets : -1;
-		pChr->GiveWeapon(m_Type, false, Ammo);
-		GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Type);
+		if (m_Type == POWERUP_WEAPON)
+		{
+			int Ammo = pChr->GetPlayer()->m_Gamemode == MODE_VANILLA ? m_Bullets : -1;
+			pChr->GiveWeapon(m_Weapon, false, Ammo);
+			GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Weapon);
 
-		if (m_Jetpack)
-			pChr->Jetpack();
-		if (m_SpreadWeapon)
-			pChr->SpreadWeapon(m_Type);
+			if (m_Jetpack)
+				pChr->Jetpack();
+			if (m_SpreadWeapon)
+				pChr->SpreadWeapon(m_Weapon);
 
-		if (m_Type == WEAPON_SHOTGUN || m_Type == WEAPON_RIFLE || m_Type == WEAPON_PLASMA_RIFLE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
-		else if (m_Type == WEAPON_GRENADE || m_Type == WEAPON_STRAIGHT_GRENADE)
-			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
-		else if (m_Type == WEAPON_HAMMER || m_Type == WEAPON_GUN || m_Type == WEAPON_HEART_GUN)
+			if (m_Weapon == WEAPON_SHOTGUN || m_Weapon == WEAPON_RIFLE || m_Weapon == WEAPON_PLASMA_RIFLE)
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
+			else if (m_Weapon == WEAPON_GRENADE || m_Weapon == WEAPON_STRAIGHT_GRENADE)
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
+			else if (m_Weapon == WEAPON_HAMMER || m_Weapon == WEAPON_GUN || m_Weapon == WEAPON_HEART_GUN)
+				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
+		}
+		else if (m_Type == POWERUP_HEALTH)
+			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, pChr->Teams()->TeamMask(pChr->Team()));
+		else if (m_Type == POWERUP_ARMOR)
 			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 		Reset(true, true);
 	}
 }
 
-int CWeapon::IsCharacterNear()
+int CPickupDrop::IsCharacterNear()
 {
 	CCharacter *apEnts[MAX_CLIENTS];
 	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
@@ -116,16 +125,24 @@ int CWeapon::IsCharacterNear()
 	{
 		CCharacter* pChr = apEnts[i];
 
-		if (
-			(m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner))
-			|| (!pChr->CanCollide(m_Owner, false))
-			|| (pChr->GetPlayer()->m_SpookyGhost && m_Type != WEAPON_GUN)
-			|| (pChr->GetWeaponGot(m_Type) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
-			|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
-			|| (m_Jetpack && pChr->m_Jetpack)
-			|| (m_SpreadWeapon && pChr->m_aSpreadWeapon[m_Type])
-			|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Type) && pChr->GetWeaponAmmo(m_Type) >= m_Bullets)
-			)
+		if ((m_PickupDelay > 0 && pChr == GameServer()->GetPlayerChar(m_Owner)) || !pChr->CanCollide(m_Owner, false))
+			continue;
+
+		if (m_Type == POWERUP_WEAPON)
+		{
+			if (
+				(pChr->GetPlayer()->m_SpookyGhost && m_Weapon != WEAPON_GUN)
+				|| (pChr->GetWeaponGot(m_Weapon) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+				|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
+				|| (m_Jetpack && pChr->m_Jetpack)
+				|| (m_SpreadWeapon && pChr->m_aSpreadWeapon[m_Weapon])
+				|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Weapon) && pChr->GetWeaponAmmo(m_Weapon) >= m_Bullets)
+				)
+				continue;
+		}
+		else if (m_Type == POWERUP_HEALTH && !pChr->IncreaseHealth(1))
+			continue;
+		else if (m_Type == POWERUP_ARMOR && !pChr->IncreaseArmor(1))
 			continue;
 
 		return pChr->GetPlayer()->GetCID();
@@ -134,7 +151,7 @@ int CWeapon::IsCharacterNear()
 	return -1;
 }
 
-void CWeapon::IsShieldNear()
+void CPickupDrop::IsShieldNear()
 {
 	CPickup *apEnts[9];
 	int Num = GameWorld()->FindEntities(m_Pos, 20.0f, (CEntity**)apEnts, 9, CGameWorld::ENTTYPE_PICKUP);
@@ -154,7 +171,7 @@ void CWeapon::IsShieldNear()
 	}
 }
 
-bool CWeapon::IsGrounded(bool SetVel)
+bool CPickupDrop::IsGrounded(bool SetVel)
 {
 	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
 		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize, m_Pos.y + ms_PhysSize + 5)))
@@ -187,7 +204,7 @@ bool CWeapon::IsGrounded(bool SetVel)
 	return false;
 }
 
-void CWeapon::HandleDropped()
+void CPickupDrop::HandleDropped()
 {
 	//Gravity
 	m_Vel.y += GameServer()->Tuning()->m_Gravity;
@@ -266,7 +283,7 @@ void CWeapon::HandleDropped()
 	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
 }
 
-void CWeapon::HandleTiles(int Index)
+void CPickupDrop::HandleTiles(int Index)
 {
 	int Team = 0;
 	if (m_pOwner)
@@ -381,7 +398,7 @@ void CWeapon::HandleTiles(int Index)
 		m_Vel.y = 0;
 }
 
-void CWeapon::Snap(int SnappingClient)
+void CPickupDrop::Snap(int SnappingClient)
 {
 	if (NetworkClipped(SnappingClient))
 		return;
@@ -398,8 +415,9 @@ void CWeapon::Snap(int SnappingClient)
 
 	pP->m_X = (int)m_Pos.x;
 	pP->m_Y = (int)m_Pos.y;
-	pP->m_Type = POWERUP_WEAPON;
-	pP->m_Subtype = GameServer()->GetRealWeapon(m_Type);
+	pP->m_Type = m_Type;
+	if (m_Type == POWERUP_WEAPON)
+		pP->m_Subtype = GameServer()->GetRealWeapon(m_Weapon);
 
 	if (m_Jetpack)
 	{
@@ -412,7 +430,7 @@ void CWeapon::Snap(int SnappingClient)
 		pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
 		pJetpackIndicator->m_StartTick = Server()->Tick();
 	}
-	else if (m_Type == WEAPON_PLASMA_RIFLE)
+	else if (m_Weapon == WEAPON_PLASMA_RIFLE)
 	{
 		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID2, sizeof(CNetObj_Laser)));
 		if (!pLaser)
@@ -424,7 +442,7 @@ void CWeapon::Snap(int SnappingClient)
 		pLaser->m_FromY = pP->m_Y - 30;
 		pLaser->m_StartTick = Server()->Tick();
 	}
-	else if (m_Type == WEAPON_HEART_GUN)
+	else if (m_Weapon == WEAPON_HEART_GUN)
 	{
 		CNetObj_Pickup *pPickup = static_cast<CNetObj_Pickup *>(Server()->SnapNewItem(NETOBJTYPE_PICKUP, m_ID2, sizeof(CNetObj_Pickup)));
 		if (!pPickup)
@@ -434,7 +452,7 @@ void CWeapon::Snap(int SnappingClient)
 		pPickup->m_Y = pP->m_Y - 30;
 		pPickup->m_Type = POWERUP_HEALTH;
 	}
-	else if (m_Type == WEAPON_STRAIGHT_GRENADE)
+	else if (m_Weapon == WEAPON_STRAIGHT_GRENADE)
 	{
 		CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID2, sizeof(CNetObj_Projectile)));
 		if (!pProj)

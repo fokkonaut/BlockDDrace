@@ -69,8 +69,6 @@ void CPlayer::Reset()
 
 	// DDRace
 
-	m_vWeaponLimit.resize(NUM_WEAPONS);
-
 	m_LastCommandPos = 0;
 	m_LastPlaytime = time_get();
 	m_Sent1stAfkWarning = 0;
@@ -154,6 +152,8 @@ void CPlayer::Reset()
 	m_IsDummy = false;
 	m_Dummymode = DUMMYMODE_NULL;
 	m_FakePing = 0;
+
+	m_vWeaponLimit.resize(NUM_WEAPONS);
 
 	m_Gamemode = g_Config.m_SvVanillaModeStart ? MODE_VANILLA : MODE_DDRACE;
 	m_SpookyGhost = false;
@@ -764,6 +764,8 @@ void CPlayer::TryRespawn()
 		TileSpawnPos = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
 		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_MINIGAME_BLOCK);
+	else if (m_Minigame == MINIGAME_SURVIVAL)
+		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN);
 
 	if (TileSpawnPos != vec2(-1, -1))
 	{

@@ -17,6 +17,7 @@
 #include "custom_projectile.h"
 #include "meteor.h"
 #include "pickup.h"
+#include "pickup_drop.h"
 // BlockDDrace
 
 #include <stdio.h>
@@ -1079,6 +1080,8 @@ void CCharacter::Die(int Killer, int Weapon)
 		}
 		m_TrailProjs.clear();
 	}
+
+	DropLoot();
 
 	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon < 0))
 	{
@@ -3154,7 +3157,7 @@ void CCharacter::DropWeapon(int WeaponID, int Dir)
 	if (WeaponCount > 1 || (WeaponID == WEAPON_GUN && m_Jetpack))
 	{
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-		CWeapon *Weapon = new CWeapon(GameWorld(), WeaponID, 300, m_pPlayer->GetCID(), Dir, m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
+		CPickupDrop *Weapon = new CPickupDrop(GameWorld(), POWERUP_WEAPON, m_pPlayer->GetCID(), Dir == -2 ? GetAimDir() : Dir, WeaponID, 300, m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
 
 		if (WeaponID != WEAPON_GUN || !m_Jetpack)
@@ -3166,6 +3169,46 @@ void CCharacter::DropWeapon(int WeaponID, int Dir)
 			SpreadWeapon(WeaponID, false);
 		if (WeaponID == WEAPON_GUN && m_Jetpack)
 			Jetpack(false);
+	}
+}
+
+void CCharacter::DropPickup(int Type, int Amount)
+{
+	for (int i = 0; i < Amount; i++)
+	{
+		if (GameServer()->m_vPickupDropLimit[POWERUP_HEALTH].size() + GameServer()->m_vPickupDropLimit[POWERUP_ARMOR].size() == 500)
+		{
+			GameServer()->m_vPickupDropLimit[Type][0]->Reset();
+			GameServer()->m_vPickupDropLimit[Type].erase(GameServer()->m_vPickupDropLimit[Type].begin());
+		}
+		CPickupDrop *Pickup = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), (rand() % 4) - 2);
+		GameServer()->m_vPickupDropLimit[Type].push_back(Pickup);
+	}
+}
+
+void CCharacter::DropLoot()
+{
+	if (!g_Config.m_SvDropWeaponsOnDeath)
+		return;
+
+	if (m_pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+	{
+		DropPickup(POWERUP_HEALTH, rand() % 6);
+		DropPickup(POWERUP_ARMOR, rand() % 6);
+		DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
+		DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
+		DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
+		DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
+	}
+	else
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			int Weapon = WEAPON_GUN;
+			while (Weapon == WEAPON_NINJA || Weapon == WEAPON_GUN || Weapon == WEAPON_HAMMER)
+				Weapon = rand() % NUM_WEAPONS;
+			DropWeapon(Weapon, (rand() % 4) - 2);
+		}
 	}
 }
 

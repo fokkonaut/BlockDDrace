@@ -790,6 +790,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/meteor.h
   entities/pickup.cpp
   entities/pickup.h
+  entities/pickup_drop.cpp
+  entities/pickup_drop.h
   entities/plasma.cpp
   entities/plasma.h
   entities/projectile.cpp
@@ -797,8 +799,6 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/shop.cpp
   entities/stable_projectile.cpp
   entities/stable_projectile.h
-  entities/weapon.cpp
-  entities/weapon.h
   entity.cpp
   entity.h
   eventhandler.cpp

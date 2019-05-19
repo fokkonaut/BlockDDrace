@@ -14,7 +14,7 @@
 *                                                *
 **************************************************/
 
-#include "entities/weapon.h"
+#include "entities/pickup_drop.h"
 #include <vector>
 
 enum NoNameFix
@@ -51,6 +51,7 @@ enum Minigames
 {
 	MINIGAME_NONE=0,
 	MINIGAME_BLOCK,
+	MINIGAME_SURVIVAL,
 	NUM_MINIGAMES
 };
 
@@ -209,8 +210,6 @@ public:
 		TIMERTYPE_NONE,
 	};
 
-	std::vector< std::vector<CWeapon*> > m_vWeaponLimit;
-
 	bool m_DND;
 	int64 m_FirstVoteTick;
 	char m_TimeoutCode[64];
@@ -264,6 +263,9 @@ public:
 	*              B L O C K D D R A C E             *
 	*                                                *
 	**************************************************/
+
+	//weapon drops
+	std::vector< std::vector<CPickupDrop*> > m_vWeaponLimit;
 
 	//dummy
 	bool m_IsDummy;

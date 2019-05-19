@@ -11,7 +11,10 @@
 #include <game/mapbugs.h>
 #include <game/voting.h>
 
+// BlockDDrace
 #include <vector>
+#include <game/server/entities/pickup_drop.h>
+// BlockDDrace
 
 #include "eventhandler.h"
 #include "gamecontroller.h"
@@ -355,6 +358,9 @@ public:
 
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
 
+	//pickup drops
+	std::vector< std::vector<CPickupDrop*> > m_vPickupDropLimit;
+
 private:
 
 	bool m_VoteWillPass;
@@ -470,6 +476,7 @@ private:
 	static void ConMinigames(IConsole::IResult *pResult, void *pUserData);
 	static void ConLeave(IConsole::IResult *pResult, void *pUserData);
 	static void ConBlock(IConsole::IResult *pResult, void *pUserData);
+	static void ConSurvival(IConsole::IResult *pResult, void *pUserData);
 
 	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);

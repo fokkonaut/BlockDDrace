@@ -152,7 +152,11 @@ public:
 	*                                                *
 	**************************************************/
 
-	void DropWeapon(int WeaponID, int Dir);
+	//drops
+	void DropWeapon(int WeaponID, int Dir = -2);
+	void DropPickup(int Type, int Amount);
+	void DropLoot();
+
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
 	int GetAimDir() { return m_Input.m_TargetX < 0 ? -1 : 1; };
 
@@ -474,7 +478,6 @@ public:
 
 	//others
 	int HasFlag();
-
 
 
 	/////////dummymode variables

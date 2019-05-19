@@ -78,4 +78,6 @@ MACRO_CONFIG_INT(SvRescueDelay, sv_rescue_delay, 5, 0, 1000, CFGFLAG_SERVER, "Nu
 
 	MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, 374, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 bot")
 	MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, 59, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 bot")
+
+	MACRO_CONFIG_INT(SvDropWeaponsOnDeath, sv_drop_weapons_on_death, 0, 0, 1, CFGFLAG_SERVER, "Whether there is a chance of dropping weapons on death")
 #endif

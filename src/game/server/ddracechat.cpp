@@ -1509,6 +1509,27 @@ void CGameContext::ConPoliceInfo(IConsole::IResult *pResult, void *pUserData)
 	pSelf->SendChatTarget(pResult->m_ClientID, aPage);
 }
 
+void CGameContext::ConMinigames(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	char aMinigames[256];
+	char aTemp2[256];
+	aMinigames[0] = 0;
+	aTemp2[0] = 0;
+	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+	{
+		if (i != MINIGAME_BLOCK)
+			str_format(aTemp2, sizeof(aTemp2), "%s, ", aMinigames);
+		str_format(aMinigames, sizeof(aMinigames), "%s%s", aTemp2, pSelf->GetMinigameName(i));
+	}
+
+	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Minigames ~~~");
+	pSelf->SendChatTarget(pResult->m_ClientID, "You can join any minigame using '/<minigame>'");
+	pSelf->SendChatTarget(pResult->m_ClientID, "To leave a minigame, just type '/leave'");
+	pSelf->SendChatTarget(pResult->m_ClientID, "Here is a list of all minigames:");
+	pSelf->SendChatTarget(pResult->m_ClientID, aMinigames);
+}
+
 void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int Minigame)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -1533,37 +1554,28 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 	{
 		str_format(aMsg, sizeof(aMsg), "You left the minigame '%s'", pSelf->GetMinigameName(pPlayer->m_Minigame));
 		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+
+		//reset everything
+		pPlayer->m_Gamemode = g_Config.m_SvVanillaModeStart ? MODE_VANILLA : MODE_DDRACE;
 	}
-	else
+	else if (pPlayer->m_Minigame == MINIGAME_NONE)
 	{
 		str_format(aMsg, sizeof(aMsg), "You joined the minigame '%s'", pSelf->GetMinigameName(Minigame));
 		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
 		pSelf->SendChatTarget(pResult->m_ClientID, "Say '/leave' to join the normal area again");
+
+		//set minigame required stuff
+		if (Minigame == MINIGAME_SURVIVAL)
+			pPlayer->m_Gamemode = MODE_VANILLA;
 	}
-
-	pPlayer->m_Minigame = Minigame;
-	pPlayer->KillCharacter(WEAPON_GAME);
-}
-
-void CGameContext::ConMinigames(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	char aMinigames[256];
-	char aTemp2[256];
-	aMinigames[0] = 0;
-	aTemp2[0] = 0;
-	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+	else
 	{
-		if (i != MINIGAME_BLOCK)
-			str_format(aTemp2, sizeof(aTemp2), "%s, ", aMinigames);
-		str_format(aMinigames, sizeof(aMinigames), "%s%s", aTemp2, pSelf->GetMinigameName(i));
+		pSelf->SendChatTarget(pResult->m_ClientID, "You have to leave first in order to join another minigame");
+		return;
 	}
 
-	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Minigames ~~~");
-	pSelf->SendChatTarget(pResult->m_ClientID, "You can join any minigame using '/<minigame>'");
-	pSelf->SendChatTarget(pResult->m_ClientID, "To leave a minigame, just type '/leave'");
-	pSelf->SendChatTarget(pResult->m_ClientID, "Here is a list of all minigames:");
-	pSelf->SendChatTarget(pResult->m_ClientID, aMinigames);
+	pPlayer->KillCharacter(WEAPON_GAME);
+	pPlayer->m_Minigame = Minigame;
 }
 
 void CGameContext::ConLeave(IConsole::IResult *pResult, void *pUserData)
@@ -1576,4 +1588,10 @@ void CGameContext::ConBlock(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_BLOCK);
+}
+
+void CGameContext::ConSurvival(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SetMinigame(pResult, pUserData, MINIGAME_SURVIVAL);
 }

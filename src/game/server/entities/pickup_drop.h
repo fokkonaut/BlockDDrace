@@ -6,13 +6,15 @@
 
 // made by fokkonaut
 
-#ifndef GAME_SERVER_ENTITIES_WEAPON_H
-#define GAME_SERVER_ENTITIES_WEAPON_H
+#ifndef GAME_SERVER_ENTITIES_PICKUP_DROP_H
+#define GAME_SERVER_ENTITIES_PICKUP_DROP_H
 
-class CWeapon : public CEntity
+#include <game/server/entity.h>
+
+class CPickupDrop : public CEntity
 {
 public:
-	CWeapon(CGameWorld *pGameWorld, int Weapon, int Lifetime, int Owner, int Direction, int Bullets, bool SpreadWeapon, bool Jetpack);
+	CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, int Direction, int Weapon = WEAPON_GUN, int Lifetime = 300, int Bullets = -1, bool SpreadWeapon = false, bool Jetpack = false);
 
 	virtual void Reset(bool EreaseWeapon = true, bool Picked = false);
 	virtual void Tick();
@@ -34,6 +36,7 @@ private:
 	int m_Owner;
 
 	int m_Type;
+	int m_Weapon;
 	int m_Lifetime;
 	int m_Bullets;
 	int m_PickupDelay;

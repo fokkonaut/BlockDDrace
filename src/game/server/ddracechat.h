@@ -74,4 +74,5 @@ CHAT_COMMAND("weaponindicator", "", CFGFLAG_CHAT, ConWeaponIndicator, this, "Tel
 CHAT_COMMAND("minigames", "", CFGFLAG_CHAT, ConMinigames, this, "Shows a list of all available minigames")
 CHAT_COMMAND("leave", "", CFGFLAG_CHAT, ConLeave, this, "Leaves the current minigame")
 CHAT_COMMAND("block", "", CFGFLAG_CHAT, ConBlock, this, "Joins the block minigame")
+CHAT_COMMAND("survival", "", CFGFLAG_CHAT, ConSurvival, this, "Joins the survival minigame")
 #undef CHAT_COMMAND
