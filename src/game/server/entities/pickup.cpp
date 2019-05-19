@@ -103,10 +103,13 @@ void CPickup::Tick()
 					case POWERUP_ARMOR:
 						if(pChr->Team() == TEAM_SUPER) continue;
 						// BlockDDrace
-						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->IncreaseArmor(1))
+						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
 						{
-							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
-							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+							if (pChr->IncreaseArmor(1))
+							{
+								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
+								RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
+							}
 						}
 						else if (pChr->GetPlayer()->m_SpookyGhost)
 						{
