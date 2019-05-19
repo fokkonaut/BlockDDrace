@@ -986,7 +986,7 @@ void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
 	}
 	if (!pResult->NumArguments() || ShowInfo)
 	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available hook powers:");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "~~~ Hook Powers ~~~");
 		for (int i = 0; i < NUM_EXTRAS; i++)
 		{
 			if (pSelf->IsValidHookPower(i))
@@ -1160,7 +1160,7 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	}
 	else
 	{
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "Available dummymodes:");
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "~~~ Dummymodes ~~~");
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[0] Calm");
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[-6] BlmapV3 1o1");
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", "[23] ChillBlock5 Racer");
