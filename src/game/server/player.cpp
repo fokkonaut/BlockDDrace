@@ -160,7 +160,7 @@ void CPlayer::Reset()
 	m_RealUseCustomColor = 0;
 	m_RealSkinName[0] = '\0';
 
-	m_FixNameID = FIX_SET_NAME_ONLY;
+	m_FixNameID = -1;
 	m_ShowName = true;
 	m_SetRealName = false;
 	m_SetRealNameTick = Now;
