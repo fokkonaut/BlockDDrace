@@ -4189,6 +4189,8 @@ const char *CGameContext::GetExtraName(int Extra, int Special)
 		}
 	case FREEZE_HAMMER:
 		return "Freeze Hammer";
+	case INVISIBLE:
+		return "Invisibility";
 	}
 	return "Unknown";
 }

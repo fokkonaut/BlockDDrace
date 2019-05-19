@@ -369,6 +369,8 @@ void CPlayer::Snap(int SnappingClient)
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
+	// BlockDDrace
+
 	//spooky ghost
 	const char *pClan;
 	if (m_SpookyGhost)
@@ -402,7 +404,16 @@ void CPlayer::Snap(int SnappingClient)
 			GetCharacter()->m_TimesShot = 0;
 	}
 
-	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
+	if (GetCharacter() && GetCharacter()->m_Invisible && SnappingClient != m_ClientID && Server()->GetAuthedState(SnappingClient) >= AUTHED_MOD)
+	{
+		StrToInts(&pClientInfo->m_Clan0, 3, "[INVISIBLE]");
+
+		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
+		pClientInfo->m_UseCustomColor = true;
+		pClientInfo->m_ColorBody = 182;
+		pClientInfo->m_ColorFeet = 182;
+	}
+	else if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = true;

@@ -1312,6 +1312,11 @@ void CCharacter::Snap(int SnappingClient)
 		if((SnapPlayer->GetTeam() == TEAM_SPECTATORS || SnapPlayer->IsPaused()) && SnapPlayer->m_SpectatorID == -1
 			&& !CanCollide(SnappingClient, false) && SnapPlayer->m_SpecTeam)
 			return;
+
+		// BlockDDrace
+		if (m_Invisible && SnappingClient != m_pPlayer->GetCID())
+			if (Server()->GetAuthedState(SnappingClient) < AUTHED_MOD || Server()->Tick() % 200 == 0)
+				return;
 	}
 
 	if (m_Paused)
@@ -2822,6 +2827,7 @@ void CCharacter::DDRaceInit()
 	m_CountSpookyGhostInputs = false;
 	m_TimesShot = 0;
 
+	m_Invisible = false;
 	m_Rainbow = false;
 	m_Atom = false;
 	m_Trail = false;
@@ -3551,4 +3557,10 @@ void CCharacter::FreezeHammer(bool Set, int FromID, bool Silent)
 {
 	m_FreezeHammer = Set;
 	GameServer()->SendExtraMessage(FREEZE_HAMMER, m_pPlayer->GetCID(), Set, FromID, Silent);
+}
+
+void CCharacter::Invisible(bool Set, int FromID, bool Silent)
+{
+	m_Invisible = Set;
+	GameServer()->SendExtraMessage(INVISIBLE, m_pPlayer->GetCID(), Set, FromID, Silent);
 }

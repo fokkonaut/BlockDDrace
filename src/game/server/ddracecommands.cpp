@@ -906,6 +906,15 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 		pChr->Meteor(false, pResult->m_ClientID);
 }
 
+void CGameContext::ConInvisible(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Invisible(!pChr->m_Invisible, pResult->m_ClientID);
+}
+
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

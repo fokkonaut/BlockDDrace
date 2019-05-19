@@ -69,6 +69,7 @@ enum Extra
 	INFINITE_JUMPS,
 	SPREAD_WEAPON,
 	FREEZE_HAMMER,
+	INVISIBLE,
 	NUM_EXTRAS
 };
 
@@ -184,6 +185,7 @@ public:
 	void InfiniteJumps(bool Set = true, int FromID = -1, bool Silent = false);
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
+	void Invisible(bool Set = true, int FromID = -1, bool Silent = false);
 
 	/*************************************************
 	*                                                *
@@ -434,6 +436,7 @@ public:
 	int m_Meteors;
 	bool m_Bloody;
 	bool m_StrongBloody;
+	bool m_Invisible;
 	bool m_ScrollNinja;
 	int m_HookPower;
 	bool m_aSpreadWeapon[NUM_WEAPONS];

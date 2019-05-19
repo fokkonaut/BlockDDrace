@@ -519,6 +519,7 @@ private:
 
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConInvisible(IConsole::IResult *pResult, void *pUserData);
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData);
