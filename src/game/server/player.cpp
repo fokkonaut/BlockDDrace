@@ -754,12 +754,8 @@ void CPlayer::TryRespawn()
 	vec2 SpawnPos;
 	vec2 TileSpawnPos = vec2(-1, -1);
 
-	bool Failed = true;
 	if (m_ForceSpawn != vec2(-1, -1))
-	{
 		SpawnPos = m_ForceSpawn;
-		Failed = false;
-	}
 	else if (m_Dummymode == 99)
 		TileSpawnPos = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
@@ -770,12 +766,10 @@ void CPlayer::TryRespawn()
 	if (TileSpawnPos != vec2(-1, -1))
 	{
 		SpawnPos = TileSpawnPos;
-		Failed = false;
 	}
 
-	if (Failed)
-		if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
-			return;
+	if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
+		return;
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
 
