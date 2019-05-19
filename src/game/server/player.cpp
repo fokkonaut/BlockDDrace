@@ -380,7 +380,7 @@ void CPlayer::Snap(int SnappingClient)
 
 	m_ShowName = true;
 
-	if (m_SpookyGhost)
+	if (m_SpookyGhost || (m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_Minigame == MINIGAME_SURVIVAL))
 		m_ShowName = false;
 
 	if (pSnapping)
