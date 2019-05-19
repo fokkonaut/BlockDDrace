@@ -1241,6 +1241,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 		pPlayer->m_DisplayScore = SCORE_LEVEL;
 	else
 	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Score Format ~~~");
 		pSelf->SendChatTarget(pResult->m_ClientID, "You can choose what the player score will display:");
 		pSelf->SendChatTarget(pResult->m_ClientID, "time, level");
 		Changed = false;
@@ -1257,6 +1258,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 void CGameContext::ConSpookyGhostInfo(IConsole::IResult * pResult, void * pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Spooky Ghost ~~~");
 	pSelf->SendChatTarget(pResult->m_ClientID, "The Spooky Ghost is an extra, that can be toggled like this:");
 	pSelf->SendChatTarget(pResult->m_ClientID, "Hold TAB (or other scoreboard key) and shoot two times with your gun.");
 }
