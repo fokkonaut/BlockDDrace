@@ -3009,6 +3009,9 @@ void CGameContext::OnInit()
 	// BlockDDrace
 	m_vPickupDropLimit.resize(2);
 
+	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+		m_aMinigameDisabled[i] = false;
+
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
 }

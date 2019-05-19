@@ -1538,6 +1538,33 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		return;
 
 	char aMsg[64];
+
+	if (pResult->NumArguments() && pSelf->Server()->GetAuthedState(pResult->m_ClientID) == AUTHED_ADMIN && Minigame != MINIGAME_NONE)
+	{
+		bool Disable;
+		if (!str_comp_nocase(pResult->GetString(0), "enable"))
+			Disable = false;
+		else if (!str_comp_nocase(pResult->GetString(0), "disable"))
+			Disable = true;
+		else
+			return;
+
+		str_format(aMsg, sizeof(aMsg), "Minigame '%s' %s%sd", pSelf->GetMinigameName(Minigame), (pSelf->m_aMinigameDisabled[Minigame] == Disable ? "is already " : ""), pResult->GetString(0));
+		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
+
+		if (!Disable)
+			pSelf->m_aMinigameDisabled[Minigame] = false;
+		if (Disable)
+			pSelf->m_aMinigameDisabled[Minigame] = true;
+		return;
+	}
+
+	if (Minigame != MINIGAME_NONE && pSelf->m_aMinigameDisabled[Minigame])
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "This minigame is disabled");
+		return;
+	}
+
 	if (pPlayer->m_Minigame == Minigame)
 	{
 		if (Minigame == MINIGAME_NONE)

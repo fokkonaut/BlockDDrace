@@ -81,6 +81,14 @@ enum Item
 	NUM_ITEMS
 };
 
+enum Minigames
+{
+	MINIGAME_NONE = 0,
+	MINIGAME_BLOCK,
+	MINIGAME_SURVIVAL,
+	NUM_MINIGAMES
+};
+
 #define ACC_START 1 // account ids start with 1, 0 means not logged in
 
 /*************************************************
@@ -360,6 +368,9 @@ public:
 
 	//pickup drops
 	std::vector< std::vector<CPickupDrop*> > m_vPickupDropLimit;
+
+	//minigames disabled
+	bool m_aMinigameDisabled[NUM_MINIGAMES];
 
 private:
 

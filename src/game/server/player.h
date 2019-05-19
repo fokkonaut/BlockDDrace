@@ -47,14 +47,6 @@ enum Dummymode
 	DUMMYMODE_SHOP_BOT = 99,
 };
 
-enum Minigames
-{
-	MINIGAME_NONE=0,
-	MINIGAME_BLOCK,
-	MINIGAME_SURVIVAL,
-	NUM_MINIGAMES
-};
-
 /*************************************************
 *                                                *
 *              B L O C K D D R A C E             *
