@@ -240,6 +240,12 @@ void ToggleSpecPause(IConsole::IResult *pResult, void *pUserData, int PauseType)
 	if(!pPlayer)
 		return;
 
+	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "You can't join the spectators while you are in survival");
+		return;
+	}
+
 	int PauseState = pPlayer->IsPaused();
 	if(PauseState > 0)
 	{
@@ -278,6 +284,12 @@ void ToggleSpecPauseVoted(IConsole::IResult *pResult, void *pUserData, int Pause
 	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
 	if (!pPlayer)
 		return;
+
+	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "You can't join the spectators while you are in survival");
+		return;
+	}
 
 	int PauseState = pPlayer->IsPaused();
 	if (PauseState > 0)

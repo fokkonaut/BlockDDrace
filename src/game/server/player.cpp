@@ -715,6 +715,12 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	if(m_Team == Team)
 		return;
 
+	if (Team == TEAM_SPECTATORS && m_Minigame == MINIGAME_SURVIVAL)
+	{
+		GameServer()->SendChatTarget(m_ClientID, "You can't join the spectators while you are in survival");
+		return;
+	}
+
 	char aBuf[512];
 	if(DoChatMsg)
 	{
@@ -751,13 +757,18 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 
 void CPlayer::TryRespawn()
 {
-	vec2 SpawnPos;
+	if (m_Team == TEAM_SPECTATORS)
+		return;
 
-	// BlockDDrace
+	vec2 SpawnPos;
 	vec2 TileSpawnPos = vec2(-1, -1);
 
+	bool Failed = true;
 	if (m_ForceSpawn != vec2(-1, -1))
+	{
 		SpawnPos = m_ForceSpawn;
+		Failed = false;
+	}
 	else if (m_Dummymode == 99)
 		TileSpawnPos = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
@@ -768,10 +779,10 @@ void CPlayer::TryRespawn()
 	if (TileSpawnPos != vec2(-1, -1))
 	{
 		SpawnPos = TileSpawnPos;
+		Failed = false;
 	}
-	// BlockDDrace
 
-	if (!GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
+	if (Failed && !GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
 		return;
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
