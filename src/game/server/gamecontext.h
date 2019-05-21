@@ -354,6 +354,7 @@ public:
 		bool m_aHasItem[NUM_ITEMS];
 		int m_PoliceLevel;
 		int m_SurvivalKills;
+		int m_SurvivalWins;
 	};
 	std::vector<AccountInfo> m_Accounts;
 

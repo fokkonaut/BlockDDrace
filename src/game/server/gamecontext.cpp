@@ -3783,6 +3783,7 @@ int CGameContext::AddAccount()
 		m_Accounts[ID].m_aHasItem[i] = false;
 	m_Accounts[ID].m_PoliceLevel = 0;
 	m_Accounts[ID].m_SurvivalKills = 0;
+	m_Accounts[ID].m_SurvivalWins = 0;
 
 	return ID;
 }
@@ -3856,6 +3857,10 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_SurvivalKills = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_SurvivalWins = atoi(aData);
 }
 
 void CGameContext::WriteAccountStats(int ID)
@@ -3883,6 +3888,7 @@ void CGameContext::WriteAccountStats(int ID)
 			AccFile << m_Accounts[ID].m_aHasItem[i] << "\n";
 		AccFile << m_Accounts[ID].m_PoliceLevel << "\n";
 		AccFile << m_Accounts[ID].m_SurvivalKills << "\n";
+		AccFile << m_Accounts[ID].m_SurvivalWins << "\n";
 
 		dbg_msg("acc", "saved acc '%s'", m_Accounts[ID].m_Username);
 	}
