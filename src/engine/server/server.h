@@ -313,6 +313,11 @@ public:
 	void InitRegister(CNetServer *pNetServer, IEngineMasterServer *pMasterServer, IConsole *pConsole);
 	int Run();
 
+	// BlockDDrace
+	static void ConMaxWeaponDrops(IConsole::IResult *pResult, void *pUser);
+	static void ConMaxPickupDrops(IConsole::IResult *pResult, void *pUser);
+	// BlockDDrace
+
 	static void ConTestingCommands(IConsole::IResult *pResult, void *pUser);
 	static void ConRescue(IConsole::IResult *pResult, void *pUser);
 	static void ConKick(IConsole::IResult *pResult, void *pUser);

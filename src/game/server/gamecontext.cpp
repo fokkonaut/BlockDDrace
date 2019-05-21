@@ -3018,6 +3018,7 @@ void CGameContext::OnInit()
 	m_SurvivalGameState = SURVIVAL_OFFLINE;
 	m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
 	m_SurvivalTick = 0;
+	m_SurvivalBackgroundTick = 0;
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
@@ -4301,7 +4302,7 @@ void CGameContext::SurvivalTick()
 		// if there is only one survival player left, before the time is over, we have a winner
 		m_SurvivalWinner = GetRandomSurvivalPlayer(m_SurvivalGameState);
 		str_format(aBuf, sizeof(aBuf), "The winner is '%s'", Server()->ClientName(m_SurvivalWinner));
-		SendSurvivalBroadcast(aBuf, true);
+		SendSurvivalBroadcast(aBuf);
 
 		// send message to winner
 		SendChatTarget(m_SurvivalWinner, "You are the winner");
@@ -4331,7 +4332,7 @@ void CGameContext::SurvivalTick()
 			else
 			{
 				m_SurvivalBackgroundState = BACKGROUND_LOBBY_COUNTDOWN;
-				m_SurvivalTick = Server()->TickSpeed() *2;//* (30 + 1);
+				m_SurvivalTick = Server()->TickSpeed() * (30 + 1);
 			}
 			break;
 		}
@@ -4358,7 +4359,7 @@ void CGameContext::SurvivalTick()
 			{
 				// if the deathmatch is over, reset the survival game, sending players back to lobby
 				if (CountSurvivalPlayers(SURVIVAL_DEATHMATCH) > 1)
-					SendSurvivalBroadcast("There is no winner this round!", true);
+					SendSurvivalBroadcast("There is no winner this round!");
 				m_SurvivalGameState = SURVIVAL_OFFLINE;
 				m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
 				SetPlayerSurvivalState(SURVIVAL_LOBBY);
@@ -4372,7 +4373,7 @@ void CGameContext::SurvivalTick()
 					if (Remaining % 30 == 0 || Remaining <= 10)
 					{
 						str_format(aBuf, sizeof(aBuf), "Deathmatch will end in %d seconds", Remaining);
-						SendSurvivalBroadcast(aBuf, true);
+						SendSurvivalBroadcast(aBuf);
 					}
 				}
 			}
@@ -4400,7 +4401,10 @@ void CGameContext::SurvivalTick()
 			{
 				// timer is over, the round starts
 				str_format(aBuf, sizeof(aBuf), "Round started, you have %d minutes to kill each other", g_Config.m_SvSurvivalRoundTime);
-				SendSurvivalBroadcast(aBuf, true);
+				SendSurvivalBroadcast(aBuf);
+
+				// set a new tick, this time for the round to end after its up
+				m_SurvivalTick = Server()->TickSpeed() * 60 * g_Config.m_SvSurvivalRoundTime;
 
 				// set the foreground state
 				m_SurvivalGameState = SURVIVAL_PLAYING;
@@ -4410,9 +4414,6 @@ void CGameContext::SurvivalTick()
 
 				// change background state
 				m_SurvivalBackgroundState = SURVIVAL_PLAYING;
-
-				// set a new tick, this time for the round to end after its up
-				m_SurvivalTick = Server()->TickSpeed() * 60 * g_Config.m_SvSurvivalRoundTime;
 			}
 			else if (CountSurvivalPlayers(SURVIVAL_LOBBY) >= g_Config.m_SvSurvivalMinPlayers)
 			{
@@ -4420,13 +4421,13 @@ void CGameContext::SurvivalTick()
 				if (Server()->Tick() % 50 == 0)
 				{
 					str_format(aBuf, sizeof(aBuf), "Round will start in %d seconds", m_SurvivalTick / Server()->TickSpeed());
-					SendSurvivalBroadcast(aBuf);
+					SendSurvivalBroadcast(aBuf, false);
 				}
 			}
 			// if someone left the lobby, the countdown stops and we return to the lobby state (waiting for players again)
 			else
 			{
-				SendSurvivalBroadcast("Start failed, too few players", true);
+				SendSurvivalBroadcast("Start failed, too few players");
 				m_SurvivalGameState = SURVIVAL_LOBBY;
 			}
 			break;
@@ -4437,7 +4438,7 @@ void CGameContext::SurvivalTick()
 			if (!m_SurvivalTick)
 			{
 				// deathmatch countdown is over, we will start the deathmatch now
-				SendSurvivalBroadcast("Deathmatch started, you have 2 minutes to kill the last survivors", true);
+				SendSurvivalBroadcast("Deathmatch started, you have 2 minutes to kill the last survivors");
 
 				//sending to deathmatch arena
 				m_SurvivalGameState = SURVIVAL_DEATHMATCH;
@@ -4452,8 +4453,12 @@ void CGameContext::SurvivalTick()
 				// printing broadcast until deathmatch starts
 				if (Server()->Tick() % 50 == 0)
 				{
-					str_format(aBuf, sizeof(aBuf), "Deathmatch will start in %d seconds", m_SurvivalTick / Server()->TickSpeed());
-					SendSurvivalBroadcast(aBuf);
+					int Remaining = m_SurvivalTick / Server()->TickSpeed();
+					if (Remaining % 60 == 0 || Remaining == 30 || Remaining <= 10)
+					{
+						str_format(aBuf, sizeof(aBuf), "Deathmatch will start in %d %s%s", Remaining > 30 ? Remaining / 60 : Remaining, (Remaining % 60 == 0 && Remaining != 0) ? "minute" : "second", (Remaining == 1 || Remaining == 60) ? "" : "s");
+						SendSurvivalBroadcast(aBuf);
+					}
 				}
 			}
 			break;

@@ -2154,6 +2154,22 @@ void CServer::ConKick(IConsole::IResult *pResult, void *pUser)
 		((CServer *)pUser)->Kick(pResult->GetInteger(0), "Kicked by console");
 }
 
+// BlockDDrace
+void CServer::ConMaxWeaponDrops(CConsole::IResult *pResult, void *pUser)
+{
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "Value: %d", g_Config.m_SvMaxWeaponDrops);
+	((CConsole*)pUser)->Print(CConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+}
+
+void CServer::ConMaxPickupDrops(CConsole::IResult *pResult, void *pUser)
+{
+	char aBuf[128];
+	str_format(aBuf, sizeof(aBuf), "Value: %d", g_Config.m_SvMaxPickupDrops);
+	((CConsole*)pUser)->Print(CConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+}
+// BlockDDrace
+
 void CServer::StatusImpl(IConsole::IResult *pResult, void *pUser, bool DnsblBlacklistedOnly)
 {
 	char aBuf[1024];
@@ -3014,6 +3030,11 @@ int main(int argc, const char **argv) // ignore_convention
 
 	pConsole->Register("sv_test_cmds", "", CFGFLAG_SERVER, CServer::ConTestingCommands, pConsole, "Turns testing commands aka cheats on/off");
 	pConsole->Register("sv_rescue", "", CFGFLAG_SERVER, CServer::ConRescue, pConsole, "Allow /rescue command so players can teleport themselves out of freeze");
+
+	// BlockDDrace
+	pConsole->Register("sv_max_weapon_drops", "", CFGFLAG_SERVER, CServer::ConMaxWeaponDrops, pConsole, "Maximum amount of dropped weapons per player");
+	pConsole->Register("sv_max_pickup_drops", "", CFGFLAG_SERVER, CServer::ConMaxPickupDrops, pConsole, "Maximum amount of dropped hearts and shields");
+	// BlockDDrace
 
 	pEngine->InitLogfile();
 

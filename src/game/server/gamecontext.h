@@ -388,13 +388,14 @@ public:
 	//survival
 	virtual void SurvivalTick();
 	void SetPlayerSurvivalState(int State);
-	void SendSurvivalBroadcast(const char *pMsg, bool IsImportant = false);
+	void SendSurvivalBroadcast(const char *pMsg, bool IsImportant = true);
 	void SendSurvivalChat(const char *pMsg);
 	int CountSurvivalPlayers(int State);
 	int GetRandomSurvivalPlayer(int State, int NotThis = -1);
 	int m_SurvivalBackgroundState;
 	int m_SurvivalGameState;
 	int64 m_SurvivalTick;
+	int64 m_SurvivalBackgroundTick;
 	int m_SurvivalWinner;
 
 private:

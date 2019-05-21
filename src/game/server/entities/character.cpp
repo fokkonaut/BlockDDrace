@@ -3177,10 +3177,10 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 
 void CCharacter::DropWeapon(int WeaponID, int Dir)
 {
-	if (IsFrozen || m_FreezeTime || !g_Config.m_SvAllowDroppingWeapons || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
+	if (IsFrozen || m_FreezeTime || !g_Config.m_SvDropWeapons || g_Config.m_SvMaxWeaponDrops == 0 || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
 		return;
 
-	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == 5)
+	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == g_Config.m_SvMaxWeaponDrops)
 	{
 		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset(false);
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
@@ -3215,9 +3215,12 @@ void CCharacter::DropWeapon(int WeaponID, int Dir)
 
 void CCharacter::DropPickup(int Type, int Amount)
 {
+	if (g_Config.m_SvMaxPickupDrops == 0)
+		return;
+
 	for (int i = 0; i < Amount; i++)
 	{
-		if (GameServer()->m_vPickupDropLimit.size() == 500)
+		if (GameServer()->m_vPickupDropLimit.size() == g_Config.m_SvMaxPickupDrops)
 		{
 			GameServer()->m_vPickupDropLimit[0]->Reset();
 			GameServer()->m_vPickupDropLimit.erase(GameServer()->m_vPickupDropLimit.begin());
@@ -3235,14 +3238,14 @@ void CCharacter::DropLoot()
 	if (m_pPlayer->m_Minigame == MINIGAME_SURVIVAL)
 	{
 		if (m_pPlayer->m_SurvivalState <= SURVIVAL_LOBBY)
-		{
-			DropPickup(POWERUP_HEALTH, rand() % 6);
-			DropPickup(POWERUP_ARMOR, rand() % 6);
-			DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
-			DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
-			DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
-			DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
-		}
+			return;
+
+		DropPickup(POWERUP_HEALTH, rand() % 6);
+		DropPickup(POWERUP_ARMOR, rand() % 6);
+		DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
+		DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
+		DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
+		DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
 	}
 	else
 	{
