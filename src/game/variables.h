@@ -90,7 +90,7 @@ MACRO_CONFIG_INT(SvRescueDelay, sv_rescue_delay, 5, 0, 1000, CFGFLAG_SERVER, "Nu
 	MACRO_CONFIG_INT(SvVanillaWeapons, sv_vanilla_weapons, 0, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether shotgun and gun are like vanilla in vanillamode or not")
 
 	//survival
-	MACRO_CONFIG_INT(SvSurvivalMinPlayers, sv_survival_min_players, 4, 2, MAX_CLIENTS, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether there is a chance of dropping weapons on death (health and armor in survival)")
+	MACRO_CONFIG_INT(SvSurvivalMinPlayers, sv_survival_min_players, 4, 2, MAX_CLIENTS, CFGFLAG_SERVER|CFGFLAG_GAME, "Minimum players to start a round")
 	MACRO_CONFIG_INT(SvSurvivalRoundTime, sv_survival_round_time, 10, 1, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Time in minutes until deathmatch starts")
 
 	// other

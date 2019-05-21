@@ -209,8 +209,6 @@ bool CGameTeams::SetCharacterTeam(int ClientID, int Team)
 	//if you begin race
 	if (Character(ClientID)->m_DDRaceState != DDRACE_NONE && Team != TEAM_SUPER)
 		return false;
-	if (Character(ClientID)->GetPlayer()->m_Minigame == MINIGAME_SURVIVAL)
-		return false;
 
 	SetForceCharacterTeam(ClientID, Team);
 
