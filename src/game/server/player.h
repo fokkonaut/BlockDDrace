@@ -301,7 +301,6 @@ public:
 	int GetAccID();
 	void CheckLevel();
 	void MoneyTransaction(int Amount, const char *Description);
-	char m_aLastMoneyTransaction[10][256];
 
 	//score
 	int m_DisplayScore;

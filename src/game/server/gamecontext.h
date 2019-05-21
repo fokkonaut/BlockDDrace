@@ -355,6 +355,7 @@ public:
 		int m_SurvivalKills;
 		int m_SurvivalWins;
 		bool m_aHasItem[NUM_ITEMS];
+		char m_aLastMoneyTransaction[5][256];
 	};
 	std::vector<AccountInfo> m_Accounts;
 

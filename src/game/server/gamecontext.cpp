@@ -3784,6 +3784,8 @@ int CGameContext::AddAccount()
 	m_Accounts[ID].m_SurvivalWins = 0;
 	for (int i = 0; i < NUM_ITEMS; i++)
 		m_Accounts[ID].m_aHasItem[i] = false;
+	for (int i = 0; i < 5; i++)
+		m_Accounts[ID].m_aLastMoneyTransaction[i][0] = 0;
 
 	return ID;
 }
@@ -3862,6 +3864,21 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_aHasItem[POLICE] = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_aLastMoneyTransaction[0], aData, sizeof(m_Accounts[ID].m_aLastMoneyTransaction[0]));
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_aLastMoneyTransaction[1], aData, sizeof(m_Accounts[ID].m_aLastMoneyTransaction[1]));
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_aLastMoneyTransaction[2], aData, sizeof(m_Accounts[ID].m_aLastMoneyTransaction[2]));
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_aLastMoneyTransaction[3], aData, sizeof(m_Accounts[ID].m_aLastMoneyTransaction[3]));
+
+	getline(AccFile, data);
+	str_copy(m_Accounts[ID].m_aLastMoneyTransaction[4], aData, sizeof(m_Accounts[ID].m_aLastMoneyTransaction[4]));
 }
 
 void CGameContext::WriteAccountStats(int ID)
@@ -3890,6 +3907,11 @@ void CGameContext::WriteAccountStats(int ID)
 		AccFile << m_Accounts[ID].m_SurvivalWins << "\n";
 		AccFile << m_Accounts[ID].m_aHasItem[SPOOKY_GHOST] << "\n";
 		AccFile << m_Accounts[ID].m_aHasItem[POLICE] << "\n";
+		AccFile << m_Accounts[ID].m_aLastMoneyTransaction[0] << "\n";
+		AccFile << m_Accounts[ID].m_aLastMoneyTransaction[1] << "\n";
+		AccFile << m_Accounts[ID].m_aLastMoneyTransaction[2] << "\n";
+		AccFile << m_Accounts[ID].m_aLastMoneyTransaction[3] << "\n";
+		AccFile << m_Accounts[ID].m_aLastMoneyTransaction[4] << "\n";
 
 		dbg_msg("acc", "saved acc '%s'", m_Accounts[ID].m_Username);
 	}

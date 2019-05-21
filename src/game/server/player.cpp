@@ -1093,18 +1093,15 @@ void CPlayer::MoneyTransaction(int Amount, const char *Description)
 	if (GetAccID() <= 0)
 		return;
 
-	GameServer()->m_Accounts[GetAccID()].m_Money += Amount;
+	CGameContext::AccountInfo Account = GameServer()->m_Accounts[GetAccID()];
 
-	str_format(m_aLastMoneyTransaction[9], sizeof(m_aLastMoneyTransaction[9]), "%s", m_aLastMoneyTransaction[8]);
-	str_format(m_aLastMoneyTransaction[8], sizeof(m_aLastMoneyTransaction[8]), "%s", m_aLastMoneyTransaction[7]);
-	str_format(m_aLastMoneyTransaction[7], sizeof(m_aLastMoneyTransaction[7]), "%s", m_aLastMoneyTransaction[6]);
-	str_format(m_aLastMoneyTransaction[6], sizeof(m_aLastMoneyTransaction[6]), "%s", m_aLastMoneyTransaction[5]);
-	str_format(m_aLastMoneyTransaction[5], sizeof(m_aLastMoneyTransaction[5]), "%s", m_aLastMoneyTransaction[4]);
-	str_format(m_aLastMoneyTransaction[4], sizeof(m_aLastMoneyTransaction[4]), "%s", m_aLastMoneyTransaction[3]);
-	str_format(m_aLastMoneyTransaction[3], sizeof(m_aLastMoneyTransaction[3]), "%s", m_aLastMoneyTransaction[2]);
-	str_format(m_aLastMoneyTransaction[2], sizeof(m_aLastMoneyTransaction[2]), "%s", m_aLastMoneyTransaction[1]);
-	str_format(m_aLastMoneyTransaction[1], sizeof(m_aLastMoneyTransaction[1]), "%s", m_aLastMoneyTransaction[0]);
-	str_format(m_aLastMoneyTransaction[0], sizeof(m_aLastMoneyTransaction[0]), "%s", Description);
+	Account.m_Money += Amount;
+
+	str_format(Account.m_aLastMoneyTransaction[4], sizeof(Account.m_aLastMoneyTransaction[4]), "%s", Account.m_aLastMoneyTransaction[3]);
+	str_format(Account.m_aLastMoneyTransaction[3], sizeof(Account.m_aLastMoneyTransaction[3]), "%s", Account.m_aLastMoneyTransaction[2]);
+	str_format(Account.m_aLastMoneyTransaction[2], sizeof(Account.m_aLastMoneyTransaction[2]), "%s", Account.m_aLastMoneyTransaction[1]);
+	str_format(Account.m_aLastMoneyTransaction[1], sizeof(Account.m_aLastMoneyTransaction[1]), "%s", Account.m_aLastMoneyTransaction[0]);
+	str_format(Account.m_aLastMoneyTransaction[0], sizeof(Account.m_aLastMoneyTransaction[0]), "%s", Description);
 }
 
 bool CPlayer::IsHooked(int Power)
