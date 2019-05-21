@@ -79,5 +79,9 @@ MACRO_CONFIG_INT(SvRescueDelay, sv_rescue_delay, 5, 0, 1000, CFGFLAG_SERVER, "Nu
 	MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, 374, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 bot")
 	MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, 59, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 bot")
 
-	MACRO_CONFIG_INT(SvDropsOnDeath, sv_drops_on_death, 0, 0, 1, CFGFLAG_SERVER, "Whether there is a chance of dropping weapons on death (health and armor in survival)")
+	MACRO_CONFIG_INT(SvDropsOnDeath, sv_drops_on_death, 0, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether there is a chance of dropping weapons on death (health and armor in survival)")
+
+	//survival
+	MACRO_CONFIG_INT(SvSurvivalMinPlayers, sv_survival_min_players, 4, 2, MAX_CLIENTS, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether there is a chance of dropping weapons on death (health and armor in survival)")
+	MACRO_CONFIG_INT(SvSurvivalRoundTime, sv_survival_round_time, 10, 1, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Time in minutes until deathmatch starts")
 #endif

@@ -933,9 +933,13 @@ void CGameContext::OnTick()
 			}
 		}
 
+	// BlockDDrace
+
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 			WriteAccountStats(i);
+
+	SurvivalTick();
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -3011,6 +3015,9 @@ void CGameContext::OnInit()
 
 	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
 		m_aMinigameDisabled[i] = false;
+	m_SurvivalGameState = SURVIVAL_OFFLINE;
+	m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+	m_SurvivalTick = 0;
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
@@ -3781,6 +3788,7 @@ int CGameContext::AddAccount()
 	for (int i = 0; i < NUM_ITEMS; i++)
 		m_Accounts[ID].m_aHasItem[i] = false;
 	m_Accounts[ID].m_PoliceLevel = 0;
+	m_Accounts[ID].m_SurvivalKills = 0;
 
 	return ID;
 }
@@ -3850,6 +3858,10 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_PoliceLevel = atoi(aData);
+
+	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
+	m_Accounts[ID].m_SurvivalKills = atoi(aData);
 }
 
 void CGameContext::WriteAccountStats(int ID)
@@ -3876,6 +3888,7 @@ void CGameContext::WriteAccountStats(int ID)
 		for (int i = 0; i < NUM_ITEMS; i++)
 			AccFile << m_Accounts[ID].m_aHasItem[i] << "\n";
 		AccFile << m_Accounts[ID].m_PoliceLevel << "\n";
+		AccFile << m_Accounts[ID].m_SurvivalKills << "\n";
 
 		dbg_msg("acc", "saved acc '%s'", m_Accounts[ID].m_Username);
 	}
@@ -3992,6 +4005,11 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 	Server()->BotJoin(DummyID);
 	m_apPlayers[DummyID]->m_IsDummy = true;
 	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
+
+	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER)
+		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;
+	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_BOT)
+		m_apPlayers[DummyID]->m_Minigame = -1;
 
 	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
 	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
@@ -4240,4 +4258,256 @@ const char *CGameContext::GetMinigameName(int Minigame)
 		return "Survival";
 	}
 	return "Unknown";
+}
+
+void CGameContext::SurvivalTick()
+{
+	// if there are no spawn tiles, we cant play the game
+	if (!m_aMinigameDisabled[MINIGAME_SURVIVAL] && Collision()->GetRandomTile(TILE_SURVIVAL_LOBBY) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_DEATHMATCH) == vec2(-1, -1))
+	{
+		m_aMinigameDisabled[MINIGAME_SURVIVAL] = true;
+		return;
+	}
+
+	// set the state to offline if there are no players in the lobby or playing
+	if (!CountSurvivalPlayers(-1))
+	{
+		m_SurvivalGameState = SURVIVAL_OFFLINE;
+		m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+		return;
+	}
+	// set the mode to lobby, if the game is offline and there are now players
+	else if (m_SurvivalGameState == SURVIVAL_OFFLINE)
+		m_SurvivalGameState = SURVIVAL_LOBBY;
+
+	// check if we dont have any players
+	if (!CountSurvivalPlayers(m_SurvivalGameState))
+	{
+		m_SurvivalGameState = SURVIVAL_OFFLINE;
+		m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+		return;
+	}
+
+	// decrease the tick at any time if it exists (its a timer)
+	if (m_SurvivalTick)
+		m_SurvivalTick--;
+
+	// main part
+	char aBuf[128];
+
+
+	if (m_SurvivalGameState > SURVIVAL_LOBBY && CountSurvivalPlayers(m_SurvivalGameState) == 1)
+	{
+		// if there is only one survival player left, before the time is over, we have a winner
+		m_SurvivalWinner = GetRandomSurvivalPlayer(m_SurvivalGameState);
+		str_format(aBuf, sizeof(aBuf), "The winner is '%s'", Server()->ClientName(m_SurvivalWinner));
+		SendSurvivalBroadcast(aBuf, true);
+
+		// send message to winner
+		SendChatTarget(m_SurvivalWinner, "You are the winner");
+
+		// sending back to lobby
+		m_SurvivalGameState = SURVIVAL_LOBBY;
+		m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+		SetPlayerSurvivalState(SURVIVAL_LOBBY);
+	}
+
+
+	// checking for foreground states
+	switch (m_SurvivalGameState)
+	{
+		case SURVIVAL_LOBBY:
+		{
+			// check whether we have something running in the background
+			if (m_SurvivalBackgroundState != SURVIVAL_OFFLINE)
+				break;
+
+			// count the lobby players, if they are smaller than the minimum amount, set the waiting mode in the background
+			if (CountSurvivalPlayers(SURVIVAL_LOBBY) < g_Config.m_SvSurvivalMinPlayers)
+			{
+				m_SurvivalBackgroundState = BACKGROUND_LOBBY_WAITING;
+			}
+			// if we are more than the minimum players waiting, the countdown will start in the background (30 seconds until the game starts)
+			else
+			{
+				m_SurvivalBackgroundState = BACKGROUND_LOBBY_COUNTDOWN;
+				m_SurvivalTick = Server()->TickSpeed() *2;//* (30 + 1);
+			}
+			break;
+		}
+
+		case SURVIVAL_PLAYING:
+		{
+			if (!m_SurvivalTick)
+			{
+				if (m_SurvivalBackgroundState != BACKGROUND_DEATHMATCH_COUNTDOWN)
+				{
+					// round is over, starting an extra deathmatch countdown
+					m_SurvivalBackgroundState = BACKGROUND_DEATHMATCH_COUNTDOWN;
+
+					// this timer will be there for one minute
+					m_SurvivalTick = Server()->TickSpeed() * 60;
+				}
+			}
+			break;
+		}
+
+		case SURVIVAL_DEATHMATCH:
+		{
+			if (!m_SurvivalTick)
+			{
+				// if the deathmatch is over, reset the survival game, sending players back to lobby
+				if (CountSurvivalPlayers(SURVIVAL_DEATHMATCH) > 1)
+					SendSurvivalBroadcast("There is no winner this round!", true);
+				m_SurvivalGameState = SURVIVAL_OFFLINE;
+				m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+				SetPlayerSurvivalState(SURVIVAL_LOBBY);
+			}
+			else
+			{
+				// before its over, send some broadcasts until its finally over
+				if (Server()->Tick() % 50 == 0)
+				{
+					int Remaining = m_SurvivalTick / Server()->TickSpeed();
+					if (Remaining % 30 == 0 || Remaining <= 10)
+					{
+						str_format(aBuf, sizeof(aBuf), "Deathmatch will end in %d seconds", Remaining);
+						SendSurvivalBroadcast(aBuf, true);
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	// checking for background states
+	switch (m_SurvivalBackgroundState)
+	{
+		case BACKGROUND_LOBBY_WAITING:
+		{
+			// send the waiting for players broadcast to all survival players
+			if (Server()->Tick() % 50 == 0)
+			{
+				str_format(aBuf, sizeof(aBuf), "[%d/%d] players to start a round", CountSurvivalPlayers(SURVIVAL_LOBBY), g_Config.m_SvSurvivalMinPlayers);
+				SendSurvivalBroadcast(aBuf);
+			}
+			break;
+		}
+
+		case BACKGROUND_LOBBY_COUNTDOWN:
+		{
+			if (!m_SurvivalTick)
+			{
+				// timer is over, the round starts
+				str_format(aBuf, sizeof(aBuf), "Round started, you have %d minutes to kill each other", g_Config.m_SvSurvivalRoundTime);
+				SendSurvivalBroadcast(aBuf, true);
+
+				// set the foreground state
+				m_SurvivalGameState = SURVIVAL_PLAYING;
+
+				// set the player's survival state
+				SetPlayerSurvivalState(SURVIVAL_PLAYING);
+
+				// change background state
+				m_SurvivalBackgroundState = SURVIVAL_PLAYING;
+
+				// set a new tick, this time for the round to end after its up
+				m_SurvivalTick = Server()->TickSpeed() * 60 * g_Config.m_SvSurvivalRoundTime;
+			}
+			else if (CountSurvivalPlayers(SURVIVAL_LOBBY) >= g_Config.m_SvSurvivalMinPlayers)
+			{
+				// if we are more than the minimum players, the countdown will start
+				if (Server()->Tick() % 50 == 0)
+				{
+					str_format(aBuf, sizeof(aBuf), "Round will start in %d seconds", m_SurvivalTick / Server()->TickSpeed());
+					SendSurvivalBroadcast(aBuf);
+				}
+			}
+			// if someone left the lobby, the countdown stops and we return to the lobby state (waiting for players again)
+			else
+			{
+				SendSurvivalBroadcast("Start failed, too few players", true);
+				m_SurvivalGameState = SURVIVAL_LOBBY;
+			}
+			break;
+		}
+
+		case BACKGROUND_DEATHMATCH_COUNTDOWN:
+		{
+			if (!m_SurvivalTick)
+			{
+				// deathmatch countdown is over, we will start the deathmatch now
+				SendSurvivalBroadcast("Deathmatch started, you have 2 minutes to kill the last survivors", true);
+
+				//sending to deathmatch arena
+				m_SurvivalGameState = SURVIVAL_DEATHMATCH;
+				SetPlayerSurvivalState(SURVIVAL_DEATHMATCH);
+				m_SurvivalBackgroundState = SURVIVAL_DEATHMATCH;
+
+				// deathmatch will be 2 minutes
+				m_SurvivalTick = Server()->TickSpeed() * 60 * 2;
+			}
+			else
+			{
+				// printing broadcast until deathmatch starts
+				if (Server()->Tick() % 50 == 0)
+				{
+					str_format(aBuf, sizeof(aBuf), "Deathmatch will start in %d seconds", m_SurvivalTick / Server()->TickSpeed());
+					SendSurvivalBroadcast(aBuf);
+				}
+			}
+			break;
+		}
+	}
+}
+
+int CGameContext::CountSurvivalPlayers(int State)
+{
+	int count = 0;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL && (m_apPlayers[i]->m_SurvivalState == State || State == -1))
+			count++;
+	return count;
+}
+
+void CGameContext::SetPlayerSurvivalState(int State)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
+		{
+			// unset spectator mode and pause
+			m_apPlayers[i]->SetPlaying();
+			// kill the character
+			m_apPlayers[i]->KillCharacter(WEAPON_GAME);
+			// set its new survival state
+			m_apPlayers[i]->m_SurvivalState = State;
+		}
+}
+
+int CGameContext::GetRandomSurvivalPlayer(int State, int NotThis)
+{
+	std::vector<int> SurvivalPlayers;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (i != NotThis && m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL && (m_apPlayers[i]->m_SurvivalState == State || State == -1))
+			SurvivalPlayers.push_back(i);
+	if (SurvivalPlayers.size())
+	{
+		int Rand = rand() % SurvivalPlayers.size();
+		return SurvivalPlayers[Rand];
+	}
+	return -1;
+}
+
+void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool IsImportant)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
+			SendBroadcast(pMsg, i, IsImportant);
+}
+
+void CGameContext::SendSurvivalChat(const char *pMsg)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
+			SendChatTarget(i, pMsg);
 }

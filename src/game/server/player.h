@@ -311,9 +311,12 @@ public:
 
 	//others
 	bool IsHooked(int Power = -1);
+	bool IsSpectator();
+	void SetPlaying();
 
 	//minigames
 	int m_Minigame;
+	int m_SurvivalState;
 };
 
 #endif

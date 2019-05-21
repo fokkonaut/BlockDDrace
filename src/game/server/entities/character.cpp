@@ -1098,7 +1098,12 @@ void CCharacter::Die(int Killer, int Weapon)
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
 		if (GameServer()->m_apPlayers[Killer])
-			GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_Kills++;
+		{
+			if (GameServer()->m_apPlayers[Killer]->m_Minigame == MINIGAME_SURVIVAL)
+				GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_SurvivalKills++;
+			else
+				GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_Kills++;
+		}
 		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 		Suicide = false;
 	}
@@ -1140,11 +1145,41 @@ void CCharacter::Die(int Killer, int Weapon)
 		Msg.m_Victim = m_pPlayer->GetCID();
 		Msg.m_Weapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 		Msg.m_ModeSpecial = ModeSpecial;
-		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+		// BlockDDrace
+		for (int i = 0; i < MAX_CLIENTS; i++)
+			if (GameServer()->m_apPlayers[i] && m_pPlayer->m_Minigame == GameServer()->m_apPlayers[i]->m_Minigame)
+				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
 	}
 
 	// BlockDDrace
 	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
+
+
+	// character doesnt exist, print some messages and set states
+	// if the player is in deathmatch mode, or simply playing
+	if (GameServer()->m_SurvivalGameState > SURVIVAL_LOBBY && m_pPlayer->m_SurvivalState > SURVIVAL_LOBBY)
+	{
+		// check for players in the current game state
+		int SurvivalPlayers = GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState);
+		if (SurvivalPlayers > 1)
+		{
+			// if there are more than one player, you loose if you die, also sending you back to lobby
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You lost, you can wait for another round or leave the lobby using '/leave'");
+			m_pPlayer->m_SurvivalState = SURVIVAL_LOBBY;
+		}
+		if (SurvivalPlayers > 2)
+		{
+			// if there are more than just two players left, you will watch your killer or a random player
+			m_pPlayer->m_SpectatorID = GameServer()->GetPlayerChar(Killer) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
+			m_pPlayer->Pause(CPlayer::PAUSE_PAUSED, true);
+
+			// printing a message that you died and informing about remaining players
+			char aKillMsg[128];
+			str_format(aKillMsg, sizeof(aKillMsg), "'%s' died\nAlive players: %d", Server()->ClientName(m_pPlayer->GetCID()), GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState));
+			GameServer()->SendSurvivalBroadcast(aKillMsg, true);
+		}
+	}
+
 
 	// a nice sound
 	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -3182,13 +3217,13 @@ void CCharacter::DropPickup(int Type, int Amount)
 {
 	for (int i = 0; i < Amount; i++)
 	{
-		if (GameServer()->m_vPickupDropLimit[POWERUP_HEALTH].size() + GameServer()->m_vPickupDropLimit[POWERUP_ARMOR].size() == 500)
+		if (GameServer()->m_vPickupDropLimit.size() == 500)
 		{
-			GameServer()->m_vPickupDropLimit[Type][0]->Reset();
-			GameServer()->m_vPickupDropLimit[Type].erase(GameServer()->m_vPickupDropLimit[Type].begin());
+			GameServer()->m_vPickupDropLimit[0]->Reset();
+			GameServer()->m_vPickupDropLimit.erase(GameServer()->m_vPickupDropLimit.begin());
 		}
 		CPickupDrop *Pickup = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), (rand() % 4) - 2);
-		GameServer()->m_vPickupDropLimit[Type].push_back(Pickup);
+		GameServer()->m_vPickupDropLimit.push_back(Pickup);
 	}
 }
 
@@ -3199,12 +3234,15 @@ void CCharacter::DropLoot()
 
 	if (m_pPlayer->m_Minigame == MINIGAME_SURVIVAL)
 	{
-		DropPickup(POWERUP_HEALTH, rand() % 6);
-		DropPickup(POWERUP_ARMOR, rand() % 6);
-		DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
-		DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
-		DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
-		DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
+		if (m_pPlayer->m_SurvivalState <= SURVIVAL_LOBBY)
+		{
+			DropPickup(POWERUP_HEALTH, rand() % 6);
+			DropPickup(POWERUP_ARMOR, rand() % 6);
+			DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
+			DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
+			DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
+			DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
+		}
 	}
 	else
 	{

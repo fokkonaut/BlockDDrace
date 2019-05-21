@@ -89,6 +89,18 @@ enum Minigames
 	NUM_MINIGAMES
 };
 
+enum Survival
+{
+	SURVIVAL_OFFLINE = 0,
+	SURVIVAL_LOBBY,
+	SURVIVAL_PLAYING,
+	SURVIVAL_DEATHMATCH,
+
+	BACKGROUND_LOBBY_WAITING = 0,
+	BACKGROUND_LOBBY_COUNTDOWN,
+	BACKGROUND_DEATHMATCH_COUNTDOWN,
+};
+
 #define ACC_START 1 // account ids start with 1, 0 means not logged in
 
 /*************************************************
@@ -341,6 +353,7 @@ public:
 		int m_Deaths;
 		bool m_aHasItem[NUM_ITEMS];
 		int m_PoliceLevel;
+		int m_SurvivalKills;
 	};
 	std::vector<AccountInfo> m_Accounts;
 
@@ -367,10 +380,22 @@ public:
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
 
 	//pickup drops
-	std::vector< std::vector<CPickupDrop*> > m_vPickupDropLimit;
+	std::vector<CPickupDrop*> m_vPickupDropLimit;
 
 	//minigames disabled
 	bool m_aMinigameDisabled[NUM_MINIGAMES];
+
+	//survival
+	virtual void SurvivalTick();
+	void SetPlayerSurvivalState(int State);
+	void SendSurvivalBroadcast(const char *pMsg, bool IsImportant = false);
+	void SendSurvivalChat(const char *pMsg);
+	int CountSurvivalPlayers(int State);
+	int GetRandomSurvivalPlayer(int State, int NotThis = -1);
+	int m_SurvivalBackgroundState;
+	int m_SurvivalGameState;
+	int64 m_SurvivalTick;
+	int m_SurvivalWinner;
 
 private:
 

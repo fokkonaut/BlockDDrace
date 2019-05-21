@@ -240,7 +240,7 @@ void ToggleSpecPause(IConsole::IResult *pResult, void *pUserData, int PauseType)
 	if(!pPlayer)
 		return;
 
-	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL && pPlayer->m_SurvivalState == SURVIVAL_PLAYING && !pPlayer->IsSpectator())
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You can't join the spectators while you are in survival");
 		return;
@@ -285,7 +285,7 @@ void ToggleSpecPauseVoted(IConsole::IResult *pResult, void *pUserData, int Pause
 	if (!pPlayer)
 		return;
 
-	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+	if (pPlayer->m_Minigame == MINIGAME_SURVIVAL && pPlayer->m_SurvivalState == SURVIVAL_PLAYING && !pPlayer->IsSpectator())
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You can't join the spectators while you are in survival");
 		return;
@@ -824,6 +824,11 @@ void CGameContext::ConJoinTeam(IConsole::IResult *pResult, void *pUserData)
 			{
 				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "join",
 						"You can\'t change teams that fast!");
+			}
+			else if (pPlayer->m_Minigame == MINIGAME_SURVIVAL && pResult->NumArguments() > 0)
+			{
+				pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "join",
+					"You can\'t join teams in survival");
 			}
 			else if(pResult->GetInteger(0) > 0 && pResult->GetInteger(0) < DDRACE_MAX_CLIENTS && pController->m_Teams.TeamLocked(pResult->GetInteger(0)) && !pController->m_Teams.IsInvited(pResult->GetInteger(0), pResult->m_ClientID))
 			{
@@ -1596,6 +1601,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 
 		//reset everything
 		pPlayer->m_Gamemode = g_Config.m_SvVanillaModeStart ? MODE_VANILLA : MODE_DDRACE;
+		pPlayer->m_SurvivalState = SURVIVAL_OFFLINE;
 	}
 	else if (pPlayer->m_Minigame == MINIGAME_NONE)
 	{
@@ -1605,7 +1611,11 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 
 		//set minigame required stuff
 		if (Minigame == MINIGAME_SURVIVAL)
+		{
+			((CGameControllerDDRace*)pSelf->m_pController)->m_Teams.SetCharacterTeam(pPlayer->GetCID(), 0);
 			pPlayer->m_Gamemode = MODE_VANILLA;
+			pPlayer->m_SurvivalState = SURVIVAL_LOBBY;
+		}
 	}
 	else
 	{

@@ -182,6 +182,7 @@ void CPlayer::Reset()
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
 
 	m_Minigame = MINIGAME_NONE;
+	m_SurvivalState = SURVIVAL_OFFLINE;
 }
 
 void CPlayer::Tick()
@@ -310,7 +311,9 @@ void CPlayer::Tick()
 				Msg.m_Victim = GetCID();
 				Msg.m_Weapon = m_MsgWeapon;
 				Msg.m_ModeSpecial = m_MsgModeSpecial;
-				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+				for (int i = 0; i < MAX_CLIENTS; i++)
+					if (GameServer()->m_apPlayers[i] && m_Minigame == GameServer()->m_apPlayers[i]->m_Minigame)
+						Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
 			}
 
 			m_SetRealName = false;
@@ -382,14 +385,13 @@ void CPlayer::Snap(int SnappingClient)
 
 	m_ShowName = true;
 
-	if (m_SpookyGhost || (m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_Minigame == MINIGAME_SURVIVAL))
+	if (m_SpookyGhost
+		|| (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY && pSnapping->m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_SurvivalState > SURVIVAL_LOBBY)
+		)
 		m_ShowName = false;
 
-	if (pSnapping)
-	{
-		if (pSnapping->GetTeam() == TEAM_SPECTATORS)
-			m_ShowName = true;
-	}
+	if (pSnapping->GetTeam() == TEAM_SPECTATORS)
+		m_ShowName = true;
 
 	if (m_SetRealName || m_ShowName)
 		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
@@ -479,10 +481,14 @@ void CPlayer::Snap(int SnappingClient)
 	*                                                *
 	**************************************************/
 
+	int Team = m_Team;
+	if (Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
+		Team = TEAM_BLUE;
+
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
-	pPlayerInfo->m_Team = (m_SnapFixVanilla || m_SnapFixDDNet || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? m_Team : TEAM_SPECTATORS;
+	pPlayerInfo->m_Team = (m_SnapFixVanilla || m_SnapFixDDNet || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? Team : TEAM_SPECTATORS;
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_SnapFixVanilla || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
@@ -504,20 +510,30 @@ void CPlayer::Snap(int SnappingClient)
 
 	// BlockDDrace
 	// send 0 if times of others are not shown
+	int Score;
+	bool Account = true;
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
-		pPlayerInfo->m_Score = -9999;
-	else if (pSnapping->m_DisplayScore != SCORE_TIME) // race time
 	{
-		if (pSnapping->m_DisplayScore == SCORE_LEVEL) // level
-		{
-			if (GetAccID() > 0)
-				pPlayerInfo->m_Score = GameServer()->m_Accounts[GetAccID()].m_Level;
-			else
-				pPlayerInfo->m_Score = 0;
-		}
+		Score = -9999;
+		Account = false;
+	}
+	else if (pSnapping->m_Minigame == MINIGAME_BLOCK)
+		Score = GameServer()->m_Accounts[GetAccID()].m_Kills;
+	else if (pSnapping->m_Minigame == MINIGAME_SURVIVAL)
+		Score = GameServer()->m_Accounts[GetAccID()].m_SurvivalKills;
+	else if (pSnapping->m_DisplayScore != SCORE_TIME)
+	{
+		if (pSnapping->m_DisplayScore == SCORE_LEVEL)
+			Score = GameServer()->m_Accounts[GetAccID()].m_Level;
 	}
 	else
-		pPlayerInfo->m_Score = abs(m_Score) * -1;
+	{
+		Score = abs(m_Score) * -1;
+		Account = false;
+	}
+	if (Account && GetAccID() <= 0)
+		Score = 0;
+	pPlayerInfo->m_Score = Score;
 	// BlockDDrace
 
 	CNetObj_AuthInfo *pAuthInfo = static_cast<CNetObj_AuthInfo *>(Server()->SnapNewItem(NETOBJTYPE_AUTHINFO, id, sizeof(CNetObj_AuthInfo)));
@@ -726,6 +742,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	if(m_Team == Team)
 		return;
 
+	// BlockDDrace
 	if (Team == TEAM_SPECTATORS && m_Minigame == MINIGAME_SURVIVAL)
 	{
 		GameServer()->SendChatTarget(m_ClientID, "You can't join the spectators while you are in survival");
@@ -785,7 +802,14 @@ void CPlayer::TryRespawn()
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
 		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_MINIGAME_BLOCK);
 	else if (m_Minigame == MINIGAME_SURVIVAL)
-		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN);
+	{
+		if (m_SurvivalState == SURVIVAL_LOBBY)
+			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_LOBBY);
+		else if (m_SurvivalState == SURVIVAL_PLAYING)
+			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN);
+		else if (m_SurvivalState == SURVIVAL_DEATHMATCH)
+			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_DEATHMATCH);
+	}
 
 	if (TileSpawnPos != vec2(-1, -1))
 	{
@@ -1095,4 +1119,18 @@ bool CPlayer::IsHooked(int Power)
 			return Power != -1 ? pChr->m_HookPower == Power : true;
 	}
 	return false;
+}
+
+bool CPlayer::IsSpectator()
+{
+	return m_Paused != PAUSE_NONE || m_Team == TEAM_SPECTATORS || (GetCharacter() && GetCharacter()->IsPaused());
+}
+
+void CPlayer::SetPlaying()
+{
+	m_SpectatorID = SPEC_FREEVIEW;
+	Pause(PAUSE_NONE, true);
+	SetTeam(TEAM_RED);
+	if (GetCharacter() && GetCharacter()->IsPaused())
+		GetCharacter()->Pause(false);
 }
