@@ -351,10 +351,10 @@ public:
 		int m_Money;
 		int m_Kills;
 		int m_Deaths;
-		bool m_aHasItem[NUM_ITEMS];
 		int m_PoliceLevel;
 		int m_SurvivalKills;
 		int m_SurvivalWins;
+		bool m_aHasItem[NUM_ITEMS];
 	};
 	std::vector<AccountInfo> m_Accounts;
 

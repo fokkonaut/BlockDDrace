@@ -3779,11 +3779,11 @@ int CGameContext::AddAccount()
 	m_Accounts[ID].m_Money = 0;
 	m_Accounts[ID].m_Kills = 0;
 	m_Accounts[ID].m_Deaths = 0;
-	for (int i = 0; i < NUM_ITEMS; i++)
-		m_Accounts[ID].m_aHasItem[i] = false;
 	m_Accounts[ID].m_PoliceLevel = 0;
 	m_Accounts[ID].m_SurvivalKills = 0;
 	m_Accounts[ID].m_SurvivalWins = 0;
+	for (int i = 0; i < NUM_ITEMS; i++)
+		m_Accounts[ID].m_aHasItem[i] = false;
 
 	return ID;
 }
@@ -3843,13 +3843,6 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_Deaths = atoi(aData);
 
-	for (int i = 0; i < NUM_ITEMS; i++)
-	{
-		getline(AccFile, data);
-		str_copy(aData, data.c_str(), sizeof(aData));
-		m_Accounts[ID].m_aHasItem[i] = atoi(aData);
-	}
-
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_PoliceLevel = atoi(aData);
@@ -3861,6 +3854,13 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	getline(AccFile, data);
 	str_copy(aData, data.c_str(), sizeof(aData));
 	m_Accounts[ID].m_SurvivalWins = atoi(aData);
+
+	for (int i = 0; i < NUM_ITEMS; i++)
+	{
+		getline(AccFile, data);
+		str_copy(aData, data.c_str(), sizeof(aData));
+		m_Accounts[ID].m_aHasItem[i] = atoi(aData);
+	}
 }
 
 void CGameContext::WriteAccountStats(int ID)
@@ -3884,11 +3884,11 @@ void CGameContext::WriteAccountStats(int ID)
 		AccFile << m_Accounts[ID].m_Money << "\n";
 		AccFile << m_Accounts[ID].m_Kills << "\n";
 		AccFile << m_Accounts[ID].m_Deaths << "\n";
-		for (int i = 0; i < NUM_ITEMS; i++)
-			AccFile << m_Accounts[ID].m_aHasItem[i] << "\n";
 		AccFile << m_Accounts[ID].m_PoliceLevel << "\n";
 		AccFile << m_Accounts[ID].m_SurvivalKills << "\n";
 		AccFile << m_Accounts[ID].m_SurvivalWins << "\n";
+		for (int i = 0; i < NUM_ITEMS; i++)
+			AccFile << m_Accounts[ID].m_aHasItem[i] << "\n";
 
 		dbg_msg("acc", "saved acc '%s'", m_Accounts[ID].m_Username);
 	}
