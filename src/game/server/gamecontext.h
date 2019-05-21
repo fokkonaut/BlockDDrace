@@ -395,7 +395,6 @@ public:
 	int m_SurvivalBackgroundState;
 	int m_SurvivalGameState;
 	int64 m_SurvivalTick;
-	int64 m_SurvivalBackgroundTick;
 	int m_SurvivalWinner;
 
 private:

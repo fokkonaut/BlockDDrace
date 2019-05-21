@@ -3018,7 +3018,6 @@ void CGameContext::OnInit()
 	m_SurvivalGameState = SURVIVAL_OFFLINE;
 	m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
 	m_SurvivalTick = 0;
-	m_SurvivalBackgroundTick = 0;
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
