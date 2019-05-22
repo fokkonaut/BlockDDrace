@@ -17,6 +17,7 @@ public:
 	virtual void TickPaused();
 	virtual void Snap(int SnappingClient);
 	
+	// BlockDDrace
 	int GetType() { return m_Type; }
 
 private:
@@ -35,6 +36,7 @@ private:
 	void Move();
 	vec2 m_Core;
 
+	// BlockDDrace
 	// have to define a new ID variable for the bullet
 	int m_ID2;
 };
