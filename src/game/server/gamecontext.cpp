@@ -3003,6 +3003,15 @@ void CGameContext::OnInit()
 		}
 	}
 
+	// BlockDDrace
+
+	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+		m_aMinigameDisabled[i] = false;
+
+	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
+	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
+
+
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
 	{
@@ -3012,15 +3021,6 @@ void CGameContext::OnInit()
 		}
 	}
 #endif
-
-	// BlockDDrace
-	m_vPickupDropLimit.resize(2);
-
-	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
-		m_aMinigameDisabled[i] = false;
-
-	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
-	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
 }
 
 void CGameContext::SetV3Offset(int X, int Y)

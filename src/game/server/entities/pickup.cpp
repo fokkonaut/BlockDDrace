@@ -153,7 +153,7 @@ void CPickup::Tick()
 
 					case POWERUP_WEAPON:
 
-						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || (pChr->GetWeaponAmmo(m_Subtype) != -1 && !pChr->m_FreezeTime)))))
+						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || pChr->GetWeaponAmmo(m_Subtype) != -1))))
 						{
 							// BlockDDrace
 							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
@@ -161,7 +161,7 @@ void CPickup::Tick()
 							else if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
 								pChr->GiveWeapon(m_Subtype);
 							else
-								continue;
+								break;
 
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 

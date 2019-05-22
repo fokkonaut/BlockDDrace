@@ -3146,9 +3146,9 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 	UpdateWeaponIndicator();
 }
 
-void CCharacter::DropWeapon(int WeaponID, int Dir)
+void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 {
-	if (IsFrozen || m_FreezeTime || !g_Config.m_SvDropWeapons || g_Config.m_SvMaxWeaponDrops == 0 || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
+	if ((m_FreezeTime && !Forced) || !g_Config.m_SvDropWeapons || g_Config.m_SvMaxWeaponDrops == 0 || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
 		return;
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == g_Config.m_SvMaxWeaponDrops)
@@ -3169,7 +3169,7 @@ void CCharacter::DropWeapon(int WeaponID, int Dir)
 	if (WeaponCount > 1 || (WeaponID == WEAPON_GUN && m_Jetpack))
 	{
 		GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
-		CPickupDrop *Weapon = new CPickupDrop(GameWorld(), POWERUP_WEAPON, m_pPlayer->GetCID(), Dir == -2 ? GetAimDir() : Dir, WeaponID, 300, m_aWeapons[WeaponID].m_Ammo, m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
+		CPickupDrop *Weapon = new CPickupDrop(GameWorld(), POWERUP_WEAPON, m_pPlayer->GetCID(), Dir == -3 ? GetAimDir() : Dir, WeaponID, 300, GetWeaponAmmo(WeaponID), m_aSpreadWeapon[WeaponID], (WeaponID == WEAPON_GUN && m_Jetpack));
 		m_pPlayer->m_vWeaponLimit[WeaponID].push_back(Weapon);
 
 		if (WeaponID != WEAPON_GUN || !m_Jetpack)
@@ -3186,7 +3186,7 @@ void CCharacter::DropWeapon(int WeaponID, int Dir)
 
 void CCharacter::DropPickup(int Type, int Amount)
 {
-	if (g_Config.m_SvMaxPickupDrops == 0)
+	if (Type > POWERUP_ARMOR || g_Config.m_SvMaxPickupDrops == 0)
 		return;
 
 	for (int i = 0; i < Amount; i++)
@@ -3196,9 +3196,13 @@ void CCharacter::DropPickup(int Type, int Amount)
 			GameServer()->m_vPickupDropLimit[0]->Reset();
 			GameServer()->m_vPickupDropLimit.erase(GameServer()->m_vPickupDropLimit.begin());
 		}
-		CPickupDrop *Pickup = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), (rand() % 4) - 2);
-		GameServer()->m_vPickupDropLimit.push_back(Pickup);
+		float Dir = ((rand() % 50-25) * 0.1); // in a range of -2.5 to +2.5
+		CPickupDrop *PickupDrop = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), Dir);
+		GameServer()->m_vPickupDropLimit.push_back(PickupDrop);
 	}
+
+	if (Amount > 0)
+		GameServer()->CreateSound(m_Pos, Type == POWERUP_HEALTH ? SOUND_PICKUP_HEALTH : SOUND_PICKUP_ARMOR, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 }
 
 void CCharacter::DropLoot()
@@ -3211,12 +3215,16 @@ void CCharacter::DropLoot()
 		if (m_pPlayer->m_SurvivalState <= SURVIVAL_LOBBY)
 			return;
 
+		// drop 0 to 6 armor and hearts
 		DropPickup(POWERUP_HEALTH, rand() % 6);
 		DropPickup(POWERUP_ARMOR, rand() % 6);
-		DropWeapon(WEAPON_GUN, (rand() % 4) - 2);
-		DropWeapon(WEAPON_SHOTGUN, (rand() % 4) - 2);
-		DropWeapon(WEAPON_GRENADE, (rand() % 4) - 2);
-		DropWeapon(WEAPON_RIFLE, (rand() % 4) - 2);
+
+		// drop all your weapons, in various directions (excluding hammer, ninja and extra weapons)
+		for (int i = WEAPON_GUN; i < WEAPON_NINJA; i++)
+		{
+			float Dir = ((rand() % 50 - 25) * 0.1); // in a range of -2.5 to +2.5
+			DropWeapon(i, Dir, true);
+		}
 	}
 	else
 	{
@@ -3272,6 +3280,15 @@ void CCharacter::SetActiveWeapon(int Weapon)
 		m_Core.m_ActiveWeapon = Weapon;
 
 	UpdateWeaponIndicator();
+}
+
+int CCharacter::GetWeaponAmmo(int Type)
+{
+	if (!m_FreezeTime)
+		return m_aWeapons[Type].m_Ammo;
+	if (m_FreezeTime)
+		return m_aWeaponsBackup[Type][BACKUP_FREEZE];
+	return 0;
 }
 
 void CCharacter::UpdateWeaponIndicator()

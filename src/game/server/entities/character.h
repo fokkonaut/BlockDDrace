@@ -154,8 +154,8 @@ public:
 	**************************************************/
 
 	//drops
-	void DropWeapon(int WeaponID, int Dir = -2);
-	void DropPickup(int Type, int Amount);
+	void DropWeapon(int WeaponID, float Dir = -3, bool Forced = false);
+	void DropPickup(int Type, int Amount = 1);
 	void DropLoot();
 
 	void SetAvailableWeapon(int PreferedWeapon = WEAPON_GUN);
@@ -390,7 +390,7 @@ public:
 	CCharacterCore* Core() { return &m_Core; };
 	bool GetWeaponGot(int Type) { return m_aWeapons[Type].m_Got; };
 	void SetWeaponGot(int Type, bool Value) { m_aWeapons[Type].m_Got = Value; };
-	int GetWeaponAmmo(int Type) { return m_aWeapons[Type].m_Ammo; };
+	int GetWeaponAmmo(int Type);
 	void SetWeaponAmmo(int Type, int Value) { m_aWeapons[Type].m_Ammo = Value; };
 	bool IsAlive() { return m_Alive; };
 	void SetEmoteType(int EmoteType) { m_EmoteType = EmoteType; };

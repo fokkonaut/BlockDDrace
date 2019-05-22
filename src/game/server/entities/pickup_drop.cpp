@@ -14,7 +14,7 @@
 #include <engine/shared/config.h>
 #include <game/server/gamemodes/DDRace.h>
 
-CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, int Direction, int Weapon, int Lifetime, int Bullets, bool SpreadWeapon, bool Jetpack)
+CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Direction, int Weapon, int Lifetime, int Bullets, bool SpreadWeapon, bool Jetpack)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
 {
 	m_Type = Type;
