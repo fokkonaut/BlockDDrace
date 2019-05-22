@@ -510,7 +510,7 @@ void CPlayer::Snap(int SnappingClient)
 
 	// BlockDDrace
 	// send 0 if times of others are not shown
-	int Score;
+	int Score = -9999;
 	bool Account = true;
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 	{
