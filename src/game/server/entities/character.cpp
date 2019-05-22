@@ -3163,7 +3163,7 @@ void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 	if ((m_FreezeTime && !Forced) || !g_Config.m_SvDropWeapons || g_Config.m_SvMaxWeaponDrops == 0 || WeaponID == WEAPON_NINJA || !m_aWeapons[WeaponID].m_Got)
 		return;
 
-	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == g_Config.m_SvMaxWeaponDrops)
+	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == (unsigned)g_Config.m_SvMaxWeaponDrops)
 	{
 		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset(false);
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
@@ -3203,7 +3203,7 @@ void CCharacter::DropPickup(int Type, int Amount)
 
 	for (int i = 0; i < Amount; i++)
 	{
-		if (GameServer()->m_vPickupDropLimit.size() == g_Config.m_SvMaxPickupDrops)
+		if (GameServer()->m_vPickupDropLimit.size() == (unsigned)g_Config.m_SvMaxPickupDrops)
 		{
 			GameServer()->m_vPickupDropLimit[0]->Reset();
 			GameServer()->m_vPickupDropLimit.erase(GameServer()->m_vPickupDropLimit.begin());
