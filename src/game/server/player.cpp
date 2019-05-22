@@ -31,7 +31,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos)
 	m_pCharacter = 0;
 	m_NumInputs = 0;
 	m_KillMe = 0;
-	m_ForceSpawn = Pos;
+	m_ForceSpawnPos = Pos;
 	Reset();
 }
 
@@ -792,9 +792,9 @@ void CPlayer::TryRespawn()
 	vec2 TileSpawnPos = vec2(-1, -1);
 
 	bool Failed = true;
-	if (m_ForceSpawn != vec2(-1, -1))
+	if (m_ForceSpawnPos != vec2(-1, -1))
 	{
-		SpawnPos = m_ForceSpawn;
+		SpawnPos = m_ForceSpawnPos;
 		Failed = false;
 	}
 	else if (m_Dummymode == 99)

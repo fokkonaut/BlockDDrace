@@ -263,7 +263,7 @@ public:
 	bool m_IsDummy;
 	int m_Dummymode;
 	int m_FakePing;
-	vec2 m_ForceSpawn;
+	vec2 m_ForceSpawnPos;
 
 	//snap fix
 	bool m_SnapFixVanilla;
