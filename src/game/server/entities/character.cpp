@@ -803,14 +803,22 @@ void CCharacter::HandleWeapons()
 
 void CCharacter::GiveNinja()
 {
-	m_aWeapons[WEAPON_NINJA].m_Got = true;
+	if (!m_ScrollNinja && !m_aWeapons[WEAPON_NINJA].m_Got && m_pPlayer->m_Gamemode == MODE_VANILLA)
+		GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+
+	for (int i = 0; i < NUM_BACKUPS; i++)
+	{
+		m_aWeaponsBackupGot[WEAPON_NINJA][i] = true;
+		m_aWeaponsBackup[WEAPON_NINJA][i] = -1;
+	}
+
 	if (!m_FreezeTime)
 		m_aWeapons[WEAPON_NINJA].m_Ammo = -1;
-	if (!m_aWeapons[WEAPON_NINJA].m_Got)
-		GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
 	if (m_ScrollNinja)
 		return;
+
+	m_aWeapons[WEAPON_NINJA].m_Got = true;
 
 	m_Ninja.m_ActivationTick = Server()->Tick();
 	if (GetActiveWeapon() != WEAPON_NINJA)
@@ -824,6 +832,8 @@ void CCharacter::RemoveNinja()
 	if (GetActiveWeapon() == WEAPON_NINJA)
 		SetWeapon(m_LastWeapon);
 	m_aWeapons[WEAPON_NINJA].m_Got = false;
+	for (int i = 0; i < NUM_BACKUPS; i++)
+		m_aWeaponsBackupGot[WEAPON_NINJA][i] = false;
 }
 
 void CCharacter::SetEmote(int Emote, int Tick)
