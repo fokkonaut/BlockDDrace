@@ -91,7 +91,12 @@ void CPickupDrop::Pickup()
 
 		if (m_Type == POWERUP_WEAPON)
 		{
-			int Ammo = pChr->GetPlayer()->m_Gamemode == MODE_VANILLA ? m_Bullets : -1;
+			int Ammo = m_Bullets;
+			if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Ammo == -1)
+				Ammo = 10;
+			if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+				Ammo = -1;
+				
 			pChr->GiveWeapon(m_Weapon, false, Ammo);
 			GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Weapon);
 

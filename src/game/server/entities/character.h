@@ -77,7 +77,11 @@ enum Backup
 {
 	BACKUP_FREEZE = 0,
 	BACKUP_SPOOKY_GHOST,
-	NUM_BACKUPS
+	NUM_BACKUPS,
+
+	BACKUP_HEALTH = NUM_WEAPONS,
+	BACKUP_ARMOR,
+	NUM_WEAPONS_BACKUP
 };
 
 /*************************************************

@@ -309,8 +309,8 @@ void CCharacter::HandleWeaponSwitch()
 		WantedWeapon = m_QueuedWeapon;
 
 	bool Anything = false;
-	 for(int i = 0; i < NUM_WEAPONS - 1; ++i)
-		 if(m_aWeapons[i].m_Got)
+	 for(int i = 0; i < NUM_WEAPONS; ++i)
+		 if(i != WEAPON_NINJA && m_aWeapons[i].m_Got)
 			 Anything = true;
 	 if(!Anything)
 		 return;
@@ -1038,15 +1038,15 @@ bool CCharacter::IncreaseHealth(int Amount)
 bool CCharacter::IncreaseArmor(int Amount)
 {
 	// BlockDDrace
-	if(m_Armor >= 10 && !m_FreezeTime)
+	if (m_FreezeTime && m_aWeaponsBackup[BACKUP_ARMOR][BACKUP_FREEZE] >= 10)
 		return false;
-	if (m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] >= 10 && m_FreezeTime)
+	if (m_Armor >= 10)
 		return false;
 
-	if (!m_FreezeTime)
-		m_Armor = clamp(m_Armor+Amount, 0, 10);
+	if (m_FreezeTime)
+		m_aWeaponsBackup[BACKUP_ARMOR][BACKUP_FREEZE] = clamp(m_aWeaponsBackup[BACKUP_ARMOR][BACKUP_FREEZE] + Amount, 0, 10);
 	else
-		m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] = clamp(m_aWeaponsBackup[NUM_WEAPONS][BACKUP_FREEZE] + Amount, 0, 10);
+		m_Armor = clamp(m_Armor + Amount, 0, 10);
 	return true;
 }
 
@@ -2385,8 +2385,9 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if(g_Config.m_SvTeleportLoseWeapons)
 		{
-			for(int i=WEAPON_SHOTGUN;i<NUM_WEAPONS-1;i++)
-				m_aWeapons[i].m_Got = false;
+			for(int i=WEAPON_SHOTGUN;i<NUM_WEAPONS;i++)
+				if (i != WEAPON_NINJA)
+					m_aWeapons[i].m_Got = false;
 		}
 		return;
 	}
@@ -2411,8 +2412,9 @@ void CCharacter::HandleTiles(int Index)
 			}
 			if(g_Config.m_SvTeleportLoseWeapons)
 			{
-				for(int i=WEAPON_SHOTGUN;i<NUM_WEAPONS-1;i++)
-					m_aWeapons[i].m_Got = false;
+				for(int i=WEAPON_SHOTGUN;i<NUM_WEAPONS;i++)
+					if (i != WEAPON_NINJA)
+						m_aWeapons[i].m_Got = false;
 			}
 		}
 		return;
@@ -3095,12 +3097,12 @@ void CCharacter::BackupWeapons(int Type)
 {
 	if (!m_WeaponsBackupped[Type])
 	{
-		for (int i = 0; i < NUM_WEAPONS + 2; i++)
+		for (int i = 0; i < NUM_WEAPONS_BACKUP; i++)
 		{
-			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[i][Type] = m_Armor;
-			else if (i == NUM_WEAPONS + 1)
+			if (i == BACKUP_HEALTH)
 				m_aWeaponsBackup[i][Type] = m_Health;
+			else if (i == BACKUP_ARMOR)
+				m_aWeaponsBackup[i][Type] = m_Armor;
 			else
 			{
 				m_aWeaponsBackupGot[i][Type] = m_aWeapons[i].m_Got;
@@ -3115,12 +3117,12 @@ void CCharacter::LoadWeaponBackup(int Type)
 {
 	if (m_WeaponsBackupped[Type])
 	{
-		for (int i = 0; i < NUM_WEAPONS + 2; i++)
+		for (int i = 0; i < NUM_WEAPONS_BACKUP; i++)
 		{
-			if (i == NUM_WEAPONS)
-				m_Armor = m_aWeaponsBackup[i][Type];
-			else if (i == NUM_WEAPONS + 1)
+			if (i == BACKUP_HEALTH)
 				m_Health = m_aWeaponsBackup[i][Type];
+			else if (i == BACKUP_ARMOR)
+				m_Armor = m_aWeaponsBackup[i][Type];
 			else
 			{
 				m_aWeapons[i].m_Got = m_aWeaponsBackupGot[i][Type];
@@ -3196,7 +3198,7 @@ void CCharacter::DropPickup(int Type, int Amount)
 			GameServer()->m_vPickupDropLimit[0]->Reset();
 			GameServer()->m_vPickupDropLimit.erase(GameServer()->m_vPickupDropLimit.begin());
 		}
-		float Dir = ((rand() % 50-25) * 0.1); // in a range of -2.5 to +2.5
+		float Dir = ((rand() % 50 - 25) * 0.1); // in a range of -2.5 to +2.5
 		CPickupDrop *PickupDrop = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), Dir);
 		GameServer()->m_vPickupDropLimit.push_back(PickupDrop);
 	}
@@ -3284,11 +3286,9 @@ void CCharacter::SetActiveWeapon(int Weapon)
 
 int CCharacter::GetWeaponAmmo(int Type)
 {
-	if (!m_FreezeTime)
-		return m_aWeapons[Type].m_Ammo;
 	if (m_FreezeTime)
 		return m_aWeaponsBackup[Type][BACKUP_FREEZE];
-	return 0;
+	return m_aWeapons[Type].m_Ammo;
 }
 
 void CCharacter::UpdateWeaponIndicator()
@@ -3469,12 +3469,12 @@ void CCharacter::VanillaMode(int FromID, bool Silent)
 	m_Armor = 0;
 	for (int j = 0; j < NUM_BACKUPS; j++)
 	{
-		for (int i = 0; i < NUM_WEAPONS+2; i++)
+		for (int i = 0; i < NUM_WEAPONS_BACKUP; i++)
 		{
-			if (i == NUM_WEAPONS)
-				m_aWeaponsBackup[i][j] = 0;
-			else if (i == NUM_WEAPONS+1)
+			if (i == BACKUP_HEALTH)
 				m_aWeaponsBackup[i][j] = 10;
+			else if (i == BACKUP_ARMOR)
+				m_aWeaponsBackup[i][j] = 0;
 			else if (i != WEAPON_HAMMER)
 			{
 				m_aWeaponsBackup[i][j] = 10;
@@ -3496,11 +3496,11 @@ void CCharacter::DDraceMode(int FromID, bool Silent)
 	m_Armor = 10;
 	for (int j = 0; j < NUM_BACKUPS; j++)
 	{
-		for (int i = 0; i < NUM_WEAPONS+2; i++)
+		for (int i = 0; i < NUM_WEAPONS_BACKUP; i++)
 		{
-			if (i == NUM_WEAPONS)
+			if (i == BACKUP_HEALTH)
 				m_aWeaponsBackup[i][j] = 10;
-			else if (i == NUM_WEAPONS+1)
+			else if (i == BACKUP_ARMOR)
 				m_aWeaponsBackup[i][j] = 10;
 			else
 			{
