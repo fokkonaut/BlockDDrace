@@ -933,6 +933,12 @@ void CGameContext::OnTick()
 			}
 		}
 
+	if (m_pRandomMapResult && m_pRandomMapResult->m_Done)
+	{
+		str_copy(g_Config.m_SvMap, m_pRandomMapResult->m_aMap, sizeof(g_Config.m_SvMap));
+		m_pRandomMapResult = NULL;
+	}
+
 	// BlockDDrace
 	if (Server()->Tick() % 100000 == 0) // save all accounts every ~ 30 minutes
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
@@ -2262,22 +2268,22 @@ void CGameContext::ConRandomMap(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 
-	int stars = 0;
-	if (pResult->NumArguments())
-		stars = pResult->GetInteger(0);
+	int Stars = 0;
+	if(pResult->NumArguments())
+		Stars = pResult->GetInteger(0);
 
-	pSelf->m_pScore->RandomMap(pSelf->m_VoteCreator, stars);
+	pSelf->m_pScore->RandomMap(&pSelf->m_pRandomMapResult, pSelf->m_VoteCreator, Stars);
 }
 
 void CGameContext::ConRandomUnfinishedMap(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 
-	int stars = 0;
-	if (pResult->NumArguments())
-		stars = pResult->GetInteger(0);
+	int Stars = 0;
+	if(pResult->NumArguments())
+		Stars = pResult->GetInteger(0);
 
-	pSelf->m_pScore->RandomUnfinishedMap(pSelf->m_VoteCreator, stars);
+	pSelf->m_pScore->RandomUnfinishedMap(&pSelf->m_pRandomMapResult, pSelf->m_VoteCreator, Stars);
 }
 
 void CGameContext::ConRestart(IConsole::IResult *pResult, void *pUserData)

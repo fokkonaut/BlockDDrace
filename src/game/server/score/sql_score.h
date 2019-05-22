@@ -103,18 +103,21 @@ struct CSqlScoreData : CSqlData
 
 	bool m_NotEligible;
 	float m_Time;
+	char m_aTimestamp[TIMESTAMP_STR_LENGTH];
 	float m_aCpCurrent[NUM_CHECKPOINTS];
 	int m_Num;
 	bool m_Search;
-	char m_aRequestingPlayer [MAX_NAME_LENGTH];
+	char m_aRequestingPlayer[MAX_NAME_LENGTH];
 };
 
 struct CSqlTeamScoreData : CSqlData
 {
 	bool m_NotEligible;
+	float m_Time;
+	char m_aTimestamp[TIMESTAMP_STR_LENGTH];
 	unsigned int m_Size;
 	int m_aClientIDs[MAX_CLIENTS];
-	sqlstr::CSqlString<MAX_NAME_LENGTH> m_aNames [MAX_CLIENTS];
+	sqlstr::CSqlString<MAX_NAME_LENGTH> m_aNames[MAX_CLIENTS];
 
 	float m_Time;
 };
@@ -133,6 +136,11 @@ struct CSqlTeamLoad : CSqlData
 {
 	sqlstr::CSqlString<128> m_Code;
 	int m_ClientID;
+};
+
+struct CSqlRandomMap : CSqlScoreData
+{
+	std::shared_ptr<CRandomMapResult> m_pResult;
 };
 
 class CSqlScore: public IScore
@@ -179,9 +187,8 @@ public:
 	virtual void LoadScore(int ClientID);
 	virtual void MapInfo(int ClientID, const char* MapName);
 	virtual void MapVote(int ClientID, const char* MapName);
-	virtual void SaveScore(int ClientID, float Time,
-			float CpTime[NUM_CHECKPOINTS], bool NotEligible);
-	virtual void SaveTeamScore(int* aClientIDs, unsigned int Size, float Time);
+	virtual void SaveScore(int ClientID, float Time, const char *pTimestamp, float CpTime[NUM_CHECKPOINTS], bool NotEligible);
+	virtual void SaveTeamScore(int* aClientIDs, unsigned int Size, float Time, const char *pTimestamp);
 	virtual void ShowRank(int ClientID, const char* pName, bool Search = false);
 	virtual void ShowTeamRank(int ClientID, const char* pName, bool Search = false);
 	virtual void ShowTimes(int ClientID, const char* pName, int Debut = 1);
@@ -193,8 +200,8 @@ public:
 	virtual void ShowPoints(int ClientID, const char* pName, bool Search = false);
 	virtual void ShowTopPoints(IConsole::IResult *pResult, int ClientID,
 			void *pUserData, int Debut = 1);
-	virtual void RandomMap(int ClientID, int stars);
-	virtual void RandomUnfinishedMap(int ClientID, int stars);
+	virtual void RandomMap(std::shared_ptr<CRandomMapResult> *ppResult, int ClientID, int Stars);
+	virtual void RandomUnfinishedMap(std::shared_ptr<CRandomMapResult> *ppResult, int ClientID, int Stars);
 	virtual void SaveTeam(int Team, const char* Code, int ClientID, const char* Server);
 	virtual void LoadTeam(const char* Code, int ClientID);
 

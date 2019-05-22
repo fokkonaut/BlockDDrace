@@ -230,12 +230,12 @@ void CFileScore::LoadScore(int ClientID)
 	}
 }
 
-void CFileScore::SaveTeamScore(int* ClientIDs, unsigned int Size, float Time)
+void CFileScore::SaveTeamScore(int* ClientIDs, unsigned int Size, float Time, const char *pTimestamp)
 {
 	dbg_msg("filescore", "saveteamscore not implemented for filescore");
 }
 
-void CFileScore::SaveScore(int ClientID, float Time,
+void CFileScore::SaveScore(int ClientID, float Time, const char *pTimestamp,
 		float CpTime[NUM_CHECKPOINTS], bool NotEligible)
 {
 	CConsole* pCon = (CConsole*) GameServer()->Console();
@@ -330,18 +330,20 @@ void CFileScore::ShowPoints(int ClientID, const char* pName, bool Search)
 	GameServer()->SendChatTarget(ClientID, aBuf);
 }
 
-void CFileScore::RandomMap(int ClientID, int stars)
+void CFileScore::RandomMap(std::shared_ptr<CRandomMapResult> *ppResult, int ClientID, int Stars)
 {
 	char aBuf[512];
 	str_format(aBuf, sizeof(aBuf), "Random map not supported in file based servers");
 	GameServer()->SendChatTarget(ClientID, aBuf);
+	*ppResult = NULL;
 }
 
-void CFileScore::RandomUnfinishedMap(int ClientID, int stars)
+void CFileScore::RandomUnfinishedMap(std::shared_ptr<CRandomMapResult> *ppResult, int ClientID, int Stars)
 {
 	char aBuf[512];
 	str_format(aBuf, sizeof(aBuf), "Random unfinished map not supported in file based servers");
 	GameServer()->SendChatTarget(ClientID, aBuf);
+	*ppResult = NULL;
 }
 
 void CFileScore::SaveTeam(int Team, const char* Code, int ClientID, const char* Server)
