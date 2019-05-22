@@ -1094,7 +1094,6 @@ void CCharacter::Die(int Killer, int Weapon)
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastToucherID;
 
-	bool Suicide = true;
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
 		if (GameServer()->m_apPlayers[Killer])
@@ -1105,7 +1104,6 @@ void CCharacter::Die(int Killer, int Weapon)
 				GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_Kills++;
 		}
 		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
-		Suicide = false;
 	}
 	
 	/*************************************************
@@ -1114,7 +1112,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	*                                                *
 	**************************************************/
 
-	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon, Suicide);
+	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",

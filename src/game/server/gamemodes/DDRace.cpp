@@ -82,7 +82,7 @@ bool CGameControllerDDRace::OnEntity(int Index, vec2 Pos)
 	return true;
 }
 
-int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID, bool Suicide)
+int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponID)
 {
 	int HadFlag = 0;
 
@@ -97,9 +97,8 @@ int CGameControllerDDRace::OnCharacterDeath(class CCharacter *pVictim, class CPl
 			HadFlag |= 2;
 		if (F->GetCarrier() == pVictim)
 		{
-			if (Suicide || HasFlag(pKiller->GetCharacter()) != -1)
+			if (HasFlag(pKiller->GetCharacter()) != -1)
 				F->Drop();
-			F->SetLastCarrier(NULL);
 			HadFlag |= 1;
 		}
 	}

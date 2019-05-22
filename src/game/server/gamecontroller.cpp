@@ -437,7 +437,7 @@ void IGameController::PostReset()
 	}
 }
 
-int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon, bool Suicide)
+int IGameController::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
 {
 	return 0;
 }
