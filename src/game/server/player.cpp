@@ -817,7 +817,7 @@ void CPlayer::TryRespawn()
 		Failed = false;
 	}
 
-	if (Failed && !GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos))
+	if (Failed && !GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Minigame))
 		return;
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;

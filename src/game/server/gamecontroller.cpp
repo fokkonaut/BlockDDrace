@@ -102,7 +102,7 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
 	}
 }
 
-bool IGameController::CanSpawn(int Team, vec2 *pOutPos)
+bool IGameController::CanSpawn(int Team, vec2 *pOutPos, int Minigame)
 {
 	CSpawnEval Eval;
 
@@ -110,9 +110,12 @@ bool IGameController::CanSpawn(int Team, vec2 *pOutPos)
 	if(Team == TEAM_SPECTATORS)
 		return false;
 
-	EvaluateSpawnType(&Eval, 0);
-	//EvaluateSpawnType(&Eval, 1);
-	//EvaluateSpawnType(&Eval, 2);
+	if (Minigame == MINIGAME_INSTAGIB_BOOMFNG)
+		EvaluateSpawnType(&Eval, 1); // red
+	else if (Minigame == MINIGAME_INSTAGIB_FNG)
+		EvaluateSpawnType(&Eval, 2); // blue
+	else
+		EvaluateSpawnType(&Eval, 0); // default
 
 	*pOutPos = Eval.m_Pos;
 	return Eval.m_Got;
