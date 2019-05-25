@@ -1373,7 +1373,7 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 	int ID = pSelf->AddAccount();
 	str_copy(pSelf->m_Accounts[ID].m_Password, aPassword, sizeof(pSelf->m_Accounts[ID].m_Password));
 	str_copy(pSelf->m_Accounts[ID].m_Username, aUsername, sizeof(pSelf->m_Accounts[ID].m_Username));
-	pSelf->WriteAccountStats(ID);
+	pSelf->Logout(ID);
 
 	pSelf->SendChatTarget(pResult->m_ClientID, "Successfully registered an account, you can login now");
 	dbg_msg("acc", "account created, file '%s/%s.acc'", g_Config.m_SvAccFilePath, aUsername);
