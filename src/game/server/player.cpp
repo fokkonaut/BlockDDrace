@@ -821,6 +821,9 @@ void CPlayer::TryRespawn()
 	else if (m_Minigame == MINIGAME_INSTAGIB_FNG)
 		Index = ENTITY_SPAWN_BLUE;
 
+	if (GameServer()->Collision()->GetRandomTile(Index) == vec2(-1, -1))
+		Index = ENTITY_SPAWN;
+
 	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index))
 		return;
 
