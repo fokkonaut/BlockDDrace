@@ -3545,11 +3545,11 @@ void CCharacter::PoliceHelper(bool Set, int FromID, bool Silent)
 
 void CCharacter::ScrollNinja(bool Set, int FromID, bool Silent)
 {
-	m_ScrollNinja = Set;
 	if (Set)
 		GiveNinja();
 	else
 		RemoveNinja();
+	m_ScrollNinja = Set;
 	GameServer()->SendExtraMessage(SCROLL_NINJA, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
