@@ -3227,7 +3227,7 @@ void CCharacter::DropLoot()
 		if (m_pPlayer->m_SurvivalState <= SURVIVAL_LOBBY)
 			return;
 
-		// drop 0 to 6 armor and hearts
+		// drop 0 to 5 armor and hearts
 		DropPickup(POWERUP_HEALTH, rand() % 6);
 		DropPickup(POWERUP_ARMOR, rand() % 6);
 
