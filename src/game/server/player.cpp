@@ -797,35 +797,32 @@ void CPlayer::TryRespawn()
 		return;
 
 	vec2 SpawnPos;
-	vec2 TileSpawnPos = vec2(-1, -1);
 
-	bool Failed = true;
+	// BlockDDrace
+	int Index = ENTITY_SPAWN;
+	bool Entity = true;
+
 	if (m_ForceSpawnPos != vec2(-1, -1))
-	{
 		SpawnPos = m_ForceSpawnPos;
-		Failed = false;
-	}
 	else if (m_Dummymode == 99)
-		TileSpawnPos = GameServer()->Collision()->GetRandomEntity(ENTITY_SHOP_BOT_SPAWN);
+		Index = ENTITY_SHOP_BOT_SPAWN;
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
-		TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_MINIGAME_BLOCK);
+	{
+		Index = TILE_MINIGAME_BLOCK;
+		Entity = false;
+	}
 	else if (m_Minigame == MINIGAME_SURVIVAL)
 	{
-		if (m_SurvivalState == SURVIVAL_LOBBY)
-			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_LOBBY);
+		if (m_SurvivalState == SURVIVAL_DEATHMATCH)
+			Index = TILE_SURVIVAL_DEATHMATCH;
 		else if (m_SurvivalState == SURVIVAL_PLAYING)
-			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN);
-		else if (m_SurvivalState == SURVIVAL_DEATHMATCH)
-			TileSpawnPos = GameServer()->Collision()->GetRandomTile(TILE_SURVIVAL_DEATHMATCH);
+			Index = TILE_SURVIVAL_SPAWN;
+		else
+			Index = TILE_SURVIVAL_LOBBY;
+		Entity = false;
 	}
 
-	if (TileSpawnPos != vec2(-1, -1))
-	{
-		SpawnPos = TileSpawnPos;
-		Failed = false;
-	}
-
-	if (Failed && !GameServer()->m_pController->CanSpawn(m_Team, &SpawnPos, m_Minigame))
+	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index, Entity))
 		return;
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;

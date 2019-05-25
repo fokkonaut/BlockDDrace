@@ -36,10 +36,6 @@ IGameController::IGameController(class CGameContext *pGameServer)
 	m_UnbalancedTick = -1;
 	m_ForceBalanced = false;
 
-	m_aNumSpawnPoints[0] = 0;
-	m_aNumSpawnPoints[1] = 0;
-	m_aNumSpawnPoints[2] = 0;
-
 	m_CurrentRecord = 0;
 }
 
@@ -65,14 +61,14 @@ float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
 	return Score;
 }
 
-void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
+void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
 {
 	// get spawn point
-	for(int i = 0; i < m_aNumSpawnPoints[Type]; i++)
+	for(int i = 0; i < GameServer()->Collision()->m_vTiles[Index].size(); i++)
 	{
 		// check if the position is occupado
 		CCharacter *aEnts[MAX_CLIENTS];
-		int Num = GameServer()->m_World.FindEntities(m_aaSpawnPoints[Type][i], 64, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+		int Num = GameServer()->m_World.FindEntities(GameServer()->Collision()->m_vTiles[Index][i], 64, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 		vec2 Positions[5] = { vec2(0.0f, 0.0f), vec2(-32.0f, 0.0f), vec2(0.0f, -32.0f), vec2(32.0f, 0.0f), vec2(0.0f, 32.0f) };	// start, left, up, right, down
 		int Result = -1;
 		for(int Index = 0; Index < 5 && Result == -1; ++Index)
@@ -81,8 +77,8 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
 			if(!GameServer()->m_World.m_Core.m_Tuning[0].m_PlayerCollision)
 				break;
 			for(int c = 0; c < Num; ++c)
-				if(GameServer()->Collision()->CheckPoint(m_aaSpawnPoints[Type][i]+Positions[Index]) ||
-					distance(aEnts[c]->m_Pos, m_aaSpawnPoints[Type][i]+Positions[Index]) <= aEnts[c]->m_ProximityRadius)
+				if(GameServer()->Collision()->CheckPoint(GameServer()->Collision()->m_vTiles[Index][i]+Positions[Index]) ||
+					distance(aEnts[c]->m_Pos, GameServer()->Collision()->m_vTiles[Index][i]+Positions[Index]) <= aEnts[c]->m_ProximityRadius)
 				{
 					Result = -1;
 					break;
@@ -91,7 +87,7 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
 		if(Result == -1)
 			continue;	// try next spawn point
 
-		vec2 P = m_aaSpawnPoints[Type][i]+Positions[Result];
+		vec2 P = GameServer()->Collision()->m_vTiles[Index][i]+Positions[Result];
 		float S = EvaluateSpawnPos(pEval, P);
 		if(!pEval->m_Got || pEval->m_Score > S)
 		{
@@ -102,21 +98,18 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Type)
 	}
 }
 
-bool IGameController::CanSpawn(int Team, vec2 *pOutPos, int Minigame)
+bool IGameController::CanSpawn(vec2 *pOutPos, int Index, bool Entity)
 {
-	CSpawnEval Eval;
+	// BlockDDrace
+	if (Entity)
+		Index += ENTITY_OFFSET;
 
 	// spectators can't spawn
-	if(Team == TEAM_SPECTATORS)
+	if(Index < TILE_AIR || Index > NUM_INDICES-1)
 		return false;
 
-	if (Minigame == MINIGAME_INSTAGIB_BOOMFNG)
-		EvaluateSpawnType(&Eval, 1); // red
-	else if (Minigame == MINIGAME_INSTAGIB_FNG)
-		EvaluateSpawnType(&Eval, 2); // blue
-	else
-		EvaluateSpawnType(&Eval, 0); // default
-
+	CSpawnEval Eval;
+	EvaluateSpawnType(&Eval, Index);
 	*pOutPos = Eval.m_Pos;
 	return Eval.m_Got;
 }
@@ -142,15 +135,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	sides[6]=GameServer()->Collision()->Entity(x-1,y, Layer);
 	sides[7]=GameServer()->Collision()->Entity(x-1,y+1, Layer);
 
-
-	if(Index == ENTITY_SPAWN)
-		m_aaSpawnPoints[0][m_aNumSpawnPoints[0]++] = Pos;
-	else if(Index == ENTITY_SPAWN_RED)
-		m_aaSpawnPoints[1][m_aNumSpawnPoints[1]++] = Pos;
-	else if(Index == ENTITY_SPAWN_BLUE)
-		m_aaSpawnPoints[2][m_aNumSpawnPoints[2]++] = Pos;
-
-	else if(Index == ENTITY_DOOR)
+	if(Index == ENTITY_DOOR)
 	{
 		for(int i = 0; i < 8;i++)
 		{

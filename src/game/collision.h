@@ -101,7 +101,7 @@ public:
 	vec2 GetRandomTile(int Index, bool Entity);
 	vec2 GetRandomTile(int Index) { return GetRandomTile(Index, false); };
 	vec2 GetRandomEntity(int Index) { return GetRandomTile(Index, true); };
-	std::vector< std::vector<vec2> > m_vRandomTile;;
+	std::vector< std::vector<vec2> > m_vTiles;;
 	// BlockDDrace
 
 private:

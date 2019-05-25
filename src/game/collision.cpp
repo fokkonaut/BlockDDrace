@@ -1149,10 +1149,10 @@ vec2 CCollision::GetRandomTile(int Index, bool Entity)
 	if (Entity)
 		Index += ENTITY_OFFSET;
 
-	if (m_vRandomTile[Index].size())
+	if (m_vTiles[Index].size())
 	{
-		int Rand = rand() % m_vRandomTile[Index].size();
-		return m_vRandomTile[Index][Rand];
+		int Rand = rand() % m_vTiles[Index].size();
+		return m_vTiles[Index][Rand];
 	}
 
 	return vec2(-1, -1);

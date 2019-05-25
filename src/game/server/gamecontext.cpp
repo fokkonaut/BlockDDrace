@@ -2905,8 +2905,8 @@ void CGameContext::OnInit()
 		pSwitch = (CSwitchTile *)Kernel()->RequestInterface<IMap>()->GetData(m_Layers.SwitchLayer()->m_Switch);
 
 	// BlockDDrace
-	Collision()->m_vRandomTile.clear();
-	Collision()->m_vRandomTile.resize(NUM_INDICES);
+	Collision()->m_vTiles.clear();
+	Collision()->m_vTiles.resize(NUM_INDICES);
 	// BlockDDrace
 
 	for(int y = 0; y < pTileMap->m_Height; y++)
@@ -2916,7 +2916,7 @@ void CGameContext::OnInit()
 			int Index = pTiles[y*pTileMap->m_Width+x].m_Index;
 
 			// BlockDDrace
-			Collision()->m_vRandomTile[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
+			Collision()->m_vTiles[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
 			// BlockDDrace
 
 			if(Index == TILE_OLDLASER)
@@ -2956,7 +2956,7 @@ void CGameContext::OnInit()
 				Index = pFront[y * pTileMap->m_Width + x].m_Index;
 
 				// BlockDDrace
-				Collision()->m_vRandomTile[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
+				Collision()->m_vTiles[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
 				// BlockDDrace
 
 				if(Index == TILE_OLDLASER)

@@ -24,9 +24,6 @@ class IGameController
 {
 	friend class CSaveTeam; // need access to GameServer() and Server()
 
-	vec2 m_aaSpawnPoints[3][64];
-	int m_aNumSpawnPoints[3];
-
 	class CGameContext *m_pGameServer;
 	class IServer *m_pServer;
 
@@ -50,7 +47,7 @@ protected:
 	};
 
 	float EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos);
-	void EvaluateSpawnType(CSpawnEval *pEval, int Type);
+	void EvaluateSpawnType(CSpawnEval *pEval, int Index);
 
 	void ResetGame();
 
@@ -122,7 +119,7 @@ public:
 	*/
 	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon);
 
-	virtual bool CanSpawn(int Team, vec2 *pPos, int Minigame = 0);
+	virtual bool CanSpawn(vec2 *pPos, int Index, bool Entity);
 
 	virtual const char *GetTeamName(int Team);
 	virtual int GetAutoTeam(int NotThisID);
