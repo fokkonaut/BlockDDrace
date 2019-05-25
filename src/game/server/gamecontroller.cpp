@@ -589,7 +589,7 @@ int IGameController::GetAutoTeam(int NotThisID)
 	// this will force the auto balancer to work overtime as well
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgStress)
-		return 0;
+		return TEAM_RED;
 #endif
 
 	int aNumplayers[2] = {0,0};
@@ -602,7 +602,7 @@ int IGameController::GetAutoTeam(int NotThisID)
 		}
 	}
 
-	int Team = 0;
+	int Team = TEAM_RED;
 
 	if(CanJoinTeam(Team, NotThisID))
 		return Team;
@@ -629,7 +629,7 @@ bool IGameController::CanJoinTeam(int Team, int NotThisID)
 
 int IGameController::ClampTeam(int Team)
 {
-	if(Team < 0)
+	if(Team < TEAM_RED)
 		return TEAM_SPECTATORS;
-	return 0;
+	return TEAM_RED;
 }
