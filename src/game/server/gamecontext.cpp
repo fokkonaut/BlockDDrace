@@ -4268,6 +4268,10 @@ const char *CGameContext::GetMinigameName(int Minigame)
 		return "Block";
 	case MINIGAME_SURVIVAL:
 		return "Survival";
+	case MINIGAME_INSTAGIB_BOOMFNG:
+		return "Instagib Boom FNG";
+	case MINIGAME_INSTAGIB_FNG:
+		return "Instagib FNG";
 	}
 	return "Unknown";
 }
