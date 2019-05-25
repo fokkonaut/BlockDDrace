@@ -1409,35 +1409,37 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	int ID = 0;
-	for (unsigned int i = ACC_START; i < pSelf->m_Accounts.size(); i++)
-		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
-		{
-			ID = i;
-			break;
-		}
+	int ID = pSelf->AddAccount();
+	pSelf->ReadAccountStats(ID, aUsername);
 
-	if (ID == 0)
+	if (pSelf->m_Accounts[ID].m_Username[0] == 0)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "That account doesn't exist, please register first");
+		pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
 		return;
 	}
 
 	if (pSelf->m_Accounts[ID].m_LoggedIn)
 	{
-		pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in");
+		if (pSelf->m_Accounts[ID].m_Port == g_Config.m_SvPort)
+			pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in");
+		else
+			pSelf->SendChatTarget(pResult->m_ClientID, "This account is already logged in on another server");
+		pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
 		return;
 	}
 
 	if (pSelf->m_Accounts[ID].m_Disabled)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This account is disabled");
+		pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
 		return;
 	}
 
 	if (str_comp(pSelf->m_Accounts[ID].m_Password, aPassword))
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Wrong password");
+		pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
 		return;
 	}
 

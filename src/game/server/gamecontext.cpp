@@ -3760,6 +3760,8 @@ int CGameContext::AccountsCallback(const char *pName, int IsDir, int StorageType
 			pSelf->Logout(ID);
 			dbg_msg("acc", "logged out account '%s'", aUsername);
 		}
+		else
+			pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
 	}
 
 	return 0;
