@@ -290,14 +290,6 @@ void CPlayer::Tick()
 	*                                                *
 	**************************************************/
 
-	if (m_IsDummy && m_Team != TEAM_SPECTATORS)
-	{
-		if (g_Config.m_SvHideBots == 2 && ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(GetCharacter()) == -1)
-			m_Team = TEAM_BLUE;
-		else
-			m_Team = TEAM_RED;
-	}
-
 	if (m_SetRealName)
 	{
 		if (m_SetRealNameTick < Server()->Tick())
@@ -482,7 +474,10 @@ void CPlayer::Snap(int SnappingClient)
 	**************************************************/
 
 	int Team = m_Team;
-	if (Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
+	if (
+		(g_Config.m_SvHideMinigamePlayers && Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
+		|| (g_Config.m_SvHideBots == 2 && m_IsDummy && m_Team != TEAM_SPECTATORS && ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(GetCharacter()) == -1)
+		)
 		Team = TEAM_BLUE;
 
 	pPlayerInfo->m_Local = 0;
