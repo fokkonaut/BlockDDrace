@@ -3234,7 +3234,7 @@ void CCharacter::DropLoot()
 		// drop all your weapons, in various directions (excluding hammer, ninja and extra weapons)
 		for (int i = WEAPON_GUN; i < WEAPON_NINJA; i++)
 		{
-			float Dir = ((rand() % 50 - 25) * 0.1); // in a range of -2.5 to +2.5
+			float Dir = ((rand() % 50 - 25 + 1) * 0.1); // in a range of -2.5 to +2.5
 			DropWeapon(i, Dir, true);
 		}
 	}
