@@ -422,9 +422,9 @@ public:
 	//backups
 	void BackupWeapons(int Type);
 	void LoadWeaponBackup(int Type);
-	int m_aWeaponsBackup[NUM_WEAPONS + 2][NUM_BACKUPS];
+	int m_aWeaponsBackup[NUM_WEAPONS_BACKUP][NUM_BACKUPS];
 	bool m_WeaponsBackupped[NUM_BACKUPS];
-	bool m_aWeaponsBackupGot[NUM_WEAPONS + 2][NUM_BACKUPS];
+	bool m_aWeaponsBackupGot[NUM_WEAPONS_BACKUP][NUM_BACKUPS];
 
 	//spooky ghost
 	void SetSpookyGhost();
