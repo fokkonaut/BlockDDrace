@@ -393,7 +393,7 @@ void CPlayer::Snap(int SnappingClient)
 		m_ShowName = true;
 
 	// set the name
-	if (m_SetRealName || m_ShowName)
+	if (m_ShowName || m_SetRealName)
 		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	else
 		StrToInts(&pClientInfo->m_Name0, 4, " ");
