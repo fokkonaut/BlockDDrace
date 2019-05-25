@@ -1124,6 +1124,8 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 				pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 			}
 		}
+		if (pChr->m_Invisible)
+			pSelf->SendChatTarget(pResult->m_ClientID, "Invisibility: True");
 		str_format(aBuf, sizeof(aBuf), "Position: (%.2f/%.2f)", pChr->m_Pos.x / 32, pChr->m_Pos.y / 32);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
