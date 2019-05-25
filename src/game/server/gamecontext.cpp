@@ -3005,7 +3005,7 @@ void CGameContext::OnInit()
 
 	// BlockDDrace
 
-	for (int i = MINIGAME_BLOCK; i < NUM_MINIGAMES; i++)
+	for (int i = 0; i < NUM_MINIGAMES; i++)
 		m_aMinigameDisabled[i] = false;
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
