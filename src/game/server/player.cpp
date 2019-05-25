@@ -364,7 +364,12 @@ void CPlayer::Snap(int SnappingClient)
 	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
-	// BlockDDrace
+
+	/*************************************************
+	*                                                *
+	*              B L O C K D D R A C E             *
+	*                                                *
+	**************************************************/
 
 	//spooky ghost
 	const char *pClan;
@@ -374,22 +379,26 @@ void CPlayer::Snap(int SnappingClient)
 		pClan = Server()->ClientClan(m_ClientID);
 	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
 
-
+	// show name by default
 	m_ShowName = true;
 
+	// hide names if both players are in survival, and not in the lobby
 	if (m_SpookyGhost
 		|| (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY && pSnapping->m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_SurvivalState > SURVIVAL_LOBBY)
 		)
 		m_ShowName = false;
 
+	// always show name if player is in spectators
 	if (pSnapping->GetTeam() == TEAM_SPECTATORS)
 		m_ShowName = true;
 
+	// set the name
 	if (m_SetRealName || m_ShowName)
 		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	else
 		StrToInts(&pClientInfo->m_Name0, 4, " ");
 
+	// checking whether scoreboard is activated or not
 	if (GetCharacter())
 	{
 		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
@@ -398,15 +407,17 @@ void CPlayer::Snap(int SnappingClient)
 			GetCharacter()->m_TimesShot = 0;
 	}
 
+	// setting stuff for invisible
 	if (GetCharacter() && GetCharacter()->m_Invisible && SnappingClient != m_ClientID && Server()->GetAuthedState(SnappingClient) >= AUTHED_MOD)
 	{
 		StrToInts(&pClientInfo->m_Clan0, 3, "[INVISIBLE]");
 
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = true;
-		pClientInfo->m_ColorBody = 182;
-		pClientInfo->m_ColorFeet = 182;
+		pClientInfo->m_ColorBody = 180;
+		pClientInfo->m_ColorFeet = 180;
 	}
+	// setting rainbow
 	else if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
@@ -473,6 +484,7 @@ void CPlayer::Snap(int SnappingClient)
 	*                                                *
 	**************************************************/
 
+	// hide bots from scoreboard and other players if they are in different minigames
 	int Team = m_Team;
 	if (
 		(g_Config.m_SvHideMinigamePlayers && Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
@@ -504,9 +516,10 @@ void CPlayer::Snap(int SnappingClient)
 
 
 	// BlockDDrace
-	// send 0 if times of others are not shown
 	int Score = -9999;
 	bool Account = true;
+
+	// send 0 if times of others are not shown
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 	{
 		Score = -9999;
