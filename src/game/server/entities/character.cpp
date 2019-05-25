@@ -815,10 +815,10 @@ void CCharacter::GiveNinja()
 	if (!m_FreezeTime)
 		m_aWeapons[WEAPON_NINJA].m_Ammo = -1;
 
+	m_aWeapons[WEAPON_NINJA].m_Got = true;
+
 	if (m_ScrollNinja)
 		return;
-
-	m_aWeapons[WEAPON_NINJA].m_Got = true;
 
 	m_Ninja.m_ActivationTick = Server()->Tick();
 	if (GetActiveWeapon() != WEAPON_NINJA)
@@ -3545,11 +3545,11 @@ void CCharacter::PoliceHelper(bool Set, int FromID, bool Silent)
 
 void CCharacter::ScrollNinja(bool Set, int FromID, bool Silent)
 {
+	m_ScrollNinja = Set;
 	if (Set)
 		GiveNinja();
 	else
 		RemoveNinja();
-	m_ScrollNinja = Set;
 	GameServer()->SendExtraMessage(SCROLL_NINJA, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
