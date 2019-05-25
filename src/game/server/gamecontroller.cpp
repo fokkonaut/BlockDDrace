@@ -61,7 +61,7 @@ float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
 void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
 {
 	// get spawn point
-	for(int i = 0; i < GameServer()->Collision()->m_vTiles[Index].size(); i++)
+	for(unsigned int i = 0; i < GameServer()->Collision()->m_vTiles[Index].size(); i++)
 	{
 		// check if the position is occupado
 		CCharacter *aEnts[MAX_CLIENTS];
