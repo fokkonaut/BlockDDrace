@@ -98,13 +98,9 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
 	}
 }
 
-bool IGameController::CanSpawn(vec2 *pOutPos, int Index, bool Entity)
+bool IGameController::CanSpawn(vec2 *pOutPos, int Index)
 {
 	// BlockDDrace
-	if (Entity)
-		Index += ENTITY_OFFSET;
-
-	// spectators can't spawn
 	if(Index < TILE_AIR || Index > NUM_INDICES-1)
 		return false;
 

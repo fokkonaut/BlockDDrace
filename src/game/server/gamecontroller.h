@@ -119,7 +119,7 @@ public:
 	*/
 	virtual int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon);
 
-	virtual bool CanSpawn(vec2 *pPos, int Index, bool Entity);
+	virtual bool CanSpawn(vec2 *pPos, int Index);
 
 	virtual const char *GetTeamName(int Team);
 	virtual int GetAutoTeam(int NotThisID);

@@ -934,17 +934,17 @@ int CCollision::Entity(int x, int y, int Layer)
 	switch (Layer)
 	{
 		case LAYER_GAME:
-			return m_pTiles[y*m_Width+x].m_Index - ENTITY_OFFSET;
+			return m_pTiles[y*m_Width+x].m_Index;
 		case LAYER_FRONT:
-			return m_pFront[y*m_Width+x].m_Index - ENTITY_OFFSET;
+			return m_pFront[y*m_Width+x].m_Index;
 		case LAYER_SWITCH:
-			return m_pSwitch[y*m_Width+x].m_Type - ENTITY_OFFSET;
+			return m_pSwitch[y*m_Width+x].m_Type;
 		case LAYER_TELE:
-			return m_pTele[y*m_Width+x].m_Type - ENTITY_OFFSET;
+			return m_pTele[y*m_Width+x].m_Type;
 		case LAYER_SPEEDUP:
-			return m_pSpeedup[y*m_Width+x].m_Type - ENTITY_OFFSET;
+			return m_pSpeedup[y*m_Width+x].m_Type;
 		case LAYER_TUNE:
-			return m_pTune[y*m_Width+x].m_Type - ENTITY_OFFSET;
+			return m_pTune[y*m_Width+x].m_Type;
 		default:
 			return 0;
 			break;
@@ -1144,16 +1144,12 @@ int CCollision::IsFCheckpoint(int Index)
 *                                                *
 **************************************************/
 
-vec2 CCollision::GetRandomTile(int Index, bool Entity)
+vec2 CCollision::GetRandomTile(int Index)
 {
-	if (Entity)
-		Index += ENTITY_OFFSET;
-
 	if (m_vTiles[Index].size())
 	{
 		int Rand = rand() % m_vTiles[Index].size();
 		return m_vTiles[Index][Rand];
 	}
-
 	return vec2(-1, -1);
 }

@@ -2947,8 +2947,8 @@ void CGameContext::OnInit()
 			if(Index >= ENTITY_OFFSET)
 			{
 				vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
-				((CGameControllerDDRace*)m_pController)->OnEntity(Index - ENTITY_OFFSET, Pos);
-				m_pController->OnEntity(Index - ENTITY_OFFSET, Pos, LAYER_GAME, pTiles[y * pTileMap->m_Width + x].m_Flags);
+				((CGameControllerDDRace*)m_pController)->OnEntity(Index, Pos);
+				m_pController->OnEntity(Index, Pos, LAYER_GAME, pTiles[y * pTileMap->m_Width + x].m_Flags);
 			}
 
 			if(pFront)
@@ -2987,7 +2987,7 @@ void CGameContext::OnInit()
 				if(Index >= ENTITY_OFFSET)
 				{
 					vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
-					m_pController->OnEntity(Index-ENTITY_OFFSET, Pos, LAYER_FRONT, pFront[y*pTileMap->m_Width+x].m_Flags);
+					m_pController->OnEntity(Index, Pos, LAYER_FRONT, pFront[y*pTileMap->m_Width+x].m_Flags);
 				}
 			}
 			if(pSwitch)
@@ -2997,7 +2997,7 @@ void CGameContext::OnInit()
 				if(Index >= ENTITY_OFFSET)
 				{
 					vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
-					m_pController->OnEntity(Index-ENTITY_OFFSET, Pos, LAYER_SWITCH, pSwitch[y*pTileMap->m_Width+x].m_Flags, pSwitch[y*pTileMap->m_Width+x].m_Number);
+					m_pController->OnEntity(Index, Pos, LAYER_SWITCH, pSwitch[y*pTileMap->m_Width+x].m_Flags, pSwitch[y*pTileMap->m_Width+x].m_Number);
 				}
 			}
 		}

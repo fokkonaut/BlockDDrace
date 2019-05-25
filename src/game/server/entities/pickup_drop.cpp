@@ -365,7 +365,7 @@ void CPickupDrop::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(&SpawnPos, ENTITY_SPAWN, true))
+		if (GameServer()->m_pController->CanSpawn(&SpawnPos, ENTITY_SPAWN))
 		{
 			m_Pos = SpawnPos;
 			m_Vel.x = 0;
@@ -387,7 +387,7 @@ void CPickupDrop::HandleTiles(int Index)
 		}
 		// if no checkpointout have been found (or if there no recorded checkpoint), teleport to start
 		vec2 SpawnPos;
-		if (GameServer()->m_pController->CanSpawn(&SpawnPos, ENTITY_SPAWN, true))
+		if (GameServer()->m_pController->CanSpawn(&SpawnPos, ENTITY_SPAWN))
 			m_Pos = SpawnPos;
 		return;
 	}

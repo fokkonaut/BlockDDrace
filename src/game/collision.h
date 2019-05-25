@@ -98,9 +98,7 @@ public:
 	int m_NumSwitchers;
 
 	// BlockDDrace
-	vec2 GetRandomTile(int Index, bool Entity);
-	vec2 GetRandomTile(int Index) { return GetRandomTile(Index, false); };
-	vec2 GetRandomEntity(int Index) { return GetRandomTile(Index, true); };
+	vec2 GetRandomTile(int Index);
 	std::vector< std::vector<vec2> > m_vTiles;;
 	// BlockDDrace
 

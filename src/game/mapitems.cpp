@@ -83,7 +83,6 @@ bool IsValidSwitchTile(int Index)
 
 bool IsValidEntity(int Index)
 {
-	Index -= ENTITY_OFFSET;
 	return (
 		   (Index >= ENTITY_SPAWN && Index <= ENTITY_LASER_O_FAST)
 		|| (Index >= ENTITY_PLASMAE && Index <= ENTITY_CRAZY_SHOTGUN)

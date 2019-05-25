@@ -800,33 +800,28 @@ void CPlayer::TryRespawn()
 
 	// BlockDDrace
 	int Index = ENTITY_SPAWN;
-	bool Entity = true;
 
 	if (m_ForceSpawnPos != vec2(-1, -1))
 		SpawnPos = m_ForceSpawnPos;
 	else if (m_Dummymode == 99)
 		Index = ENTITY_SHOP_BOT_SPAWN;
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
-	{
 		Index = TILE_MINIGAME_BLOCK;
-		Entity = false;
-	}
 	else if (m_Minigame == MINIGAME_SURVIVAL)
 	{
-		if (m_SurvivalState == SURVIVAL_DEATHMATCH)
-			Index = TILE_SURVIVAL_DEATHMATCH;
+		if (m_SurvivalState == SURVIVAL_LOBBY)
+			Index = TILE_SURVIVAL_LOBBY;
 		else if (m_SurvivalState == SURVIVAL_PLAYING)
 			Index = TILE_SURVIVAL_SPAWN;
-		else
-			Index = TILE_SURVIVAL_LOBBY;
-		Entity = false;
+		else if (m_SurvivalState == SURVIVAL_DEATHMATCH)
+			Index = TILE_SURVIVAL_DEATHMATCH;
 	}
 	else if (m_Minigame == MINIGAME_INSTAGIB_BOOMFNG)
 		Index = ENTITY_SPAWN_RED;
 	else if (m_Minigame == MINIGAME_INSTAGIB_FNG)
 		Index = ENTITY_SPAWN_BLUE;
 
-	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index, Entity))
+	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index))
 		return;
 
 	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
