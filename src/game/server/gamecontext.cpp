@@ -3928,6 +3928,7 @@ void CGameContext::Logout(int ID)
 	m_Accounts[ID].m_LoggedIn = false;
 	m_Accounts[ID].m_ClientID = -1;
 	WriteAccountStats(ID);
+	m_Accounts.erase(m_Accounts.begin() + ID);
 }
 
 int CGameContext::GetNextClientID()
