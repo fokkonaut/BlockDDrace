@@ -51,9 +51,6 @@ float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
 	{
 		// team mates are not as dangerous as enemies
 		float Scoremod = 1.0f;
-		if(pEval->m_FriendlyTeam != -1 && pC->GetPlayer()->GetTeam() == pEval->m_FriendlyTeam)
-			Scoremod = 0.5f;
-
 		float d = distance(Pos, pC->m_Pos);
 		Score += Scoremod * (d == 0 ? 1000000000.0f : 1.0f/d);
 	}
