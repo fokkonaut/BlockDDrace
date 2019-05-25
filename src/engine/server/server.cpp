@@ -3127,12 +3127,12 @@ void CServer::SetErrorShutdown(const char *pReason)
 void CServer::BotJoin(int BotID)
 {
 	const char *pNames[] = { //name array
-		"flappy", //0
+		"ZillyDreck", //0
+		"flappy",
 		"Chillingo",
 		"Fluffy",
 		"MLG_PRO",
 		"Enzym",
-		"ZillyDreck",
 		"ciliDR[HUN]",
 		"fuzzle",
 		"Piko",

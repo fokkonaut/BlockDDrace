@@ -2886,13 +2886,6 @@ void CGameContext::OnInit()
 #endif
 		m_pScore = new CFileScore(this);
 
-	// BlockDDrace
-	if (g_Config.m_SvDefaultBots)
-		ConnectDefaultBots();
-	SetV3Offset();
-	// BlockDDrace
-
-
 	// create all entities from the game layer
 	CMapItemLayerTilemap *pTileMap = m_Layers.GameLayer();
 	CTile *pTiles = (CTile *)Kernel()->RequestInterface<IMap>()->GetData(pTileMap->m_Data);
@@ -3010,6 +3003,10 @@ void CGameContext::OnInit()
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsCallback, this);
+
+	if (g_Config.m_SvDefaultBots)
+		ConnectDefaultBots();
+	SetV3Offset();
 
 
 #ifdef CONF_DEBUG
