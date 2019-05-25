@@ -3328,48 +3328,42 @@ void CCharacter::Jetpack(bool Set, int FromID, bool Silent)
 void CCharacter::Rainbow(bool Set, int FromID, bool Silent)
 {
 	m_Rainbow = Set;
-	if (!Set)
-		m_pPlayer->m_InfRainbow = false;
+	m_pPlayer->m_InfRainbow = false;
 	GameServer()->SendExtraMessage(RAINBOW, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::InfRainbow(bool Set, int FromID, bool Silent)
 {
 	m_pPlayer->m_InfRainbow = Set;
-	if (!Set)
-		m_Rainbow = false;
+	m_Rainbow = false;
 	GameServer()->SendExtraMessage(INF_RAINBOW, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::Atom(bool Set, int FromID, bool Silent)
 {
 	m_Atom = Set;
-	if (!Set)
-		m_pPlayer->m_InfAtom = false;
+	m_pPlayer->m_InfAtom = false;
 	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::InfAtom(bool Set, int FromID, bool Silent)
 {
 	m_pPlayer->m_InfAtom = Set;
-	if (!Set)
-		m_Atom = false;
+	m_Atom = false;
 	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::Trail(bool Set, int FromID, bool Silent)
 {
 	m_Trail = Set;
-	if (!Set)
-		m_pPlayer->m_InfTrail = false;
+	m_pPlayer->m_InfTrail = false;
 	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::InfTrail(bool Set, int FromID, bool Silent)
 {
 	m_pPlayer->m_InfTrail = Set;
-	if (!Set)
-		m_Trail = false;
+	m_Trail = false;
 	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
@@ -3398,11 +3392,9 @@ void CCharacter::Meteor(bool Set, int FromID, bool Silent)
 	{
 		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
 			return;
-		else
-		{
-			m_Meteors = 0;
-			m_pPlayer->m_InfMeteors = 0;
-		}
+
+		m_Meteors = 0;
+		m_pPlayer->m_InfMeteors = 0;
 	}
 	GameServer()->SendExtraMessage(METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
@@ -3424,11 +3416,9 @@ void CCharacter::InfMeteor(bool Set, int FromID, bool Silent)
 	{
 		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
 			return;
-		else
-		{
-			m_Meteors = 0;
-			m_pPlayer->m_InfMeteors = 0;
-		}
+
+		m_Meteors = 0;
+		m_pPlayer->m_InfMeteors = 0;
 	}
 	GameServer()->SendExtraMessage(INF_METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
@@ -3587,7 +3577,6 @@ void CCharacter::SpreadWeapon(int Type, bool Set, int FromID, bool Silent)
 {
 	if (Type == WEAPON_HAMMER || Type == WEAPON_NINJA)
 		return;
-
 	m_aSpreadWeapon[Type] = Set;
 	GameServer()->SendExtraMessage(SPREAD_WEAPON, m_pPlayer->GetCID(), Set, FromID, Silent, Type);
 }
