@@ -337,7 +337,7 @@ public:
 	int GetNextClientID();
 
 	//account
-	static int AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser);
+	static int AccountsCallback(const char *pName, int IsDir, int StorageType, void *pUser);
 	int AddAccount();
 	void ReadAccountStats(int ID, char *pName);
 	void WriteAccountStats(int ID);

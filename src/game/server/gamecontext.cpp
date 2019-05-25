@@ -3009,7 +3009,7 @@ void CGameContext::OnInit()
 		m_aMinigameDisabled[i] = false;
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
-	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsListdirCallback, this);
+	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsCallback, this);
 
 
 #ifdef CONF_DEBUG
@@ -3746,14 +3746,14 @@ bool CGameContext::IsSnapFixDDNet(int ClientID)
 	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixDDNet : false;
 }
 
-int CGameContext::AccountsListdirCallback(const char *pName, int IsDir, int StorageType, void *pUser)
+int CGameContext::AccountsCallback(const char *pName, int IsDir, int StorageType, void *pUser)
 {
 	CGameContext *pSelf = (CGameContext *)pUser;
 
 	if (!IsDir && str_endswith(pName, ".acc"))
 	{
 		char aUsername[32];
-		str_copy(aUsername, pName, str_length(pName) - 3);
+		str_copy(aUsername, pName, str_length(pName) - 3); // remove the .acc
 
 		int ID = pSelf->AddAccount();
 		pSelf->ReadAccountStats(ID, aUsername);
