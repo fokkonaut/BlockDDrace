@@ -3935,34 +3935,18 @@ void CGameContext::Logout(int ID)
 
 int CGameContext::GetNextClientID()
 {
-	int ClientID = -1;
 	for (int i = 0; i < g_Config.m_SvMaxClients; i++)
-	{
-		if (((CServer*)Server())->m_aClients[i].m_State != CServer::CClient::STATE_EMPTY)
-			continue;
-
-		ClientID = i;
-		break;
-	}
-
-	return ClientID;
+		if (((CServer*)Server())->m_aClients[i].m_State == CServer::CClient::STATE_EMPTY)
+			return i;
+	return -1;
 }
 
 int CGameContext::GetCIDByName(const char * pName)
 {
-	int ClientID = -1;
 	for (int i = 0; i < MAX_CLIENTS; i++)
-	{
-		if (m_apPlayers[i])
-		{
-			if (!str_comp(pName, Server()->ClientName(i)))
-			{
-				ClientID = i;
-				break;
-			}
-		}
-	}
-	return ClientID;
+		if (m_apPlayers[i] && !str_comp(pName, Server()->ClientName(i)))
+			return i;
+	return -1;
 }
 
 void CGameContext::FixMotd()
@@ -4057,7 +4041,6 @@ bool CGameContext::IsShopBot(int ClientID)
 
 void CGameContext::SendMotd(const char * pMsg, int ClientID)
 {
-	// send motd
 	CNetMsg_Sv_Motd Msg;
 	Msg.m_pMessage = pMsg;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
