@@ -4236,7 +4236,7 @@ int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
 			{
 				if (ExcludeBots && m_apPlayers[i]->m_IsDummy)
 					continue;
-				if (!CountSpectators && !m_apPlayers[i]->GetCharacter())
+				if (!CountSpectators && m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS)
 					continue;
 			}
 			count++;
