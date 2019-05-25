@@ -821,6 +821,10 @@ void CPlayer::TryRespawn()
 			Index = TILE_SURVIVAL_LOBBY;
 		Entity = false;
 	}
+	else if (m_Minigame == MINIGAME_INSTAGIB_BOOMFNG)
+		Index = ENTITY_SPAWN_RED;
+	else if (m_Minigame == MINIGAME_INSTAGIB_FNG)
+		Index = ENTITY_SPAWN_BLUE;
 
 	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index, Entity))
 		return;
