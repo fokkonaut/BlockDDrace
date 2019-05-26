@@ -416,7 +416,7 @@ public:
 
 	//last toucher
 	int m_LastHitWeapon;
-	int m_LastToucherID;
+	int m_LastTouchedTee;
 	int m_OldLastHookedPlayer;
 
 	//backups

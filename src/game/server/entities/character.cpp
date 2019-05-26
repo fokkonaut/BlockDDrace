@@ -1095,14 +1095,14 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon < 0))
 	{
-		m_LastToucherID = -1;
+		m_LastTouchedTee = -1;
 		m_LastHitWeapon = -1;
 	}
 
-	if (m_LastToucherID == -1)
-		m_LastToucherID = m_pPlayer->GetCID();
+	if (m_LastTouchedTee == -1)
+		m_LastTouchedTee = m_pPlayer->GetCID();
 	Weapon = m_LastHitWeapon;
-	Killer = m_LastToucherID;
+	Killer = m_LastTouchedTee;
 
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
@@ -1187,7 +1187,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 
 	if (GameServer()->m_apPlayers[From] && From != m_pPlayer->GetCID())
 	{
-		m_LastToucherID = From;
+		m_LastTouchedTee = From;
 		m_LastHitWeapon = Weapon;
 	}
 
@@ -2712,7 +2712,7 @@ bool CCharacter::UnFreeze()
 		m_FreezeTick = 0;
 		m_FirstFreezeTick = 0;
 		m_LastHitWeapon = -1;
-		m_LastToucherID = -1;
+		m_LastTouchedTee = -1;
 		if (GetActiveWeapon()==WEAPON_HAMMER) m_ReloadTimer = 0;
 		return true;
 	}
@@ -2836,7 +2836,7 @@ void CCharacter::DDRaceInit()
 	m_LastIndexFrontTile = 0;
 
 	m_LastHitWeapon = -1;
-	m_LastToucherID = -1;
+	m_LastTouchedTee = -1;
 	m_OldLastHookedPlayer = -1;
 
 	m_CountSpookyGhostInputs = false;
@@ -3038,7 +3038,7 @@ void CCharacter::BlockDDraceTick()
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
 		if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
-			m_LastToucherID = pChr->GetPlayer()->GetCID();
+			m_LastTouchedTee = pChr->GetPlayer()->GetCID();
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -3047,16 +3047,16 @@ void CCharacter::BlockDDraceTick()
 		if (!pChar || !pChar->IsAlive() || pChar == this)
 			continue;
 		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
-			m_LastToucherID = i;
+			m_LastTouchedTee = i;
 	}
 
 	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
 		m_LastHitWeapon = -1;
 	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
 
-	if (!GameServer()->m_apPlayers[m_LastToucherID])
+	if (!GameServer()->m_apPlayers[m_LastTouchedTee])
 	{
-		m_LastToucherID = -1;
+		m_LastTouchedTee = -1;
 		m_LastHitWeapon = -1;
 	}
 
