@@ -231,7 +231,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, in
 		return;
 	}
 
-	int Amount = (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
+	int Amount = (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
 
 	bool Spread = Remove ? false : pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : Weapon >= 0 ? pChr->m_aSpreadWeapon[Weapon] : false;
 
@@ -1071,9 +1071,9 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);
 		pSelf->SendChatTarget(pResult->m_ClientID, aBuf);
 	}
-	if (pPlayer->m_Gamemode == MODE_DDRACE)
+	if (pPlayer->m_Gamemode == GAMEMODE_DDRACE)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: DDrace");
-	else if (pPlayer->m_Gamemode == MODE_VANILLA)
+	else if (pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Mode: Vanilla");
 
 	if (pChr)

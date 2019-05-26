@@ -155,7 +155,7 @@ void CPlayer::Reset()
 
 	m_vWeaponLimit.resize(NUM_WEAPONS);
 
-	m_Gamemode = g_Config.m_SvVanillaModeStart ? MODE_VANILLA : MODE_DDRACE;
+	m_Gamemode = g_Config.m_SvVanillaModeStart ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
 	m_SpookyGhost = false;
 	m_RealUseCustomColor = 0;
 	m_RealSkinName[0] = '\0';

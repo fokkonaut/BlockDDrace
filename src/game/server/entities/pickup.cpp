@@ -88,7 +88,7 @@ void CPickup::Tick()
 				{
 					case POWERUP_HEALTH:
 						// BlockDDrace
-						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+						if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA)
 						{
 							if (pChr->IncreaseHealth(1))
 							{
@@ -103,7 +103,7 @@ void CPickup::Tick()
 					case POWERUP_ARMOR:
 						if(pChr->Team() == TEAM_SUPER) continue;
 						// BlockDDrace
-						if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+						if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA)
 						{
 							if (pChr->IncreaseArmor(1))
 							{
@@ -156,9 +156,9 @@ void CPickup::Tick()
 						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || pChr->GetWeaponAmmo(m_Subtype) != -1))))
 						{
 							// BlockDDrace
-							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
+							if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
 								pChr->GiveWeapon(m_Subtype, false, 10);
-							else if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+							else if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
 								pChr->GiveWeapon(m_Subtype);
 							else
 								break;
@@ -184,7 +184,7 @@ void CPickup::Tick()
 
 							// activate ninja on target player
 							pChr->GiveNinja();
-							if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+							if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA)
 							{
 								RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 
@@ -213,7 +213,7 @@ void CPickup::Tick()
 						break;
 				};
 
-				if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA)
+				if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA)
 				{
 					if (RespawnTime >= 0)
 					{

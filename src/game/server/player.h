@@ -26,8 +26,8 @@ enum NoNameFix
 
 enum Gamemode
 {
-	MODE_DDRACE = 0,
-	MODE_VANILLA
+	GAMEMODE_DDRACE = 0,
+	GAMEMODE_VANILLA
 };
 
 enum Scoreformat

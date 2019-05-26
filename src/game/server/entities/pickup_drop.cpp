@@ -92,9 +92,9 @@ void CPickupDrop::Pickup()
 		if (m_Type == POWERUP_WEAPON)
 		{
 			int Ammo = m_Bullets;
-			if (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && Ammo == -1)
+			if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && Ammo == -1)
 				Ammo = 10;
-			if (pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+			if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
 				Ammo = -1;
 				
 			pChr->GiveWeapon(m_Weapon, false, Ammo);
@@ -137,11 +137,11 @@ int CPickupDrop::IsCharacterNear()
 		{
 			if (
 				(pChr->GetPlayer()->m_SpookyGhost && m_Weapon != WEAPON_GUN)
-				|| (pChr->GetWeaponGot(m_Weapon) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == MODE_DDRACE)
+				|| (pChr->GetWeaponGot(m_Weapon) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
 				|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 				|| (m_Jetpack && pChr->m_Jetpack)
 				|| (m_SpreadWeapon && pChr->m_aSpreadWeapon[m_Weapon])
-				|| (pChr->GetPlayer()->m_Gamemode == MODE_VANILLA && pChr->GetWeaponGot(m_Weapon) && pChr->GetWeaponAmmo(m_Weapon) >= m_Bullets)
+				|| (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && pChr->GetWeaponGot(m_Weapon) && pChr->GetWeaponAmmo(m_Weapon) >= m_Bullets)
 				)
 				continue;
 		}
@@ -167,7 +167,7 @@ void CPickupDrop::IsShieldNear()
 
 		if (pShield->GetType() == POWERUP_ARMOR)
 		{
-			if (GameServer()->m_apPlayers[m_Owner]->m_Gamemode == MODE_DDRACE)
+			if (GameServer()->m_apPlayers[m_Owner]->m_Gamemode == GAMEMODE_DDRACE)
 			{
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 				Reset();

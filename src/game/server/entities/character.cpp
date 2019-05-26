@@ -426,7 +426,7 @@ void CCharacter::FireWeapon()
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
-	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaWeapons)
+	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA && g_Config.m_SvVanillaWeapons)
 		NumShots = 1;
 	bool Sound = true;
 
@@ -508,7 +508,7 @@ void CCharacter::FireWeapon()
 			if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
 			{
 				bool Straight = false;
-				if (m_pPlayer->m_Gamemode == MODE_DDRACE && g_Config.m_SvVanillaWeapons)
+				if (m_pPlayer->m_Gamemode == GAMEMODE_DDRACE && g_Config.m_SvVanillaWeapons)
 					Straight = true;
 
 				int Lifetime;
@@ -553,7 +553,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			if (m_pPlayer->m_Gamemode == MODE_VANILLA && g_Config.m_SvVanillaWeapons)
+			if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA && g_Config.m_SvVanillaWeapons)
 			{
 				int ShotSpread = 2;
 
@@ -777,7 +777,7 @@ void CCharacter::HandleWeapons()
 	int AmmoRegenTime = g_pData->m_Weapons.m_aId[GetActiveWeapon()].m_Ammoregentime;
 	if (GetActiveWeapon() == WEAPON_HEART_GUN)
 		AmmoRegenTime = g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Ammoregentime;
-	if(AmmoRegenTime && m_pPlayer->m_Gamemode == MODE_VANILLA && !m_FreezeTime && m_aWeapons[GetActiveWeapon()].m_Ammo != -1)
+	if(AmmoRegenTime && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA && !m_FreezeTime && m_aWeapons[GetActiveWeapon()].m_Ammo != -1)
 	{
 		// If equipped and not active, regen ammo?
 		if (m_ReloadTimer <= 0)
@@ -803,7 +803,7 @@ void CCharacter::HandleWeapons()
 
 void CCharacter::GiveNinja()
 {
-	if (!m_ScrollNinja && !m_aWeapons[WEAPON_NINJA].m_Got && m_pPlayer->m_Gamemode == MODE_VANILLA)
+	if (!m_ScrollNinja && !m_aWeapons[WEAPON_NINJA].m_Got && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 		GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
 	for (int i = 0; i < NUM_BACKUPS; i++)
@@ -1191,7 +1191,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		m_LastHitWeapon = Weapon;
 	}
 
-	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 	{
 		// m_pPlayer only inflicts half damage on self
 		if(From == m_pPlayer->GetCID())
@@ -1275,11 +1275,11 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);
 	}
 
-	if (m_pPlayer->m_Gamemode == MODE_DDRACE && From != -1 && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_DDRACE && From != -1 && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if ((Dmg && m_pPlayer->m_Gamemode == MODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
+	else if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -2870,12 +2870,12 @@ void CCharacter::DDRaceInit()
 	SaveRealInfos();
 	UnsetSpookyGhost();
 
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == MODE_VANILLA)
-		m_pPlayer->m_Gamemode = MODE_VANILLA;
+	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
+		m_pPlayer->m_Gamemode = GAMEMODE_VANILLA;
 	else
-		m_pPlayer->m_Gamemode = MODE_DDRACE;
+		m_pPlayer->m_Gamemode = GAMEMODE_DDRACE;
 
-	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 	{
 		m_Armor = 0;
 		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
@@ -3459,10 +3459,10 @@ void CCharacter::PassiveCollision(bool Set)
 
 void CCharacter::VanillaMode(int FromID, bool Silent)
 {
-	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 		return;
 
-	m_pPlayer->m_Gamemode = MODE_VANILLA;
+	m_pPlayer->m_Gamemode = GAMEMODE_VANILLA;
 	m_Armor = 0;
 	for (int j = 0; j < NUM_BACKUPS; j++)
 	{
@@ -3485,10 +3485,10 @@ void CCharacter::VanillaMode(int FromID, bool Silent)
 
 void CCharacter::DDraceMode(int FromID, bool Silent)
 {
-	if (m_pPlayer->m_Gamemode == MODE_DDRACE)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_DDRACE)
 		return;
 
-	m_pPlayer->m_Gamemode = MODE_DDRACE;
+	m_pPlayer->m_Gamemode = GAMEMODE_DDRACE;
 	m_Health = 10;
 	m_Armor = 10;
 	for (int j = 0; j < NUM_BACKUPS; j++)
