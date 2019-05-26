@@ -1185,13 +1185,10 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	*                                                *
 	**************************************************/
 
-	if (GameServer()->m_apPlayers[From])
+	if (GameServer()->m_apPlayers[From] && From != m_pPlayer->GetCID())
 	{
-		if (From != m_pPlayer->GetCID())
-		{
-			m_LastToucherID = From;
-			m_LastHitWeapon = Weapon;
-		}
+		m_LastToucherID = From;
+		m_LastHitWeapon = Weapon;
 	}
 
 	if (m_pPlayer->m_Gamemode == MODE_VANILLA)
