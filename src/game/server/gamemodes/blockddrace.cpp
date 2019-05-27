@@ -166,7 +166,7 @@ void CGameControllerBlockDDrace::Snap(int SnappingClient)
 	bool FlagPosFix[2];
 	FlagPosFix[TEAM_RED] = false;
 	FlagPosFix[TEAM_BLUE] = false;
-	if (pSnap->m_SnapFixDDNet || pSnap->m_SnapFixVanilla)
+	if (pSnap->m_SnapFixDDNet || pSnap->m_ClientVersion < VERSION_DDNET_OLD)
 		for (int i = 0; i < 2; i++)
 			if (
 				m_apFlags[i]
@@ -181,7 +181,7 @@ void CGameControllerBlockDDrace::Snap(int SnappingClient)
 			pGameDataObj->m_FlagCarrierRed = FLAG_ATSTAND;
 		else if (m_apFlags[TEAM_RED]->GetCarrier() && m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer())
 		{
-			if (!pSnap->m_SnapFixDDNet && !pSnap->m_SnapFixVanilla)
+			if (!pSnap->m_SnapFixDDNet && pSnap->m_ClientVersion >= VERSION_DDNET_OLD)
 				pGameDataObj->m_FlagCarrierRed = m_apFlags[TEAM_RED]->GetCarrier()->GetPlayer()->GetCID();
 			else if (FlagPosFix[TEAM_RED])
 				pGameDataObj->m_FlagCarrierRed = 0;
@@ -199,7 +199,7 @@ void CGameControllerBlockDDrace::Snap(int SnappingClient)
 			pGameDataObj->m_FlagCarrierBlue = FLAG_ATSTAND;
 		else if (m_apFlags[TEAM_BLUE]->GetCarrier() && m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer())
 		{
-			if (!pSnap->m_SnapFixDDNet && !pSnap->m_SnapFixVanilla)
+			if (!pSnap->m_SnapFixDDNet && pSnap->m_ClientVersion >= VERSION_DDNET_OLD)
 				pGameDataObj->m_FlagCarrierBlue = m_apFlags[TEAM_BLUE]->GetCarrier()->GetPlayer()->GetCID();
 			else if (FlagPosFix[TEAM_BLUE])
 				pGameDataObj->m_FlagCarrierBlue = 0;

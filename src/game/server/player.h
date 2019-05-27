@@ -265,8 +265,7 @@ public:
 	int m_FakePing;
 	vec2 m_ForceSpawnPos;
 
-	//snap fix
-	bool m_SnapFixVanilla;
+	//snap fix for 256p support
 	bool m_SnapFixDDNet;
 
 	//gamemodes

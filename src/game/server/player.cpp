@@ -57,8 +57,8 @@ void CPlayer::Reset()
 
 	// BlockDDrace
 
-	m_SnapFixDDNet = GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS;
-	m_SnapFixVanilla = false;
+	// used for 256p support
+	m_SnapFixDDNet = true;
 
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
 	for (int i = 1;i < DDRACE_MAX_CLIENTS;i++)
@@ -451,7 +451,6 @@ void CPlayer::Snap(int SnappingClient)
 	**************************************************/
 
 	m_SnapFixDDNet = false;
-	m_SnapFixVanilla = false;
 	if (m_ClientVersion >= VERSION_DDNET_OLD)
 	{
 		if (GameServer()->CountConnectedPlayers() > DDRACE_MAX_CLIENTS || m_ClientID > DDRACE_MAX_CLIENTS)
@@ -459,14 +458,6 @@ void CPlayer::Snap(int SnappingClient)
 		else for (int i = 0; i < MAX_CLIENTS; i++)
 			if (i >= DDRACE_MAX_CLIENTS && GameServer()->m_apPlayers[i])
 				m_SnapFixDDNet = true;
-	}
-	if (m_ClientVersion < VERSION_DDNET_OLD)
-	{
-		if (GameServer()->CountConnectedPlayers() > VANILLA_MAX_CLIENTS || m_ClientID > VANILLA_MAX_CLIENTS)
-			m_SnapFixVanilla = true;
-		else for (int i = 0; i < MAX_CLIENTS; i++)
-			if (i >= VANILLA_MAX_CLIENTS && GameServer()->m_apPlayers[i])
-				m_SnapFixVanilla = true;
 	}
 
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
@@ -477,12 +468,6 @@ void CPlayer::Snap(int SnappingClient)
 	}
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
-
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
 
 	// hide bots from scoreboard and other players if they are in different minigames
 	int Team = m_Team;
@@ -495,9 +480,9 @@ void CPlayer::Snap(int SnappingClient)
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Score = abs(m_Score) * -1;
-	pPlayerInfo->m_Team = (m_SnapFixVanilla || m_SnapFixDDNet || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? Team : TEAM_SPECTATORS;
+	pPlayerInfo->m_Team = (m_SnapFixDDNet || m_ClientVersion < VERSION_DDNET_OLD || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? Team : TEAM_SPECTATORS;
 
-	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_SnapFixVanilla || m_SnapFixDDNet))
+	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_ClientVersion < VERSION_DDNET_OLD || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
 	if (m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && !m_SnapFixDDNet)))
@@ -514,8 +499,6 @@ void CPlayer::Snap(int SnappingClient)
 		pSpectatorInfo->m_Y = m_ViewPos.y;
 	}
 
-
-	// BlockDDrace
 	int Score = -9999;
 	bool Account = true;
 
@@ -542,7 +525,6 @@ void CPlayer::Snap(int SnappingClient)
 	if (Account && GetAccID() <= 0)
 		Score = 0;
 	pPlayerInfo->m_Score = Score;
-	// BlockDDrace
 
 	CNetObj_AuthInfo *pAuthInfo = static_cast<CNetObj_AuthInfo *>(Server()->SnapNewItem(NETOBJTYPE_AUTHINFO, id, sizeof(CNetObj_AuthInfo)));
 	if(!pAuthInfo)
@@ -557,7 +539,7 @@ void CPlayer::FakeSnap()
 	// Then we can't spectate players at the start
 
 	// BlockDDrace
-	if(!m_SnapFixDDNet && !m_SnapFixVanilla)
+	if (m_ClientVersion >= VERSION_DDNET_OLD && !m_SnapFixDDNet)
 		return;
 
 	int FakeID = (m_SnapFixDDNet ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS) - 1;

@@ -500,7 +500,7 @@ void CGameContext::SendVoteStatus(int ClientID, int Total, int Yes, int No)
 	if (m_apPlayers[ClientID])
 	{
 		int OldMaxClients = m_apPlayers[ClientID]->m_ClientVersion >= VERSION_DDNET_OLD ? DDRACE_MAX_CLIENTS : VANILLA_MAX_CLIENTS;
-		if ((Total > VANILLA_MAX_CLIENTS && m_apPlayers[ClientID]->m_SnapFixVanilla) || (Total > DDRACE_MAX_CLIENTS && m_apPlayers[ClientID]->m_SnapFixDDNet))
+		if (OldMaxClients == VANILLA_MAX_CLIENTS || (Total > DDRACE_MAX_CLIENTS && m_apPlayers[ClientID]->m_SnapFixDDNet))
 		{
 			Yes = float(Yes) * OldMaxClients / float(Total);
 			No = float(No) * OldMaxClients / float(Total);
@@ -3714,11 +3714,6 @@ void CGameContext::ForceVote(int EnforcerID, bool Success)
 *              B L O C K D D R A C E             *
 *                                                *
 **************************************************/
-
-bool CGameContext::IsSnapFixVanilla(int ClientID)
-{
-	return m_apPlayers[ClientID] ? m_apPlayers[ClientID]->m_SnapFixVanilla : false;
-}
 
 bool CGameContext::IsSnapFixDDNet(int ClientID)
 {

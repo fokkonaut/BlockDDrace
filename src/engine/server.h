@@ -27,7 +27,6 @@ public:
 		const char *m_pName;
 		int m_Latency;
 		int m_ClientVersion;
-		bool m_SnapFixVanilla;
 		bool m_SnapFixDDNet;
 	};
 
@@ -118,7 +117,7 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (!Info.m_SnapFixVanilla && !Info.m_SnapFixDDNet)
+		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && !Info.m_SnapFixDDNet)
 			return true;
 		int *pMap = GetIdMap(Client);
 		bool Found = false;
@@ -138,7 +137,7 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
-		if (!Info.m_SnapFixVanilla && !Info.m_SnapFixDDNet)
+		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && !Info.m_SnapFixDDNet)
 			return true;
 		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS-1);
 		int *pMap = GetIdMap(Client);
@@ -234,7 +233,6 @@ public:
 	// DDRace
 
 	virtual void OnSetAuthed(int ClientID, int Level) = 0;
-	virtual bool IsSnapFixVanilla(int ClientID) = 0;
 	virtual bool IsSnapFixDDNet(int ClientID) = 0;
 	virtual int GetClientVersion(int ClientID) = 0;
 	virtual void SetClientVersion(int ClientID, int Version) = 0;
