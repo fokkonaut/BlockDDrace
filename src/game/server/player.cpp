@@ -548,11 +548,7 @@ void CPlayer::Snap(int SnappingClient)
 	if(!pAuthInfo)
 		return;
 
-	// BlockDDrace
-	if (g_Config.m_SvAuthedPlayersColored)
-		pAuthInfo->m_AuthLevel = Server()->GetAuthedState(id);
-	else
-		pAuthInfo->m_AuthLevel = AUTHED_NO;
+	pAuthInfo->m_AuthLevel = g_Config.m_SvAuthedPlayersColored ? Server()->GetAuthedState(id) : AUTHED_NO;
 }
 
 void CPlayer::FakeSnap()
