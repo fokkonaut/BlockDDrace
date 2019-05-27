@@ -1158,8 +1158,11 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->GetVictim();
 	CPlayer *pPlayer = pSelf->m_apPlayers[Victim];
 
-	if (pResult->NumArguments() > 0 && pPlayer && pPlayer->m_IsDummy)
+	if (pResult->NumArguments() > 0)
 	{
+		if (!pPlayer || !pPlayer->m_IsDummy)
+			return;
+
 		if (pResult->NumArguments() == 2)
 			pPlayer->m_Dummymode = pResult->GetInteger(1);
 		else if (pResult->NumArguments() == 1)
