@@ -2925,7 +2925,7 @@ void CGameContext::OnInit()
 			else if(Index == TILE_EHOOK)
 			{
 				g_Config.m_SvEndlessDrag = 1;
-				dbg_msg("game layer", "found no unlimited hook time tile");
+				dbg_msg("game layer", "found unlimited hook time tile");
 			}
 			else if(Index == TILE_NOHIT)
 			{
@@ -2965,7 +2965,7 @@ void CGameContext::OnInit()
 				else if(Index == TILE_EHOOK)
 				{
 					g_Config.m_SvEndlessDrag = 1;
-					dbg_msg("front layer", "found no unlimited hook time tile");
+					dbg_msg("front layer", "found unlimited hook time tile");
 				}
 				else if(Index == TILE_NOHIT)
 				{
