@@ -125,16 +125,6 @@ void CCharacterCore::Reset()
 	m_DeepFrozen = false;
 }
 
-// BlockDDrace
-void CCharacterCore::SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Carried)
-{
-	m_FlagPos[Team] = Pos;
-	m_AtStand[Team] = Stand;
-	m_FlagVel[Team] = Vel;
-	m_Carried[Team] = Carried;
-}
-// BlockDDrace
-
 void CCharacterCore::Tick(bool UseInput)
 {
 	// BlockDDrace
@@ -806,4 +796,19 @@ void CCharacterCore::ApplyForce(vec2 Force)
 	vec2 Temp = m_Vel + Force;
 	LimitForce(&Temp);
 	m_Vel = Temp;
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+void CCharacterCore::SetFlagPos(int Team, vec2 Pos, int Stand, vec2 Vel, bool Carried)
+{
+	m_FlagPos[Team] = Pos;
+	m_AtStand[Team] = Stand;
+	m_FlagVel[Team] = Vel;
+	m_Carried[Team] = Carried;
 }
