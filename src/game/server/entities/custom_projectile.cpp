@@ -10,7 +10,7 @@
 #include <game/server/gamecontext.h>
 #include <game/server/teams.h>
 #include "custom_projectile.h"
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 #include <engine/shared/config.h>
 
 CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
@@ -95,10 +95,10 @@ void CCustomProjectile::Tick()
 		z = GameServer()->Collision()->IsTeleport(x);
 	else
 		z = GameServer()->Collision()->IsTeleportWeapon(x);
-	if (z && ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size())
+	if (z && ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size())
 	{
-		int Num = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size();
-		m_Pos = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z - 1][(!Num) ? Num : rand() % Num];
+		int Num = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z - 1].size();
+		m_Pos = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z - 1][(!Num) ? Num : rand() % Num];
 		m_EvalTick = Server()->Tick();
 	}
 

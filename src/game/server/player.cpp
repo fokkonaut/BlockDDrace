@@ -9,7 +9,7 @@
 #include <game/gamecore.h>
 #include <game/version.h>
 #include <game/server/teams.h>
-#include "gamemodes/DDRace.h"
+#include "gamemodes/blockddrace.h"
 #include <time.h>
 
 #include <fstream>
@@ -619,7 +619,7 @@ void CPlayer::OnDisconnect(const char *pReason)
 			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, "Server kick/spec votes are no longer actively moderated.");
 	}
 
-	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 	Controller->m_Teams.SetForceCharacterTeam(m_ClientID, 0);
 }
 
@@ -762,7 +762,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 
 	if(Team == TEAM_SPECTATORS)
 	{
-		CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+		CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 		Controller->m_Teams.SetForceCharacterTeam(m_ClientID, 0);
 	}
 
@@ -823,7 +823,7 @@ void CPlayer::TryRespawn()
 	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index))
 		return;
 
-	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 
 	m_WeakHookSpawn = false;
 	m_Spawning = false;

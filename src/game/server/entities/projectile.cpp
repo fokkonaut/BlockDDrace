@@ -2,7 +2,7 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 #include "projectile.h"
 
 #include <engine/shared/config.h>
@@ -324,10 +324,10 @@ void CProjectile::Tick()
 		z = GameServer()->Collision()->IsTeleport(x);
 	else
 		z = GameServer()->Collision()->IsTeleportWeapon(x);
-	if (z && ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z-1].size())
+	if (z && ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z-1].size())
 	{
-		int Num = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z-1].size();
-		m_Pos = ((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts[z-1][(!Num)?Num:rand() % Num];
+		int Num = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z-1].size();
+		m_Pos = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts[z-1][(!Num)?Num:rand() % Num];
 		m_StartTick = Server()->Tick();
 	}
 

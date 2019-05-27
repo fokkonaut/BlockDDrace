@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-class CGameControllerDDRace: public IGameController
+class CGameControllerBlockDDrace: public IGameController
 {
 public:
 
@@ -25,8 +25,8 @@ public:
 	void ChangeFlagOwner(CCharacter *pOldCarrier, CCharacter *pNewCarrier);
 	int HasFlag(CCharacter *pChr);
 
-	CGameControllerDDRace(class CGameContext *pGameServer);
-	~CGameControllerDDRace();
+	CGameControllerBlockDDrace(class CGameContext *pGameServer);
+	~CGameControllerBlockDDrace();
 
 	CGameTeams m_Teams;
 

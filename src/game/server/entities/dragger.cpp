@@ -5,7 +5,7 @@
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 #include <game/server/teams.h>
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 #include "dragger.h"
 
 CDragger::CDragger(CGameWorld *pGameWorld, vec2 Pos, float Strength, bool NW,
@@ -258,7 +258,7 @@ void CDragger::Reset()
 
 void CDragger::Tick()
 {
-	if (((CGameControllerDDRace*) GameServer()->m_pController)->m_Teams.GetTeamState(
+	if (((CGameControllerBlockDDrace*) GameServer()->m_pController)->m_Teams.GetTeamState(
 			m_CaughtTeam) == CGameTeams::TEAMSTATE_EMPTY)
 		return;
 	if (Server()->Tick() % int(Server()->TickSpeed() * 0.15f) == 0)
@@ -281,7 +281,7 @@ void CDragger::Tick()
 
 void CDragger::Snap(int SnappingClient)
 {
-	if (((CGameControllerDDRace*) GameServer()->m_pController)->m_Teams.GetTeamState(
+	if (((CGameControllerBlockDDrace*) GameServer()->m_pController)->m_Teams.GetTeamState(
 			m_CaughtTeam) == CGameTeams::TEAMSTATE_EMPTY)
 		return;
 

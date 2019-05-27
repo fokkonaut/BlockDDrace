@@ -3,7 +3,7 @@
 
 #include "save.h"
 #include "teams.h"
-#include "./gamemodes/DDRace.h"
+#include "./gamemodes/blockddrace.h"
 #include <engine/shared/config.h>
 
 CSaveTee::CSaveTee()
@@ -227,7 +227,7 @@ int CSaveTeam::save(int Team)
 {
 	if(g_Config.m_SvTeam == 3 || (Team > 0 && Team < MAX_CLIENTS))
 	{
-		CGameTeams* Teams = &(((CGameControllerDDRace*)m_pController)->m_Teams);
+		CGameTeams* Teams = &(((CGameControllerBlockDDrace*)m_pController)->m_Teams);
 
 		m_MembersCount = Teams->Count(Team);
 		if(m_MembersCount <= 0)
@@ -284,7 +284,7 @@ int CSaveTeam::load(int Team)
 	if(Team <= 0 || Team >= MAX_CLIENTS)
 		return 1;
 
-	CGameTeams* pTeams = &(((CGameControllerDDRace*)m_pController)->m_Teams);
+	CGameTeams* pTeams = &(((CGameControllerBlockDDrace*)m_pController)->m_Teams);
 
 	if(pTeams->Count(Team) > m_MembersCount)
 		return 2;

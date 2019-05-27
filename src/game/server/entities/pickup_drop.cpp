@@ -12,7 +12,7 @@
 #include "pickup.h"
 #include <game/server/teams.h>
 #include <engine/shared/config.h>
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 
 CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Direction, int Weapon, int Lifetime, int Bullets, bool SpreadWeapon, bool Jetpack)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
@@ -294,7 +294,7 @@ void CPickupDrop::HandleTiles(int Index)
 	if (m_pOwner)
 		Team = m_pOwner->Team();
 
-	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 	int MapIndex = Index;
 	float Offset = 4.0f;
 	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));

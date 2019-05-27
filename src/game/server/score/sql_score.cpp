@@ -12,7 +12,7 @@
 #include "sql_score.h"
 
 #include "../entities/character.h"
-#include "../gamemodes/DDRace.h"
+#include "../gamemodes/blockddrace.h"
 #include "../save.h"
 
 CGameContext* CSqlData::ms_pGameServer = 0;
@@ -32,7 +32,7 @@ CSqlTeamSave::~CSqlTeamSave()
 {
 	try
 	{
-		((class CGameControllerDDRace*)(GameServer()->m_pController))->m_Teams.SetSaving(m_Team, false);
+		((class CGameControllerBlockDDrace*)(GameServer()->m_pController))->m_Teams.SetSaving(m_Team, false);
 	}
 	catch (CGameContextError& e) {}
 }
@@ -142,7 +142,7 @@ bool CSqlScore::Init(CSqlServer* pSqlServer, const CSqlData *pGameData, bool Han
 
 		if(pSqlServer->GetResults()->next())
 		{
-			((CGameControllerDDRace*)pData->GameServer()->m_pController)->m_CurrentRecord = (float)pSqlServer->GetResults()->getDouble("Time");
+			((CGameControllerBlockDDrace*)pData->GameServer()->m_pController)->m_CurrentRecord = (float)pSqlServer->GetResults()->getDouble("Time");
 
 			dbg_msg("sql", "Getting best time on server done");
 		}
@@ -1394,11 +1394,11 @@ bool CSqlScore::RandomUnfinishedMapThread(CSqlServer* pSqlServer, const CSqlData
 
 void CSqlScore::SaveTeam(int Team, const char* Code, int ClientID, const char* Server)
 {
-	if((g_Config.m_SvTeam == 3 || (Team > 0 && Team < MAX_CLIENTS)) && ((CGameControllerDDRace*)(GameServer()->m_pController))->m_Teams.Count(Team) > 0)
+	if((g_Config.m_SvTeam == 3 || (Team > 0 && Team < MAX_CLIENTS)) && ((CGameControllerBlockDDrace*)(GameServer()->m_pController))->m_Teams.Count(Team) > 0)
 	{
-		if(((CGameControllerDDRace*)(GameServer()->m_pController))->m_Teams.GetSaving(Team))
+		if(((CGameControllerBlockDDrace*)(GameServer()->m_pController))->m_Teams.GetSaving(Team))
 			return;
-		((CGameControllerDDRace*)(GameServer()->m_pController))->m_Teams.SetSaving(Team, true);
+		((CGameControllerBlockDDrace*)(GameServer()->m_pController))->m_Teams.SetSaving(Team, true);
 	}
 	else
 	{
@@ -1428,7 +1428,7 @@ bool CSqlScore::SaveTeamThread(CSqlServer* pSqlServer, const CSqlData *pGameData
 
 		int Num = -1;
 
-		if((g_Config.m_SvTeam == 3 || (Team > 0 && Team < MAX_CLIENTS)) && ((CGameControllerDDRace*)(pData->GameServer()->m_pController))->m_Teams.Count(Team) > 0)
+		if((g_Config.m_SvTeam == 3 || (Team > 0 && Team < MAX_CLIENTS)) && ((CGameControllerBlockDDrace*)(pData->GameServer()->m_pController))->m_Teams.Count(Team) > 0)
 		{
 			CSaveTeam SavedTeam(pData->GameServer()->m_pController);
 			Num = SavedTeam.save(Team);
@@ -1506,7 +1506,7 @@ bool CSqlScore::SaveTeamThread(CSqlServer* pSqlServer, const CSqlData *pGameData
 				char aBuf2[256];
 				str_format(aBuf2, sizeof(aBuf2), "Team successfully saved. Use '/load %s' to continue", pData->m_Code.Str());
 				pData->GameServer()->SendChatTeam(Team, aBuf2);
-				((CGameControllerDDRace*)(pData->GameServer()->m_pController))->m_Teams.KillSavedTeam(Team);
+				((CGameControllerBlockDDrace*)(pData->GameServer()->m_pController))->m_Teams.KillSavedTeam(Team);
 			}
 			else
 			{
@@ -1606,7 +1606,7 @@ bool CSqlScore::LoadTeamThread(CSqlServer* pSqlServer, const CSqlData *pGameData
 					pData->GameServer()->SendChatTarget(pData->m_ClientID, "You don't belong to this team");
 				else
 				{
-					int Team = ((CGameControllerDDRace*)(pData->GameServer()->m_pController))->m_Teams.m_Core.Team(pData->m_ClientID);
+					int Team = ((CGameControllerBlockDDrace*)(pData->GameServer()->m_pController))->m_Teams.m_Core.Team(pData->m_ClientID);
 
 					Num = SavedTeam.load(Team);
 

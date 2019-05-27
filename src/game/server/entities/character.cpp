@@ -22,7 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 #include <game/server/score.h>
 #include "light.h"
 
@@ -66,7 +66,7 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	m_Pos = Pos;
 
 	m_Core.Reset();
-	m_Core.Init(&GameWorld()->m_Core, GameServer()->Collision(), &((CGameControllerDDRace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts);
+	m_Core.Init(&GameWorld()->m_Core, GameServer()->Collision(), &((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts);
 	SetActiveWeapon(WEAPON_GUN);
 	m_Core.m_Pos = m_Pos;
 	GameWorld()->m_Core.m_apCharacters[m_pPlayer->GetCID()] = &m_Core;
@@ -906,7 +906,7 @@ void CCharacter::Tick()
 	for (int i = 0; i < 2; i++)
 	{
 		bool Carried = true;
-		CFlag *F = ((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[i];
+		CFlag *F = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[i];
 		if (!F)
 			continue;
 
@@ -920,9 +920,9 @@ void CCharacter::Tick()
 
 	// BlockDDrace
 	if (m_Core.m_UpdateFlagVel == FLAG_RED)
-		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
+		((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[TEAM_RED]->SetVel(m_Core.m_UFlagVel);
 	else if (m_Core.m_UpdateFlagVel == FLAG_BLUE)
-		((CGameControllerDDRace*)GameServer()->m_pController)->m_apFlags[TEAM_BLUE]->SetVel(m_Core.m_UFlagVel);
+		((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[TEAM_BLUE]->SetVel(m_Core.m_UFlagVel);
 	// BlockDDrace
 
 	// handle Weapons
@@ -942,7 +942,7 @@ void CCharacter::TickDefered()
 	// advance the dummy
 	{
 		CWorldCore TempWorld;
-		m_ReckoningCore.Init(&TempWorld, GameServer()->Collision(), &((CGameControllerDDRace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerDDRace*)GameServer()->m_pController)->m_TeleOuts);
+		m_ReckoningCore.Init(&TempWorld, GameServer()->Collision(), &((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_Teams.m_Core, &((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_TeleOuts);
 		m_ReckoningCore.m_Id = m_pPlayer->GetCID();
 		m_ReckoningCore.Tick(false);
 		m_ReckoningCore.Move();
@@ -1160,7 +1160,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	}
 
 	// BlockDDrace
-	((CGameControllerDDRace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
+	((CGameControllerBlockDDrace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
 
 	// a nice sound
 	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
@@ -1552,7 +1552,7 @@ int CCharacter::Team()
 
 CGameTeams* CCharacter::Teams()
 {
-	return &((CGameControllerDDRace*)GameServer()->m_pController)->m_Teams;
+	return &((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_Teams;
 }
 
 void CCharacter::HandleBroadcast()
@@ -1675,7 +1675,7 @@ void CCharacter::HandleSkippableTiles(int Index)
 
 void CCharacter::HandleTiles(int Index)
 {
-	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 	int MapIndex = Index;
 	//int PureMapIndex = GameServer()->Collision()->GetPureMapIndex(m_Pos);
 	float Offset = 4.0f;
@@ -3312,7 +3312,7 @@ void CCharacter::UpdateWeaponIndicator()
 
 int CCharacter::HasFlag()
 {
-	return ((CGameControllerDDRace*)GameServer()->m_pController)->HasFlag(this);
+	return ((CGameControllerBlockDDrace*)GameServer()->m_pController)->HasFlag(this);
 }
 
 void CCharacter::Jetpack(bool Set, int FromID, bool Silent)

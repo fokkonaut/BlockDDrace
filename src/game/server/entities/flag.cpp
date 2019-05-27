@@ -11,7 +11,7 @@
 #include <engine/shared/config.h>
 #include <game/server/teams.h>
 #include "flag.h"
-#include <game/server/gamemodes/DDRace.h>
+#include <game/server/gamemodes/blockddrace.h>
 
 CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_FLAG)
@@ -255,7 +255,7 @@ void CFlag::HandleTiles(int Index)
 	if (m_pLastCarrier)
 		Team = m_pLastCarrier->Team();
 
-	CGameControllerDDRace* Controller = (CGameControllerDDRace*)GameServer()->m_pController;
+	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 	int MapIndex = Index;
 	float Offset = 4.0f;
 	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));

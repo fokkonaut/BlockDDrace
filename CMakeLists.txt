@@ -807,8 +807,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   gamecontext.h
   gamecontroller.cpp
   gamecontroller.h
-  gamemodes/DDRace.cpp
-  gamemodes/DDRace.h
+  gamemodes/blockddrace.cpp
+  gamemodes/blockddrace.h
   gamemodes/gamemode.h
   gameworld.cpp
   gameworld.h

@@ -17,7 +17,7 @@
 #include <game/collision.h>
 #include <game/gamecore.h>
 #include <game/server/entities/flag.h>
-#include "gamemodes/DDRace.h"
+#include "gamemodes/blockddrace.h"
 #include "score.h"
 #include "score/file_score.h"
 #if defined(CONF_SQL)
@@ -199,7 +199,7 @@ void CGameContext::CreateExplosion(vec2 Pos, int Owner, int Weapon, bool NoDamag
 			if(Owner == -1 && ActivatedTeam != -1 && apEnts[i]->IsAlive() && apEnts[i]->Team() != ActivatedTeam) continue;
 
 			// Explode at most once per team
-			int PlayerTeam = ((CGameControllerDDRace*)m_pController)->m_Teams.m_Core.Team(apEnts[i]->GetPlayer()->GetCID());
+			int PlayerTeam = ((CGameControllerBlockDDrace*)m_pController)->m_Teams.m_Core.Team(apEnts[i]->GetPlayer()->GetCID());
 			if(GetPlayerChar(Owner) ? GetPlayerChar(Owner)->m_Hit&CCharacter::DISABLE_HIT_GRENADE : !g_Config.m_SvHit || NoDamage)
 			{
 				if(!CmaskIsSet(TeamMask, PlayerTeam)) continue;
@@ -302,7 +302,7 @@ void CGameContext::SendChatTarget(int To, const char *pText)
 void CGameContext::SendChatTeam(int Team, const char *pText)
 {
 	for(int i = 0; i<MAX_CLIENTS; i++)
-		if(((CGameControllerDDRace*)m_pController)->m_Teams.m_Core.Team(i) == Team)
+		if(((CGameControllerBlockDDrace*)m_pController)->m_Teams.m_Core.Team(i) == Team)
 			SendChatTarget(i, pText);
 }
 
@@ -365,7 +365,7 @@ void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, in
 	}
 	else
 	{
-		CTeamsCore * Teams = &((CGameControllerDDRace*)m_pController)->m_Teams.m_Core;
+		CTeamsCore * Teams = &((CGameControllerBlockDDrace*)m_pController)->m_Teams.m_Core;
 		CNetMsg_Sv_Chat Msg;
 		Msg.m_Team = 1;
 		Msg.m_ClientID = ChatterClientID;
@@ -1277,7 +1277,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 
 			//pPlayer->m_LastChat = Server()->Tick();
 
-			int GameTeam = ((CGameControllerDDRace*)m_pController)->m_Teams.m_Core.Team(pPlayer->GetCID());
+			int GameTeam = ((CGameControllerBlockDDrace*)m_pController)->m_Teams.m_Core.Team(pPlayer->GetCID());
 			if(Team)
 				Team = ((pPlayer->GetTeam() == -1) ? CHAT_SPEC : GameTeam);
 			else
@@ -1699,7 +1699,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					{
 						for (int i = 0; i < 2; i++)
 						{
-							CFlag *F = ((CGameControllerDDRace*)m_pController)->m_apFlags[i];
+							CFlag *F = ((CGameControllerBlockDDrace*)m_pController)->m_apFlags[i];
 							if (!F)
 								continue;
 
@@ -1812,7 +1812,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			dbg_msg("ddnet", "%d using Custom Client %d", ClientID, pPlayer->m_ClientVersion);
 
 			//first update his teams state
-			((CGameControllerDDRace*)m_pController)->m_Teams.SendTeamsState(ClientID);
+			((CGameControllerBlockDDrace*)m_pController)->m_Teams.SendTeamsState(ClientID);
 
 			//second give him records
 			SendRecord(ClientID);
@@ -2801,8 +2801,8 @@ void CGameContext::OnInit()
 
 	m_MapBugs.Dump();
 
-	m_pController = new CGameControllerDDRace(this);
-	((CGameControllerDDRace*)m_pController)->m_Teams.Reset();
+	m_pController = new CGameControllerBlockDDrace(this);
+	((CGameControllerBlockDDrace*)m_pController)->m_Teams.Reset();
 
 	m_TeeHistorianActive = g_Config.m_SvTeeHistorian;
 	if(m_TeeHistorianActive)
@@ -2940,7 +2940,7 @@ void CGameContext::OnInit()
 			if(Index >= ENTITY_OFFSET)
 			{
 				vec2 Pos(x*32.0f+16.0f, y*32.0f+16.0f);
-				((CGameControllerDDRace*)m_pController)->OnEntity(Index, Pos);
+				((CGameControllerBlockDDrace*)m_pController)->OnEntity(Index, Pos);
 				m_pController->OnEntity(Index, Pos, LAYER_GAME, pTiles[y * pTileMap->m_Width + x].m_Flags);
 			}
 
@@ -3417,7 +3417,7 @@ int CGameContext::ProcessSpamProtection(int ClientID)
 
 int CGameContext::GetDDRaceTeam(int ClientID)
 {
-	CGameControllerDDRace *pController = (CGameControllerDDRace*)m_pController;
+	CGameControllerBlockDDrace *pController = (CGameControllerBlockDDrace*)m_pController;
 	return pController->m_Teams.m_Core.Team(ClientID);
 }
 
