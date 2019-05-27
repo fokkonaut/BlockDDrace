@@ -49,7 +49,6 @@ float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
 	CCharacter *pC = static_cast<CCharacter *>(GameServer()->m_World.FindFirst(CGameWorld::ENTTYPE_CHARACTER));
 	for(; pC; pC = (CCharacter *)pC->TypeNext())
 	{
-		// team mates are not as dangerous as enemies
 		float Scoremod = 1.0f;
 		float d = distance(Pos, pC->m_Pos);
 		Score += Scoremod * (d == 0 ? 1000000000.0f : 1.0f/d);
@@ -58,14 +57,14 @@ float IGameController::EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos)
 	return Score;
 }
 
-void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
+void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int MapIndex)
 {
 	// get spawn point
-	for(unsigned int i = 0; i < GameServer()->Collision()->m_vTiles[Index].size(); i++)
+	for(unsigned int i = 0; i < GameServer()->Collision()->m_vTiles[MapIndex].size(); i++)
 	{
 		// check if the position is occupado
 		CCharacter *aEnts[MAX_CLIENTS];
-		int Num = GameServer()->m_World.FindEntities(GameServer()->Collision()->m_vTiles[Index][i], 64, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+		int Num = GameServer()->m_World.FindEntities(GameServer()->Collision()->m_vTiles[MapIndex][i], 64, (CEntity**)aEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
 		vec2 Positions[5] = { vec2(0.0f, 0.0f), vec2(-32.0f, 0.0f), vec2(0.0f, -32.0f), vec2(32.0f, 0.0f), vec2(0.0f, 32.0f) };	// start, left, up, right, down
 		int Result = -1;
 		for(int Index = 0; Index < 5 && Result == -1; ++Index)
@@ -74,8 +73,8 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
 			if(!GameServer()->m_World.m_Core.m_Tuning[0].m_PlayerCollision)
 				break;
 			for(int c = 0; c < Num; ++c)
-				if(GameServer()->Collision()->CheckPoint(GameServer()->Collision()->m_vTiles[Index][i]+Positions[Index]) ||
-					distance(aEnts[c]->m_Pos, GameServer()->Collision()->m_vTiles[Index][i]+Positions[Index]) <= aEnts[c]->m_ProximityRadius)
+				if(GameServer()->Collision()->CheckPoint(GameServer()->Collision()->m_vTiles[MapIndex][i]+Positions[Index]) ||
+					distance(aEnts[c]->m_Pos, GameServer()->Collision()->m_vTiles[MapIndex][i]+Positions[Index]) <= aEnts[c]->m_ProximityRadius)
 				{
 					Result = -1;
 					break;
@@ -84,7 +83,7 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int Index)
 		if(Result == -1)
 			continue;	// try next spawn point
 
-		vec2 P = GameServer()->Collision()->m_vTiles[Index][i]+Positions[Result];
+		vec2 P = GameServer()->Collision()->m_vTiles[MapIndex][i]+Positions[Result];
 		float S = EvaluateSpawnPos(pEval, P);
 		if(!pEval->m_Got || pEval->m_Score > S)
 		{

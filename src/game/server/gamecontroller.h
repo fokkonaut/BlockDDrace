@@ -45,7 +45,7 @@ protected:
 	};
 
 	float EvaluateSpawnPos(CSpawnEval *pEval, vec2 Pos);
-	void EvaluateSpawnType(CSpawnEval *pEval, int Index);
+	void EvaluateSpawnType(CSpawnEval *pEval, int MapIndex);
 
 	void ResetGame();
 
