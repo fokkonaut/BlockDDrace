@@ -21,7 +21,7 @@ CGameControllerBlockDDrace::CGameControllerBlockDDrace(class CGameContext *pGame
 	m_GameFlags = GAMEFLAG_FLAGS;
 
 	m_pGameType = g_Config.m_SvTestingCommands ? TEST_NAME : GAME_NAME;
-	
+
 	InitTeleporter();
 }
 
