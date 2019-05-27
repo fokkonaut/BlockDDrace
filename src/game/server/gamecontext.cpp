@@ -3020,25 +3020,6 @@ void CGameContext::OnInit()
 #endif
 }
 
-void CGameContext::SetV3Offset(int X, int Y)
-{
-	if (X == -1 && Y == -1)
-	{
-		if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
-		{
-			X = 374;
-			Y = 59;
-		}
-		else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
-		{
-			X = 97;
-			Y = 19;
-		}
-	}
-	g_Config.m_V3OffsetX = X;
-	g_Config.m_V3OffsetY = Y;
-}
-
 void CGameContext::DeleteTempfile()
 {
 	if(m_aDeleteTempfile[0] != 0)
@@ -4274,4 +4255,23 @@ const char *CGameContext::GetMinigameName(int Minigame)
 		return "Instagib FNG";
 	}
 	return "Unknown";
+}
+
+void CGameContext::SetV3Offset(int X, int Y)
+{
+	if (X == -1 && Y == -1)
+	{
+		if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
+		{
+			X = 374;
+			Y = 59;
+		}
+		else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+		{
+			X = 97;
+			Y = 19;
+		}
+	}
+	g_Config.m_V3OffsetX = X;
+	g_Config.m_V3OffsetY = Y;
 }
