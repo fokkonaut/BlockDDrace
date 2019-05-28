@@ -31,7 +31,9 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos)
 	m_pCharacter = 0;
 	m_NumInputs = 0;
 	m_KillMe = 0;
+	// BlockDDrace
 	m_ForceSpawnPos = Pos;
+	// BlockDDrace
 	Reset();
 }
 
