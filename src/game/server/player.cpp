@@ -460,6 +460,14 @@ void CPlayer::Snap(int SnappingClient)
 				m_SnapFixDDNet = true;
 	}
 
+	// hide bots from scoreboard and other players if they are in different minigames
+	int Team = m_Team;
+	if (
+		(g_Config.m_SvHideMinigamePlayers && Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
+		|| (g_Config.m_SvHideBots == 2 && m_IsDummy && m_Team != TEAM_SPECTATORS)
+		)
+		Team = TEAM_BLUE;
+
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
 		if (Server()->Tick() % 200 == 0)
@@ -468,14 +476,6 @@ void CPlayer::Snap(int SnappingClient)
 	}
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
-
-	// hide bots from scoreboard and other players if they are in different minigames
-	int Team = m_Team;
-	if (
-		(g_Config.m_SvHideMinigamePlayers && Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
-		|| (g_Config.m_SvHideBots == 2 && m_IsDummy && m_Team != TEAM_SPECTATORS)
-		)
-		Team = TEAM_BLUE;
 
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
