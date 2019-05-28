@@ -94,7 +94,6 @@ void CCharacterCore::Reset()
 	m_HookDir = vec2(0,0);
 	m_HookTick = 0;
 	m_HookState = HOOK_IDLE;
-	m_LastHookedPlayer = -1;
 	m_HookedPlayer = -1;
 	m_Jumped = 0;
 	m_JumpedTotal = 0;
@@ -104,6 +103,7 @@ void CCharacterCore::Reset()
 	m_Collision = true;
 
 	// BlockDDrace
+	m_LastHookedPlayer = -1;
 	m_Passive = false;
 
 	// DDNet Character
@@ -131,7 +131,7 @@ void CCharacterCore::Tick(bool UseInput)
 	m_UpdateFlagVel = 0;
 
 	if (m_LastHookedTick != -1)
-		m_LastHookedTick = m_LastHookedTick + 1;
+		m_LastHookedTick++;
 
 	if (m_LastHookedTick > SERVER_TICK_SPEED * 10)
 	{
