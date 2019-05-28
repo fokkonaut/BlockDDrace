@@ -311,7 +311,6 @@ public:
 	bool m_NinjaJetpack;
 	int m_TeamBeforeSuper;
 	int m_FreezeTime;
-	bool IsFrozen;
 	int64 m_FirstFreezeTick;
 	int m_FreezeTick;
 	bool m_DeepFreeze;
@@ -485,6 +484,9 @@ public:
 
 	//others
 	int HasFlag();
+
+	//this means the character is directly on a freezetile
+	bool IsFrozen;
 
 
 	/////////dummymode variables

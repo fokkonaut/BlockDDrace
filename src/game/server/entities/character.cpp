@@ -2675,7 +2675,9 @@ void CCharacter::DDRacePostCoreTick()
 
 bool CCharacter::Freeze(int Seconds)
 {
+	// BlockDDrace
 	IsFrozen = true;
+
 	if ((Seconds <= 0 || m_Super || m_FreezeTime == -1 || m_FreezeTime > Seconds * Server()->TickSpeed()) && Seconds != -1)
 		 return false;
 	if (m_FreezeTick < Server()->Tick() - Server()->TickSpeed() || Seconds == -1)
