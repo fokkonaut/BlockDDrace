@@ -72,12 +72,7 @@ void CFlag::Drop(int Dir)
 void CFlag::Grab(CCharacter *pChr)
 {
 	if (g_Config.m_SvFlagSounds)
-	{
-		if (m_Team == TEAM_RED)
-			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_EN);
-		else if (m_Team == TEAM_BLUE)
-			GameServer()->CreateSoundGlobal(SOUND_CTF_GRAB_PL);
-	}
+		GameServer()->CreateSoundGlobal(m_Team == TEAM_RED ? SOUND_CTF_GRAB_EN : SOUND_CTF_GRAB_PL);
 	if (m_AtStand)
 		m_GrabTick = Server()->Tick();
 	m_AtStand = false;
@@ -100,10 +95,8 @@ void CFlag::Tick()
 	if (m_pCarrier && m_pCarrier->IsAlive())
 	{
 		if (m_pCarrier->m_FirstFreezeTick != 0)
-		{
 			if (Server()->Tick() > m_pCarrier->m_FirstFreezeTick + Server()->TickSpeed() * 8)
 				Drop(m_pCarrier->GetAimDir());
-		}
 	}
 	else
 	{
