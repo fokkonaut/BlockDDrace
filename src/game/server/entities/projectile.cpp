@@ -117,6 +117,7 @@ vec2 CProjectile::GetPos(float Time, bool CalculateVel)
 		m_VelX = ((m_Pos.x - m_LastResetPos.x) / Time / Speed) * 100;
 		m_VelY = ((m_Pos.y - m_LastResetPos.y) / Time / Speed - Time * Speed*Curvature / 10000) * 100;
 		m_CalculatedVel = true;
+		return vec2(0, 0);
 	}
 
 	return CalcPos(m_Pos, m_Direction, Curvature, Speed, Time);
