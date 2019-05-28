@@ -463,8 +463,10 @@ void CPlayer::Snap(int SnappingClient)
 	// hide bots from scoreboard and other players if they are in different minigames
 	int Team = m_Team;
 	if (
-		(g_Config.m_SvHideMinigamePlayers && Team != TEAM_SPECTATORS && pSnapping->m_Minigame != m_Minigame)
-		|| (g_Config.m_SvHideBots == 2 && m_IsDummy && m_Team != TEAM_SPECTATORS)
+		Team != TEAM_SPECTATORS
+		&&
+		((g_Config.m_SvHideMinigamePlayers && pSnapping->m_Minigame != m_Minigame)
+		|| (g_Config.m_SvHideBots == 2 && m_IsDummy))
 		)
 		Team = TEAM_BLUE;
 
