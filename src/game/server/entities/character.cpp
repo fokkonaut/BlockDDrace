@@ -3242,7 +3242,8 @@ void CCharacter::DropLoot()
 			int Weapon = WEAPON_GUN;
 			while (Weapon == WEAPON_NINJA || Weapon == WEAPON_GUN || Weapon == WEAPON_HAMMER)
 				Weapon = rand() % NUM_WEAPONS;
-			DropWeapon(Weapon, (rand() % 4) - 2);
+			float Dir = ((rand() % 50 - 25 + 1) * 0.1); // in a range of -2.5 to +2.5
+			DropWeapon(Weapon, Dir);
 		}
 	}
 }
