@@ -409,18 +409,8 @@ void CPlayer::Snap(int SnappingClient)
 			GetCharacter()->m_TimesShot = 0;
 	}
 
-	// setting stuff for invisible
-	if (GetCharacter() && GetCharacter()->m_Invisible && (Server()->GetAuthedState(SnappingClient) >= AUTHED_MOD || SnappingClient == m_ClientID))
-	{
-		StrToInts(&pClientInfo->m_Clan0, 3, "[INVISIBLE]");
-
-		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
-		pClientInfo->m_UseCustomColor = m_SpookyGhost ? false : true;
-		pClientInfo->m_ColorBody = 180;
-		pClientInfo->m_ColorFeet = 180;
-	}
 	// setting rainbow
-	else if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
+	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = true;
