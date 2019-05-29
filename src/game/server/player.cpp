@@ -23,7 +23,7 @@ MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
 
 IServer *CPlayer::Server() const { return m_pGameServer->Server(); }
 
-CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos)
+CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team)
 {
 	m_pGameServer = pGameServer;
 	m_ClientID = ClientID;
@@ -31,9 +31,6 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos)
 	m_pCharacter = 0;
 	m_NumInputs = 0;
 	m_KillMe = 0;
-	// BlockDDrace
-	m_ForceSpawnPos = Pos;
-	// BlockDDrace
 	Reset();
 }
 
@@ -181,6 +178,7 @@ void CPlayer::Reset()
 
 	m_DisplayScore = SCORE_TIME;
 
+	m_ForceSpawnPos = vec2(-1, -1);
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
 
 	m_Minigame = MINIGAME_NONE;

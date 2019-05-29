@@ -2909,7 +2909,7 @@ void CGameContext::OnInit()
 			int Index = pTiles[y*pTileMap->m_Width+x].m_Index;
 
 			// BlockDDrace
-			Collision()->m_vTiles[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
+			Collision()->m_vTiles[Index].push_back(vec2(x*32.0f+16.0f, y*32.0f+16.0f));
 			// BlockDDrace
 
 			if(Index == TILE_OLDLASER)
@@ -2946,10 +2946,10 @@ void CGameContext::OnInit()
 
 			if(pFront)
 			{
-				Index = pFront[y * pTileMap->m_Width + x].m_Index;
+				Index = pFront[y*pTileMap->m_Width+x].m_Index;
 
 				// BlockDDrace
-				Collision()->m_vTiles[Index].push_back(vec2(x*32.0f + 16.0f, y*32.0f + 16.0f));
+				Collision()->m_vTiles[Index].push_back(vec2(x*32.0f+16.0f, y*32.0f+16.0f));
 				// BlockDDrace
 
 				if(Index == TILE_OLDLASER)
@@ -2985,7 +2985,7 @@ void CGameContext::OnInit()
 			}
 			if(pSwitch)
 			{
-				Index = pSwitch[y*pTileMap->m_Width + x].m_Type;
+				Index = pSwitch[y*pTileMap->m_Width+x].m_Type;
 				// TODO: Add off by default door here
 				// if (Index == TILE_DOOR_OFF)
 				if(Index >= ENTITY_OFFSET)
@@ -3990,11 +3990,11 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 		m_apPlayers[DummyID] = 0;
 	}
 
-	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED, Pos);
-
+	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
 	Server()->BotJoin(DummyID);
 	m_apPlayers[DummyID]->m_IsDummy = true;
 	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
+	m_apPlayers[DummyID]->m_ForceSpawnPos = Pos;
 
 	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
 		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;

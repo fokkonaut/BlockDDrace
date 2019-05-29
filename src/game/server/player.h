@@ -62,7 +62,7 @@ class CPlayer
 	friend class CSaveTee;
 
 public:
-	CPlayer(CGameContext *pGameServer, int ClientID, int Team, vec2 Pos = vec2(-1, -1));
+	CPlayer(CGameContext *pGameServer, int ClientID, int Team);
 	~CPlayer();
 
 	void Reset();
