@@ -1100,7 +1100,6 @@ bool CPlayer::IsSpectator()
 
 void CPlayer::SetPlaying()
 {
-	m_SpectatorID = SPEC_FREEVIEW;
 	Pause(PAUSE_NONE, true);
 	SetTeam(TEAM_RED);
 	if (GetCharacter() && GetCharacter()->IsPaused())
