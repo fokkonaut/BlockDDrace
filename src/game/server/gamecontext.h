@@ -507,6 +507,8 @@ private:
 	static void ConLeave(IConsole::IResult *pResult, void *pUserData);
 	static void ConBlock(IConsole::IResult *pResult, void *pUserData);
 	static void ConSurvival(IConsole::IResult *pResult, void *pUserData);
+	static void ConBoomFNG(IConsole::IResult *pResult, void *pUserData);
+	static void ConFNG(IConsole::IResult *pResult, void *pUserData);
 
 	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);

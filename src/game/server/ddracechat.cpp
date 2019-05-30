@@ -1653,3 +1653,15 @@ void CGameContext::ConSurvival(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_SURVIVAL);
 }
+
+void CGameContext::ConBoomFNG(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SetMinigame(pResult, pUserData, MINIGAME_INSTAGIB_BOOMFNG);
+}
+
+void CGameContext::ConFNG(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->SetMinigame(pResult, pUserData, MINIGAME_INSTAGIB_FNG);
+}
