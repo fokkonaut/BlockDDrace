@@ -1047,6 +1047,7 @@ void CPlayer::CheckLevel()
 
 	CGameContext::AccountInfo Account = GameServer()->m_Accounts[GetAccID()];
 
+	// TODO: make something here, add acc sys and stuff, this is just placeholder
 	Account.m_NeededXP = 1;
 
 	if (Account.m_XP >= Account.m_NeededXP)
