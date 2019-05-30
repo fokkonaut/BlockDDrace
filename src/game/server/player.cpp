@@ -377,14 +377,20 @@ void CPlayer::Snap(int SnappingClient)
 		pClan = Server()->ClientClan(m_ClientID);
 	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
 
+
 	// show name by default
 	m_ShowName = true;
 
-	// hide names if both players are in survival, and not in the lobby
-	if (m_SpookyGhost
-		|| (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY && pSnapping->m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_SurvivalState > SURVIVAL_LOBBY)
-		)
+	if (m_SpookyGhost)
 		m_ShowName = false;
+
+	// hide names if both players are in survival, and not in the lobby
+	if (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY && pSnapping->m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_SurvivalState > SURVIVAL_LOBBY)
+	{
+		m_ShowName = false;
+		// hide clan aswell, clients can show clans over tees like names
+		StrToInts(&pClientInfo->m_Clan0, 3, " ");
+	}
 
 	// always show name if player is in spectators
 	if (pSnapping->GetTeam() == TEAM_SPECTATORS)
@@ -395,6 +401,7 @@ void CPlayer::Snap(int SnappingClient)
 		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
 	else
 		StrToInts(&pClientInfo->m_Name0, 4, " ");
+
 
 	// checking whether scoreboard is activated or not
 	if (GetCharacter())
