@@ -54,9 +54,7 @@ void CPlayer::Reset()
 	m_LastInvited = 0;
 	m_WeakHookSpawn = false;
 
-	// BlockDDrace
-
-	// used for 256p support
+	// BlockDDrace // used for 256p support
 	m_SnapFixDDNet = true;
 
 	int *pIdMap = Server()->GetIdMap(m_ClientID);
