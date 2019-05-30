@@ -205,6 +205,11 @@ void CPickup::Tick()
 						if (true)
 						{
 							//nothing here yet
+
+							if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA)
+								RespawnTime = g_pData->m_aPickups[POWERUP_WEAPON].m_Respawntime;
+
+							GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR);
 						}
 						break;
 					// BlockDDrace
