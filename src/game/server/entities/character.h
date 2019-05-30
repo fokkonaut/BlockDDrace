@@ -292,7 +292,7 @@ private:
 	// BlockDDrace
 	void BlockDDraceTick();
 	void DummyTick();
-	// BlockDDrace
+	void BlockDDraceInit();
 
 public:
 	CGameTeams* Teams();

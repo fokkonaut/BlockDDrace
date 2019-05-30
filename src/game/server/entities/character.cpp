@@ -84,6 +84,10 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 
 	DDRaceInit();
 
+	// BlockDDrace
+	BlockDDraceInit();
+	// BlockDDrace
+
 	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(Pos));
 	m_TuneZoneOld = -1; // no zone leave msg on spawn
 	m_NeededFaketuning = 0; // reset fake tunings on respawn and send the client
@@ -2827,13 +2831,45 @@ void CCharacter::DDRaceInit()
 			}
 		}
 	}
+}
 
-	/*************************************************
-	*                                                *
-	*              B L O C K D D R A C E             *
-	*                                                *
-	**************************************************/
+void CCharacter::Rescue()
+{
+	if (m_SetSavePos && !m_Super && !m_DeepFreeze && IsGrounded() && m_Pos == m_PrevPos) {
+		if (m_LastRescue + g_Config.m_SvRescueDelay * Server()->TickSpeed() > Server()->Tick())
+		{
+			char aBuf[256];
+			str_format(aBuf, sizeof(aBuf), "You have to wait %d seconds until you can rescue yourself", (int)((m_LastRescue + g_Config.m_SvRescueDelay * Server()->TickSpeed() - Server()->Tick()) / Server()->TickSpeed()));
+			GameServer()->SendChatTarget(GetPlayer()->GetCID(), aBuf);
+			return;
+		}
 
+		int index = GameServer()->Collision()->GetPureMapIndex(m_Pos);
+		if (GameServer()->Collision()->GetTileIndex(index) == TILE_FREEZE || GameServer()->Collision()->GetFTileIndex(index) == TILE_FREEZE) {
+			m_LastRescue = Server()->Tick();
+			m_Core.m_Pos = m_PrevSavePos;
+			m_Pos = m_PrevSavePos;
+			m_PrevPos = m_PrevSavePos;
+			m_Core.m_Vel = vec2(0, 0);
+			m_Core.m_HookedPlayer = -1;
+			m_Core.m_HookState = HOOK_RETRACTED;
+			m_Core.m_TriggeredEvents |= COREEVENT_HOOK_RETRACT;
+			GameWorld()->ReleaseHooked(GetPlayer()->GetCID());
+			m_Core.m_HookPos = m_Core.m_Pos;
+			UnFreeze();
+		}
+	}
+}
+
+
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
+void CCharacter::BlockDDraceInit()
+{
 	m_LastIndexTile = 0;
 	m_LastIndexFrontTile = 0;
 
@@ -2885,41 +2921,6 @@ void CCharacter::DDRaceInit()
 	else
 		m_Armor = 10;
 }
-
-void CCharacter::Rescue()
-{
-	if (m_SetSavePos && !m_Super && !m_DeepFreeze && IsGrounded() && m_Pos == m_PrevPos) {
-		if (m_LastRescue + g_Config.m_SvRescueDelay * Server()->TickSpeed() > Server()->Tick())
-		{
-			char aBuf[256];
-			str_format(aBuf, sizeof(aBuf), "You have to wait %d seconds until you can rescue yourself", (int)((m_LastRescue + g_Config.m_SvRescueDelay * Server()->TickSpeed() - Server()->Tick()) / Server()->TickSpeed()));
-			GameServer()->SendChatTarget(GetPlayer()->GetCID(), aBuf);
-			return;
-		}
-
-		int index = GameServer()->Collision()->GetPureMapIndex(m_Pos);
-		if (GameServer()->Collision()->GetTileIndex(index) == TILE_FREEZE || GameServer()->Collision()->GetFTileIndex(index) == TILE_FREEZE) {
-			m_LastRescue = Server()->Tick();
-			m_Core.m_Pos = m_PrevSavePos;
-			m_Pos = m_PrevSavePos;
-			m_PrevPos = m_PrevSavePos;
-			m_Core.m_Vel = vec2(0, 0);
-			m_Core.m_HookedPlayer = -1;
-			m_Core.m_HookState = HOOK_RETRACTED;
-			m_Core.m_TriggeredEvents |= COREEVENT_HOOK_RETRACT;
-			GameWorld()->ReleaseHooked(GetPlayer()->GetCID());
-			m_Core.m_HookPos = m_Core.m_Pos;
-			UnFreeze();
-		}
-	}
-}
-
-
-/*************************************************
-*                                                *
-*              B L O C K D D R A C E             *
-*                                                *
-**************************************************/
 
 void CCharacter::BlockDDraceTick()
 {
