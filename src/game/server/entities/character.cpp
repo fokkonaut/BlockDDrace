@@ -3238,7 +3238,7 @@ void CCharacter::DropLoot()
 			DropWeapon(i, Dir, true);
 		}
 	}
-	else
+	else if (m_pPlayer->m_Minigame == MINIGAME_NONE)
 	{
 		for (int i = 0; i < 2; i++)
 		{
