@@ -427,13 +427,37 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 	// default health
 	pChr->IncreaseHealth(10);
 
-	// give default weapons
-	pChr->GiveWeapon(WEAPON_HAMMER);
 	// BlockDDrace
-	if (pChr->GetPlayer()->m_Minigame != MINIGAME_SURVIVAL)
-		pChr->GiveWeapon(WEAPON_GUN);
-	else
-		pChr->SetActiveWeapon(WEAPON_HAMMER);
+	// give default weapons
+	switch (pChr->GetPlayer()->m_Minigame)
+	{
+		case MINIGAME_SURVIVAL:
+		{
+			pChr->GiveWeapon(WEAPON_HAMMER);
+			pChr->SetActiveWeapon(WEAPON_HAMMER);
+			break;
+		}
+		case MINIGAME_INSTAGIB_BOOMFNG:
+		{
+			pChr->GiveWeapon(WEAPON_HAMMER);
+			pChr->GiveWeapon(WEAPON_GRENADE);
+			pChr->SetActiveWeapon(WEAPON_GRENADE);
+			break;
+		}
+		case MINIGAME_INSTAGIB_FNG:
+		{
+			pChr->GiveWeapon(WEAPON_HAMMER);
+			pChr->GiveWeapon(WEAPON_RIFLE);
+			pChr->SetActiveWeapon(WEAPON_RIFLE);
+			break;
+		}
+		default:
+		{
+			pChr->GiveWeapon(WEAPON_HAMMER);
+			pChr->GiveWeapon(WEAPON_GUN);
+			pChr->SetActiveWeapon(WEAPON_GUN);
+		}
+	}
 }
 
 void IGameController::DoWarmup(int Seconds)
