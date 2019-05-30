@@ -4300,7 +4300,7 @@ void CGameContext::SetV3Offset(int X, int Y)
 void CGameContext::SurvivalTick()
 {
 	// if there are no spawn tiles, we cant play the game
-	if (!m_aMinigameDisabled[MINIGAME_SURVIVAL] && Collision()->GetRandomTile(TILE_SURVIVAL_LOBBY) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_DEATHMATCH) == vec2(-1, -1))
+	if (!m_aMinigameDisabled[MINIGAME_SURVIVAL] && (Collision()->GetRandomTile(TILE_SURVIVAL_LOBBY) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_SPAWN) == vec2(-1, -1) || Collision()->GetRandomTile(TILE_SURVIVAL_DEATHMATCH) == vec2(-1, -1)))
 	{
 		m_aMinigameDisabled[MINIGAME_SURVIVAL] = true;
 		return;
