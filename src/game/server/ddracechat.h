@@ -72,9 +72,9 @@ CHAT_COMMAND("weaponindicator", "", CFGFLAG_CHAT, ConWeaponIndicator, this, "Tel
 
 //minigames
 CHAT_COMMAND("minigames", "", CFGFLAG_CHAT, ConMinigames, this, "Shows a list of all available minigames")
-CHAT_COMMAND("leave", "", CFGFLAG_CHAT, ConLeave, this, "Leaves the current minigame")
-CHAT_COMMAND("block", "?s[enable/disable]", CFGFLAG_CHAT, ConBlock, this, "Joins the block minigame")
-CHAT_COMMAND("survival", "?s[enable/disable]", CFGFLAG_CHAT, ConSurvival, this, "Joins the survival minigame")
-CHAT_COMMAND("boomfng", "?s[enable/disable]", CFGFLAG_CHAT, ConBoomFNG, this, "Joins the boom fng minigame")
-CHAT_COMMAND("fng", "?s[enable/disable]", CFGFLAG_CHAT, ConFNG, this, "Joins the fng minigame")
+CHAT_COMMAND("leave", "", CFGFLAG_CHAT, ConLeaveMinigame, this, "Leaves the current minigame")
+CHAT_COMMAND("block", "?s[enable/disable]", CFGFLAG_CHAT, ConJoinBlock, this, "Joins the block minigame")
+CHAT_COMMAND("survival", "?s[enable/disable]", CFGFLAG_CHAT, ConJoinSurvival, this, "Joins the survival minigame")
+CHAT_COMMAND("boomfng", "?s[enable/disable]", CFGFLAG_CHAT, ConJoinBoomFNG, this, "Joins the boom fng minigame")
+CHAT_COMMAND("fng", "?s[enable/disable]", CFGFLAG_CHAT, ConJoinFNG, this, "Joins the fng minigame")
 #undef CHAT_COMMAND

@@ -1636,31 +1636,31 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 	pPlayer->m_Minigame = Minigame;
 }
 
-void CGameContext::ConLeave(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConLeaveMinigame(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_NONE);
 }
 
-void CGameContext::ConBlock(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConJoinBlock(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_BLOCK);
 }
 
-void CGameContext::ConSurvival(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConJoinSurvival(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_SURVIVAL);
 }
 
-void CGameContext::ConBoomFNG(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConJoinBoomFNG(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_INSTAGIB_BOOMFNG);
 }
 
-void CGameContext::ConFNG(IConsole::IResult *pResult, void *pUserData)
+void CGameContext::ConJoinFNG(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	pSelf->SetMinigame(pResult, pUserData, MINIGAME_INSTAGIB_FNG);

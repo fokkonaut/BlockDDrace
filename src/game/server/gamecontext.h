@@ -504,11 +504,11 @@ private:
 
 	void SetMinigame(IConsole::IResult *pResult, void *pUserData, int Minigame);
 	static void ConMinigames(IConsole::IResult *pResult, void *pUserData);
-	static void ConLeave(IConsole::IResult *pResult, void *pUserData);
-	static void ConBlock(IConsole::IResult *pResult, void *pUserData);
-	static void ConSurvival(IConsole::IResult *pResult, void *pUserData);
-	static void ConBoomFNG(IConsole::IResult *pResult, void *pUserData);
-	static void ConFNG(IConsole::IResult *pResult, void *pUserData);
+	static void ConLeaveMinigame(IConsole::IResult *pResult, void *pUserData);
+	static void ConJoinBlock(IConsole::IResult *pResult, void *pUserData);
+	static void ConJoinSurvival(IConsole::IResult *pResult, void *pUserData);
+	static void ConJoinBoomFNG(IConsole::IResult *pResult, void *pUserData);
+	static void ConJoinFNG(IConsole::IResult *pResult, void *pUserData);
 
 	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
