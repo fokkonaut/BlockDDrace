@@ -1073,6 +1073,8 @@ void CGameContext::OnClientEnter(int ClientID)
 	// init the player
 	// load score
 	{
+		// BlockDDrace // fokkonaut fixed score loading for file based score
+
 		Score()->PlayerData(ClientID)->Reset();
 		// Can't set score here as LoadScore() is threaded, run it in
 		// LoadScoreThreaded() instead
