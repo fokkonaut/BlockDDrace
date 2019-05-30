@@ -1171,11 +1171,9 @@ void CCharacter::Die(int Killer, int Weapon)
 	if (GameServer()->m_SurvivalGameState > SURVIVAL_LOBBY && m_pPlayer->m_SurvivalState > SURVIVAL_LOBBY)
 	{
 		// check for players in the current game state
-		int SurvivalPlayers = GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState);
-		// sending you back to lobby
 		if (m_pPlayer->GetCID() != GameServer()->m_SurvivalWinner)
 			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You lost, you can wait for another round or leave the lobby using '/leave'");
-		if (SurvivalPlayers > 2)
+		if (GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState) > 2)
 		{
 			// if there are more than just two players left, you will watch your killer or a random player
 			m_pPlayer->m_SpectatorID = (GameServer()->GetPlayerChar(Killer) && Killer != m_pPlayer->GetCID()) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
@@ -1186,6 +1184,7 @@ void CCharacter::Die(int Killer, int Weapon)
 			str_format(aKillMsg, sizeof(aKillMsg), "'%s' died\nAlive players: %d", Server()->ClientName(m_pPlayer->GetCID()), GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState) -1 /* -1 because we have to exclude the currently dying*/);
 			GameServer()->SendSurvivalBroadcast(aKillMsg);
 		}
+		// sending you back to lobby
 		m_pPlayer->m_SurvivalState = SURVIVAL_LOBBY;
 	}
 
