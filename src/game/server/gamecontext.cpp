@@ -944,7 +944,10 @@ void CGameContext::OnTick()
 		for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 			WriteAccountStats(i);
 
+	// minigames
 	SurvivalTick();
+	for (int i = 0; i < 2; i++)
+		InstagibTick(i);
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -4529,4 +4532,9 @@ void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool IsImportant)
 	for (int i = 0; i < MAX_CLIENTS; i++)
 		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
 			SendBroadcast(pMsg, i, IsImportant);
+}
+
+void CGameContext::InstagibTick(int Type)
+{
+	// add instagib here
 }

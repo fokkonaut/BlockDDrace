@@ -103,6 +103,12 @@ enum Survival
 	BACKGROUND_DEATHMATCH_COUNTDOWN,
 };
 
+enum Instagib
+{
+	INSTAGIB_BOOMFNG = 0,
+	INSTAGIB_FNG
+};
+
 #define ACC_START 1 // account ids start with 1, 0 means not logged in
 
 /*************************************************
@@ -392,7 +398,7 @@ public:
 	bool m_aMinigameDisabled[NUM_MINIGAMES];
 
 	//survival
-	virtual void SurvivalTick();
+	void SurvivalTick();
 	void SetPlayerSurvivalState(int State);
 	void SendSurvivalBroadcast(const char *pMsg, bool IsImportant = true);
 	int CountSurvivalPlayers(int State);
@@ -401,6 +407,9 @@ public:
 	int m_SurvivalGameState;
 	int64 m_SurvivalTick;
 	int m_SurvivalWinner;
+
+	//instagib
+	void InstagibTick(int Type);
 
 private:
 
