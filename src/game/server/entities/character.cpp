@@ -1166,6 +1166,29 @@ void CCharacter::Die(int Killer, int Weapon)
 	// BlockDDrace
 	((CGameControllerBlockDDrace*)GameServer()->m_pController)->ChangeFlagOwner(this, GameServer()->GetPlayerChar(Killer));
 
+	// character doesnt exist, print some messages and set states
+	// if the player is in deathmatch mode, or simply playing
+	if (GameServer()->m_SurvivalGameState > SURVIVAL_LOBBY && m_pPlayer->m_SurvivalState > SURVIVAL_LOBBY)
+	{
+		// check for players in the current game state
+		int SurvivalPlayers = GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState);
+		// sending you back to lobby
+		if (m_pPlayer->GetCID() != GameServer()->m_SurvivalWinner)
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You lost, you can wait for another round or leave the lobby using '/leave'");
+		if (SurvivalPlayers > 2)
+		{
+			// if there are more than just two players left, you will watch your killer or a random player
+			m_pPlayer->m_SpectatorID = (GameServer()->GetPlayerChar(Killer) && Killer != m_pPlayer->GetCID()) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
+			m_pPlayer->Pause(CPlayer::PAUSE_PAUSED, true);
+
+			// printing a message that you died and informing about remaining players
+			char aKillMsg[128];
+			str_format(aKillMsg, sizeof(aKillMsg), "'%s' died\nAlive players: %d", Server()->ClientName(m_pPlayer->GetCID()), GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState) -1 /* -1 because we have to exclude the currently dying*/);
+			GameServer()->SendSurvivalBroadcast(aKillMsg);
+		}
+		m_pPlayer->m_SurvivalState = SURVIVAL_LOBBY;
+	}
+
 	// a nice sound
 	GameServer()->CreateSound(m_Pos, SOUND_PLAYER_DIE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 
@@ -3304,7 +3327,7 @@ int CCharacter::GetWeaponAmmo(int Type)
 
 void CCharacter::UpdateWeaponIndicator()
 {
-	if (!m_pPlayer->m_WeaponIndicator)
+	if (!m_pPlayer->m_WeaponIndicator || (m_pPlayer->m_Minigame == MINIGAME_SURVIVAL && GameServer()->m_SurvivalBackgroundState == BACKGROUND_LOBBY_COUNTDOWN))
 		return;
 
 	char aBuf[256];

@@ -716,13 +716,6 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 	if(m_Team == Team)
 		return;
 
-	// BlockDDrace
-	if (Team == TEAM_SPECTATORS && m_Minigame == MINIGAME_SURVIVAL)
-	{
-		GameServer()->SendChatTarget(m_ClientID, "You can't join the spectators while you are in survival");
-		return;
-	}
-
 	char aBuf[512];
 	if(DoChatMsg)
 	{

@@ -91,7 +91,7 @@ MACRO_CONFIG_INT(SvVanillaWeapons, sv_vanilla_weapons, 0, 0, 1, CFGFLAG_SERVER|C
 
 //survival
 MACRO_CONFIG_INT(SvSurvivalMinPlayers, sv_survival_min_players, 4, 2, MAX_CLIENTS, CFGFLAG_SERVER|CFGFLAG_GAME, "Minimum players to start a round")
-MACRO_CONFIG_INT(SvSurvivalRoundTime, sv_survival_round_time, 10, 1, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Time in minutes until deathmatch starts")
+MACRO_CONFIG_INT(SvSurvivalRoundTime, sv_survival_round_time, 10, 1, 20, CFGFLAG_SERVER|CFGFLAG_GAME, "Time in minutes until deathmatch starts")
 
 // other
 MACRO_CONFIG_INT(SvAuthedPlayersColored, sv_authed_players_colored, 1, 0, 1, CFGFLAG_SERVER, "Whether authed players have a colored name in scoreboard")
