@@ -3001,8 +3001,21 @@ void CGameContext::OnInit()
 
 	// BlockDDrace
 
+	// check if there are minigame spawns available
+	int Index = ENTITY_SPAWN;
 	for (int i = 0; i < NUM_MINIGAMES; i++)
-		m_aMinigameDisabled[i] = false;
+	{
+		if (i == MINIGAME_BLOCK)
+			Index = TILE_MINIGAME_BLOCK;
+		else if (i == MINIGAME_SURVIVAL)
+			Index = TILE_SURVIVAL_LOBBY;
+		else if (i == MINIGAME_INSTAGIB_BOOMFNG)
+			Index = ENTITY_SPAWN_RED;
+		else if (i == MINIGAME_INSTAGIB_FNG)
+			Index = ENTITY_SPAWN_BLUE;
+
+		m_aMinigameDisabled[i] = Collision()->GetRandomTile(Index) == vec2(-1, -1);
+	}
 
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsCallback, this);
