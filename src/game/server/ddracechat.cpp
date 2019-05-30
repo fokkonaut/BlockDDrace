@@ -1558,6 +1558,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 
 	char aMsg[64];
 
+	// admins can enable or disable minigames with /<minigame> <enable/disable>
 	if (pResult->NumArguments() && pSelf->Server()->GetAuthedState(pResult->m_ClientID) == AUTHED_ADMIN && Minigame != MINIGAME_NONE)
 	{
 		bool Disable;
@@ -1578,14 +1579,17 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		return;
 	}
 
+	// check whether minigame is disabled
 	if (Minigame != MINIGAME_NONE && pSelf->m_aMinigameDisabled[Minigame])
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "This minigame is disabled");
 		return;
 	}
 
+	// check if we are already in a minigame
 	if (pPlayer->m_Minigame == Minigame)
 	{
+		// you can't leave when you're not in a minigame
 		if (Minigame == MINIGAME_NONE)
 			pSelf->SendChatTarget(pResult->m_ClientID, "You are not in a minigame");
 		else
@@ -1596,6 +1600,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		return;
 	}
 
+	// leave minigame
 	if (Minigame == MINIGAME_NONE)
 	{
 		str_format(aMsg, sizeof(aMsg), "You left the minigame '%s'", pSelf->GetMinigameName(pPlayer->m_Minigame));
@@ -1605,6 +1610,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		pPlayer->m_Gamemode = g_Config.m_SvVanillaModeStart ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
 		pPlayer->m_SurvivalState = SURVIVAL_OFFLINE;
 	}
+	// join minigame
 	else if (pPlayer->m_Minigame == MINIGAME_NONE)
 	{
 		str_format(aMsg, sizeof(aMsg), "You joined the minigame '%s'", pSelf->GetMinigameName(Minigame));
@@ -1621,6 +1627,7 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 	}
 	else
 	{
+		// you can't join minigames if you are already in another mingame
 		pSelf->SendChatTarget(pResult->m_ClientID, "You have to leave first in order to join another minigame");
 		return;
 	}
