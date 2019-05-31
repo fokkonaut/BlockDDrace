@@ -2993,9 +2993,16 @@ void CCharacter::BlockDDraceTick()
 		}
 	}
 
+	bool AtomHooked = false;
+	bool TrailHooked = false;
 	if (m_pPlayer->IsHooked(ATOM))
-		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+		AtomHooked = true;
 	if (m_pPlayer->IsHooked(TRAIL))
+		TrailHooked = true;
+
+	if (!AtomHooked && !m_Atom && !m_pPlayer->m_InfAtom)
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+	if (!TrailHooked && !m_Trail && !m_pPlayer->m_InfTrail)
 		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
 }
 

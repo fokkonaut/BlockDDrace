@@ -42,11 +42,12 @@ void CAtom::Tick()
 	if (m_Owner != -1)
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
+		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Owner];
 		if (
-			!GameServer()->m_apPlayers[m_Owner]
+			!pPlayer
 			|| (!pChr && !m_Infinite)
-			|| (m_Infinite && pChr && !pChr->GetPlayer()->m_InfAtom)
-			|| (!m_Infinite && pChr && !pChr->m_Atom)
+			|| (m_Infinite && pChr && !pPlayer->m_InfAtom)
+			|| (!m_Infinite && pChr && !pChr->m_Atom && !pPlayer->IsHooked(ATOM))
 			)
 		{
 			Reset();

@@ -44,7 +44,7 @@ void CTrail::Tick()
 			!pPlayer
 			|| (!pChr && !m_Infinite)
 			|| (m_Infinite && !pPlayer->m_InfTrail)
-			|| (!m_Infinite && pChr && !pChr->m_Trail)
+			|| (!m_Infinite && pChr && !pChr->m_Trail && !pPlayer->IsHooked(TRAIL))
 			)
 		{
 			Reset();
