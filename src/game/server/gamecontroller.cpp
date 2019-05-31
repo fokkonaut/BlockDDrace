@@ -588,7 +588,16 @@ void IGameController::Snap(int SnappingClient)
 	if (!pGameInfoEx)
 		return;
 
-	pGameInfoEx->m_Flags = GAMEINFOFLAG_TIMESCORE;
+	if (
+		pPlayer->m_Minigame != MINIGAME_BLOCK
+		&& pPlayer->m_Minigame != MINIGAME_SURVIVAL
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_BOOMFNG
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_FNG
+		&& pPlayer->m_DisplayScore != SCORE_LEVEL
+		)
+	{
+		pGameInfoEx->m_Flags = GAMEINFOFLAG_TIMESCORE;
+	}
 }
 
 int IGameController::GetAutoTeam(int NotThisID)

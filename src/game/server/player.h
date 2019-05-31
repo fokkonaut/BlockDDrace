@@ -303,6 +303,7 @@ public:
 
 	//score
 	int m_DisplayScore;
+	int m_InstagibScore;
 
 	//weapon indicator
 	bool m_WeaponIndicator;

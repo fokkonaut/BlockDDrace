@@ -175,6 +175,7 @@ void CPlayer::Reset()
 	m_InfMeteors = 0;
 
 	m_DisplayScore = SCORE_TIME;
+	m_InstagibScore = 0;
 
 	m_ForceSpawnPos = vec2(-1, -1);
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
@@ -507,6 +508,8 @@ void CPlayer::Snap(int SnappingClient)
 		Score = GameServer()->m_Accounts[GetAccID()].m_Kills;
 	else if (pSnapping->m_Minigame == MINIGAME_SURVIVAL)
 		Score = GameServer()->m_Accounts[GetAccID()].m_SurvivalKills;
+	else if (pSnapping->m_Minigame == MINIGAME_INSTAGIB_BOOMFNG || pSnapping->m_Minigame == MINIGAME_INSTAGIB_FNG)
+		Score = m_InstagibScore;
 	else if (pSnapping->m_DisplayScore != SCORE_TIME)
 	{
 		if (pSnapping->m_DisplayScore == SCORE_LEVEL)
