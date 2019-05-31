@@ -1097,7 +1097,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	DropLoot();
 
-	if (!m_FreezeTime && (Killer == -1 || Killer == m_pPlayer->GetCID() || Weapon < 0))
+	if (!m_FreezeTime && (Killer < 0 || Killer == m_pPlayer->GetCID() || Weapon < 0))
 	{
 		m_LastTouchedTee = -1;
 		m_LastHitWeapon = -1;
@@ -1108,14 +1108,15 @@ void CCharacter::Die(int Killer, int Weapon)
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastTouchedTee;
 
+	CPlayer *pKiller = GameServer()->m_apPlayers[Killer];
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
-		if (GameServer()->m_apPlayers[Killer])
+		if (pKiller)
 		{
-			if (GameServer()->m_apPlayers[Killer]->m_Minigame == MINIGAME_SURVIVAL)
-				GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_SurvivalKills++;
+			if (pKiller->m_Minigame == MINIGAME_SURVIVAL)
+				GameServer()->m_Accounts[pKiller->GetAccID()].m_SurvivalKills++;
 			else
-				GameServer()->m_Accounts[GameServer()->m_apPlayers[Killer]->GetAccID()].m_Kills++;
+				GameServer()->m_Accounts[pKiller->GetAccID()].m_Kills++;
 		}
 		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 	}
@@ -1126,7 +1127,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	*                                                *
 	**************************************************/
 
-	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
+	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, pKiller, Weapon);
 
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
@@ -1137,13 +1138,13 @@ void CCharacter::Die(int Killer, int Weapon)
 	// BlockDDrace
 
 	// send the kill message
-	if (!m_pPlayer->m_ShowName || (GameServer()->m_apPlayers[Killer] && !GameServer()->m_apPlayers[Killer]->m_ShowName))
+	if (!m_pPlayer->m_ShowName || (pKiller && !pKiller->m_ShowName))
 	{
 		if (m_pPlayer->m_SpookyGhost)
 			m_pPlayer->m_RespawnTick = Server()->Tick() + Server()->TickSpeed() / 10;
 
-		if (!GameServer()->m_apPlayers[Killer]->m_ShowName)
-			GameServer()->m_apPlayers[Killer]->FixForNoName(FIX_SET_NAME_ONLY);
+		if (!pKiller->m_ShowName)
+			pKiller->FixForNoName(FIX_SET_NAME_ONLY);
 
 		m_pPlayer->m_MsgKiller = Killer;
 		m_pPlayer->m_MsgWeapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
@@ -1176,7 +1177,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		if (GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState) > 2)
 		{
 			// if there are more than just two players left, you will watch your killer or a random player
-			m_pPlayer->m_SpectatorID = (GameServer()->GetPlayerChar(Killer) && Killer != m_pPlayer->GetCID()) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
+			m_pPlayer->m_SpectatorID = (pKiller->GetCharacter() && Killer != m_pPlayer->GetCID()) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
 			m_pPlayer->Pause(CPlayer::PAUSE_PAUSED, true);
 
 			// printing a message that you died and informing about remaining players
