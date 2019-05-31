@@ -11,12 +11,6 @@
 
 #include <game/gamecore.h>
 
-// BlockDDrace
-#define NUM_ATOMS 6
-#define NUM_TRAILS 20
-#define TRAIL_DIST 20
-// BlockDDrace
-
 class CGameTeams;
 
 enum
@@ -446,22 +440,6 @@ public:
 
 	bool m_Passive;
 	bool m_PoliceHelper;
-
-	// atom
-	std::vector<CStableProjectile *> m_AtomProjs;
-	int m_AtomPosition;
-
-	// trail
-	std::vector<CStableProjectile *> m_TrailProjs;
-	struct HistoryPoint
-	{
-		vec2 m_Pos;
-		float m_Dist;
-
-		HistoryPoint(vec2 Pos, float Dist) : m_Pos(Pos), m_Dist(Dist) {}
-	};
-	std::deque<HistoryPoint> m_TrailHistory;
-	float m_TrailHistoryLength;
 
 	// shop
 	bool m_InShop;

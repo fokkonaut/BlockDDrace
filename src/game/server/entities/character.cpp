@@ -5,9 +5,6 @@
 #include <game/server/gamecontext.h>
 #include <game/mapitems.h>
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 #include "character.h"
 #include "laser.h"
 #include "projectile.h"
@@ -18,6 +15,8 @@
 #include "meteor.h"
 #include "pickup.h"
 #include "pickup_drop.h"
+#include "atom.h"
+#include "trail.h"
 // BlockDDrace
 
 #include <stdio.h>
@@ -1074,26 +1073,6 @@ void CCharacter::Die(int Killer, int Weapon)
 	*              B L O C K D D R A C E             *
 	*                                                *
 	**************************************************/
-
-	// remove atom projectiles on death
-	if (!m_AtomProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_AtomProjs.begin(); it != m_AtomProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_AtomProjs.clear();
-	}
-
-	// remove trail projectiles on death
-	if (!m_TrailProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_TrailProjs.clear();
-	}
 
 	// drop armor, hearts and weapons
 	DropLoot();
@@ -2954,120 +2933,6 @@ void CCharacter::BlockDDraceInit()
 
 void CCharacter::BlockDDraceTick()
 {
-	if (m_Atom || m_pPlayer->m_InfAtom || m_pPlayer->IsHooked(ATOM))
-	{
-		if (m_AtomProjs.empty())
-		{
-			for (int i = 0; i<NUM_ATOMS; i++)
-			{
-				m_AtomProjs.push_back(new CStableProjectile(GameWorld(), i % 2 ? WEAPON_GRENADE : WEAPON_SHOTGUN, m_pPlayer->GetCID()));
-			}
-			m_AtomPosition = 0;
-		}
-		if (++m_AtomPosition >= 60)
-		{
-			m_AtomPosition = 0;
-		}
-		vec2 AtomPos;
-		AtomPos.x = m_Pos.x + 200 * cos(m_AtomPosition*M_PI * 2 / 60);
-		AtomPos.y = m_Pos.y + 80 * sin(m_AtomPosition*M_PI * 2 / 60);
-		for (int i = 0; i<NUM_ATOMS; i++)
-		{
-			m_AtomProjs[i]->m_Pos = rotate_around_point(AtomPos, m_Pos, i*M_PI * 2 / NUM_ATOMS);
-		}
-	}
-	else if (!m_AtomProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_AtomProjs.begin(); it != m_AtomProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_AtomProjs.clear();
-	}
-
-	if (m_Trail || m_pPlayer->m_InfTrail || m_pPlayer->IsHooked(TRAIL))
-	{
-		if (m_TrailProjs.empty())
-		{
-			for (int i = 0; i<NUM_TRAILS; i++)
-			{
-				m_TrailProjs.push_back(new CStableProjectile(GameWorld(), WEAPON_SHOTGUN, m_pPlayer->GetCID()));
-			}
-			m_TrailHistory.clear();
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, 0.0f));
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, NUM_TRAILS*TRAIL_DIST));
-			m_TrailHistoryLength = NUM_TRAILS * TRAIL_DIST;
-		}
-		vec2 FrontPos = m_TrailHistory.front().m_Pos;
-		if (FrontPos != m_Pos)
-		{
-			float FrontLength = distance(m_Pos, FrontPos);
-			m_TrailHistory.push_front(HistoryPoint(m_Pos, FrontLength));
-			m_TrailHistoryLength += FrontLength;
-		}
-
-		while (1)
-		{
-			float LastDist = m_TrailHistory.back().m_Dist;
-			if (m_TrailHistoryLength - LastDist >= NUM_TRAILS * TRAIL_DIST)
-			{
-				m_TrailHistory.pop_back();
-				m_TrailHistoryLength -= LastDist;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		int HistoryPos = 0;
-		float HistoryPosLength = 0.0f;
-		//float AdditionalLength = 0.0f;
-		for (int i = 0; i<NUM_TRAILS; i++)
-		{
-			float Length = (i + 1)*TRAIL_DIST;
-			float NextDist = 0.0f;
-			while (1)
-			{
-				// in case floating point arithmetic errors should fuck us up
-				// don't crash and recalculate total history length
-				if ((unsigned int)HistoryPos >= m_TrailHistory.size())
-				{
-					m_TrailHistoryLength = 0.0f;
-					for (std::deque<HistoryPoint>::iterator it = m_TrailHistory.begin(); it != m_TrailHistory.end(); ++it)
-					{
-						m_TrailHistoryLength += it->m_Dist;
-					}
-					break;
-				}
-				NextDist = m_TrailHistory[HistoryPos].m_Dist;
-
-				if (Length <= HistoryPosLength + NextDist)
-				{
-					//AdditionalLength = Length - HistoryPosLength;
-					break;
-				}
-				else
-				{
-					HistoryPos += 1;
-					HistoryPosLength += NextDist;
-					//AdditionalLength = 0;
-				}
-			}
-			m_TrailProjs[i]->m_Pos = m_TrailHistory[HistoryPos].m_Pos;
-			//the line under this comment crashed the server, dont know why but it works without that line too since the position gets set above this line too
-			//m_TrailProjs[i]->m_Pos += (m_TrailHistory[HistoryPos + 1].m_Pos - m_TrailProjs[i]->m_Pos)*(AdditionalLength / NextDist);
-		}
-	}
-	else if (!m_TrailProjs.empty())
-	{
-		for (std::vector<CStableProjectile *>::iterator it = m_TrailProjs.begin(); it != m_TrailProjs.end(); ++it)
-		{
-			GameWorld()->DestroyEntity(*it);
-		}
-		m_TrailProjs.clear();
-	}
-
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
 		if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
@@ -3131,6 +2996,11 @@ void CCharacter::BlockDDraceTick()
 			m_InShop = false;
 		}
 	}
+
+	if (m_pPlayer->IsHooked(ATOM))
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+	if (m_pPlayer->IsHooked(TRAIL))
+		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
 }
 
 void CCharacter::BackupWeapons(int Type)
@@ -3374,6 +3244,8 @@ void CCharacter::Atom(bool Set, int FromID, bool Silent)
 {
 	m_Atom = Set;
 	m_pPlayer->m_InfAtom = false;
+	if (Set)
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
 	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
@@ -3381,6 +3253,8 @@ void CCharacter::InfAtom(bool Set, int FromID, bool Silent)
 {
 	m_pPlayer->m_InfAtom = Set;
 	m_Atom = false;
+	if (Set)
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), true);
 	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
@@ -3388,6 +3262,8 @@ void CCharacter::Trail(bool Set, int FromID, bool Silent)
 {
 	m_Trail = Set;
 	m_pPlayer->m_InfTrail = false;
+	if (Set)
+		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
 	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
@@ -3395,6 +3271,8 @@ void CCharacter::InfTrail(bool Set, int FromID, bool Silent)
 {
 	m_pPlayer->m_InfTrail = Set;
 	m_Trail = false;
+	if (Set)
+		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), true);
 	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 

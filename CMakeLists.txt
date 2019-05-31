@@ -767,6 +767,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   ddracechat.cpp
   ddracechat.h
   ddracecommands.cpp
+  entities/atom.cpp
+  entities/atom.h
   entities/character.cpp
   entities/character.h
   entities/clock.cpp
@@ -799,6 +801,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/shop.cpp
   entities/stable_projectile.cpp
   entities/stable_projectile.h
+  entities/trail.cpp
+  entities/trail.h
   entity.cpp
   entity.h
   eventhandler.cpp
