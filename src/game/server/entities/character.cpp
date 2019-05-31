@@ -1095,6 +1095,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_TrailProjs.clear();
 	}
 
+	// drop armor, hearts and weapons
 	DropLoot();
 
 	if (!m_FreezeTime && (Killer < 0 || Killer == m_pPlayer->GetCID() || Weapon < 0))
@@ -1103,12 +1104,18 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_LastHitWeapon = -1;
 	}
 
+	// if no killer exists its a selfkill
 	if (m_LastTouchedTee == -1)
 		m_LastTouchedTee = m_pPlayer->GetCID();
+
+	// set the new killer and weapon
 	Weapon = m_LastHitWeapon;
 	Killer = m_LastTouchedTee;
 
+
 	CPlayer *pKiller = GameServer()->m_apPlayers[Killer];
+
+	// account kills and deaths
 	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
 	{
 		if (pKiller)
@@ -1158,7 +1165,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		Msg.m_Victim = m_pPlayer->GetCID();
 		Msg.m_Weapon = GameServer()->GetRealWeapon(m_LastHitWeapon);
 		Msg.m_ModeSpecial = ModeSpecial;
-		// BlockDDrace
+		// BlockDDrace // only send kill message to players in the same minigame
 		for (int i = 0; i < MAX_CLIENTS; i++)
 			if (GameServer()->m_apPlayers[i] && m_pPlayer->m_Minigame == GameServer()->m_apPlayers[i]->m_Minigame)
 				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
