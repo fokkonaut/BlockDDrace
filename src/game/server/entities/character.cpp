@@ -2933,31 +2933,27 @@ void CCharacter::BlockDDraceInit()
 
 void CCharacter::BlockDDraceTick()
 {
+	// checking for body checks
 	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
 	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
 		if (pChr->m_FreezeTime == 0 && CanCollide(pChr->GetPlayer()->GetCID()))
 			m_LastTouchedTee = pChr->GetPlayer()->GetCID();
 
-	for (int i = 0; i < MAX_CLIENTS; i++)
-	{
-		CCharacter *pChar = GameServer()->GetPlayerChar(i);
-
-		if (!pChar || !pChar->IsAlive() || pChar == this)
-			continue;
-		if (pChar->Core()->m_HookedPlayer == m_pPlayer->GetCID())
-			m_LastTouchedTee = i;
-	}
+	// checking if someone hooks you
+	m_pPlayer->IsHooked(-2);
 
 	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
 		m_LastHitWeapon = -1;
 	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
 
+	// reset if the last touched tee doesnt exist
 	if (!GameServer()->m_apPlayers[m_LastTouchedTee])
 	{
 		m_LastTouchedTee = -1;
 		m_LastHitWeapon = -1;
 	}
 
+	// fix miss prediction for other players if one is in solo
 	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS) // the newer clients use the DDNet network character to know whether they can collide or not
 	{
 		CCharacter *pPas = GameWorld()->ClosestCharacter(m_Pos, 50.0f, this);
