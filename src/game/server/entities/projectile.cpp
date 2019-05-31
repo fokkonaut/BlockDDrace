@@ -209,8 +209,14 @@ void CProjectile::Tick()
 				(m_Owner != -1)? TeamMask : -1LL);
 			}
 		}
-		else if(pTargetChr && m_Freeze && ((m_Layer == LAYER_SWITCH && GameServer()->Collision()->m_pSwitchers[m_Number].m_Status[pTargetChr->Team()]) || m_Layer != LAYER_SWITCH))
-			pTargetChr->Freeze();
+		else if(m_Freeze)
+		{
+			CCharacter *apEnts[MAX_CLIENTS];
+			int Num = GameWorld()->FindEntities(CurPos, 1.0f, (CEntity**)apEnts, MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+			for(int i = 0; i < Num; ++i)
+				if(apEnts[i] && (m_Layer != LAYER_SWITCH || (m_Layer == LAYER_SWITCH && GameServer()->Collision()->m_pSwitchers[m_Number].m_Status[apEnts[i]->Team()])))
+					apEnts[i]->Freeze();
+		}
 
 		// BlockDDrace
 		if (!m_Explosive && pTargetChr)
