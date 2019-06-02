@@ -4417,7 +4417,7 @@ void CGameContext::SurvivalTick()
 			if (Server()->Tick() % 50 == 0)
 			{
 				str_format(aBuf, sizeof(aBuf), "[%d/%d] players to start a round", CountSurvivalPlayers(SURVIVAL_LOBBY), g_Config.m_SvSurvivalMinPlayers);
-				SendSurvivalBroadcast(aBuf);
+				SendSurvivalBroadcast(aBuf, false);
 			}
 			break;
 		}
