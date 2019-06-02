@@ -528,7 +528,6 @@ void CCharacter::FireWeapon()
 					0,//Explosive
 					0,//Force
 					-1,//SoundImpact
-					WEAPON_GUN,//Weapon
 					0,
 					0,
 					m_pPlayer->m_SpookyGhost,
@@ -571,7 +570,7 @@ void CCharacter::FireWeapon()
 						ProjStartPos,
 						vec2(cosf(a), sinf(a))*Speed,
 						(int)(Server()->TickSpeed()*GameServer()->Tuning()->m_ShotgunLifetime),
-						0, 0, 0, -1, WEAPON_SHOTGUN);
+						0, 0, 0, -1);
 
 					// pack the Projectile and send it to the client Directly
 					CNetObj_Projectile p;
@@ -609,7 +608,7 @@ void CCharacter::FireWeapon()
 			CProjectile *pProj = new CProjectile
 			(
 				GameWorld(),
-				WEAPON_GRENADE,//Type
+				GetActiveWeapon(),//Type
 				m_pPlayer->GetCID(),//Owner
 				ProjStartPos,//Pos
 				Direction,//Dir
@@ -618,7 +617,6 @@ void CCharacter::FireWeapon()
 				true,//Explosive
 				0,//Force
 				SOUND_GRENADE_EXPLODE,//SoundImpact
-				GetActiveWeapon(),//Weapon
 				0,//Layer
 				0,//Number
 				false,//Spooky

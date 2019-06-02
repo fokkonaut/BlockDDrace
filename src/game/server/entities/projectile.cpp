@@ -20,7 +20,6 @@ CProjectile::CProjectile
 		bool Explosive,
 		float Force,
 		int SoundImpact,
-		int Weapon,
 		int Layer,
 		int Number,
 		bool Spooky,
@@ -36,7 +35,6 @@ CProjectile::CProjectile
 	m_Owner = Owner;
 	m_Force = Force;
 	m_SoundImpact = SoundImpact;
-	m_Weapon = Weapon;
 	m_StartTick = Server()->Tick();
 	m_Explosive = Explosive;
 
@@ -74,7 +72,7 @@ vec2 CProjectile::GetPos(float Time)
 
 	if (m_FakeTuning)
 	{
-		switch (m_Weapon)
+		switch (m_Type)
 		{
 			case WEAPON_SHOTGUN:
 				if (!m_TuneZone)
@@ -159,7 +157,7 @@ void CProjectile::Tick()
 	{
 		TeamMask = pOwnerChar->Teams()->TeamMask(pOwnerChar->Team(), -1, m_Owner);
 	}
-	else if (m_Owner >= 0 && ((m_Weapon != WEAPON_GRENADE && m_Weapon != WEAPON_STRAIGHT_GRENADE) || g_Config.m_SvDestroyBulletsOnDeath))
+	else if (m_Owner >= 0 && ((m_Type != WEAPON_GRENADE && m_Type != WEAPON_STRAIGHT_GRENADE) || g_Config.m_SvDestroyBulletsOnDeath))
 	{
 		GameWorld()->DestroyEntity(this);
 		return;
@@ -167,7 +165,7 @@ void CProjectile::Tick()
 
 	if( ((pTargetChr && (pOwnerChar ? !(pOwnerChar->m_Hit&CCharacter::DISABLE_HIT_GRENADE) : g_Config.m_SvHit || m_Owner == -1 || pTargetChr == pOwnerChar)) || Collide || GameLayerClipped(m_CurPos)) && !IsWeaponCollide)
 	{
-		if(m_Explosive && (!pTargetChr || (pTargetChr && (!m_Freeze || (m_Weapon == WEAPON_SHOTGUN && Collide)))))
+		if(m_Explosive && (!pTargetChr || (pTargetChr && (!m_Freeze || (m_Type == WEAPON_SHOTGUN && Collide)))))
 		{
 			int Number = 1;
 			if(GameServer()->EmulateBug(BUG_GRENADE_DOUBLEEXPLOSION) && m_LifeSpan == -1 && m_InitialLifeSpan == 0)
@@ -176,7 +174,7 @@ void CProjectile::Tick()
 			}
 			for(int i = 0; i < Number; i++)
 			{
-				GameServer()->CreateExplosion(ColPos, m_Owner, m_Weapon, m_Owner == -1, (!pTargetChr ? -1 : pTargetChr->Team()),
+				GameServer()->CreateExplosion(ColPos, m_Owner, m_Type, m_Owner == -1, (!pTargetChr ? -1 : pTargetChr->Team()),
 				(m_Owner != -1)? TeamMask : -1LL);
 				GameServer()->CreateSound(ColPos, m_SoundImpact,
 				(m_Owner != -1)? TeamMask : -1LL);
@@ -194,7 +192,7 @@ void CProjectile::Tick()
 		// BlockDDrace
 		if (!m_Explosive && pTargetChr)
 		{
-			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[m_Weapon].m_Damage, m_Owner, m_Weapon);
+			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[m_Type].m_Damage, m_Owner, m_Type);
 		}
 		if (pTargetChr && m_Spooky)
 		{
@@ -261,7 +259,7 @@ void CProjectile::Tick()
 				m_Direction.y = 0;
 			m_Pos += m_Direction;
 		}
-		else if (m_Weapon == WEAPON_GUN)
+		else if (m_Type == WEAPON_GUN)
 		{
 			// BlockDDrace
 			if (pOwnerChar && pOwnerChar->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
@@ -291,7 +289,7 @@ void CProjectile::Tick()
 					TeamMask = pOwnerChar->Teams()->TeamMask(pOwnerChar->Team(), -1, m_Owner);
 			}
 
-			GameServer()->CreateExplosion(ColPos, m_Owner, m_Weapon, m_Owner == -1, (!pOwnerChar ? -1 : pOwnerChar->Team()),
+			GameServer()->CreateExplosion(ColPos, m_Owner, m_Type, m_Owner == -1, (!pOwnerChar ? -1 : pOwnerChar->Team()),
 			(m_Owner != -1)? TeamMask : -1LL);
 			GameServer()->CreateSound(ColPos, m_SoundImpact,
 			(m_Owner != -1)? TeamMask : -1LL);
@@ -321,7 +319,7 @@ void CProjectile::TickPaused()
 
 void CProjectile::FillInfo(CNetObj_Projectile *pProj)
 {
-	pProj->m_Type = m_Type;
+	pProj->m_Type = GameServer()->GetRealWeapon(m_Type);
 
 	// BlockDDrace
 	if (m_FakeTuning)
@@ -413,7 +411,7 @@ void CProjectile::FillExtraInfo(CNetObj_Projectile *pProj)
 	pProj->m_VelX = (int)(Angle * 1000000.0f);
 	pProj->m_VelY = Data;
 	pProj->m_StartTick = m_StartTick;
-	pProj->m_Type = m_Type;
+	pProj->m_Type = GameServer()->GetRealWeapon(m_Type);
 }
 
 
@@ -451,45 +449,45 @@ void CProjectile::GetTunings(float *Curvature, float *Speed)
 	*Curvature = 0;
 	*Speed = 0;
 
-	switch (m_Type)
+	switch (GameServer()->GetRealWeapon(m_Type))
 	{
-	case WEAPON_GRENADE:
-		if (!m_TuneZone)
-		{
-			*Curvature = GameServer()->Tuning()->m_GrenadeCurvature;
-			*Speed = GameServer()->Tuning()->m_GrenadeSpeed;
-		}
-		else
-		{
-			*Curvature = GameServer()->TuningList()[m_TuneZone].m_GrenadeCurvature;
-			*Speed = GameServer()->TuningList()[m_TuneZone].m_GrenadeSpeed;
-		}
-		break;
+		case WEAPON_GRENADE:
+			if (!m_TuneZone)
+			{
+				*Curvature = GameServer()->Tuning()->m_GrenadeCurvature;
+				*Speed = GameServer()->Tuning()->m_GrenadeSpeed;
+			}
+			else
+			{
+				*Curvature = GameServer()->TuningList()[m_TuneZone].m_GrenadeCurvature;
+				*Speed = GameServer()->TuningList()[m_TuneZone].m_GrenadeSpeed;
+			}
+			break;
 
-	case WEAPON_SHOTGUN:
-		if (!m_TuneZone)
-		{
-			*Curvature = GameServer()->Tuning()->m_ShotgunCurvature;
-			*Speed = GameServer()->Tuning()->m_ShotgunSpeed;
-		}
-		else
-		{
-			*Curvature = GameServer()->TuningList()[m_TuneZone].m_ShotgunCurvature;
-			*Speed = GameServer()->TuningList()[m_TuneZone].m_ShotgunSpeed;
-		}
-		break;
+		case WEAPON_SHOTGUN:
+			if (!m_TuneZone)
+			{
+				*Curvature = GameServer()->Tuning()->m_ShotgunCurvature;
+				*Speed = GameServer()->Tuning()->m_ShotgunSpeed;
+			}
+			else
+			{
+				*Curvature = GameServer()->TuningList()[m_TuneZone].m_ShotgunCurvature;
+				*Speed = GameServer()->TuningList()[m_TuneZone].m_ShotgunSpeed;
+			}
+			break;
 
-	case WEAPON_GUN:
-		if (!m_TuneZone)
-		{
-			*Curvature = GameServer()->Tuning()->m_GunCurvature;
-			*Speed = GameServer()->Tuning()->m_GunSpeed;
-		}
-		else
-		{
-			*Curvature = GameServer()->TuningList()[m_TuneZone].m_GunCurvature;
-			*Speed = GameServer()->TuningList()[m_TuneZone].m_GunSpeed;
-		}
-		break;
+		case WEAPON_GUN:
+			if (!m_TuneZone)
+			{
+				*Curvature = GameServer()->Tuning()->m_GunCurvature;
+				*Speed = GameServer()->Tuning()->m_GunSpeed;
+			}
+			else
+			{
+				*Curvature = GameServer()->TuningList()[m_TuneZone].m_GunCurvature;
+				*Speed = GameServer()->TuningList()[m_TuneZone].m_GunSpeed;
+			}
+			break;
 	}
 }
