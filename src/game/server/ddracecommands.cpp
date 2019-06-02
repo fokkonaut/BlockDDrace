@@ -1032,7 +1032,10 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 
 	int ID = pSelf->GetCIDByName(pResult->GetString(0));
 	if (ID < 0)
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Invalid player");
 		return;
+	}
 
 	CCharacter* pChr = pSelf->GetPlayerChar(ID);
 	CPlayer* pPlayer = pSelf->m_apPlayers[ID];
