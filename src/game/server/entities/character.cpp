@@ -1092,20 +1092,17 @@ void CCharacter::Die(int Killer, int Weapon)
 	Killer = m_LastTouchedTee;
 
 
-	CPlayer *pKiller = GameServer()->m_apPlayers[Killer];
+	CPlayer *pKiller = (Killer >= 0 && Killer != m_pPlayer->GetCID()) ? GameServer()->m_apPlayers[Killer] : 0;
 
 	// account kills and deaths
-	if (Killer >= 0 && Killer != m_pPlayer->GetCID())
+	if (pKiller)
 	{
-		if (pKiller)
-		{
-			if (pKiller->m_Minigame == MINIGAME_SURVIVAL)
-				GameServer()->m_Accounts[pKiller->GetAccID()].m_SurvivalKills++;
-			else
-				GameServer()->m_Accounts[pKiller->GetAccID()].m_Kills++;
-		}
-		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
+		if (pKiller->m_Minigame == MINIGAME_SURVIVAL)
+			GameServer()->m_Accounts[pKiller->GetAccID()].m_SurvivalKills++;
+		else
+			GameServer()->m_Accounts[pKiller->GetAccID()].m_Kills++;
 	}
+	GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 	
 	/*************************************************
 	*                                                *
@@ -1113,7 +1110,7 @@ void CCharacter::Die(int Killer, int Weapon)
 	*                                                *
 	**************************************************/
 
-	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, pKiller, Weapon);
+	int ModeSpecial = GameServer()->m_pController->OnCharacterDeath(this, GameServer()->m_apPlayers[Killer], Weapon);
 
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "kill killer='%d:%s' victim='%d:%s' weapon=%d special=%d",
@@ -1163,7 +1160,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		if (GameServer()->CountSurvivalPlayers(GameServer()->m_SurvivalGameState) > 2)
 		{
 			// if there are more than just two players left, you will watch your killer or a random player
-			m_pPlayer->m_SpectatorID = (pKiller->GetCharacter() && Killer != m_pPlayer->GetCID()) ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
+			m_pPlayer->m_SpectatorID = pKiller ? Killer : GameServer()->GetRandomSurvivalPlayer(GameServer()->m_SurvivalGameState, m_pPlayer->GetCID());
 			m_pPlayer->Pause(CPlayer::PAUSE_PAUSED, true);
 
 			// printing a message that you died and informing about remaining players
