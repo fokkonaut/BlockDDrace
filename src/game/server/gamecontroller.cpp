@@ -589,11 +589,11 @@ void IGameController::Snap(int SnappingClient)
 		return;
 
 	if (
-		pPlayer->m_Minigame != MINIGAME_BLOCK
+		pPlayer->m_DisplayScore != SCORE_LEVEL
+		&& pPlayer->m_Minigame != MINIGAME_BLOCK
 		&& pPlayer->m_Minigame != MINIGAME_SURVIVAL
 		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_BOOMFNG
 		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_FNG
-		&& pPlayer->m_DisplayScore != SCORE_LEVEL
 		)
 	{
 		pGameInfoEx->m_Flags = GAMEINFOFLAG_TIMESCORE;
