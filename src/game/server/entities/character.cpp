@@ -2991,17 +2991,13 @@ void CCharacter::BlockDDraceTick()
 		}
 	}
 
-	bool AtomHooked = false;
-	bool TrailHooked = false;
-	if (m_pPlayer->IsHooked(ATOM))
-		AtomHooked = true;
-	if (m_pPlayer->IsHooked(TRAIL))
-		TrailHooked = true;
-
-	if (!AtomHooked && !m_Atom && !m_pPlayer->m_InfAtom)
+	if (!m_AtomHooked && m_pPlayer->IsHooked(ATOM) && !m_Atom && !m_pPlayer->m_InfAtom)
 		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
-	if (!TrailHooked && !m_Trail && !m_pPlayer->m_InfTrail)
+	if (!m_TrailHooked && m_pPlayer->IsHooked(TRAIL) && !m_Trail && !m_pPlayer->m_InfTrail)
 		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+
+	m_AtomHooked = m_pPlayer->IsHooked(ATOM);
+	m_TrailHooked = m_pPlayer->IsHooked(TRAIL);
 }
 
 void CCharacter::BackupWeapons(int Type)

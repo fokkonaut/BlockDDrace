@@ -441,6 +441,9 @@ public:
 	bool m_Passive;
 	bool m_PoliceHelper;
 
+	bool m_AtomHooked;
+	bool m_TrailHooked;
+
 	// shop
 	bool m_InShop;
 	bool m_EnteredShop;
