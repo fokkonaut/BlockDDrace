@@ -44,14 +44,14 @@ void CCustomProjectile::Reset()
 
 void CCustomProjectile::Tick()
 {
-	pOwner = 0;
+	m_pOwner = 0;
 	if (GameServer()->GetPlayerChar(m_Owner))
-		pOwner = GameServer()->GetPlayerChar(m_Owner);
+		m_pOwner = GameServer()->GetPlayerChar(m_Owner);
 
-	if (m_Owner >= 0 && !pOwner && g_Config.m_SvDestroyBulletsOnDeath)
+	if (m_Owner >= 0 && !m_pOwner && g_Config.m_SvDestroyBulletsOnDeath)
 		Reset();
 
-	m_TeamMask = pOwner ? pOwner->Teams()->TeamMask(pOwner->Team(), -1, m_Owner) : -1LL;
+	m_TeamMask = m_pOwner ? m_pOwner->Teams()->TeamMask(m_pOwner->Team(), -1, m_Owner) : -1LL;
 
 	m_LifeTime--;
 	if (m_LifeTime <= 0)
@@ -64,7 +64,7 @@ void CCustomProjectile::Tick()
 	{
 		if (m_Explosive)
 		{
-			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, pOwner ? pOwner->Team() : -1, m_TeamMask);
+			GameServer()->CreateExplosion(m_Pos, m_Owner, m_Type, m_Owner == -1, m_pOwner ? m_pOwner->Team() : -1, m_TeamMask);
 			GameServer()->CreateSound(m_Pos, SOUND_GRENADE_EXPLODE, m_TeamMask);
 		}
 
@@ -114,7 +114,7 @@ void CCustomProjectile::Move()
 void CCustomProjectile::HitCharacter()
 {
 	vec2 NewPos = m_Pos + m_Core;
-	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, pOwner, m_Owner);
+	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, m_pOwner, m_Owner);
 	if (!pHit || pHit->GetPlayer()->GetCID() == m_Owner)
 		return;
 
