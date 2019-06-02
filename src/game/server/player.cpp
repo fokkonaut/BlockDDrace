@@ -174,7 +174,7 @@ void CPlayer::Reset()
 	m_HasSpookyGhost = false;
 	m_InfMeteors = 0;
 
-	m_DisplayScore = SCORE_TIME;
+	m_DisplayScore = SCORE_LEVEL;
 	m_InstagibScore = 0;
 
 	m_ForceSpawnPos = vec2(-1, -1);
@@ -475,7 +475,6 @@ void CPlayer::Snap(int SnappingClient)
 
 	pPlayerInfo->m_Local = 0;
 	pPlayerInfo->m_ClientID = id;
-	pPlayerInfo->m_Score = abs(m_Score) * -1;
 	pPlayerInfo->m_Team = (m_SnapFixDDNet || m_ClientVersion < VERSION_DDNET_OLD || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? Team : TEAM_SPECTATORS;
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_ClientVersion < VERSION_DDNET_OLD || m_SnapFixDDNet))
