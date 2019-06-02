@@ -4365,7 +4365,7 @@ void CGameContext::SurvivalTick()
 			else
 			{
 				m_SurvivalBackgroundState = BACKGROUND_LOBBY_COUNTDOWN;
-				m_SurvivalTick = Server()->TickSpeed() * (30 + 1);
+				m_SurvivalTick = Server()->TickSpeed() * (g_Config.m_SvSurvivalLobbyCountdown + 1);
 			}
 			break;
 		}
@@ -4471,7 +4471,7 @@ void CGameContext::SurvivalTick()
 				m_SurvivalBackgroundState = SURVIVAL_DEATHMATCH;
 
 				// deathmatch will be 2 minutes
-				m_SurvivalTick = Server()->TickSpeed() * 60 * 2;
+				m_SurvivalTick = Server()->TickSpeed() * 60 * g_Config.m_SvSurvivalDeathmatchTime;
 			}
 			else
 			{
