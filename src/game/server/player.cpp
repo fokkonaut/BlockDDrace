@@ -161,7 +161,7 @@ void CPlayer::Reset()
 	m_ShowName = true;
 	m_SetRealName = false;
 	m_SetRealNameTick = Now;
-	m_ChatTeam = TEAM_RED;
+	m_ChatTeam = CGameContext::CHAT_ALL;
 	m_ChatText[0] = '\0';
 	m_MsgKiller = -1;
 	m_MsgWeapon = -1;
