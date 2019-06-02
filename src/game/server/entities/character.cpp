@@ -3287,14 +3287,17 @@ void CCharacter::Meteor(bool Set, int FromID, bool Silent)
 {
 	if (Set)
 	{
-		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
+		if (m_pPlayer->m_InfMeteors + m_Meteors >= 50)
 		{
-			vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
-			vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
-
-			m_Meteors++;
-			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), false);
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the maximum of 50 meteors");
+			return;
 		}
+
+		vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
+		vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
+
+		m_Meteors++;
+		new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), false);
 	}
 	else
 	{
@@ -3311,14 +3314,17 @@ void CCharacter::InfMeteor(bool Set, int FromID, bool Silent)
 {
 	if (Set)
 	{
-		if (m_pPlayer->m_InfMeteors + m_Meteors < 50)
+		if (m_pPlayer->m_InfMeteors + m_Meteors >= 50)
 		{
-			vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
-			vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
-
-			m_pPlayer->m_InfMeteors++;
-			new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), true);
+			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the maximum of 50 meteors");
+			return;
 		}
+
+		vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
+		vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
+
+		m_pPlayer->m_InfMeteors++;
+		new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), true);
 	}
 	else
 	{
