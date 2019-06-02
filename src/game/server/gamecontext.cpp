@@ -397,12 +397,14 @@ void CGameContext::SendEmoticon(int ClientID, int Emoticon)
 {
 	CNetMsg_Sv_Emoticon Msg;
 	Msg.m_ClientID = ClientID;
+	// BlockDDrace
 	Msg.m_Emoticon = m_apPlayers[ClientID]->m_SpookyGhost ? EMOTICON_GHOST : Emoticon;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
 }
 
 void CGameContext::SendWeaponPickup(int ClientID, int Weapon)
 {
+	// BlockDDrace
 	if (Weapon > WEAPON_NINJA)
 	{
 		if (GetPlayerChar(ClientID))
@@ -1167,14 +1169,18 @@ void CGameContext::OnClientConnected(int ClientID)
 	}
 #endif
 
+	// BlockDDrace
 	FixMotd();
 	SendMotd(m_aMotd, ClientID);
 }
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
+	// BlockDDrace
 	if (m_apPlayers[ClientID]->GetAccID() > 0)
 		Logout(m_apPlayers[ClientID]->GetAccID());
+	// BlockDDrace
+
 	AbortVoteKickOnDisconnect(ClientID);
 	m_apPlayers[ClientID]->OnDisconnect(pReason);
 	delete m_apPlayers[ClientID];
@@ -1354,12 +1360,14 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					Server()->RestrictRconOutput(-1);
 				}
 			}
+			// BlockDDrace
 			else if (!pPlayer->m_ShowName)
 			{
 				str_copy(pPlayer->m_ChatText, pMsg->m_pMessage, sizeof(pPlayer->m_ChatText));
 				pPlayer->m_ChatTeam = Team;
-				pPlayer->FixForNoName(1);
+				pPlayer->FixForNoName(FIX_CHAT_MSG);
 			}
+			// BlockDDrace
 			else
 				SendChat(ClientID, Team, pMsg->m_pMessage, ClientID);
 		}
@@ -1685,6 +1693,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if(MsgID == NETMSGTYPE_CL_VOTE)
 		{
+			/*************************************************
+			*                                                *
+			*              B L O C K D D R A C E             *
+			*                                                *
+			**************************************************/
+
 			CNetMsg_Cl_Vote *pMsg = (CNetMsg_Cl_Vote *)pRawMsg;
 			CCharacter *pChr = pPlayer->GetCharacter();
 
@@ -1734,6 +1748,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						pChr->DropWeapon(pChr->GetActiveWeapon());
 				}
 			}
+
+			/*************************************************
+			*                                                *
+			*              B L O C K D D R A C E             *
+			*                                                *
+			**************************************************/
 
 			if(!m_VoteCloseTime)
 				return;
@@ -1881,6 +1901,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if (MsgID == NETMSGTYPE_CL_CHANGEINFO)
 		{
+			// BlockDDrace
 			if (pPlayer->m_SpookyGhost)
 				return;
 
@@ -1930,6 +1951,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
 			pPlayer->FindDuplicateSkins();
 
+			// BlockDDrace
 			if (pPlayer->GetCharacter())
 				pPlayer->GetCharacter()->SaveRealInfos();
 		}
@@ -1978,6 +2000,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						pChr->SetEmoteType(EMOTE_NORMAL);
 						break;
 				}
+				// BlockDDrace
 				if (pPlayer->m_SpookyGhost)
 					pChr->SetEmoteType(EMOTE_SURPRISE);
 				pChr->SetEmoteStop(Server()->Tick() + 2 * Server()->TickSpeed());
@@ -3199,6 +3222,7 @@ void CGameContext::OnShutdown(bool FullShutdown)
 		aio_free(m_pTeeHistorianFile);
 	}
 
+	// BlockDDrace
 	for (unsigned int i = ACC_START; i < m_Accounts.size(); i++)
 		Logout(i);
 
