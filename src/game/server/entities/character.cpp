@@ -429,7 +429,7 @@ void CCharacter::FireWeapon()
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
-	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA && g_Config.m_SvVanillaWeapons)
+	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 		NumShots = 1;
 	bool Sound = true;
 
@@ -510,15 +510,11 @@ void CCharacter::FireWeapon()
 		{
 			if (!m_Jetpack || !m_pPlayer->m_NinjaJetpack)
 			{
-				bool Straight = false;
-				if (m_pPlayer->m_Gamemode == GAMEMODE_DDRACE && g_Config.m_SvVanillaWeapons)
-					Straight = true;
-
 				int Lifetime;
 				if (!m_TuneZone)
-					Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->Tuning()->m_DDraceGunLifetime : GameServer()->Tuning()->m_GunLifetime));
+					Lifetime = (int)(Server()->TickSpeed() * (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA ? GameServer()->Tuning()->m_VanillaGunLifetime : GameServer()->Tuning()->m_GunLifetime));
 				else
-					Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->TuningList()[m_TuneZone].m_DDraceGunLifetime : GameServer()->TuningList()[m_TuneZone].m_GunLifetime));
+					Lifetime = (int)(Server()->TickSpeed() * (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA ? GameServer()->TuningList()[m_TuneZone].m_VanillaGunLifetime : GameServer()->TuningList()[m_TuneZone].m_GunLifetime));
 
 				CProjectile *pProj = new CProjectile
 				(
@@ -536,7 +532,7 @@ void CCharacter::FireWeapon()
 					0,
 					0,
 					m_pPlayer->m_SpookyGhost,
-					Straight
+					m_pPlayer->m_Gamemode == GAMEMODE_VANILLA
 				);
 
 				// pack the Projectile and send it to the client Directly
@@ -556,7 +552,7 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_SHOTGUN:
 		{
-			if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA && g_Config.m_SvVanillaWeapons)
+			if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 			{
 				int ShotSpread = 2;
 
@@ -604,15 +600,11 @@ void CCharacter::FireWeapon()
 		case WEAPON_STRAIGHT_GRENADE:
 		case WEAPON_GRENADE:
 		{
-			bool Straight = false;
-			if (GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE)
-				Straight = true;
-
 			int Lifetime;
 			if (!m_TuneZone)
-				Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->Tuning()->m_StraightGrenadeLifetime : GameServer()->Tuning()->m_GrenadeLifetime));
+				Lifetime = (int)(Server()->TickSpeed() * (GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE ? GameServer()->Tuning()->m_StraightGrenadeLifetime : GameServer()->Tuning()->m_GrenadeLifetime));
 			else
-				Lifetime = (int)(Server()->TickSpeed() * (Straight ? GameServer()->TuningList()[m_TuneZone].m_StraightGrenadeLifetime : GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime));
+				Lifetime = (int)(Server()->TickSpeed() * (GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE ? GameServer()->TuningList()[m_TuneZone].m_StraightGrenadeLifetime : GameServer()->TuningList()[m_TuneZone].m_GrenadeLifetime));
 
 			CProjectile *pProj = new CProjectile
 			(
@@ -630,7 +622,7 @@ void CCharacter::FireWeapon()
 				0,//Layer
 				0,//Number
 				false,//Spooky
-				Straight//Straight
+				GetActiveWeapon() == WEAPON_STRAIGHT_GRENADE//FakeTuning
 			);
 
 			// pack the Projectile and send it to the client Directly

@@ -172,7 +172,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 			Layer,
 			Number,
 			false, //Spooky
-			g_Config.m_SvVanillaWeapons //Straight
+			true //FakeTuning
 			);
 		bullet->SetBouncing(2 - (Dir % 2));
 	}
@@ -204,7 +204,7 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 			Layer,
 			Number,
 			false, //Spooky
-			g_Config.m_SvVanillaWeapons //Straight
+			true //FakeTuning
 			);
 		bullet->SetBouncing(2 - (Dir % 2));
 	}

@@ -87,7 +87,6 @@ MACRO_CONFIG_INT(SvNumSpreadShots, sv_num_spread_shots, 3, 3, 9, CFGFLAG_SERVER,
 
 // vanilla
 MACRO_CONFIG_INT(SvVanillaModeStart, sv_vanilla_mode_start, 0, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether to set the players mode to vanilla on spawn or ddrace")
-MACRO_CONFIG_INT(SvVanillaWeapons, sv_vanilla_weapons, 0, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether shotgun and gun are like vanilla in vanillamode")
 
 //survival
 MACRO_CONFIG_INT(SvSurvivalMinPlayers, sv_survival_min_players, 4, 2, MAX_CLIENTS, CFGFLAG_SERVER|CFGFLAG_GAME, "Minimum players to start a survival round")

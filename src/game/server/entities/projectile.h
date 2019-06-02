@@ -22,10 +22,10 @@ public:
 		int Layer = 0,
 		int Number = 0,
 		bool Spooky = false,
-		bool Straight = false
+		bool FakeTuning = false
 	);
 
-	vec2 GetPos(float Time, bool CalculateVel = false);
+	vec2 GetPos(float Time);
 	void FillInfo(CNetObj_Projectile *pProj);
 
 	virtual void Reset();
@@ -54,11 +54,16 @@ private:
 	// BlockDDrace
 	bool m_Spooky;
 
+	bool m_FakeTuning;
 	vec2 m_LastResetPos;
 	int m_LastResetTick;
 	bool m_CalculatedVel;
 	int m_VelX;
 	int m_VelY;
+
+	virtual void TickDefered();
+	void CalculateVel();
+	void GetTunings(float *Curvature, float *Speed);
 
 public:
 
@@ -66,10 +71,7 @@ public:
 	void FillExtraInfo(CNetObj_Projectile *pProj);
 
 	// BlockDDrace
-	virtual void TickDefered();
-	void CalculateVel() { GetPos((Server()->Tick()-m_LastResetTick)/(float)Server()->TickSpeed(), true); };
-	vec2 m_PrevPos;
-	bool m_Straight;
+	vec2 m_CurPos;
 };
 
 #endif
