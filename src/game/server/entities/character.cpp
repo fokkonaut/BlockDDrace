@@ -2058,7 +2058,7 @@ void CCharacter::HandleTiles(int Index)
 			{
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "Welcome to the shop, %s! Press f4 to start shopping.", Server()->ClientName(m_pPlayer->GetCID()));
-				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_TO_ONE_CLIENT, aBuf, -1, m_pPlayer->GetCID());
+				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, aBuf, -1, m_pPlayer->GetCID());
 				m_EnteredShop = false;
 			}
 		}
@@ -2974,7 +2974,7 @@ void CCharacter::BlockDDraceTick()
 		{
 			if (m_ShopBotAntiSpamTick < Server()->Tick())
 			{
-				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_TO_ONE_CLIENT, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
+				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
 				m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
 			}
 

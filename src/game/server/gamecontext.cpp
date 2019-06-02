@@ -348,7 +348,7 @@ void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, in
 			}
 		}
 	}
-	else if (Team == CHAT_TO_ONE_CLIENT)
+	else if (Team == CHAT_SINGLE)
 	{
 		CNetMsg_Sv_Chat Msg;
 		Msg.m_Team = 0;
@@ -357,7 +357,7 @@ void CGameContext::SendChat(int ChatterClientID, int Team, const char *pText, in
 
 		// pack one for the recording only
 		if (g_Config.m_SvDemoChat)
-			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NOSEND, -1);
+			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL|MSGFLAG_NOSEND, ToClientID);
 
 		// send to the client
 		if (!m_apPlayers[ToClientID]->m_DND)
