@@ -3099,7 +3099,7 @@ void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 
 void CCharacter::DropPickup(int Type, int Amount)
 {
-	if (Type > POWERUP_ARMOR || g_Config.m_SvMaxPickupDrops == 0)
+	if (Type > POWERUP_ARMOR || g_Config.m_SvMaxPickupDrops == 0 || Amount <= 0)
 		return;
 
 	for (int i = 0; i < Amount; i++)
@@ -3113,9 +3113,7 @@ void CCharacter::DropPickup(int Type, int Amount)
 		CPickupDrop *PickupDrop = new CPickupDrop(&GameServer()->m_World, Type, m_pPlayer->GetCID(), Dir);
 		GameServer()->m_vPickupDropLimit.push_back(PickupDrop);
 	}
-
-	if (Amount > 0)
-		GameServer()->CreateSound(m_Pos, Type == POWERUP_HEALTH ? SOUND_PICKUP_HEALTH : SOUND_PICKUP_ARMOR, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+	GameServer()->CreateSound(m_Pos, Type == POWERUP_HEALTH ? SOUND_PICKUP_HEALTH : SOUND_PICKUP_ARMOR, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 }
 
 void CCharacter::DropLoot()
