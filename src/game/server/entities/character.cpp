@@ -1101,8 +1101,9 @@ void CCharacter::Die(int Killer, int Weapon)
 			GameServer()->m_Accounts[pKiller->GetAccID()].m_SurvivalKills++;
 		else
 			GameServer()->m_Accounts[pKiller->GetAccID()].m_Kills++;
+
+		GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 	}
-	GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_Deaths++;
 	
 	/*************************************************
 	*                                                *
