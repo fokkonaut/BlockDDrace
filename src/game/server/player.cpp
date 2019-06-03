@@ -400,7 +400,7 @@ void CPlayer::Snap(int SnappingClient)
 	}
 
 	// always show name if...
-	if (pSnapping->GetTeam() == TEAM_SPECTATORS || m_Minigame != pSnapping->m_Minigame)
+	if (pSnapping->GetTeam() == TEAM_SPECTATORS || (m_Minigame != pSnapping->m_Minigame && !m_SpookyGhost))
 		m_ShowName = true;
 
 	// get the name
