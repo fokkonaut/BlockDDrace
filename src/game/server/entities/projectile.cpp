@@ -192,7 +192,7 @@ void CProjectile::Tick()
 		// BlockDDrace
 		if (!m_Explosive && pTargetChr)
 		{
-			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[m_Type].m_Damage, m_Owner, m_Type);
+			pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
 		}
 		if (pTargetChr && m_Spooky)
 		{
