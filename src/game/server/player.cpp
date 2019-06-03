@@ -289,6 +289,19 @@ void CPlayer::Tick()
 	*                                                *
 	**************************************************/
 
+	// checking account level
+	CheckLevel();
+
+	// checking whether scoreboard is activated or not
+	if (GetCharacter())
+	{
+		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
+			GetCharacter()->m_ShopMotdTick = 0;
+		else
+			GetCharacter()->m_TimesShot = 0;
+	}
+
+	// fixing messages if name is hidden
 	if (m_SetRealName)
 	{
 		if (m_SetRealNameTick < Server()->Tick())
@@ -310,8 +323,6 @@ void CPlayer::Tick()
 			m_SetRealName = false;
 		}
 	}
-
-	CheckLevel();
 }
 
 void CPlayer::PostTick()
@@ -352,16 +363,14 @@ void CPlayer::Snap(int SnappingClient)
 		return;
 
 	int id = m_ClientID;
-	if (SnappingClient > -1 && !Server()->Translate(id, SnappingClient)) return;
+	if (SnappingClient > -1 && !Server()->Translate(id, SnappingClient))
+		return;
 
 	CNetObj_ClientInfo *pClientInfo = static_cast<CNetObj_ClientInfo *>(Server()->SnapNewItem(NETOBJTYPE_CLIENTINFO, id, sizeof(CNetObj_ClientInfo)));
 	if(!pClientInfo)
 		return;
 
 	CPlayer *pSnapping = GameServer()->m_apPlayers[SnappingClient];
-
-	StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
-	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
 
 	/*************************************************
@@ -370,48 +379,48 @@ void CPlayer::Snap(int SnappingClient)
 	*                                                *
 	**************************************************/
 
-	//spooky ghost
+	// for name and clan modifying
+	const char *pName;
 	const char *pClan;
-	if (m_SpookyGhost)
-		pClan = Server()->ClientName(m_ClientID);
-	else
-		pClan = Server()->ClientClan(m_ClientID);
-	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
 
-
-	// show name by default
+	// show name and clan by default
 	m_ShowName = true;
+	bool ShowClan = true;
 
+	// hide name when spooky ghost is activated
 	if (m_SpookyGhost)
 		m_ShowName = false;
 
-	// hide names if both players are in survival, and not in the lobby
-	if (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY && pSnapping->m_Minigame == MINIGAME_SURVIVAL && pSnapping->m_SurvivalState > SURVIVAL_LOBBY)
+	// hide names and clans if in survival, and not in the lobby
+	if (m_Minigame == MINIGAME_SURVIVAL && m_SurvivalState > SURVIVAL_LOBBY)
 	{
-		m_ShowName = false;
 		// hide clan aswell, clients can show clans over tees like names
-		StrToInts(&pClientInfo->m_Clan0, 3, " ");
+		m_ShowName = false;
+		ShowClan = false;
 	}
 
-	// always show name if player is in spectators
-	if (pSnapping->GetTeam() == TEAM_SPECTATORS)
+	// always show name if...
+	if (pSnapping->GetTeam() == TEAM_SPECTATORS || m_Minigame != pSnapping->m_Minigame)
 		m_ShowName = true;
 
-	// set the name
+	// get the name
 	if (m_ShowName || m_SetRealName)
-		StrToInts(&pClientInfo->m_Name0, 4, Server()->ClientName(m_ClientID));
+		pName = Server()->ClientName(id);
 	else
-		StrToInts(&pClientInfo->m_Name0, 4, " ");
+		pName = " ";
 
+	// get the clan
+	if (m_SpookyGhost)
+		pClan = Server()->ClientName(id);
+	else if (ShowClan)
+		pClan = Server()->ClientClan(id);
+	else
+		pClan = "";
 
-	// checking whether scoreboard is activated or not
-	if (GetCharacter())
-	{
-		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
-			GetCharacter()->m_ShopMotdTick = 0;
-		else
-			GetCharacter()->m_TimesShot = 0;
-	}
+	// set info
+	StrToInts(&pClientInfo->m_Clan0, 3, pClan);
+	StrToInts(&pClientInfo->m_Name0, 4, pName);
+	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
 	// setting rainbow
 	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
@@ -428,7 +437,8 @@ void CPlayer::Snap(int SnappingClient)
 		pClientInfo->m_UseCustomColor = 0;
 		pClientInfo->m_ColorBody = m_TeeInfos.m_ColorBody;
 		pClientInfo->m_ColorFeet = m_TeeInfos.m_ColorFeet;
-	} else
+	}
+	else
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = m_TeeInfos.m_UseCustomColor;
@@ -464,6 +474,7 @@ void CPlayer::Snap(int SnappingClient)
 		))
 		Team = TEAM_BLUE;
 
+	// realistic ping for bots
 	if (m_IsDummy && g_Config.m_SvFakeBotPing)
 	{
 		if (Server()->Tick() % 200 == 0)
@@ -473,28 +484,15 @@ void CPlayer::Snap(int SnappingClient)
 	else
 		pPlayerInfo->m_Latency = SnappingClient == -1 ? m_Latency.m_Min : GameServer()->m_apPlayers[SnappingClient]->m_aActLatency[m_ClientID];
 
-	pPlayerInfo->m_Local = 0;
+	pPlayerInfo->m_Local = (int)(m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && !m_SnapFixDDNet)));
 	pPlayerInfo->m_ClientID = id;
 	pPlayerInfo->m_Team = (m_SnapFixDDNet || m_ClientVersion < VERSION_DDNET_OLD || m_Paused != PAUSE_PAUSED || m_ClientID != SnappingClient) && m_Paused < PAUSE_SPEC ? Team : TEAM_SPECTATORS;
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_ClientVersion < VERSION_DDNET_OLD || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
 
-	if (m_ClientID == SnappingClient && (m_Paused != PAUSE_PAUSED || (m_ClientVersion >= VERSION_DDNET_OLD && !m_SnapFixDDNet)))
-		pPlayerInfo->m_Local = 1;
-
-	if(m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
-	{
-		CNetObj_SpectatorInfo *pSpectatorInfo = static_cast<CNetObj_SpectatorInfo *>(Server()->SnapNewItem(NETOBJTYPE_SPECTATORINFO, m_ClientID, sizeof(CNetObj_SpectatorInfo)));
-		if(!pSpectatorInfo)
-			return;
-
-		pSpectatorInfo->m_SpectatorID = m_SpectatorID;
-		pSpectatorInfo->m_X = m_ViewPos.x;
-		pSpectatorInfo->m_Y = m_ViewPos.y;
-	}
-
-	int Score = -9999;
+	// score
+	int Score = 0;
 	bool Account = true;
 
 	// send 0 if times of others are not shown
@@ -504,11 +502,17 @@ void CPlayer::Snap(int SnappingClient)
 		Account = false;
 	}
 	else if (pSnapping->m_Minigame == MINIGAME_BLOCK)
+	{
 		Score = GameServer()->m_Accounts[GetAccID()].m_Kills;
+	}
 	else if (pSnapping->m_Minigame == MINIGAME_SURVIVAL)
+	{
 		Score = GameServer()->m_Accounts[GetAccID()].m_SurvivalKills;
+	}
 	else if (pSnapping->m_Minigame == MINIGAME_INSTAGIB_BOOMFNG || pSnapping->m_Minigame == MINIGAME_INSTAGIB_FNG)
+	{
 		Score = m_InstagibScore;
+	}
 	else if (pSnapping->m_DisplayScore != SCORE_TIME)
 	{
 		if (pSnapping->m_DisplayScore == SCORE_LEVEL)
@@ -522,6 +526,18 @@ void CPlayer::Snap(int SnappingClient)
 	if (Account && GetAccID() <= 0)
 		Score = 0;
 	pPlayerInfo->m_Score = Score;
+
+
+	if (m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
+	{
+		CNetObj_SpectatorInfo *pSpectatorInfo = static_cast<CNetObj_SpectatorInfo *>(Server()->SnapNewItem(NETOBJTYPE_SPECTATORINFO, m_ClientID, sizeof(CNetObj_SpectatorInfo)));
+		if (!pSpectatorInfo)
+			return;
+
+		pSpectatorInfo->m_SpectatorID = m_SpectatorID;
+		pSpectatorInfo->m_X = m_ViewPos.x;
+		pSpectatorInfo->m_Y = m_ViewPos.y;
+	}
 
 	CNetObj_DDNetPlayer *pDDNetPlayer = static_cast<CNetObj_DDNetPlayer *>(Server()->SnapNewItem(NETOBJTYPE_DDNETPLAYER, id, sizeof(CNetObj_DDNetPlayer)));
 	if (!pDDNetPlayer)
