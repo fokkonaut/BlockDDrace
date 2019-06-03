@@ -426,7 +426,7 @@ void CPlayer::Snap(int SnappingClient)
 	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
-		pClientInfo->m_UseCustomColor = true;
+		pClientInfo->m_UseCustomColor = 1;
 		m_RainbowColor = (m_RainbowColor + 1) % 256;
 		pClientInfo->m_ColorBody = m_RainbowColor * 0x010000 + 0xff00;
 		pClientInfo->m_ColorFeet = m_RainbowColor * 0x010000 + 0xff00;
