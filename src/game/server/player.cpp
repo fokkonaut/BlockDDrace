@@ -405,15 +405,15 @@ void CPlayer::Snap(int SnappingClient)
 
 	// get the name
 	if (m_ShowName || m_SetRealName)
-		pName = Server()->ClientName(id);
+		pName = Server()->ClientName(m_ClientID);
 	else
 		pName = " ";
 
 	// get the clan
 	if (m_SpookyGhost)
-		pClan = Server()->ClientName(id);
+		pClan = Server()->ClientName(m_ClientID);
 	else if (ShowClan)
-		pClan = Server()->ClientClan(id);
+		pClan = Server()->ClientClan(m_ClientID);
 	else
 		pClan = "";
 
