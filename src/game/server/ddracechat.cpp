@@ -1607,8 +1607,11 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
 
 		//reset everything
-		pPlayer->m_Gamemode = g_Config.m_SvVanillaModeStart ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
-		pPlayer->m_SurvivalState = SURVIVAL_OFFLINE;
+		if (pPlayer->m_Minigame == MINIGAME_SURVIVAL)
+		{
+			pPlayer->m_Gamemode = g_Config.m_SvVanillaModeStart ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
+			pPlayer->m_SurvivalState = SURVIVAL_OFFLINE;
+		}
 	}
 	// join minigame
 	else if (pPlayer->m_Minigame == MINIGAME_NONE)
@@ -1618,9 +1621,10 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 		pSelf->SendChatTarget(pResult->m_ClientID, "Say '/leave' to join the normal area again");
 
 		//set minigame required stuff
+		((CGameControllerBlockDDrace*)pSelf->m_pController)->m_Teams.SetCharacterTeam(pPlayer->GetCID(), 0);
+
 		if (Minigame == MINIGAME_SURVIVAL)
 		{
-			((CGameControllerBlockDDrace*)pSelf->m_pController)->m_Teams.SetCharacterTeam(pPlayer->GetCID(), 0);
 			pPlayer->m_Gamemode = GAMEMODE_VANILLA;
 			pPlayer->m_SurvivalState = SURVIVAL_LOBBY;
 		}
