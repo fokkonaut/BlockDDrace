@@ -1397,7 +1397,7 @@ void CGameContext::ConLogin(IConsole::IResult * pResult, void * pUserData)
 	str_copy(aUsername, pResult->GetString(0), sizeof(aUsername));
 	str_copy(aPassword, pResult->GetString(1), sizeof(aPassword));
 
-	if (pPlayer->GetAccID() > 0)
+	if (pPlayer->GetAccID() >= ACC_START)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You are already logged in");
 		return;
@@ -1458,13 +1458,13 @@ void CGameContext::ConLogout(IConsole::IResult * pResult, void * pUserData)
 	if (!pPlayer)
 		return;
 
-	if (!g_Config.m_SvAccounts && pPlayer->GetAccID() <= 0)
+	if (!g_Config.m_SvAccounts && pPlayer->GetAccID() < ACC_START)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "Accounts are not supported on this server");
 		return;
 	}
 
-	if (pPlayer->GetAccID() <= 0)
+	if (pPlayer->GetAccID() < ACC_START)
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "You are not logged in");
 		return;

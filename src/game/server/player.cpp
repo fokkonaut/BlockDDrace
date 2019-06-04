@@ -516,7 +516,7 @@ void CPlayer::Snap(int SnappingClient)
 		Score = abs(m_Score) * -1;
 		Account = false;
 	}
-	if (Account && GetAccID() <= 0)
+	if (Account && GetAccID() < ACC_START)
 		Score = 0;
 	pPlayerInfo->m_Score = Score;
 
@@ -1029,7 +1029,7 @@ int CPlayer::GetAccID()
 
 void CPlayer::CheckLevel()
 {
-	if (GetAccID() <= 0)
+	if (GetAccID() < ACC_START)
 		return;
 
 	CGameContext::AccountInfo Account = GameServer()->m_Accounts[GetAccID()];
@@ -1053,7 +1053,7 @@ void CPlayer::CheckLevel()
 
 void CPlayer::MoneyTransaction(int Amount, const char *Description)
 {
-	if (GetAccID() <= 0)
+	if (GetAccID() < ACC_START)
 		return;
 
 	CGameContext::AccountInfo Account = GameServer()->m_Accounts[GetAccID()];

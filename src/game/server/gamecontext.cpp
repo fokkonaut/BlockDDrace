@@ -1177,7 +1177,7 @@ void CGameContext::OnClientConnected(int ClientID)
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 {
 	// BlockDDrace
-	if (m_apPlayers[ClientID]->GetAccID() > 0)
+	if (m_apPlayers[ClientID]->GetAccID() >= ACC_START)
 		Logout(m_apPlayers[ClientID]->GetAccID());
 	// BlockDDrace
 
