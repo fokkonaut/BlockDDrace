@@ -567,6 +567,7 @@ private:
 	static void ConEndlessHook(IConsole::IResult *pResult, void *pUserData);
 	static void ConJetpack(IConsole::IResult *pResult, void *pUserData);
 	static void ConSpookyGhost(IConsole::IResult *pResult, void *pUserData);
+	static void ConRainbowSpeed(IConsole::IResult *pResult, void *pUserData);
 	static void ConRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConInfRainbow(IConsole::IResult *pResult, void *pUserData);
 	static void ConAtom(IConsole::IResult *pResult, void *pUserData);

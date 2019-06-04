@@ -167,6 +167,7 @@ void CPlayer::Reset()
 	m_MsgWeapon = -1;
 	m_MsgModeSpecial = 0;
 
+	m_RainbowSpeed = 1;
 	m_RainbowColor = 0;
 	m_InfRainbow = false;
 	m_InfAtom = false;
@@ -427,7 +428,7 @@ void CPlayer::Snap(int SnappingClient)
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = 1;
-		m_RainbowColor = (m_RainbowColor + 1) % 256;
+		m_RainbowColor = (m_RainbowColor + m_RainbowSpeed) % 256;
 		pClientInfo->m_ColorBody = m_RainbowColor * 0x010000 + 0xff00;
 		pClientInfo->m_ColorFeet = m_RainbowColor * 0x010000 + 0xff00;
 	}

@@ -287,7 +287,9 @@ public:
 	int m_MsgModeSpecial;
 
 	//extras
+	int m_RainbowSpeed;
 	int m_RainbowColor;
+
 	bool m_InfRainbow;
 	bool m_InfAtom;
 	bool m_InfTrail;

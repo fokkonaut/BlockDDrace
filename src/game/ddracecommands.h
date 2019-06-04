@@ -96,6 +96,7 @@ CONSOLE_COMMAND("freezehammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConFreeze
 CONSOLE_COMMAND("infinitejumps", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInfiniteJumps, this, "Toggles infinite jumps for player v")
 CONSOLE_COMMAND("endlesshook", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConEndlessHook, this, "Toggles endlesshook for player v")
 CONSOLE_COMMAND("jetpack", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConJetpack, this, "Toggles jetpack for player v")
+CONSOLE_COMMAND("rainbowspeed", "?v[id] ?i[speed]", CFGFLAG_SERVER, ConRainbowSpeed, this, "Sets the rainbow speed i for player v")
 CONSOLE_COMMAND("rainbow", "?v[id]", CFGFLAG_SERVER, ConRainbow, this, "Toggles rainbow for player v")
 CONSOLE_COMMAND("infrainbow", "?v[id]", CFGFLAG_SERVER, ConInfRainbow, this, "Toggles infinite rainbow for player v")
 CONSOLE_COMMAND("atom", "?v[id]", CFGFLAG_SERVER, ConAtom, this, "Toggles atom for player v")

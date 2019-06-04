@@ -816,6 +816,28 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 		pChr->Jetpack(!pChr->m_Jetpack, pResult->m_ClientID);
 }
 
+void CGameContext::ConRainbowSpeed(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CPlayer *pPlayer = pSelf->m_apPlayers[Victim];
+	if (!pPlayer)
+		return;
+
+	char aBuf[64];
+	if (pResult->NumArguments() < 2)
+	{
+		str_format(aBuf, sizeof(aBuf), "Value: %d", pPlayer->m_RainbowSpeed);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+	}
+	else if (pResult->GetInteger(1) >= 1 && pResult->GetInteger(1) <= 50)
+	{
+		str_format(aBuf, sizeof(aBuf), "Rainbow speed for '%s' changed to %d", pSelf->Server()->ClientName(Victim), pResult->GetInteger(1));
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
+		pPlayer->m_RainbowSpeed = pResult->GetInteger(1);
+	}
+}
+
 void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
