@@ -5,6 +5,9 @@
 
 #include <base/system.h>
 
+// BlockDDrace
+#include "weapons_ex.h"
+
 /*
 	Connection diagram - How the initialization works.
 

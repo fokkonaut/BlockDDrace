@@ -674,6 +674,7 @@ set_glob(ENGINE_SHARED GLOB src/engine/shared
   teehistorian_ex_chunks.h
   uuid_manager.cpp
   uuid_manager.h
+  weapons_ex.h
   websockets.cpp
   websockets.h
 )
