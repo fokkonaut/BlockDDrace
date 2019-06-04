@@ -3117,7 +3117,7 @@ void CCharacter::DropLoot()
 		DropPickup(POWERUP_ARMOR, rand() % 6);
 
 		// drop all your weapons, in various directions (excluding hammer, ninja and extra weapons)
-		for (int i = WEAPON_GUN; i < WEAPON_NINJA; i++)
+		for (int i = WEAPON_GUN; i < NUM_VANILLA_WEAPONS-1; i++)
 		{
 			float Dir = ((rand() % 50 - 25 + 1) * 0.1); // in a range of -2.5 to +2.5
 			DropWeapon(i, Dir, true);
