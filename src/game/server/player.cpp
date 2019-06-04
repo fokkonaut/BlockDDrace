@@ -167,7 +167,7 @@ void CPlayer::Reset()
 	m_MsgWeapon = -1;
 	m_MsgModeSpecial = 0;
 
-	m_RainbowSpeed = 1;
+	m_RainbowSpeed = g_Config.m_SvRainbowSpeedDefault;
 	m_RainbowColor = 0;
 	m_InfRainbow = false;
 	m_InfAtom = false;
