@@ -27,6 +27,7 @@ public:
 		const char *m_pName;
 		int m_Latency;
 		int m_ClientVersion;
+		// BlockDDrace
 		bool m_SnapFixDDNet;
 	};
 
@@ -117,6 +118,7 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
+		// BlockDDrace
 		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && !Info.m_SnapFixDDNet)
 			return true;
 		int *pMap = GetIdMap(Client);
@@ -137,6 +139,7 @@ public:
 	{
 		CClientInfo Info;
 		GetClientInfo(Client, &Info);
+		// BlockDDrace
 		if (Info.m_ClientVersion >= VERSION_DDNET_OLD && !Info.m_SnapFixDDNet)
 			return true;
 		Target = clamp(Target, 0, DDRACE_MAX_CLIENTS-1);
@@ -233,7 +236,9 @@ public:
 	// DDRace
 
 	virtual void OnSetAuthed(int ClientID, int Level) = 0;
+	// BlockDDrace
 	virtual bool IsSnapFixDDNet(int ClientID) = 0;
+	// BlockDDrace
 	virtual int GetClientVersion(int ClientID) = 0;
 	virtual void SetClientVersion(int ClientID, int Version) = 0;
 	virtual bool PlayerExists(int ClientID) = 0;
