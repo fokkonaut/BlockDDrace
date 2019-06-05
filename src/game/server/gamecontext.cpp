@@ -4253,24 +4253,24 @@ void CGameContext::SetV3Offset(int X, int Y)
 
 int CGameContext::GetDefaultMinigame()
 {
-	if (!str_comp(g_Config.m_SvMinigameDefault, "none"))
+	if (!str_comp_nocase(g_Config.m_SvMinigameDefault, "none"))
 		return MINIGAME_NONE;
-	else if (!str_comp(g_Config.m_SvMinigameDefault, "block"))
+	else if (!str_comp_nocase(g_Config.m_SvMinigameDefault, "block"))
 		return MINIGAME_BLOCK;
-	else if (!str_comp(g_Config.m_SvMinigameDefault, "survival"))
+	else if (!str_comp_nocase(g_Config.m_SvMinigameDefault, "survival"))
 		return MINIGAME_SURVIVAL;
-	else if (!str_comp(g_Config.m_SvMinigameDefault, "boomfng"))
+	else if (!str_comp_nocase(g_Config.m_SvMinigameDefault, "boomfng"))
 		return INSTAGIB_BOOMFNG;
-	else if (!str_comp(g_Config.m_SvMinigameDefault, "fng"))
+	else if (!str_comp_nocase(g_Config.m_SvMinigameDefault, "fng"))
 		return INSTAGIB_FNG;
 	return MINIGAME_NONE;
 }
 
 int CGameContext::GetDefaultScoreformat()
 {
-	if (!str_comp(g_Config.m_SvScoreformatDefault, "time"))
+	if (!str_comp_nocase(g_Config.m_SvScoreformatDefault, "time"))
 		return SCORE_TIME;
-	else if (!str_comp(g_Config.m_SvScoreformatDefault, "level"))
+	else if (!str_comp_nocase(g_Config.m_SvScoreformatDefault, "level"))
 		return SCORE_LEVEL;
 	return SCORE_TIME;
 }
