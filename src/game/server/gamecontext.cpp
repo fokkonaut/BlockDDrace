@@ -4399,7 +4399,7 @@ void CGameContext::SurvivalTick()
 				if (Server()->Tick() % 50 == 0)
 				{
 					str_format(aBuf, sizeof(aBuf), "Round will start in %d seconds", Remaining);
-					SendSurvivalBroadcast(aBuf, true, false);
+					SendSurvivalBroadcast(aBuf, Remaining <= 10, false);
 				}
 			}
 			// if someone left the lobby, the countdown stops and we return to the lobby state (waiting for players again)
