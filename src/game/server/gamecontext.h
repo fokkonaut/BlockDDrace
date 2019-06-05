@@ -413,10 +413,6 @@ public:
 	//instagib
 	void InstagibTick(int Type);
 
-	//defaults
-	int GetDefaultMinigame();
-	int GetDefaultScoreformat();
-
 private:
 
 	bool m_VoteWillPass;

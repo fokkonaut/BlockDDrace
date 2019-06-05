@@ -175,13 +175,13 @@ void CPlayer::Reset()
 	m_HasSpookyGhost = false;
 	m_InfMeteors = 0;
 
-	m_DisplayScore = GameServer()->GetDefaultScoreformat();
+	m_DisplayScore = SCORE_LEVEL;
 	m_InstagibScore = 0;
 
 	m_ForceSpawnPos = vec2(-1, -1);
 	m_WeaponIndicator = g_Config.m_SvWeaponIndicatorDefault;
 
-	m_Minigame = GameServer()->GetDefaultMinigame();
+	m_Minigame = MINIGAME_NONE;
 	m_SurvivalState = SURVIVAL_OFFLINE;
 }
 
