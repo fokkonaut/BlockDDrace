@@ -4487,9 +4487,9 @@ void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool Sound, bool IsIm
 	{
 		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
 			SendBroadcast(pMsg, i, IsImportant);
-		if (Sound)
-			CreateSoundGlobal(SOUND_HOOK_NOATTACH);
 	}
+	if (Sound)
+		CreateSoundGlobal(SOUND_HOOK_NOATTACH);
 }
 
 void CGameContext::InstagibTick(int Type)
