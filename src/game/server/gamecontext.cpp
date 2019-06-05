@@ -4486,10 +4486,12 @@ void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool Sound, bool IsIm
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
+		{
 			SendBroadcast(pMsg, i, IsImportant);
+			if (Sound)
+				CreateSoundGlobal(SOUND_HOOK_NOATTACH, i);
+		}
 	}
-	if (Sound)
-		CreateSoundGlobal(SOUND_HOOK_NOATTACH);
 }
 
 void CGameContext::InstagibTick(int Type)
