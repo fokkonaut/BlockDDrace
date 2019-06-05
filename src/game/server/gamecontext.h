@@ -553,6 +553,8 @@ private:
 
 	static void ConScrollNinja(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConSound(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDisconnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void ConDummymode(IConsole::IResult *pResult, void *pUserData);
