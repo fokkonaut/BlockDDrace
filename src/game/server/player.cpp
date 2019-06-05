@@ -381,8 +381,8 @@ void CPlayer::Snap(int SnappingClient)
 	**************************************************/
 
 	// for name and clan modifying
-	const char *pName;
-	const char *pClan;
+	const char *pName = Server()->ClientName(m_ClientID);
+	const char *pClan = Server()->ClientClan(m_ClientID);
 
 	// show name and clan by default
 	m_ShowName = true;
@@ -405,17 +405,13 @@ void CPlayer::Snap(int SnappingClient)
 		m_ShowName = true;
 
 	// get the name
-	if (m_ShowName || m_SetRealName)
-		pName = Server()->ClientName(m_ClientID);
-	else
+	if (!m_SetRealName && !m_ShowName)
 		pName = " ";
 
 	// get the clan
 	if (m_SpookyGhost)
 		pClan = Server()->ClientName(m_ClientID);
-	else if (ShowClan)
-		pClan = Server()->ClientClan(m_ClientID);
-	else
+	else if (!ShowClan)
 		pClan = "";
 
 	// set info
