@@ -4354,7 +4354,7 @@ void CGameContext::SurvivalTick()
 					if (Remaining % 30 == 0 || Remaining <= 10)
 					{
 						str_format(aBuf, sizeof(aBuf), "Deathmatch will end in %d seconds", Remaining);
-						SendSurvivalBroadcast(aBuf);
+						SendSurvivalBroadcast(aBuf, true);
 					}
 				}
 			}
@@ -4371,7 +4371,7 @@ void CGameContext::SurvivalTick()
 			if (Server()->Tick() % 50 == 0)
 			{
 				str_format(aBuf, sizeof(aBuf), "[%d/%d] players to start a round", CountSurvivalPlayers(SURVIVAL_LOBBY), g_Config.m_SvSurvivalMinPlayers);
-				SendSurvivalBroadcast(aBuf, false);
+				SendSurvivalBroadcast(aBuf, false, false);
 			}
 			break;
 		}
@@ -4399,7 +4399,7 @@ void CGameContext::SurvivalTick()
 				if (Server()->Tick() % 50 == 0)
 				{
 					str_format(aBuf, sizeof(aBuf), "Round will start in %d seconds", Remaining);
-					SendSurvivalBroadcast(aBuf, false);
+					SendSurvivalBroadcast(aBuf, true, false);
 				}
 			}
 			// if someone left the lobby, the countdown stops and we return to the lobby state (waiting for players again)
@@ -4407,7 +4407,7 @@ void CGameContext::SurvivalTick()
 			{
 				SendSurvivalBroadcast("Start failed, too few players");
 				m_SurvivalGameState = SURVIVAL_LOBBY;
-				m_SurvivalBackgroundState = SURVIVAL_LOBBY;
+				m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
 			}
 			break;
 		}
@@ -4435,7 +4435,7 @@ void CGameContext::SurvivalTick()
 					if (Remaining % 60 == 0 || Remaining == 30 || Remaining <= 10)
 					{
 						str_format(aBuf, sizeof(aBuf), "Deathmatch will start in %d %s%s", Remaining > 30 ? Remaining / 60 : Remaining, (Remaining % 60 == 0 && Remaining != 0) ? "minute" : "second", (Remaining == 1 || Remaining == 60) ? "" : "s");
-						SendSurvivalBroadcast(aBuf);
+						SendSurvivalBroadcast(aBuf, true);
 					}
 				}
 			}
@@ -4481,11 +4481,15 @@ int CGameContext::GetRandomSurvivalPlayer(int State, int NotThis)
 	return -1;
 }
 
-void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool IsImportant)
+void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool Sound, bool IsImportant)
 {
 	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
 		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
 			SendBroadcast(pMsg, i, IsImportant);
+		if (Sound)
+			CreateSoundGlobal(SOUND_HOOK_NOATTACH);
+	}
 }
 
 void CGameContext::InstagibTick(int Type)

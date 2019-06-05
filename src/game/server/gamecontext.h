@@ -402,7 +402,7 @@ public:
 	//survival
 	void SurvivalTick();
 	void SetPlayerSurvivalState(int State);
-	void SendSurvivalBroadcast(const char *pMsg, bool IsImportant = true);
+	void SendSurvivalBroadcast(const char *pMsg, bool Sound = false, bool IsImportant = true);
 	int CountSurvivalPlayers(int State);
 	int GetRandomSurvivalPlayer(int State, int NotThis = -1);
 	int m_SurvivalBackgroundState;
