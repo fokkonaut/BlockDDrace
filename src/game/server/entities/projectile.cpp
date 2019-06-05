@@ -373,7 +373,7 @@ void CProjectile::Snap(int SnappingClient)
 		return;
 
 	// BlockDDrace
-	if(!m_FakeTuning && m_Type != WEAPON_SHOTGUN && m_Type < WEAPON_NINJA && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
+	if(!m_FakeTuning && m_Type != WEAPON_SHOTGUN && m_Type < NUM_VANILLA_WEAPONS && SnappingClient > -1 && GameServer()->m_apPlayers[SnappingClient] && GameServer()->m_apPlayers[SnappingClient]->m_ClientVersion >= VERSION_DDNET_ANTIPING_PROJECTILE)
 		FillExtraInfo(pProj);
 	else
 		FillInfo(pProj);
