@@ -147,7 +147,7 @@ void CPlayer::Reset()
 
 	// BlockDDrace
 	m_IsDummy = false;
-	m_Dummymode = DUMMYMODE_NULL;
+	m_Dummymode = DUMMYMODE_IDLE;
 	m_FakePing = 0;
 
 	m_vWeaponLimit.resize(NUM_WEAPONS);

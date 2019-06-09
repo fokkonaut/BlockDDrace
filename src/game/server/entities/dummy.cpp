@@ -33,7 +33,7 @@ void CCharacter::DummyTick()
 	ResetInput();
 	m_Input.m_Hook = 0;
 
-	if (m_pPlayer->m_Dummymode == DUMMYMODE_NULL)
+	if (m_pPlayer->m_Dummymode == DUMMYMODE_IDLE)
 	{
 		// do nothing
 	}
