@@ -59,7 +59,7 @@ void CCharacter::DummyTick()
 			}
 		}
 
-		if (IsFrozen && Server()->Tick() == m_FirstFreezeTick + 300)
+		if (m_IsFrozen && Server()->Tick() == m_FirstFreezeTick + 300)
 			Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, (float)30*32, this, m_pPlayer->GetCID());
@@ -77,7 +77,7 @@ void CCharacter::DummyTick()
 			**************************************************/
 
 			//swing enemy up
-			if (m_Core.m_Pos.y < pChr->m_Pos.y - 20 && !IsGrounded() && !pChr->IsFrozen)
+			if (m_Core.m_Pos.y < pChr->m_Pos.y - 20 && !IsGrounded() && !pChr->m_IsFrozen)
 			{
 				m_Input.m_Hook = 1;
 				float dist = distance(pChr->m_Pos, m_Core.m_Pos);
@@ -115,7 +115,7 @@ void CCharacter::DummyTick()
 					else
 						m_Input.m_Hook = 1;
 				}
-				if (pChr->IsFrozen)
+				if (pChr->m_IsFrozen)
 					m_Input.m_Hook = 0;
 			}
 
@@ -328,7 +328,7 @@ void CCharacter::DummyTick()
 					m_Input.m_TargetY = -80;
 				}
 
-				if (m_Core.m_Pos.x > 331 * 32 && IsFrozen)
+				if (m_Core.m_Pos.x > 331 * 32 && m_IsFrozen)
 					Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 				if (m_Core.m_Pos.x < 327 * 32) //dont klatsch in ze wand
@@ -356,7 +356,7 @@ void CCharacter::DummyTick()
 				if (m_Core.m_Pos.y < 158 * 32) //spawn area find down
 				{
 					//selfkill
-					if (IsFrozen)
+					if (m_IsFrozen)
 						Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 					if (m_Core.m_Pos.x < 276 * 32 + 20) //is die mitte von beiden linken spawns also da wo es runter geht
@@ -386,7 +386,7 @@ void CCharacter::DummyTick()
 				else if (m_Core.m_Pos.y > 162 * 32) //managed it to go down --> go left
 				{
 					//selfkill
-					if (IsFrozen)
+					if (m_IsFrozen)
 						Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 					if (m_Core.m_Pos.x < 283 * 32)
@@ -414,7 +414,7 @@ void CCharacter::DummyTick()
 				m_Input.m_TargetY = -84;
 
 				//Selfkills
-				if (IsFrozen && IsGrounded()) //should never lie in freeze at the ground
+				if (m_IsFrozen && IsGrounded()) //should never lie in freeze at the ground
 					Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 				if (m_Core.m_Pos.y < 166 * 32 - 20)
@@ -478,7 +478,7 @@ void CCharacter::DummyTick()
 				}
 				else
 				{
-					if (!IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
+					if (!m_IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
 					{
 						//mach nichts
 					}
@@ -494,7 +494,7 @@ void CCharacter::DummyTick()
 				CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID());
 				if (pChr && pChr->IsAlive())
 				{
-					if (!IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
+					if (!m_IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
 					{
 						//mach nichts
 					}
@@ -506,7 +506,7 @@ void CCharacter::DummyTick()
 				}
 				else
 				{
-					if (IsFrozen && m_Core.m_Vel.y == 0.000000f && m_Core.m_Vel.x < 0.1f && m_Core.m_Vel.x > -0.1f)
+					if (m_IsFrozen && m_Core.m_Vel.y == 0.000000f && m_Core.m_Vel.x < 0.1f && m_Core.m_Vel.x > -0.1f)
 						Die(m_pPlayer->GetCID(), WEAPON_SELF);
 				}
 			}
@@ -638,13 +638,13 @@ void CCharacter::DummyTick()
 							m_LatestInput.m_TargetY = 37;
 						}
 
-						if (m_Core.m_Pos.y > 210 * 32 + 30 && !IsFrozen) //wenn der dummy auf dem boden steht und unfreeze is
+						if (m_Core.m_Pos.y > 210 * 32 + 30 && !m_IsFrozen) //wenn der dummy auf dem boden steht und unfreeze is
 						{
 							if (m_Core.m_Vel.y == 0.000000f)
 								m_Input.m_Jump = 1;
 						}
 
-						if (m_Core.m_Pos.y > 210 * 32 + 10 && m_Core.m_Vel.y < -0.9f && !IsFrozen) //dann schiessen
+						if (m_Core.m_Pos.y > 210 * 32 + 10 && m_Core.m_Vel.y < -0.9f && !m_IsFrozen) //dann schiessen
 							Fire();
 					}
 				}
@@ -740,7 +740,7 @@ void CCharacter::DummyTick()
 							m_DummyHookAfterHammer = false;
 					}
 
-					if (pChr->IsFrozen)
+					if (pChr->m_IsFrozen)
 						m_DummyHelpBeforeFly = true;
 					if (pChr->m_FreezeTime == 0)
 						m_DummyHelpBeforeFly = false;
@@ -939,7 +939,7 @@ void CCharacter::DummyTick()
 						(pChr->m_Pos.y < 198 * 32 + 10 && pChr->m_Pos.x < 472 * 32 && pChr->IsGrounded()) || // recognize mates freeze in the freeze tunnel on the left
 						(m_DummyMateHelpMode == 3)) // yolo hook swing mode handles mate as failed until he is unfreeze
 					{
-						if (pChr->IsFrozen)
+						if (pChr->m_IsFrozen)
 							m_DummyMateFailed = true;
 					}
 					if (pChr->m_FreezeTime == 0)
@@ -1408,7 +1408,7 @@ void CCharacter::DummyTick()
 							if ((m_Core.m_Pos.y > 195 * 32 && !m_DummyHelpNoEmergency)) //if the bot left the platform
 								m_DummyHelpEmergency = true;
 
-							if ((m_Core.m_Pos.x > 479 * 32 && m_Core.m_Jumped == 0) || IsFrozen)
+							if ((m_Core.m_Pos.x > 479 * 32 && m_Core.m_Jumped == 0) || m_IsFrozen)
 								m_DummyHelpEmergency = false;
 
 							if (m_DummyHelpEmergency)
@@ -1504,7 +1504,7 @@ void CCharacter::DummyTick()
 									}
 
 									//deactivate bool for hook if mate is high enough or bot is freezed (but freezed is checked somewerhe else)                                                                                                                                                                              oder wenn der mate unter dem bot ist und unfreeze
-									if ((pChr->m_FreezeTime == 0 && pChr->m_Core.m_Vel.y > -1.5f && m_Core.m_Pos.y > pChr->m_Pos.y - 15) || pChr->m_Core.m_Vel.y > 3.4f || (pChr->m_FreezeTime == 0 && pChr->m_Pos.y + 38 > m_Core.m_Pos.y) || IsFrozen)
+									if ((pChr->m_FreezeTime == 0 && pChr->m_Core.m_Vel.y > -1.5f && m_Core.m_Pos.y > pChr->m_Pos.y - 15) || pChr->m_Core.m_Vel.y > 3.4f || (pChr->m_FreezeTime == 0 && pChr->m_Pos.y + 38 > m_Core.m_Pos.y) || m_IsFrozen)
 										m_DummyHook = false;
 
 									//activate bool for hook if mate stands still
@@ -1529,7 +1529,7 @@ void CCharacter::DummyTick()
 								if ((pChr->m_Pos.y < m_Core.m_Pos.y - 40 && pChr->m_Core.m_Vel.y < -4.4f) || pChr->m_Pos.y < 183 * 32)
 									m_Input.m_Hook = 1;
 
-								if (pChr->m_FreezeTime == 0 || IsFrozen || pChr->m_Pos.x > 512 * 32 + 5) //if mate gets unfreezed or dummy freezed stop balance
+								if (pChr->m_FreezeTime == 0 || m_IsFrozen || pChr->m_Pos.x > 512 * 32 + 5) //if mate gets unfreezed or dummy freezed stop balance
 									m_DummyPanicBalance = false;
 
 								if (m_DummyPanicBalance)
@@ -1556,7 +1556,7 @@ void CCharacter::DummyTick()
 								//If dummy made it till finish but mate is still freeze on the left side
 								//he automaiclly help. BUT if he fails the hook resett it!
 								//left side                                                                                      right side
-								if ((m_Core.m_Pos.x > 514 * 32 - 5 && m_FreezeTime == 0 && pChr->IsFrozen && pChr->m_Pos.x < 515 * 32) || (m_Core.m_Pos.x > 519 * 32 - 5 && m_FreezeTime == 0 && pChr->IsFrozen && pChr->m_Pos.x < 523 * 32))
+								if ((m_Core.m_Pos.x > 514 * 32 - 5 && m_FreezeTime == 0 && pChr->m_IsFrozen && pChr->m_Pos.x < 515 * 32) || (m_Core.m_Pos.x > 519 * 32 - 5 && m_FreezeTime == 0 && pChr->m_IsFrozen && pChr->m_Pos.x < 523 * 32))
 								{
 									if (Server()->Tick() % 70 == 0)
 										m_Input.m_Hook = 0;
@@ -1756,7 +1756,7 @@ void CCharacter::DummyTick()
 				SetWeapon(0);
 
 			//Selfkills (bit random but they work)
-			if (IsFrozen)
+			if (m_IsFrozen)
 			{
 				//wenn der bot freeze is warte erstmal n paar sekunden und dann kill dich
 				if (Server()->Tick() % 300 == 0)
@@ -1801,7 +1801,7 @@ void CCharacter::DummyTick()
 		else if (m_DummyBlockMode == 1) //attack in tunnel
 		{
 			//Selfkills (bit random but they work)
-			if (IsFrozen)
+			if (m_IsFrozen)
 			{
 				//wenn der bot freeze is warte erstmal n paar sekunden und dann kill dich
 				if (Server()->Tick() % 300 == 0)
@@ -1894,7 +1894,7 @@ void CCharacter::DummyTick()
 						m_Input.m_TargetY = -80;
 					}
 
-					if (m_Core.m_Pos.x > 331 * 32 && IsFrozen)
+					if (m_Core.m_Pos.x > 331 * 32 && m_IsFrozen)
 						Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 					if (m_Core.m_Pos.x < 327 * 32) //dont klatsch in ze wand
@@ -1922,7 +1922,7 @@ void CCharacter::DummyTick()
 					if (m_Core.m_Pos.y < 158 * 32) //spawn area find down
 					{
 						//selfkill
-						if (IsFrozen)
+						if (m_IsFrozen)
 							Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 						if (m_Core.m_Pos.x < 276 * 32 + 20) //is die mitte von beiden linken spawns also da wo es runter geht
@@ -1952,7 +1952,7 @@ void CCharacter::DummyTick()
 					else if (m_Core.m_Pos.y > 162 * 32) //managed it to go down --> go left
 					{
 						//selfkill
-						if (IsFrozen)
+						if (m_IsFrozen)
 							Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 						if (m_Core.m_Pos.x < 283 * 32)
@@ -1980,7 +1980,7 @@ void CCharacter::DummyTick()
 					m_Input.m_TargetY = -84;
 
 					//Selfkills
-					if (IsFrozen && IsGrounded()) //should never lie in freeze at the ground
+					if (m_IsFrozen && IsGrounded()) //should never lie in freeze at the ground
 						Die(m_pPlayer->GetCID(), WEAPON_SELF);
 
 					if (m_Core.m_Pos.y < 166 * 32 - 20)
@@ -2253,7 +2253,7 @@ void CCharacter::DummyTick()
 					}
 				}
 
-				if (!IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
+				if (!m_IsFrozen || m_Core.m_Vel.x < -0.5f || m_Core.m_Vel.x > 0.5f || m_Core.m_Vel.y != 0.000000f)
 				{
 					//mach nichts
 				}
@@ -2378,7 +2378,7 @@ void CCharacter::DummyTick()
 												Fire(false);
 
 											//letzten stupser geben (sonst gibs bugs kb zu fixen)
-											if (pChr->IsFrozen) //wenn er schon im freeze is
+											if (pChr->m_IsFrozen) //wenn er schon im freeze is
 												Fire();
 										}
 										else
@@ -2426,7 +2426,7 @@ void CCharacter::DummyTick()
 							}
 
 							//Check ob der gegener freeze is
-							if (pChr->m_FreezeTime > 0 && pChr->m_Pos.y > 208 * 32 && !pChr->IsFrozen) //wenn der Gegner tief und freeze is macht es wenig sinn den frei zu hammern
+							if (pChr->m_FreezeTime > 0 && pChr->m_Pos.y > 208 * 32 && !pChr->m_IsFrozen) //wenn der Gegner tief und freeze is macht es wenig sinn den frei zu hammern
 								Fire(false);
 
 							//Hau den weg (wie dummymode 21)
@@ -2504,7 +2504,7 @@ void CCharacter::DummyTick()
 								if (pChr && pChr->IsAlive())
 								{
 									//Trick[4] clears the left freeze
-									if (pChr->m_Pos.x < 418 * 32 - 10 && pChr->m_Pos.y > 210 * 32 && pChr->m_Pos.y < 213 * 32 && pChr->IsFrozen && pChr->m_Core.m_Vel.y == 0.00f)
+									if (pChr->m_Pos.x < 418 * 32 - 10 && pChr->m_Pos.y > 210 * 32 && pChr->m_Pos.y < 213 * 32 && pChr->m_IsFrozen && pChr->m_Core.m_Vel.y == 0.00f)
 										m_DummyFreezeBlockTrick = 4;
 
 									if (pChr->m_Pos.y < 213 * 32 + 10 && pChr->m_Pos.x < 430 * 32 && pChr->m_Pos.y > 210 * 32 && pChr->m_Pos.x > 417 * 32) // wenn ein spieler auf der linken seite in der ruler area is 
@@ -2581,7 +2581,7 @@ void CCharacter::DummyTick()
 
 								if (m_DummyFreezeBlockTrick == 1) //Tick[1] enemy on the right
 								{
-									if (pChr->IsFrozen)
+									if (pChr->m_IsFrozen)
 										m_DummyFreezeBlockTrick = 0; //stop trick if enemy is in freeze
 
 									m_Input.m_TargetX = pChr->m_Pos.x - m_Pos.x;
@@ -2756,7 +2756,7 @@ void CCharacter::DummyTick()
 									{
 										m_Input.m_TargetX = -200;
 										m_Input.m_TargetY = -2;
-										if (pChr->IsFrozen)
+										if (pChr->m_IsFrozen)
 											m_Input.m_Hook = 1;
 										else
 										{
@@ -2828,7 +2828,7 @@ void CCharacter::DummyTick()
 						m_DummySpeedRight = true;
 					}
 
-					if (IsFrozen || m_Core.m_Vel.x < 4.3f)
+					if (m_IsFrozen || m_Core.m_Vel.x < 4.3f)
 						m_DummySpeedRight = false;
 
 					if (m_DummySpeedRight)
@@ -2892,7 +2892,7 @@ void CCharacter::DummyTick()
 						//balance
 						if (m_Core.m_Pos.x > 460 * 32 && m_Core.m_Pos.x < 464 * 32 && m_Core.m_Pos.y > 210 * 32 + 10)
 							m_DummyDoBalance = true;
-						if (IsGrounded() && IsFrozen)
+						if (IsGrounded() && m_IsFrozen)
 							m_DummyDoBalance = false;
 
 						if (m_DummyDoBalance)
@@ -2963,7 +2963,7 @@ void CCharacter::DummyTick()
 					}
 
 					//go home if its oky, oky?
-					if ((m_Core.m_Pos.x < 458 * 32 && IsGrounded() && pChr->IsFrozen) || (m_Core.m_Pos.x < 458 * 32 && IsGrounded() && pChr->m_Pos.x > m_Core.m_Pos.x + (10 * 32)))
+					if ((m_Core.m_Pos.x < 458 * 32 && IsGrounded() && pChr->m_IsFrozen) || (m_Core.m_Pos.x < 458 * 32 && IsGrounded() && pChr->m_Pos.x > m_Core.m_Pos.x + (10 * 32)))
 						m_Input.m_Direction = -1;
 					//keep going also in the air xD
 					if (m_Core.m_Pos.x < 450 * 32 && m_Core.m_Vel.x < 1.1f && m_Core.m_Jumped < 2)
@@ -2999,7 +2999,7 @@ void CCharacter::DummyTick()
 
 		//selfkill
 		//dyn
-		if (m_Core.m_Vel.y == 0.000000f && m_Core.m_Vel.x < 0.01f && m_Core.m_Vel.x > -0.01f && IsFrozen)
+		if (m_Core.m_Vel.y == 0.000000f && m_Core.m_Vel.x < 0.01f && m_Core.m_Vel.x > -0.01f && m_IsFrozen)
 		{
 			if (Server()->Tick() % 20 == 0)
 				GameServer()->SendEmoticon(m_pPlayer->GetCID(), 3);
@@ -3034,7 +3034,7 @@ void CCharacter::DummyTick()
 					else
 						m_DummyPoliceMode = 1; //LOCAL: ENEMY ATTACK
 				}
-				if (pChr->IsFrozen)
+				if (pChr->m_IsFrozen)
 					m_DummyPoliceMode = 0; //maybe add here a mode where the bot moves the nonPolices away to find failed polices
 			}
 
@@ -3100,10 +3100,10 @@ void CCharacter::DummyTick()
 					m_Input.m_Hook = 0;
 					m_Input.m_Jump = 0;
 				}
-				if (IsGrounded() && pChr->IsFrozen)
+				if (IsGrounded() && pChr->m_IsFrozen)
 					m_Input.m_Jump = 1;
 
-				if (pChr->IsFrozen)
+				if (pChr->m_IsFrozen)
 				{
 					if (pChr->m_Pos.x > m_Core.m_Pos.x)
 						m_Input.m_Direction = 1;
@@ -3255,7 +3255,7 @@ void CCharacter::DummyTick()
 		}
 		else if (m_Core.m_Pos.x < 240 * 32 && m_Core.m_Pos.y < 36 * 32) // the complete zone in the map intselfs. its for resetting the dummy when he is back in spawn using tp
 		{
-			if (IsFrozen && m_Core.m_Pos.x > 32 * 32)
+			if (m_IsFrozen && m_Core.m_Pos.x > 32 * 32)
 			{
 				if (Server()->Tick() % 60 == 0)
 					GameServer()->SendEmoticon(m_pPlayer->GetCID(), 3); // tear emote before killing
@@ -3379,14 +3379,14 @@ void CCharacter::DummyTick()
 				}
 			}
 		}
-		if (IsFrozen && m_Core.m_Pos.y < 410 * 32) // kills when in freeze and not in policebase
+		if (m_IsFrozen && m_Core.m_Pos.y < 410 * 32) // kills when in freeze and not in policebase
 		{
 			if (Server()->Tick() % 60 == 0)
 				GameServer()->SendEmoticon(m_pPlayer->GetCID(), 3); // tear emote before killing
 			if (Server()->Tick() % 500 == 0 && IsGrounded()) // kill when freeze
 				Die(m_pPlayer->GetCID(), WEAPON_SELF);
 		}
-		if (IsFrozen && m_Core.m_Pos.x < 41 * 32 && m_Core.m_Pos.x > 33 * 32 && m_Core.m_Pos.y < 10 * 32) // kills when on speedup right next to the newtee spawn to prevent infinite flappy blocking
+		if (m_IsFrozen && m_Core.m_Pos.x < 41 * 32 && m_Core.m_Pos.x > 33 * 32 && m_Core.m_Pos.y < 10 * 32) // kills when on speedup right next to the newtee spawn to prevent infinite flappy blocking
 		{
 			if (Server()->Tick() % 500 == 0) // kill when freeze
 				Die(m_pPlayer->GetCID(), WEAPON_SELF);
@@ -3670,7 +3670,7 @@ void CCharacter::DummyTick()
 								m_Input.m_Direction = -1;
 						}
 
-						if ((m_Core.m_Pos.y > 441 * 32 + 10 && (m_Core.m_Pos.x > 402 * 32 || m_Core.m_Pos.x < 399 * 32 + 10)) || IsFrozen) //check for fail position
+						if ((m_Core.m_Pos.y > 441 * 32 + 10 && (m_Core.m_Pos.x > 402 * 32 || m_Core.m_Pos.x < 399 * 32 + 10)) || m_IsFrozen) //check for fail position
 							m_DummyLowerPanic = 1; //lower panic mode to reposition
 					}
 				}
@@ -3901,7 +3901,7 @@ void CCharacter::DummyTick()
 			}
 			if (m_Core.m_Pos.x > 290 * 32 && m_Core.m_Pos.x < 450 * 32 && m_Core.m_Pos.y > 415 * 32 && m_Core.m_Pos.y < 450 * 32)
 			{
-				if (IsFrozen) // kills when in freeze in policebase or left of it (takes longer that he kills bcs the way is so long he wait a bit longer for help)
+				if (m_IsFrozen) // kills when in freeze in policebase or left of it (takes longer that he kills bcs the way is so long he wait a bit longer for help)
 				{
 					if (Server()->Tick() % 60 == 0)
 						GameServer()->SendEmoticon(m_pPlayer->GetCID(), 3); // tear emote before killing

@@ -2611,7 +2611,7 @@ void CCharacter::DDRaceTick()
 void CCharacter::DDRacePostCoreTick()
 {
 	// BlockDDrace
-	IsFrozen = false;
+	m_IsFrozen = false;
 	// BlockDDrace
 
 	m_Time = (float)(Server()->Tick() - m_StartTime) / ((float)Server()->TickSpeed());
@@ -2668,7 +2668,7 @@ void CCharacter::DDRacePostCoreTick()
 	}
 
 	// BlockDDrace
-	if (!IsFrozen)
+	if (!m_IsFrozen)
 		m_FirstFreezeTick = 0;
 	// BlockDDrace
 
@@ -2678,7 +2678,7 @@ void CCharacter::DDRacePostCoreTick()
 bool CCharacter::Freeze(int Seconds)
 {
 	// BlockDDrace
-	IsFrozen = true;
+	m_IsFrozen = true;
 
 	if ((Seconds <= 0 || m_Super || m_FreezeTime == -1 || m_FreezeTime > Seconds * Server()->TickSpeed()) && Seconds != -1)
 		 return false;

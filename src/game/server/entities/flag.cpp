@@ -93,7 +93,7 @@ void CFlag::Tick()
 
 	if (m_pCarrier && m_pCarrier->IsAlive())
 	{
-		if (m_pCarrier->IsFrozen && m_pCarrier->m_FirstFreezeTick != 0)
+		if (m_pCarrier->m_IsFrozen && m_pCarrier->m_FirstFreezeTick != 0)
 			if (Server()->Tick() > m_pCarrier->m_FirstFreezeTick + Server()->TickSpeed() * 8)
 				Drop(m_pCarrier->GetAimDir());
 	}

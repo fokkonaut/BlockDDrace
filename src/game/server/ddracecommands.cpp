@@ -1109,7 +1109,7 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Flag: Blue");
 		if (pChr->m_DeepFreeze)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: Deep");
-		else if (pChr->IsFrozen)
+		else if (pChr->m_IsFrozen)
 			pSelf->SendChatTarget(pResult->m_ClientID, "Frozen: True");
 		else if (pChr->m_FreezeTime)
 		{

@@ -467,7 +467,7 @@ public:
 	int HasFlag();
 
 	//this means the character is directly on a freezetile
-	bool IsFrozen;
+	bool m_IsFrozen;
 
 
 	/////////dummymode variables
