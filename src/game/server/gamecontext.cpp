@@ -3962,36 +3962,38 @@ void CGameContext::FixMotd()
 
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 {
-	int DummyID = GetNextClientID();
-	if (DummyID < 0)
+	int BotID = GetNextClientID();
+	if (BotID < 0)
 		return;
 
-	if (m_apPlayers[DummyID])
+	CPlayer *pBot = m_apPlayers[BotID];
+
+	if (pBot)
 	{
-		m_apPlayers[DummyID]->OnDisconnect("");
-		delete m_apPlayers[DummyID];
-		m_apPlayers[DummyID] = 0;
+		pBot->OnDisconnect("");
+		delete pBot;
+		pBot = 0;
 	}
 
-	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
-	Server()->BotJoin(DummyID);
-	m_apPlayers[DummyID]->m_IsDummy = true;
-	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
-	m_apPlayers[DummyID]->m_ForceSpawnPos = Pos;
+	pBot = new(BotID) CPlayer(this, BotID, TEAM_RED);
+	Server()->BotJoin(BotID);
+	pBot->m_IsDummy = true;
+	pBot->m_Dummymode = Dummymode;
+	pBot->m_ForceSpawnPos = Pos;
 
-	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
-		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;
-	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_BOT && Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
-		m_apPlayers[DummyID]->m_Minigame = -1;
+	if (pBot->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
+		pBot->m_Minigame = MINIGAME_BLOCK;
+	else if (pBot->m_Dummymode == DUMMYMODE_SHOP_BOT && Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
+		pBot->m_Minigame = -1;
 
-	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
-	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
-	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
-	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+	str_copy(pBot->m_TeeInfos.m_SkinName, "greensward", sizeof(pBot->m_TeeInfos.m_SkinName));
+	pBot->m_TeeInfos.m_UseCustomColor = 1;
+	pBot->m_TeeInfos.m_ColorFeet = 0;
+	pBot->m_TeeInfos.m_ColorBody = 0;
 
-	OnClientEnter(DummyID);
+	OnClientEnter(BotID);
 
-	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", DummyID, Dummymode);
+	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", BotID, Dummymode);
 }
 
 bool CGameContext::IsShopBot(int ClientID)
