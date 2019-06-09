@@ -3966,30 +3966,28 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 	if (BotID < 0)
 		return;
 
-	CPlayer *pBot = m_apPlayers[BotID];
-
-	if (pBot)
+	if (m_apPlayers[BotID])
 	{
-		pBot->OnDisconnect("");
-		delete pBot;
-		pBot = 0;
+		m_apPlayers[BotID]->OnDisconnect("");
+		delete m_apPlayers[BotID];
+		m_apPlayers[BotID] = 0;
 	}
 
-	pBot = new(BotID) CPlayer(this, BotID, TEAM_RED);
+	m_apPlayers[BotID] = new(BotID) CPlayer(this, BotID, TEAM_RED);
 	Server()->BotJoin(BotID);
-	pBot->m_IsDummy = true;
-	pBot->m_Dummymode = Dummymode;
-	pBot->m_ForceSpawnPos = Pos;
+	m_apPlayers[BotID]->m_IsDummy = true;
+	m_apPlayers[BotID]->m_Dummymode = Dummymode;
+	m_apPlayers[BotID]->m_ForceSpawnPos = Pos;
 
-	if (pBot->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
-		pBot->m_Minigame = MINIGAME_BLOCK;
-	else if (pBot->m_Dummymode == DUMMYMODE_SHOP_BOT && Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
-		pBot->m_Minigame = -1;
+	if (m_apPlayers[BotID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
+		m_apPlayers[BotID]->m_Minigame = MINIGAME_BLOCK;
+	else if (m_apPlayers[BotID]->m_Dummymode == DUMMYMODE_SHOP_BOT && Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
+		m_apPlayers[BotID]->m_Minigame = -1;
 
-	str_copy(pBot->m_TeeInfos.m_SkinName, "greensward", sizeof(pBot->m_TeeInfos.m_SkinName));
-	pBot->m_TeeInfos.m_UseCustomColor = 1;
-	pBot->m_TeeInfos.m_ColorFeet = 0;
-	pBot->m_TeeInfos.m_ColorBody = 0;
+	str_copy(m_apPlayers[BotID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[BotID]->m_TeeInfos.m_SkinName));
+	m_apPlayers[BotID]->m_TeeInfos.m_UseCustomColor = 1;
+	m_apPlayers[BotID]->m_TeeInfos.m_ColorFeet = 0;
+	m_apPlayers[BotID]->m_TeeInfos.m_ColorBody = 0;
 
 	OnClientEnter(BotID);
 
