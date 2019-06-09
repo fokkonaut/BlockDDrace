@@ -316,6 +316,7 @@ public:
 	//minigames
 	int m_Minigame;
 	int m_SurvivalState;
+	bool m_ForceKilled;
 };
 
 #endif

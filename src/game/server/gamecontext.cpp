@@ -4326,12 +4326,7 @@ void CGameContext::SurvivalTick()
 
 		case SURVIVAL_PLAYING:
 		{
-			if (!m_SurvivalTick)
-			{
-				// round is almost over, just one minute left, starting an extra deathmatch countdown
-				if (Remaining == 60 && m_SurvivalBackgroundState != BACKGROUND_DEATHMATCH_COUNTDOWN)
-					m_SurvivalBackgroundState = BACKGROUND_DEATHMATCH_COUNTDOWN;
-			}
+			// the game is running
 			break;
 		}
 
@@ -4343,7 +4338,7 @@ void CGameContext::SurvivalTick()
 				if (CountSurvivalPlayers(SURVIVAL_DEATHMATCH) > 1)
 					SendSurvivalBroadcast("There is no winner this round!");
 				m_SurvivalGameState = SURVIVAL_OFFLINE;
-				m_SurvivalBackgroundState = SURVIVAL_OFFLINE;
+				m_SurvivalBackgroundState = BACKGROUND_IDLE;
 				SetPlayerSurvivalState(SURVIVAL_LOBBY);
 			}
 			else
@@ -4389,7 +4384,7 @@ void CGameContext::SurvivalTick()
 				// set the foreground state
 				m_SurvivalGameState = SURVIVAL_PLAYING;
 				// change background state
-				m_SurvivalBackgroundState = SURVIVAL_PLAYING;
+				m_SurvivalBackgroundState = BACKGROUND_DEATHMATCH_COUNTDOWN;
 				// set the player's survival state
 				SetPlayerSurvivalState(SURVIVAL_PLAYING);
 			}
@@ -4422,7 +4417,7 @@ void CGameContext::SurvivalTick()
 				//sending to deathmatch arena
 				m_SurvivalGameState = SURVIVAL_DEATHMATCH;
 				SetPlayerSurvivalState(SURVIVAL_DEATHMATCH);
-				m_SurvivalBackgroundState = SURVIVAL_DEATHMATCH;
+				m_SurvivalBackgroundState = BACKGROUND_IDLE;
 
 				// deathmatch will be 2 minutes
 				m_SurvivalTick = Server()->TickSpeed() * 60 * g_Config.m_SvSurvivalDeathmatchTime;
@@ -4458,6 +4453,7 @@ void CGameContext::SetPlayerSurvivalState(int State)
 	for (int i = 0; i < MAX_CLIENTS; i++)
 		if (m_apPlayers[i] && m_apPlayers[i]->m_Minigame == MINIGAME_SURVIVAL)
 		{
+			m_apPlayers[i]->m_ForceKilled = true;
 			// unset spectator mode and pause
 			m_apPlayers[i]->SetPlaying();
 			// kill the character

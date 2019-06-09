@@ -1143,7 +1143,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	// character doesnt exist, print some messages and set states
 	// if the player is in deathmatch mode, or simply playing
-	if (GameServer()->m_SurvivalGameState > SURVIVAL_LOBBY && m_pPlayer->m_SurvivalState > SURVIVAL_LOBBY)
+	if (GameServer()->m_SurvivalGameState > SURVIVAL_LOBBY && m_pPlayer->m_SurvivalState > SURVIVAL_LOBBY && !m_pPlayer->m_ForceKilled)
 	{
 		// check for players in the current game state
 		if (m_pPlayer->GetCID() != GameServer()->m_SurvivalWinner)
@@ -1171,6 +1171,7 @@ void CCharacter::Die(int Killer, int Weapon)
 
 	m_Alive = false;
 	m_Solo = false;
+	m_pPlayer->m_ForceKilled = false;
 
 	GameWorld()->RemoveEntity(this);
 	GameWorld()->m_Core.m_apCharacters[m_pPlayer->GetCID()] = 0;
