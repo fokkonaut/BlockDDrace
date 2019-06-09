@@ -948,9 +948,13 @@ void CGameContext::OnTick()
 			WriteAccountStats(i);
 
 	// minigames
-	SurvivalTick();
+	if (!m_aMinigameDisabled[MINIGAME_SURVIVAL])
+		SurvivalTick();
+
 	for (int i = 0; i < 2; i++)
-		InstagibTick(i);
+		if (!m_aMinigameDisabled[i == 0 ? INSTAGIB_BOOMFNG : INSTAGIB_FNG])
+			InstagibTick(i);
+
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -4492,5 +4496,14 @@ void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool Sound, bool IsIm
 
 void CGameContext::InstagibTick(int Type)
 {
+	Type = Type == 0 ? INSTAGIB_BOOMFNG : INSTAGIB_FNG;
+
+	// if there are no spawn tiles, we cant play the game
+	if (!m_aMinigameDisabled[Type] && Collision()->GetRandomTile(Type == INSTAGIB_BOOMFNG ? ENTITY_SPAWN_RED : ENTITY_SPAWN_BLUE) == vec2(-1, -1))
+	{
+		m_aMinigameDisabled[Type] = true;
+		return;
+	}
+
 	// add instagib here
 }
