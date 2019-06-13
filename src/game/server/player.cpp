@@ -821,6 +821,7 @@ void CPlayer::TryRespawn()
 			NewTeam = 0;
 
 		Controller->m_Teams.SetForceCharacterTeam(GetCID(), NewTeam);
+		m_pCharacter->SetSolo(true);
 	}
 }
 
