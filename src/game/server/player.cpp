@@ -295,12 +295,12 @@ void CPlayer::Tick()
 	CheckLevel();
 
 	// checking whether scoreboard is activated or not
-	if (GetCharacter())
+	if (m_pCharacter)
 	{
 		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
-			GetCharacter()->m_ShopMotdTick = 0;
+			m_pCharacter->m_ShopMotdTick = 0;
 		else
-			GetCharacter()->m_TimesShot = 0;
+			m_pCharacter->m_TimesShot = 0;
 	}
 
 	// fixing messages if name is hidden
@@ -421,7 +421,7 @@ void CPlayer::Snap(int SnappingClient)
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
 	// setting rainbow
-	if ((GetCharacter() && GetCharacter()->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
+	if ((m_pCharacter && m_pCharacter->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
 	{
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = 1;
@@ -1076,8 +1076,8 @@ bool CPlayer::IsHooked(int Power)
 
 		if (pChr->Core()->m_HookedPlayer == m_ClientID)
 		{
-			if (Power == -2 && GetCharacter())
-				GetCharacter()->m_LastTouchedTee = i;
+			if (Power == -2 && m_pCharacter)
+				m_pCharacter->m_LastTouchedTee = i;
 			return Power >= 0 ? pChr->m_HookPower == Power : true;
 		}
 	}
@@ -1086,7 +1086,7 @@ bool CPlayer::IsHooked(int Power)
 
 bool CPlayer::IsSpectator()
 {
-	return m_Paused != PAUSE_NONE || m_Team == TEAM_SPECTATORS || (GetCharacter() && GetCharacter()->IsPaused());
+	return m_Paused != PAUSE_NONE || m_Team == TEAM_SPECTATORS || (m_pCharacter && m_pCharacter->IsPaused());
 }
 
 void CPlayer::SetPlaying()
@@ -1094,6 +1094,6 @@ void CPlayer::SetPlaying()
 	m_SpectatorID = SPEC_FREEVIEW;
 	Pause(PAUSE_NONE, true);
 	SetTeam(TEAM_RED);
-	if (GetCharacter() && GetCharacter()->IsPaused())
-		GetCharacter()->Pause(false);
+	if (m_pCharacter && m_pCharacter->IsPaused())
+		m_pCharacter->Pause(false);
 }
