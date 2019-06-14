@@ -582,20 +582,27 @@ void IGameController::Snap(int SnappingClient)
 		}
 	}
 
-	CNetObj_DDNetGameInfo *pGameInfoEx = (CNetObj_DDNetGameInfo *)Server()->SnapNewItem(NETOBJTYPE_DDNETGAMEINFO, 0, sizeof(CNetObj_DDNetGameInfo));
+	CNetObj_GameInfoEx *pGameInfoEx = (CNetObj_GameInfoEx *)Server()->SnapNewItem(NETOBJTYPE_GAMEINFOEX, 0, sizeof(CNetObj_GameInfoEx));
 	if (!pGameInfoEx)
 		return;
 
-	if (
-		pPlayer->m_DisplayScore != SCORE_LEVEL
-		&& pPlayer->m_Minigame != MINIGAME_BLOCK
-		&& pPlayer->m_Minigame != MINIGAME_SURVIVAL
-		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_BOOMFNG
-		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_FNG
-		)
-	{
-		pGameInfoEx->m_Flags = GAMEINFOFLAG_TIMESCORE;
-	}
+	pGameInfoEx->m_Flags = 0
+		| GAMEINFOFLAG_TIMESCORE
+		| GAMEINFOFLAG_GAMETYPE_RACE
+		| GAMEINFOFLAG_GAMETYPE_DDRACE
+		| GAMEINFOFLAG_GAMETYPE_DDNET
+		| GAMEINFOFLAG_UNLIMITED_AMMO
+		| GAMEINFOFLAG_DDRACE_RECORD_MESSAGE
+		| GAMEINFOFLAG_ALLOW_EYE_WHEEL
+		| GAMEINFOFLAG_ALLOW_HOOK_COLL
+		| GAMEINFOFLAG_ALLOW_ZOOM
+		| GAMEINFOFLAG_BUG_DDRACE_GHOST
+		| GAMEINFOFLAG_BUG_DDRACE_INPUT
+		| GAMEINFOFLAG_PREDICT_DDRACE
+		| GAMEINFOFLAG_PREDICT_DDRACE_TILES
+		| GAMEINFOFLAG_ENTITIES_DDNET
+		| GAMEINFOFLAG_ENTITIES_DDRACE
+		| GAMEINFOFLAG_ENTITIES_RACE;
 }
 
 int IGameController::GetAutoTeam(int NotThisID)
