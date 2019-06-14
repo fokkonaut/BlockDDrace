@@ -587,15 +587,12 @@ void IGameController::Snap(int SnappingClient)
 		return;
 
 	pGameInfoEx->m_Flags = 0
-		| GAMEINFOFLAG_TIMESCORE
 		| GAMEINFOFLAG_GAMETYPE_RACE
 		| GAMEINFOFLAG_GAMETYPE_DDRACE
 		| GAMEINFOFLAG_GAMETYPE_DDNET
-		| GAMEINFOFLAG_UNLIMITED_AMMO
 		| GAMEINFOFLAG_DDRACE_RECORD_MESSAGE
 		| GAMEINFOFLAG_ALLOW_EYE_WHEEL
 		| GAMEINFOFLAG_ALLOW_HOOK_COLL
-		| GAMEINFOFLAG_ALLOW_ZOOM
 		| GAMEINFOFLAG_BUG_DDRACE_GHOST
 		| GAMEINFOFLAG_BUG_DDRACE_INPUT
 		| GAMEINFOFLAG_PREDICT_DDRACE
@@ -603,6 +600,26 @@ void IGameController::Snap(int SnappingClient)
 		| GAMEINFOFLAG_ENTITIES_DDNET
 		| GAMEINFOFLAG_ENTITIES_DDRACE
 		| GAMEINFOFLAG_ENTITIES_RACE;
+
+	if (pPlayer->m_DisplayScore != SCORE_LEVEL
+		&& pPlayer->m_Minigame != MINIGAME_BLOCK
+		&& pPlayer->m_Minigame != MINIGAME_SURVIVAL
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_BOOMFNG
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_FNG)
+	{
+		pGameInfoEx->m_Flags |= GAMEINFOFLAG_TIMESCORE;
+	}
+
+	if (pPlayer->m_Minigame != MINIGAME_SURVIVAL
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_BOOMFNG
+		&& pPlayer->m_Minigame != MINIGAME_INSTAGIB_FNG)
+	{
+		pGameInfoEx->m_Flags |= GAMEINFOFLAG_ALLOW_ZOOM;
+	}
+
+	CCharacter *pSnapChar = pPlayer->GetCharacter();
+	if (pSnapChar && pSnapChar->GetWeaponAmmo(pSnapChar->GetActiveWeapon()) == -1)
+		pGameInfoEx->m_Flags |= GAMEINFOFLAG_UNLIMITED_AMMO;
 }
 
 int IGameController::GetAutoTeam(int NotThisID)
