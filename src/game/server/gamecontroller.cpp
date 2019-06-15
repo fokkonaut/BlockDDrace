@@ -586,6 +586,7 @@ void IGameController::Snap(int SnappingClient)
 	if (!pGameInfoEx)
 		return;
 
+	pGameInfoEx->m_Version = GAMEINFO_CURVERSION;
 	pGameInfoEx->m_Flags = 0
 		| GAMEINFOFLAG_GAMETYPE_RACE
 		| GAMEINFOFLAG_GAMETYPE_DDRACE
