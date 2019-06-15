@@ -1524,6 +1524,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 		}
 	}
 
+	// BlockDDrace
 	char aIP[32];
 	char aCheckIP[32];
 	bool Ingame = false;
@@ -1537,6 +1538,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 				Ingame = true;
 		}
 	}
+	// BlockDDrace
 
 	if (!Ingame && g_Config.m_SvHideServerInfo)
 		p.AddString("", 32);

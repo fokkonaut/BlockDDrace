@@ -484,13 +484,13 @@ void CPlayer::Snap(int SnappingClient)
 
 	// score
 	int Score = 0;
-	bool Account = true;
+	bool TimeFormat = false;
 
 	// send 0 if times of others are not shown
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 	{
 		Score = -9999;
-		Account = false;
+		TimeFormat = true;
 	}
 	else if (pSnapping->m_Minigame == MINIGAME_BLOCK)
 	{
@@ -512,9 +512,9 @@ void CPlayer::Snap(int SnappingClient)
 	else
 	{
 		Score = abs(m_Score) * -1;
-		Account = false;
+		TimeFormat = true;
 	}
-	if (Account && GetAccID() < ACC_START)
+	if (!TimeFormat && GetAccID() < ACC_START)
 		Score = 0;
 	pPlayerInfo->m_Score = Score;
 
