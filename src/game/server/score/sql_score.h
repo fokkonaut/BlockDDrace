@@ -85,7 +85,7 @@ struct CSqlPlayerData : CSqlData
 	sqlstr::CSqlString<MAX_NAME_LENGTH> m_Name;
 };
 
-// used for mapvote and mapinfo
+// used for mapinfo
 struct CSqlMapData : CSqlData
 {
 	int m_ClientID;
@@ -94,6 +94,13 @@ struct CSqlMapData : CSqlData
 	char m_aFuzzyMap[128];
 	sqlstr::CSqlString<MAX_NAME_LENGTH> m_Name;
 };
+
+// used for mapvote
+struct CSqlMapVoteData : CSqlMapData
+{
+	std::shared_ptr<CMapVoteResult> m_pResult;
+};
+
 
 struct CSqlScoreData : CSqlData
 {
@@ -186,7 +193,7 @@ public:
 	virtual void CheckBirthday(int ClientID);
 	virtual void LoadScore(int ClientID);
 	virtual void MapInfo(int ClientID, const char* MapName);
-	virtual void MapVote(int ClientID, const char* MapName);
+	virtual void MapVote(std::shared_ptr<CMapVoteResult> *ppResult, int ClientID, const char* MapName);
 	virtual void SaveScore(int ClientID, float Time, const char *pTimestamp, float CpTime[NUM_CHECKPOINTS], bool NotEligible);
 	virtual void SaveTeamScore(int* aClientIDs, unsigned int Size, float Time, const char *pTimestamp);
 	virtual void ShowRank(int ClientID, const char* pName, bool Search = false);
