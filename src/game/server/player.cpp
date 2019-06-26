@@ -12,12 +12,6 @@
 #include "gamemodes/blockddrace.h"
 #include <time.h>
 
-#include <fstream>
-#include <limits>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-
 
 MACRO_ALLOC_POOL_ID_IMPL(CPlayer, MAX_CLIENTS)
 
