@@ -97,7 +97,7 @@ void IGameController::EvaluateSpawnType(CSpawnEval *pEval, int MapIndex)
 bool IGameController::CanSpawn(vec2 *pOutPos, int Index)
 {
 	// BlockDDrace
-	if(Index < TILE_AIR || Index > NUM_INDICES-1)
+	if(Index < TILE_AIR || Index >= NUM_INDICES)
 		return false;
 
 	CSpawnEval Eval;
