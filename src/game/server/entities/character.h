@@ -465,7 +465,7 @@ public:
 
 	//others
 	int HasFlag();
-	void CheckMoved(bool Weapon);
+	void CheckMoved();
 
 	//this means the character is directly on a freezetile
 	bool m_IsFrozen;
