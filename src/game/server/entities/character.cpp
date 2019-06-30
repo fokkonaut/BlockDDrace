@@ -1298,6 +1298,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		Temp.y = 0;
 	m_Core.m_Vel = Temp;
 
+	CheckMoved(true);
+
 	return true;
 }
 
@@ -2604,6 +2606,8 @@ void CCharacter::DDRaceTick()
 		}
 	}
 
+	CheckMoved(false);
+
 	m_Core.m_Id = GetPlayer()->GetCID();
 }
 
@@ -3203,6 +3207,14 @@ void CCharacter::UpdateWeaponIndicator()
 int CCharacter::HasFlag()
 {
 	return ((CGameControllerBlockDDrace*)GameServer()->m_pController)->HasFlag(this);
+}
+
+void CCharacter::CheckMoved(bool Weapon)
+{
+	if (!m_pPlayer->m_ResumeMoved || !m_pPlayer->IsPaused() || m_PrevPos == m_Pos)
+		return;
+
+	m_pPlayer->Pause(CPlayer::PAUSE_NONE, false);
 }
 
 void CCharacter::Jetpack(bool Set, int FromID, bool Silent)

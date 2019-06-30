@@ -1528,6 +1528,34 @@ void CGameContext::ConPoliceInfo(IConsole::IResult *pResult, void *pUserData)
 	pSelf->SendChatTarget(pResult->m_ClientID, aPage);
 }
 
+void CGameContext::ConResumeMoved(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if (!CheckClientID(pResult->m_ClientID))
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientID];
+	if (!pPlayer)
+		return;
+
+	if (pResult->NumArguments())
+	{
+		if (pPlayer->m_ResumeMoved == (bool)pResult->GetInteger(0))
+			return;
+
+		pPlayer->m_ResumeMoved = pResult->GetInteger(0);
+	}
+	else
+	{
+		pPlayer->m_ResumeMoved = !pPlayer->m_ResumeMoved;
+	}
+
+	if (pPlayer->m_ResumeMoved)
+		pSelf->SendChatTarget(pResult->m_ClientID, "You will now resume from pause if your tee gets moved");
+	else
+		pSelf->SendChatTarget(pResult->m_ClientID, "You will no longer resume from pause if your tee gets moved");
+}
+
 void CGameContext::ConMinigames(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

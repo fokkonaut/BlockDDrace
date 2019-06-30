@@ -535,6 +535,8 @@ private:
 	static void ConJoinBoomFNG(IConsole::IResult *pResult, void *pUserData);
 	static void ConJoinFNG(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConResumeMoved(IConsole::IResult *pResult, void *pUserData);
+
 	//rcon
 	static void ConFreezeHammer(IConsole::IResult *pResult, void *pUserData);
 

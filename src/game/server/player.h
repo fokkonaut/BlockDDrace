@@ -312,6 +312,7 @@ public:
 	bool IsHooked(int Power = -1);
 	bool IsSpectator();
 	void SetPlaying();
+	bool m_ResumeMoved;
 
 	//minigames
 	int m_Minigame;
