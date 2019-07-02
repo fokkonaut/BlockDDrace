@@ -4019,7 +4019,7 @@ bool CGameContext::IsShopBot(int ClientID)
 	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == DUMMYMODE_SHOP_BOT;
 }
 
-void CGameContext::SendMotd(const char * pMsg, int ClientID)
+void CGameContext::SendMotd(const char *pMsg, int ClientID)
 {
 	CNetMsg_Sv_Motd Msg;
 	Msg.m_pMessage = pMsg;
