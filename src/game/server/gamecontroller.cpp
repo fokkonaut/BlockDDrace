@@ -593,6 +593,7 @@ void IGameController::Snap(int SnappingClient)
 		| GAMEINFOFLAG_GAMETYPE_DDNET
 		| GAMEINFOFLAG_DDRACE_RECORD_MESSAGE
 		| GAMEINFOFLAG_ALLOW_EYE_WHEEL
+		| GAMEINFOFLAG_ALLOW_HOOK_COLL
 		| GAMEINFOFLAG_BUG_DDRACE_GHOST
 		| GAMEINFOFLAG_BUG_DDRACE_INPUT
 		| GAMEINFOFLAG_PREDICT_DDRACE
@@ -616,9 +617,6 @@ void IGameController::Snap(int SnappingClient)
 	{
 		pGameInfoEx->m_Flags |= GAMEINFOFLAG_ALLOW_ZOOM;
 	}
-
-	if (g_Config.m_SvAllowHookColl)
-		pGameInfoEx->m_Flags |= GAMEINFOFLAG_ALLOW_HOOK_COLL;
 
 	CCharacter *pSnapChar = pPlayer->GetCharacter();
 	if (pSnapChar && pSnapChar->GetWeaponAmmo(pSnapChar->GetActiveWeapon()) == -1)
