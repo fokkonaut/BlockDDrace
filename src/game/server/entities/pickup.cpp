@@ -153,9 +153,12 @@ void CPickup::Tick()
 
 					case POWERUP_WEAPON:
 
-						if ((!pChr->GetPlayer()->m_SpookyGhost && (m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || pChr->GetWeaponAmmo(m_Subtype) != -1))))
+						if ((m_Subtype >= 0 && m_Subtype < NUM_WEAPONS && (!pChr->GetWeaponGot(m_Subtype) || pChr->GetWeaponAmmo(m_Subtype) != -1)))
 						{
 							// BlockDDrace
+							if (pChr->GetPlayer()->m_SpookyGhost && GameServer()->GetRealWeapon(m_Subtype) != WEAPON_GUN)
+								break;
+
 							if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && (pChr->GetWeaponAmmo(m_Subtype) < 10 || !pChr->GetWeaponGot(m_Subtype)))
 								pChr->GiveWeapon(m_Subtype, false, 10);
 							else if (pChr->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
@@ -180,7 +183,7 @@ void CPickup::Tick()
 					case POWERUP_NINJA:
 						{
 							if (pChr->GetPlayer()->m_SpookyGhost)
-								continue;
+								break;
 
 							// activate ninja on target player
 							pChr->GiveNinja();
