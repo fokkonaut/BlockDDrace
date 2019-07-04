@@ -136,7 +136,7 @@ int CPickupDrop::IsCharacterNear()
 		if (m_Type == POWERUP_WEAPON)
 		{
 			if (
-				(pChr->GetPlayer()->m_SpookyGhost && m_Weapon != WEAPON_GUN)
+				(pChr->GetPlayer()->m_SpookyGhost && GameServer()->GetRealWeapon(m_Weapon) != WEAPON_GUN)
 				|| (pChr->GetWeaponGot(m_Weapon) && !m_SpreadWeapon && !m_Jetpack && pChr->GetPlayer()->m_Gamemode == GAMEMODE_DDRACE)
 				|| (m_Jetpack && !pChr->GetWeaponGot(WEAPON_GUN))
 				|| (m_Jetpack && pChr->m_Jetpack)
