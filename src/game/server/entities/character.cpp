@@ -77,15 +77,15 @@ bool CCharacter::Spawn(CPlayer *pPlayer, vec2 Pos)
 	GameWorld()->InsertEntity(this);
 	m_Alive = true;
 
+	// BlockDDrace
+	BlockDDraceInit();
+	// BlockDDrace
+
 	GameServer()->m_pController->OnCharacterSpawn(this);
 
 	Teams()->OnCharacterSpawn(GetPlayer()->GetCID());
 
 	DDRaceInit();
-
-	// BlockDDrace
-	BlockDDraceInit();
-	// BlockDDrace
 
 	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(Pos));
 	m_TuneZoneOld = -1; // no zone leave msg on spawn
