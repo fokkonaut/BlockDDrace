@@ -74,7 +74,7 @@ int CClock::GetID(int Hand)
 	case HOUR:
 		return m_ID3;
 	}
-	return m_ID;
+	return 0;
 }
 
 void CClock::Snap(int SnappingClient)
@@ -93,17 +93,7 @@ void CClock::Snap(int SnappingClient)
 		pObj->m_Y = (int)m_Pos.y;
 		pObj->m_FromX = (int)m_Hand[i].m_To.x;
 		pObj->m_FromY = (int)m_Hand[i].m_To.y;
-
-		int StartTick = Server()->Tick();
-
 		// the second hand is the thinnest, and the hour hand is the thickest
-		if (i == SECOND)
-			StartTick = Server()->Tick() - 4;
-		else if (i == MINUTE)
-			StartTick = Server()->Tick() - 3;
-		else if (i == HOUR)
-			StartTick = Server()->Tick() - 2;
-
-		pObj->m_StartTick = StartTick;
+		pObj->m_StartTick = Server()->Tick()-4+i;
 	}
 }
