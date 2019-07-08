@@ -71,7 +71,7 @@ CHAT_COMMAND("logout", "", CFGFLAG_CHAT, ConLogout, this, "Log out of an account
 CHAT_COMMAND("weaponindicator", "", CFGFLAG_CHAT, ConWeaponIndicator, this, "Tells you which weapon you are holding under the heart and armor bar")
 
 //other
-CHAT_COMMAND("resumemoved", "?i['0'|'1']", CFGFLAG_CHAT|CFGFLAG_SERVER, ConResumeMoved, this, "Whether to resume from pause when someone moved your tee (off by default), optional i = 0 for off else for on")
+CHAT_COMMAND("resumemoved", "?i['0'|'1']", CFGFLAG_CHAT, ConResumeMoved, this, "Whether to resume from pause when someone moved your tee (off by default), optional i = 0 for off else for on")
 
 //minigames
 CHAT_COMMAND("minigames", "", CFGFLAG_CHAT, ConMinigames, this, "Shows a list of all available minigames")
