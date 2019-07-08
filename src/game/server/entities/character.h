@@ -447,7 +447,6 @@ public:
 	// shop
 	bool m_InShop;
 	bool m_EnteredShop;
-	bool m_LeftShop;
 
 	int64 m_ShopBotAntiSpamTick;
 

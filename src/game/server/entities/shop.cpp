@@ -71,7 +71,7 @@ void CCharacter::ShopWindow(int Dir)
 	{
 		aItem[0] = 0;
 	}
-	//////////////////// UPDATE m_MaxShopPage ON TOP OF THIS FUNCTION!!! /////////////////////////
+	//////////////////// UPDATE MAX_SHOP_PAGES ON TOP OF THIS FILE !!! /////////////////////////
 
 	char aLevel[128];
 	str_format(aLevel, sizeof(aLevel), "Needed level: %s", aLevelTmp);

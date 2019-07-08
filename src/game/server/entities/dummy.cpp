@@ -3921,6 +3921,9 @@ void CCharacter::DummyTick()
 			m_LatestInput.m_TargetX = pChr->m_Pos.x - m_Pos.x;
 			m_LatestInput.m_TargetY = pChr->m_Pos.y - m_Pos.y;
 		}
+
+		if (m_pPlayer->m_ForceSpawnPos == vec2(-1, -1) && !m_InShop && Server()->Tick() % 200 == 0)
+			Die(m_pPlayer->GetCID(), WEAPON_SELF);
 	}
 	else
 		m_pPlayer->m_Dummymode = 0;

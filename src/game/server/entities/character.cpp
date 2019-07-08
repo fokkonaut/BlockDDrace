@@ -2042,18 +2042,14 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if (m_EnteredShop)
 		{
-			Passive(true, -1, true);
-			if (m_ShopBotAntiSpamTick > Server()->Tick())
-				m_EnteredShop = false;
-			else if (m_EnteredShop)
+			if (m_ShopBotAntiSpamTick <= Server()->Tick())
 			{
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "Welcome to the shop, %s! Press f4 to start shopping.", Server()->ClientName(m_pPlayer->GetCID()));
 				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, aBuf, -1, m_pPlayer->GetCID());
-				m_EnteredShop = false;
 			}
+			m_EnteredShop = false;
 		}
-
 		if (Server()->Tick() % 50 == 0)
 			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
@@ -2896,7 +2892,6 @@ void CCharacter::BlockDDraceInit()
 
 	m_InShop = false;
 	m_EnteredShop = false;
-	m_LeftShop = false;
 
 	int64 Now = Server()->Tick();
 	m_ShopBotAntiSpamTick = Now;
@@ -2979,7 +2974,6 @@ void CCharacter::BlockDDraceTick()
 			m_PurchaseState = SHOP_STATE_NONE;
 			m_ShopWindowPage = SHOP_PAGE_NONE;
 
-			Passive(false, -1, true);
 			m_InShop = false;
 		}
 	}

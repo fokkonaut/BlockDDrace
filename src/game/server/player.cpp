@@ -773,9 +773,14 @@ void CPlayer::TryRespawn()
 
 	if (m_ForceSpawnPos != vec2(-1, -1))
 		SpawnPos = m_ForceSpawnPos;
-	else if (m_Dummymode == 99)
-		Index = ENTITY_SHOP_BOT_SPAWN;
-	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == -6)
+	else if (m_Dummymode == DUMMYMODE_SHOP_BOT)
+	{
+		if (GameServer()->Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
+			Index = ENTITY_SHOP_BOT_SPAWN;
+		else
+			Index = TILE_SHOP;
+	}
+	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == DUMMYMODE_V3_BLOCKER)
 		Index = TILE_MINIGAME_BLOCK;
 	else if (m_Minigame == MINIGAME_SURVIVAL)
 	{

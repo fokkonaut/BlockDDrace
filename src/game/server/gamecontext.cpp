@@ -2998,18 +2998,22 @@ void CGameContext::OnInit()
 
 	// BlockDDrace
 
+	bool HasShopBot = false;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (IsShopBot(i))
+		{
+			HasShopBot = true;
+			break;
+		}
+	if (!HasShopBot)
+		ConnectDummy(DUMMYMODE_SHOP_BOT);
+
 	// check if there are minigame spawns available
 	int Index = ENTITY_SPAWN;
 	for (int i = 0; i < NUM_MINIGAMES; i++)
 	{
 		if (i == MINIGAME_BLOCK)
 			Index = TILE_MINIGAME_BLOCK;
-		else if (i == MINIGAME_SURVIVAL)
-			Index = TILE_SURVIVAL_LOBBY;
-		else if (i == MINIGAME_INSTAGIB_BOOMFNG)
-			Index = ENTITY_SPAWN_RED;
-		else if (i == MINIGAME_INSTAGIB_FNG)
-			Index = ENTITY_SPAWN_BLUE;
 
 		m_aMinigameDisabled[i] = Collision()->GetRandomTile(Index) == vec2(-1, -1);
 	}
