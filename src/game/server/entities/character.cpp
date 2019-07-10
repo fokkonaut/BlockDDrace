@@ -2961,7 +2961,7 @@ void CCharacter::BlockDDraceTick()
 
 	if (m_InShop)
 	{
-		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP && m_pPlayer->m_ForceSpawnPos == vec2(-1, -1))
+		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP && m_TileIndex != ENTITY_SHOP_BOT_SPAWN && m_TileFIndex != ENTITY_SHOP_BOT_SPAWN)
 		{
 			if (m_ShopBotAntiSpamTick < Server()->Tick())
 			{
