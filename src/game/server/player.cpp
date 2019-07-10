@@ -772,7 +772,9 @@ void CPlayer::TryRespawn()
 	int Index = ENTITY_SPAWN;
 
 	if (m_ForceSpawnPos != vec2(-1, -1))
+	{
 		SpawnPos = m_ForceSpawnPos;
+	}
 	else if (m_Dummymode == DUMMYMODE_SHOP_BOT)
 	{
 		if (GameServer()->Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
@@ -781,7 +783,9 @@ void CPlayer::TryRespawn()
 			Index = TILE_SHOP;
 	}
 	else if (m_Minigame == MINIGAME_BLOCK || m_Dummymode == DUMMYMODE_V3_BLOCKER)
+	{
 		Index = TILE_MINIGAME_BLOCK;
+	}
 	else if (m_Minigame == MINIGAME_SURVIVAL)
 	{
 		if (m_SurvivalState == SURVIVAL_LOBBY)
@@ -792,9 +796,13 @@ void CPlayer::TryRespawn()
 			Index = TILE_SURVIVAL_DEATHMATCH;
 	}
 	else if (m_Minigame == MINIGAME_INSTAGIB_BOOMFNG)
+	{
 		Index = ENTITY_SPAWN_RED;
+	}
 	else if (m_Minigame == MINIGAME_INSTAGIB_FNG)
+	{
 		Index = ENTITY_SPAWN_BLUE;
+	}
 
 	if (GameServer()->Collision()->GetRandomTile(Index) == vec2(-1, -1))
 		Index = ENTITY_SPAWN;

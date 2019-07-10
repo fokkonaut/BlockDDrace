@@ -2033,7 +2033,7 @@ void CCharacter::HandleTiles(int Index)
 	}
 
 	//shop
-	if (m_TileIndex == TILE_SHOP || m_TileFIndex == TILE_SHOP) // SHOP
+	if (m_TileIndex == TILE_SHOP || m_TileFIndex == TILE_SHOP)
 	{
 		if (!m_InShop)
 		{
@@ -2053,6 +2053,8 @@ void CCharacter::HandleTiles(int Index)
 		if (Server()->Tick() % 50 == 0)
 			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
+	if (m_pPlayer->m_IsDummy && (m_TileIndex == ENTITY_SHOP_BOT_SPAWN || m_TileFIndex == ENTITY_SHOP_BOT_SPAWN))
+		m_InShop = true;
 
 
 	// helper only
@@ -2956,7 +2958,7 @@ void CCharacter::BlockDDraceTick()
 		m_PurchaseState = SHOP_STATE_NONE;
 	}
 
-	if (m_InShop)
+	if (m_InShop && !m_pPlayer->m_IsDummy)
 	{
 		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
 		{

@@ -2998,16 +2998,6 @@ void CGameContext::OnInit()
 
 	// BlockDDrace
 
-	bool HasShopBot = false;
-	for (int i = 0; i < MAX_CLIENTS; i++)
-		if (IsShopBot(i))
-		{
-			HasShopBot = true;
-			break;
-		}
-	if (!HasShopBot)
-		ConnectDummy(DUMMYMODE_SHOP_BOT);
-
 	// check if there are minigame spawns available
 	int Index = ENTITY_SPAWN;
 	for (int i = 0; i < NUM_MINIGAMES; i++)
@@ -4023,16 +4013,20 @@ bool CGameContext::IsShopBot(int ClientID)
 	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == DUMMYMODE_SHOP_BOT;
 }
 
-void CGameContext::SendMotd(const char *pMsg, int ClientID)
+int CGameContext::GetShopBot()
 {
-	CNetMsg_Sv_Motd Msg;
-	Msg.m_pMessage = pMsg;
-	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (IsShopBot(i))
+			return i;
+	return -1;
 }
 
 void CGameContext::ConnectDefaultBots()
 {
-	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
+	if (GetShopBot() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
+		ConnectDummy(DUMMYMODE_SHOP_BOT);
+
+	if (!str_comp(g_Config.m_SvMap, "ChillBlock5_BD"))
 	{
 		ConnectDummy(DUMMYMODE_CHILLBOCK5_POLICE);
 		ConnectDummy(DUMMYMODE_CHILLBLOCK5_BLOCKER);
@@ -4048,6 +4042,32 @@ void CGameContext::ConnectDefaultBots()
 	{
 		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 	}
+}
+
+void CGameContext::SetV3Offset(int X, int Y)
+{
+	if (X == -1 && Y == -1)
+	{
+		if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
+		{
+			X = 374;
+			Y = 59;
+		}
+		else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
+		{
+			X = 97;
+			Y = 19;
+		}
+	}
+	g_Config.m_V3OffsetX = X;
+	g_Config.m_V3OffsetY = Y;
+}
+
+void CGameContext::SendMotd(const char *pMsg, int ClientID)
+{
+	CNetMsg_Sv_Motd Msg;
+	Msg.m_pMessage = pMsg;
+	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
 }
 
 const char *CGameContext::GetWeaponName(int Weapon)
@@ -4254,25 +4274,6 @@ const char *CGameContext::GetMinigameName(int Minigame)
 		return "Instagib FNG";
 	}
 	return "Unknown";
-}
-
-void CGameContext::SetV3Offset(int X, int Y)
-{
-	if (X == -1 && Y == -1)
-	{
-		if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
-		{
-			X = 374;
-			Y = 59;
-		}
-		else if (!str_comp(g_Config.m_SvMap, "blmapV3RoyalX"))
-		{
-			X = 97;
-			Y = 19;
-		}
-	}
-	g_Config.m_V3OffsetX = X;
-	g_Config.m_V3OffsetY = Y;
 }
 
 void CGameContext::SurvivalTick()

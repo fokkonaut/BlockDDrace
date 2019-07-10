@@ -340,9 +340,11 @@ public:
 
 	//dummy
 	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
-	bool IsShopBot(int ClientID);
 	void ConnectDefaultBots();
 	void SetV3Offset(int X = -1, int Y = -1);
+
+	bool IsShopBot(int ClientID);
+	int GetShopBot();
 
 	int GetNextClientID();
 
