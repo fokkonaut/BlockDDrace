@@ -4026,7 +4026,7 @@ void CGameContext::ConnectDefaultBots()
 	if (GetShopBot() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
 		ConnectDummy(DUMMYMODE_SHOP_BOT);
 
-	if (!str_comp(g_Config.m_SvMap, "ChillBlock5_BD"))
+	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
 	{
 		ConnectDummy(DUMMYMODE_CHILLBOCK5_POLICE);
 		ConnectDummy(DUMMYMODE_CHILLBLOCK5_BLOCKER);

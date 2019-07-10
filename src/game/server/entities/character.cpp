@@ -1078,8 +1078,9 @@ void CCharacter::Die(int Killer, int Weapon)
 		m_LastTouchedTee = m_pPlayer->GetCID();
 
 	// set the new killer and weapon
-	Weapon = m_LastHitWeapon;
 	Killer = m_LastTouchedTee;
+	if (Weapon >= 0)
+		Weapon = m_LastHitWeapon;
 
 
 	CPlayer *pKiller = (Killer >= 0 && Killer != m_pPlayer->GetCID()) ? GameServer()->m_apPlayers[Killer] : 0;
