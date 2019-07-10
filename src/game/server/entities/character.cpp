@@ -2959,9 +2959,9 @@ void CCharacter::BlockDDraceTick()
 		m_PurchaseState = SHOP_STATE_NONE;
 	}
 
-	if (m_InShop && !m_pPlayer->m_IsDummy)
+	if (m_InShop)
 	{
-		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP)
+		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP && m_pPlayer->m_ForceSpawnPos == vec2(-1, -1))
 		{
 			if (m_ShopBotAntiSpamTick < Server()->Tick())
 			{
