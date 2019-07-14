@@ -1259,7 +1259,7 @@ void CGameContext::ConScore(IConsole::IResult * pResult, void * pUserData)
 	else
 	{
 		pSelf->SendChatTarget(pResult->m_ClientID, "~~~ Score Format ~~~");
-		pSelf->SendChatTarget(pResult->m_ClientID, "You can choose what the player score will display:");
+		pSelf->SendChatTarget(pResult->m_ClientID, "Use '/score <format>' to change the displayed score.");
 		pSelf->SendChatTarget(pResult->m_ClientID, "time, level");
 		Changed = false;
 	}
