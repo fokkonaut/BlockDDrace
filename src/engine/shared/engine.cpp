@@ -9,6 +9,8 @@
 #include <engine/shared/config.h>
 #include <engine/shared/network.h>
 
+#include "protocol.h"
+
 CHostLookup::CHostLookup()
 {
 }
@@ -87,7 +89,7 @@ public:
 		if(!m_pConsole || !m_pStorage)
 			return;
 
-		m_pConsole->Register("dbg_lognetwork", "", CFGFLAG_SERVER|CFGFLAG_CLIENT, Con_DbgLognetwork, this, "Log the network");
+		m_pConsole->Register("dbg_lognetwork", "", CFGFLAG_SERVER|CFGFLAG_CLIENT, Con_DbgLognetwork, this, "Log the network", AUTHED_ADMIN);
 	}
 
 	void InitLogfile()

@@ -104,7 +104,7 @@ void CTeeHistorian::WriteHeader(const CGameInfo *pGameInfo)
 	char aBuffer2[1024];
 	bool First = true;
 
-	#define MACRO_CONFIG_INT(Name,ScriptName,Def,Min,Max,Flags,Desc) \
+	#define MACRO_CONFIG_INT(Name,ScriptName,Def,Min,Max,Flags,Desc,AccessLevel) \
 	if((Flags)&CFGFLAG_SERVER && !((Flags)&CFGFLAG_NONTEEHISTORIC) && pGameInfo->m_pConfig->m_##Name != (Def)) \
 	{ \
 		str_format(aJson, sizeof(aJson), "%s\"%s\":\"%d\"", \
@@ -115,7 +115,7 @@ void CTeeHistorian::WriteHeader(const CGameInfo *pGameInfo)
 		First = false; \
 	}
 
-	#define MACRO_CONFIG_STR(Name,ScriptName,Len,Def,Flags,Desc) \
+	#define MACRO_CONFIG_STR(Name,ScriptName,Len,Def,Flags,Desc,AccessLevel) \
 	if((Flags)&CFGFLAG_SERVER && !((Flags)&CFGFLAG_NONTEEHISTORIC) && str_comp(pGameInfo->m_pConfig->m_##Name, (Def)) != 0) \
 	{ \
 		str_format(aJson, sizeof(aJson), "%s\"%s\":\"%s\"", \
