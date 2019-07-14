@@ -257,6 +257,7 @@ public:
 	bool m_Passive;
 
 	// DDNet Character
+	void ReadDDNet(const CNetObj_DDNetCharacter *pObjDDNet);
 	bool m_Solo;
 	bool m_Jetpack;
 	bool m_NoCollision;
