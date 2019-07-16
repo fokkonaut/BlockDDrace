@@ -12,7 +12,7 @@
 #include <time.h>
 
 CClock::CClock(CGameWorld *pGameWorld, vec2 Pos)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
+: CEntity(pGameWorld, CGameWorld::ENTTYPE_CLOCK)
 {
 	m_Pos = Pos;
 

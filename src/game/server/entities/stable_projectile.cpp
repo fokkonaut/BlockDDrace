@@ -3,7 +3,7 @@
 #include <game/server/teams.h>
 
 CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
+: CEntity(pGameWorld, CGameWorld::ENTTYPE_STABLE_PROJECTILE)
 {
 	m_Type = GameServer()->GetRealWeapon(Type);
 	m_Pos = Pos;

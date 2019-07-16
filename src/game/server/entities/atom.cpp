@@ -11,7 +11,7 @@
 #include <math.h>
 
 CAtom::CAtom(CGameWorld *pGameWorld, vec2 Pos, int Owner)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
+: CEntity(pGameWorld, CGameWorld::ENTTYPE_ATOM)
 {
 	m_Owner = Owner;
 	m_Pos = Pos;

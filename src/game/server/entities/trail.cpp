@@ -8,7 +8,7 @@
 #include "trail.h"
 
 CTrail::CTrail(CGameWorld *pGameWorld, vec2 Pos, int Owner)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
+: CEntity(pGameWorld, CGameWorld::ENTTYPE_TRAIL)
 {
 	m_Owner = Owner;
 	m_Pos = Pos;

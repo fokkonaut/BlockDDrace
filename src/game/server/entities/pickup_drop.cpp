@@ -15,7 +15,7 @@
 #include <game/server/gamemodes/blockddrace.h>
 
 CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Direction, int Weapon, int Lifetime, int Bullets, bool SpreadWeapon, bool Jetpack)
-: CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP)
+: CEntity(pGameWorld, CGameWorld::ENTTYPE_PICKUP_DROP)
 {
 	m_Type = Type;
 	m_Weapon = Weapon;

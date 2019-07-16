@@ -15,7 +15,7 @@
 
 CCustomProjectile::CCustomProjectile(CGameWorld *pGameWorld, int Owner, vec2 Pos, vec2 Dir, bool Freeze,
 		bool Explosive, bool Unfreeze, bool Bloody, bool Ghost, bool Spooky, int Type, float Lifetime, float Accel, float Speed)
-		: CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
+		: CEntity(pGameWorld, CGameWorld::ENTTYPE_CUSTOM_PROJECTILE)
 {
 	m_Owner = Owner;
 	m_Pos = Pos;
