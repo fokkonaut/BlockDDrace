@@ -862,16 +862,7 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->Atom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
-}
-
-void CGameContext::ConInfAtom(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfAtom(!(pChr->m_Atom || pChr->GetPlayer()->m_InfAtom), pResult->m_ClientID);
+		pChr->Atom(!pChr->m_Atom, pResult->m_ClientID);
 }
 
 void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
@@ -880,16 +871,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->Trail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
-}
-
-void CGameContext::ConInfTrail(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfTrail(!(pChr->m_Trail || pChr->GetPlayer()->m_InfTrail), pResult->m_ClientID);
+		pChr->Trail(!pChr->m_Trail, pResult->m_ClientID);
 }
 
 void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
@@ -916,7 +898,7 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
-		pChr->InfMeteor(true, pResult->m_ClientID);
+		pChr->Meteor(true, pResult->m_ClientID, true);
 }
 
 void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
@@ -1087,10 +1069,6 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Account: Not logged in");
 	if (pPlayer->m_InfRainbow)
 		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Rainbow: True");
-	if (pPlayer->m_InfAtom)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Atom: True");
-	if (pPlayer->m_InfTrail)
-		pSelf->SendChatTarget(pResult->m_ClientID, "Infinite Trail: True");
 	if (pPlayer->m_InfMeteors > 0)
 	{
 		str_format(aBuf, sizeof(aBuf), "Infinite Meteors: %d", pPlayer->m_InfMeteors);

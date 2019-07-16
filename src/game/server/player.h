@@ -291,10 +291,8 @@ public:
 	int m_RainbowColor;
 
 	bool m_InfRainbow;
-	bool m_InfAtom;
-	bool m_InfTrail;
-	bool m_HasSpookyGhost;
 	int m_InfMeteors;
+	bool m_HasSpookyGhost;
 
 	//account
 	int GetAccID();

@@ -165,10 +165,8 @@ void CPlayer::Reset()
 	m_RainbowSpeed = g_Config.m_SvRainbowSpeedDefault;
 	m_RainbowColor = 0;
 	m_InfRainbow = false;
-	m_InfAtom = false;
-	m_InfTrail = false;
-	m_HasSpookyGhost = false;
 	m_InfMeteors = 0;
+	m_HasSpookyGhost = false;
 
 	m_DisplayScore = SCORE_LEVEL;
 	m_InstagibScore = 0;

@@ -165,12 +165,9 @@ public:
 	void Rainbow(bool Set = true, int FromID = -1, bool Silent = false);
 	void InfRainbow(bool Set = true, int FromID = -1, bool Silent = false);
 	void Atom(bool Set = true, int FromID = -1, bool Silent = false);
-	void InfAtom(bool Set = true, int FromID = -1, bool Silent = false);
 	void Trail(bool Set = true, int FromID = -1, bool Silent = false);
-	void InfTrail(bool Set = true, int FromID = -1, bool Silent = false);
 	void SpookyGhost(bool Set = true, int FromID = -1, bool Silent = false);
-	void Meteor(bool Set = true, int FromID = -1, bool Silent = false);
-	void InfMeteor(bool Set = true, int FromID = -1, bool Silent = false);
+	void Meteor(bool Set = true, int FromID = -1, bool Infinite = false, bool Silent = false);
 	void Passive(bool Set = true, int FromID = -1, bool Silent = false);
 	void VanillaMode(int FromID = -1, bool Silent = false);
 	void DDraceMode(int FromID = -1, bool Silent = false);

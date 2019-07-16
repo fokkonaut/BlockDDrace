@@ -10,11 +10,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-CAtom::CAtom(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
+CAtom::CAtom(CGameWorld *pGameWorld, vec2 Pos, int Owner)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
 	m_Owner = Owner;
-	m_Infinite = Infinite;
 	m_Pos = Pos;
 	GameWorld()->InsertEntity(this);
 }
@@ -43,12 +42,7 @@ void CAtom::Tick()
 	{
 		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
 		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Owner];
-		if (
-			!pPlayer
-			|| (!pChr && !m_Infinite)
-			|| (m_Infinite && pChr && !pPlayer->m_InfAtom)
-			|| (!m_Infinite && pChr && !pChr->m_Atom && !pPlayer->IsHooked(ATOM))
-			)
+		if (!pPlayer || (pChr && !pChr->m_Atom && !pPlayer->IsHooked(ATOM)))
 		{
 			Reset();
 			return;

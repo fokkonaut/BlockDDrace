@@ -17,10 +17,9 @@ class CAtom : public CEntity
 	int m_AtomPosition;
 
 	int m_Owner;
-	bool m_Infinite;
 
 public:
-	CAtom(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite);
+	CAtom(CGameWorld *pGameWorld, vec2 Pos, int Owner);
 	
 	void Clear();
 	virtual void Reset();

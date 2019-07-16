@@ -7,11 +7,10 @@
 #include <game/server/gamecontext.h>
 #include "trail.h"
 
-CTrail::CTrail(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
+CTrail::CTrail(CGameWorld *pGameWorld, vec2 Pos, int Owner)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_PROJECTILE)
 {
 	m_Owner = Owner;
-	m_Infinite = Infinite;
 	m_Pos = Pos;
 	GameWorld()->InsertEntity(this);
 }
@@ -40,12 +39,7 @@ void CTrail::Tick()
 	{
 		CCharacter *pChr = GameServer()->GetPlayerChar(m_Owner);
 		CPlayer *pPlayer = GameServer()->m_apPlayers[m_Owner];
-		if (
-			!pPlayer
-			|| (!pChr && !m_Infinite)
-			|| (m_Infinite && !pPlayer->m_InfTrail)
-			|| (!m_Infinite && pChr && !pChr->m_Trail && !pPlayer->IsHooked(TRAIL))
-			)
+		if (!pPlayer || (pChr && !pChr->m_Trail && !pPlayer->IsHooked(TRAIL)))
 		{
 			Reset();
 			return;

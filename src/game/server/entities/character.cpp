@@ -1966,7 +1966,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_ATOM) || (m_LastIndexFrontTile == TILE_ATOM))
 			return;
-		Atom(!(m_Atom || m_pPlayer->m_InfAtom));
+		Atom(!m_Atom);
 	}
 
 	//trail toggle
@@ -1974,7 +1974,7 @@ void CCharacter::HandleTiles(int Index)
 	{
 		if ((m_LastIndexTile == TILE_TRAIL) || (m_LastIndexFrontTile == TILE_TRAIL))
 			return;
-		Trail(!(m_Trail || m_pPlayer->m_InfTrail));
+		Trail(!m_Trail);
 	}
 
 	//spooky ghost toggle
@@ -2980,10 +2980,10 @@ void CCharacter::BlockDDraceTick()
 		}
 	}
 
-	if (!m_AtomHooked && m_pPlayer->IsHooked(ATOM) && !m_Atom && !m_pPlayer->m_InfAtom)
-		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
-	if (!m_TrailHooked && m_pPlayer->IsHooked(TRAIL) && !m_Trail && !m_pPlayer->m_InfTrail)
-		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+	if (!m_AtomHooked && m_pPlayer->IsHooked(ATOM) && !m_Atom)
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID());
+	if (!m_TrailHooked && m_pPlayer->IsHooked(TRAIL) && !m_Trail)
+		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID());
 
 	m_AtomHooked = m_pPlayer->IsHooked(ATOM);
 	m_TrailHooked = m_pPlayer->IsHooked(TRAIL);
@@ -3235,37 +3235,17 @@ void CCharacter::InfRainbow(bool Set, int FromID, bool Silent)
 void CCharacter::Atom(bool Set, int FromID, bool Silent)
 {
 	m_Atom = Set;
-	m_pPlayer->m_InfAtom = false;
 	if (Set)
-		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID());
 	GameServer()->SendExtraMessage(ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
-}
-
-void CCharacter::InfAtom(bool Set, int FromID, bool Silent)
-{
-	m_pPlayer->m_InfAtom = Set;
-	m_Atom = false;
-	if (Set)
-		new CAtom(GameWorld(), m_Pos, m_pPlayer->GetCID(), true);
-	GameServer()->SendExtraMessage(INF_ATOM, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::Trail(bool Set, int FromID, bool Silent)
 {
 	m_Trail = Set;
-	m_pPlayer->m_InfTrail = false;
 	if (Set)
-		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), false);
+		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID());
 	GameServer()->SendExtraMessage(TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
-}
-
-void CCharacter::InfTrail(bool Set, int FromID, bool Silent)
-{
-	m_pPlayer->m_InfTrail = Set;
-	m_Trail = false;
-	if (Set)
-		new CTrail(GameWorld(), m_Pos, m_pPlayer->GetCID(), true);
-	GameServer()->SendExtraMessage(INF_TRAIL, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::SpookyGhost(bool Set, int FromID, bool Silent)
@@ -3276,7 +3256,7 @@ void CCharacter::SpookyGhost(bool Set, int FromID, bool Silent)
 		GameServer()->SendChatTarget(m_pPlayer->GetCID(), "For more info, say '/spookyghost'");
 }
 
-void CCharacter::Meteor(bool Set, int FromID, bool Silent)
+void CCharacter::Meteor(bool Set, int FromID, bool Infinite, bool Silent)
 {
 	if (Set)
 	{
@@ -3289,8 +3269,8 @@ void CCharacter::Meteor(bool Set, int FromID, bool Silent)
 		vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
 		vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
 
-		m_Meteors++;
-		new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), false);
+		Infinite ? m_pPlayer->m_InfMeteors++ : m_Meteors++;
+		new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), Infinite);
 	}
 	else
 	{
@@ -3300,34 +3280,7 @@ void CCharacter::Meteor(bool Set, int FromID, bool Silent)
 		m_Meteors = 0;
 		m_pPlayer->m_InfMeteors = 0;
 	}
-	GameServer()->SendExtraMessage(METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
-}
-
-void CCharacter::InfMeteor(bool Set, int FromID, bool Silent)
-{
-	if (Set)
-	{
-		if (m_pPlayer->m_InfMeteors + m_Meteors >= 50)
-		{
-			GameServer()->SendChatTarget(m_pPlayer->GetCID(), "You already have the maximum of 50 meteors");
-			return;
-		}
-
-		vec2 Direction = normalize(vec2(m_LatestInput.m_TargetX, m_LatestInput.m_TargetY));
-		vec2 ProjStartPos = m_Pos + Direction * m_ProximityRadius*0.75f;
-
-		m_pPlayer->m_InfMeteors++;
-		new CMeteor(GameWorld(), ProjStartPos, m_pPlayer->GetCID(), true);
-	}
-	else
-	{
-		if (!m_Meteors && !m_pPlayer->m_InfMeteors)
-			return;
-
-		m_Meteors = 0;
-		m_pPlayer->m_InfMeteors = 0;
-	}
-	GameServer()->SendExtraMessage(INF_METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
+	GameServer()->SendExtraMessage(Infinite ? INF_METEOR : METEOR, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 
 void CCharacter::Passive(bool Set, int FromID, bool Silent)

@@ -26,10 +26,9 @@ class CTrail : public CEntity
 	float m_TrailHistoryLength;
 
 	int m_Owner;
-	bool m_Infinite;
 
 public:
-	CTrail(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite);
+	CTrail(CGameWorld *pGameWorld, vec2 Pos, int Owner);
 	
 	void Clear();
 	virtual void Reset();
