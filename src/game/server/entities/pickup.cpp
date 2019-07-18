@@ -166,13 +166,16 @@ void CPickup::Tick()
 							else
 								break;
 
+							if (m_Subtype == WEAPON_TELEKINESIS)
+								pChr->Telekinesis();
+
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 
 							if (m_Subtype == WEAPON_GRENADE || m_Subtype == WEAPON_STRAIGHT_GRENADE)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_GRENADE, pChr->Teams()->TeamMask(pChr->Team()));
 							else if (m_Subtype == WEAPON_SHOTGUN || m_Subtype == WEAPON_RIFLE || m_Subtype == WEAPON_PLASMA_RIFLE)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
-							else if (m_Subtype == WEAPON_HAMMER || m_Subtype == WEAPON_GUN || m_Subtype == WEAPON_HEART_GUN)
+							else if (m_Subtype == WEAPON_HAMMER || m_Subtype == WEAPON_GUN || m_Subtype == WEAPON_HEART_GUN || m_Subtype == WEAPON_TELEKINESIS)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 
 							if (pChr->GetPlayer())

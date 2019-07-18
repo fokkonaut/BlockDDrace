@@ -421,7 +421,7 @@ void CCharacter::FireWeapon()
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
-	if (GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
+	if ((GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || GetActiveWeapon() == WEAPON_TELEKINESIS)
 		NumShots = 1;
 	bool Sound = true;
 
@@ -703,15 +703,26 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_TELEKINESIS:
 		{
+			bool TelekinesisSound = false;
+
 			if (m_TelekinesisTee == -1)
 			{
 				vec2 CursorPos = vec2(m_Pos.x + m_Input.m_TargetX, m_Pos.y + m_Input.m_TargetY);
 				CCharacter *pChr = GameWorld()->ClosestCharacter(CursorPos, 20.f, this);
 				if (pChr && pChr->GetPlayer()->GetCID() != m_pPlayer->GetCID())
+				{
 					m_TelekinesisTee = pChr->GetPlayer()->GetCID();
+					TelekinesisSound = true;
+				}
 			}
-			else
+			else if (m_TelekinesisTee != -1)
+			{
 				m_TelekinesisTee = -1;
+				TelekinesisSound = true;
+			}
+
+			if (Sound && TelekinesisSound)
+				GameServer()->CreateSound(m_Pos, SOUND_NINJA_HIT, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
 		}
 
