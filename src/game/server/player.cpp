@@ -293,7 +293,7 @@ void CPlayer::Tick()
 		if (m_PlayerFlags&PLAYERFLAG_SCOREBOARD)
 			m_pCharacter->m_ShopMotdTick = 0;
 		else
-			m_pCharacter->m_TimesShot = 0;
+			m_pCharacter->m_NumGhostShots = 0;
 	}
 
 	// fixing messages if name is hidden

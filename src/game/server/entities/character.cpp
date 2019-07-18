@@ -380,20 +380,12 @@ void CCharacter::FireWeapon()
 	// check if we gonna fire
 	bool WillFire = false;
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
-	{
 		WillFire = true;
-		if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
-			m_CountSpookyGhostInputs = true;
-
-		if (m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
-			m_ChangeShopPage = true;
-	}
 
 	// shop window
-	if (m_ChangeShopPage && m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
+	if (WillFire && m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
 	{
 		ShopWindow(GetAimDir());
-		m_ChangeShopPage = false;
 		return;
 	}
 
@@ -743,20 +735,19 @@ void CCharacter::FireWeapon()
 
 	// BlockDDrace
 	//spooky ghost
-	if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN && m_CountSpookyGhostInputs)
+	if (WillFire && m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
 	{
-		m_TimesShot++;
-		if ((m_pPlayer->m_HasSpookyGhost || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST]) && (m_TimesShot == 2) && !m_pPlayer->m_SpookyGhost)
+		m_NumGhostShots++;
+		if ((m_pPlayer->m_HasSpookyGhost || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST]) && (m_NumGhostShots == 2) && !m_pPlayer->m_SpookyGhost)
 		{
 			SetSpookyGhost();
-			m_TimesShot = 0;
+			m_NumGhostShots = 0;
 		}
-		else if (m_TimesShot == 2 && m_pPlayer->m_SpookyGhost)
+		else if (m_NumGhostShots == 2 && m_pPlayer->m_SpookyGhost)
 		{
 			UnsetSpookyGhost();
-			m_TimesShot = 0;
+			m_NumGhostShots = 0;
 		}
-		m_CountSpookyGhostInputs = false;
 	}
 }
 
@@ -2888,8 +2879,7 @@ void CCharacter::BlockDDraceInit()
 	m_LastTouchedTee = -1;
 	m_OldLastHookedPlayer = -1;
 
-	m_CountSpookyGhostInputs = false;
-	m_TimesShot = 0;
+	m_NumGhostShots = 0;
 
 	m_Invisible = false;
 	m_Rainbow = false;
@@ -2914,7 +2904,6 @@ void CCharacter::BlockDDraceInit()
 	m_ShopWindowPage = SHOP_PAGE_NONE;
 	m_ShopMotdTick = Now;
 	m_PurchaseState = SHOP_STATE_NONE;
-	m_ChangeShopPage = false;
 
 	SaveRealInfos();
 	UnsetSpookyGhost();

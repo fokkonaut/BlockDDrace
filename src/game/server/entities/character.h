@@ -420,8 +420,7 @@ public:
 	void SetSpookyGhost();
 	void UnsetSpookyGhost();
 	void SaveRealInfos();
-	bool m_CountSpookyGhostInputs;
-	int m_TimesShot;
+	int m_NumGhostShots;
 
 	//extras
 	bool m_Rainbow;
@@ -455,7 +454,6 @@ public:
 	void ConfirmPurchase();
 	int m_PurchaseState;
 	void PurchaseEnd(bool canceled);
-	bool m_ChangeShopPage;
 
 	//weapon indicator
 	void UpdateWeaponIndicator();
