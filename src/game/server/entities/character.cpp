@@ -708,11 +708,22 @@ void CCharacter::FireWeapon()
 			if (m_TelekinesisTee == -1)
 			{
 				vec2 CursorPos = vec2(m_Pos.x + m_Input.m_TargetX, m_Pos.y + m_Input.m_TargetY);
-				CCharacter *pChr = GameWorld()->ClosestCharacter(CursorPos, 20.f, this);
-				if (pChr && pChr->GetPlayer()->GetCID() != m_pPlayer->GetCID())
+				CCharacter *pChr = GameWorld()->ClosestCharacter(CursorPos, 20.f, this, m_pPlayer->GetCID());
+				if (pChr && pChr->GetPlayer()->GetCID() != m_pPlayer->GetCID() && pChr->m_TelekinesisTee != m_pPlayer->GetCID())
 				{
-					m_TelekinesisTee = pChr->GetPlayer()->GetCID();
-					TelekinesisSound = true;
+					bool IsTelekinesed = false;
+					for (int i = 0; i < MAX_CLIENTS; i++)
+						if (GameServer()->GetPlayerChar(i) && GameServer()->GetPlayerChar(i)->m_TelekinesisTee == pChr->GetPlayer()->GetCID())
+						{
+							IsTelekinesed = true;
+							break;
+						}
+
+					if (!IsTelekinesed)
+					{
+						m_TelekinesisTee = pChr->GetPlayer()->GetCID();
+						TelekinesisSound = true;
+					}
 				}
 			}
 			else if (m_TelekinesisTee != -1)
@@ -3005,7 +3016,7 @@ void CCharacter::BlockDDraceTick()
 	if (m_TelekinesisTee != -1)
 	{
 		CCharacter *pChr = GameServer()->GetPlayerChar(m_TelekinesisTee);
-		if (pChr && GetActiveWeapon() == WEAPON_TELEKINESIS)
+		if (pChr && GetActiveWeapon() == WEAPON_TELEKINESIS && !m_FreezeTime)
 		{
 			pChr->Core()->m_Pos = vec2(m_Pos.x+m_Input.m_TargetX, m_Pos.y+m_Input.m_TargetY);
 			pChr->Core()->m_Vel = vec2(0.f, 0.f);
