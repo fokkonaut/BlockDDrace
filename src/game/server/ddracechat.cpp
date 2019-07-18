@@ -1363,14 +1363,16 @@ void CGameContext::ConRegister(IConsole::IResult * pResult, void * pUserData)
 		return;
 	}
 
-	for (unsigned int i = ACC_START; i < pSelf->m_Accounts.size(); i++)
-		if (!str_comp_nocase(pSelf->m_Accounts[i].m_Username, aUsername))
-		{
-			pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
-			return;
-		}
-
 	int ID = pSelf->AddAccount();
+	pSelf->ReadAccountStats(ID, aUsername);
+
+	if (!str_comp_nocase(pSelf->m_Accounts[ID].m_Username, aUsername))
+	{
+		pSelf->SendChatTarget(pResult->m_ClientID, "Username already exsists");
+		pSelf->m_Accounts.erase(pSelf->m_Accounts.begin() + ID);
+		return;
+	}
+
 	str_copy(pSelf->m_Accounts[ID].m_Password, aPassword, sizeof(pSelf->m_Accounts[ID].m_Password));
 	str_copy(pSelf->m_Accounts[ID].m_Username, aUsername, sizeof(pSelf->m_Accounts[ID].m_Username));
 	pSelf->Logout(ID);
