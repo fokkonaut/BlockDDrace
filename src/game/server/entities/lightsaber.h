@@ -43,7 +43,6 @@ public:
 
 	void Extend();
 	void Retract();
-	virtual void TickDefered();
 	virtual void Reset();
 	virtual void Tick();
 	virtual void Snap(int SnappingClient);
