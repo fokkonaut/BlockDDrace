@@ -17,14 +17,11 @@
 
 class CLightsaber : public CEntity
 {
-	struct LightsaberInfo
-	{
-		int m_Length;
-		float m_Rotation;
-		vec2 m_To;
-		bool m_Extending;
-		bool m_Retracting;
-	} m_Lightsaber;
+	int m_Length;
+	float m_Rotation;
+	vec2 m_To;
+	bool m_Extending;
+	bool m_Retracting;
 
 	int m_Owner;
 	CCharacter *m_pOwner;
@@ -37,7 +34,6 @@ class CLightsaber : public CEntity
 	void PlaySound();
 	bool HitCharacter();
 	void Step();
-	int GetID(int Hand);
 public:
 	CLightsaber(CGameWorld *pGameWorld, int Owner);
 

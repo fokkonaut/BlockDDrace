@@ -19,9 +19,9 @@ CLightsaber::CLightsaber(CGameWorld *pGameWorld, int Owner)
 	m_EvalTick = Server()->Tick();
 	m_SoundTick = 0;
 
-	m_Lightsaber.m_Length = RETRACTED_LENGTH;
-	m_Lightsaber.m_Extending = false;
-	m_Lightsaber.m_Retracting = false;
+	m_Length = RETRACTED_LENGTH;
+	m_Extending = false;
+	m_Retracting = false;
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
 		m_LastHit[i] = 0;
@@ -38,12 +38,12 @@ void CLightsaber::Reset()
 
 void CLightsaber::Extend()
 {
-	m_Lightsaber.m_Extending = true;
+	m_Extending = true;
 }
 
 void CLightsaber::Retract()
 {
-	m_Lightsaber.m_Retracting = true;
+	m_Retracting = true;
 }
 
 void CLightsaber::PlaySound()
@@ -57,7 +57,7 @@ void CLightsaber::PlaySound()
 
 bool CLightsaber::HitCharacter()
 {
-	std::list<CCharacter *> HitCharacters = GameWorld()->IntersectedCharacters(m_Pos, m_Lightsaber.m_To, 0.0f, m_pOwner, m_Owner);
+	std::list<CCharacter *> HitCharacters = GameWorld()->IntersectedCharacters(m_Pos, m_To, 0.0f, m_pOwner, m_Owner);
 	if (HitCharacters.empty())
 		return false;
 	for (std::list<CCharacter *>::iterator i = HitCharacters.begin();
@@ -90,19 +90,19 @@ void CLightsaber::Tick()
 
 	HitCharacter();
 
-	if (m_Lightsaber.m_Extending && m_Lightsaber.m_Length < EXTENDED_LENGTH)
+	if (m_Extending && m_Length < EXTENDED_LENGTH)
 	{
 		PlaySound();
-		m_Lightsaber.m_Length += SPEED;
-		if (m_Lightsaber.m_Length >= EXTENDED_LENGTH)
-			m_Lightsaber.m_Extending = false;
+		m_Length += SPEED;
+		if (m_Length >= EXTENDED_LENGTH)
+			m_Extending = false;
 	}
 
-	if (m_Lightsaber.m_Retracting && m_Lightsaber.m_Length > RETRACTED_LENGTH)
+	if (m_Retracting && m_Length > RETRACTED_LENGTH)
 	{
 		PlaySound();
-		m_Lightsaber.m_Length -= SPEED;
-		if (m_Lightsaber.m_Length <= RETRACTED_LENGTH)
+		m_Length -= SPEED;
+		if (m_Length <= RETRACTED_LENGTH)
 			Reset();
 	}
 }
@@ -113,16 +113,16 @@ void CLightsaber::Step()
 		return;
 
 	vec2 Direction = normalize(vec2(m_pOwner->GetInput().m_TargetX, m_pOwner->GetInput().m_TargetY));
-	m_Lightsaber.m_Rotation = -GetAngle(Direction) - 4.725f;
+	m_Rotation = -GetAngle(Direction) - 4.725f;
 
-	vec2 dir(sin(m_Lightsaber.m_Rotation), cos(m_Lightsaber.m_Rotation));
-	vec2 to2 = m_Pos + normalize(dir) * m_Lightsaber.m_Length;
-	GameServer()->Collision()->IntersectLine(m_Pos, to2, &m_Lightsaber.m_To, 0);
+	vec2 dir(sin(m_Rotation), cos(m_Rotation));
+	vec2 to2 = m_Pos + normalize(dir) * m_Length;
+	GameServer()->Collision()->IntersectLine(m_Pos, to2, &m_To, 0);
 }
 
 void CLightsaber::Snap(int SnappingClient)
 {
-	if (NetworkClipped(SnappingClient, m_Pos) && NetworkClipped(SnappingClient, m_Lightsaber.m_To))
+	if (NetworkClipped(SnappingClient, m_Pos) && NetworkClipped(SnappingClient, m_To))
 		return;
 
 	if (GameServer()->GetPlayerChar(SnappingClient))
@@ -140,8 +140,8 @@ void CLightsaber::Snap(int SnappingClient)
 
 	pObj->m_X = (int)m_Pos.x;
 	pObj->m_Y = (int)m_Pos.y;
-	pObj->m_FromX = (int)m_Lightsaber.m_To.x;
-	pObj->m_FromY = (int)m_Lightsaber.m_To.y;
+	pObj->m_FromX = (int)m_To.x;
+	pObj->m_FromY = (int)m_To.y;
 
 	int StartTick = m_EvalTick;
 	if (StartTick < Server()->Tick() - 2)
