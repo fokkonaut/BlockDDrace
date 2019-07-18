@@ -109,6 +109,9 @@ void CLightsaber::Tick()
 
 void CLightsaber::Step()
 {
+	if (!m_pOwner)
+		return;
+
 	vec2 Direction = normalize(vec2(m_pOwner->GetInput().m_TargetX, m_pOwner->GetInput().m_TargetY));
 	m_Lightsaber.m_Rotation = -GetAngle(Direction) - 4.725f;
 
