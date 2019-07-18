@@ -624,8 +624,14 @@ void IGameController::Snap(int SnappingClient)
 	}
 
 	CCharacter *pSnapChar = pPlayer->GetCharacter();
-	if (pSnapChar && pSnapChar->GetWeaponAmmo(pSnapChar->GetActiveWeapon()) == -1)
+	if (!pSnapChar)
+		return;
+
+	if (pSnapChar->GetWeaponAmmo(pSnapChar->GetActiveWeapon()) == -1)
 		pGameInfoEx->m_Flags |= GAMEINFOFLAG_UNLIMITED_AMMO;
+
+	if (pSnapChar->GetActiveWeapon() == WEAPON_TELEKINESIS)
+		pGameInfoEx->m_Flags &= GAMEINFOFLAG_ALLOW_ZOOM;
 }
 
 int IGameController::GetAutoTeam(int NotThisID)
