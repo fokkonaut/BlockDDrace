@@ -3240,7 +3240,7 @@ void CCharacter::SetActiveWeapon(int Weapon)
 bool CCharacter::GetWeaponGot(int Type)
 {
 	if (m_FreezeTime)
-		m_aWeaponsBackupGot[Type][BACKUP_FREEZE];
+		return m_aWeaponsBackupGot[Type][BACKUP_FREEZE];
 	return m_aWeapons[Type].m_Got;
 }
 
