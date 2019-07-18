@@ -3038,6 +3038,9 @@ void CCharacter::BlockDDraceTick()
 		else
 			m_TelekinesisTee = -1;
 	}
+
+	if (m_pLightsaber && m_FreezeTime)
+		m_pLightsaber->Retract();
 }
 
 void CCharacter::BackupWeapons(int Type)
