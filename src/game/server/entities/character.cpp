@@ -3039,7 +3039,7 @@ void CCharacter::BlockDDraceTick()
 			m_TelekinesisTee = -1;
 	}
 
-	if (m_pLightsaber && m_FreezeTime)
+	if (m_pLightsaber && (m_FreezeTime || GetActiveWeapon() != WEAPON_LIGHTSABER))
 		m_pLightsaber->Retract();
 }
 
