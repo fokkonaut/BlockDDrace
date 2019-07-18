@@ -808,8 +808,6 @@ void CPlayer::TryRespawn()
 	if (m_ForceSpawnPos == vec2(-1, -1) && !GameServer()->m_pController->CanSpawn(&SpawnPos, Index))
 		return;
 
-	dbg_msg("hi", "%f, %f", SpawnPos.x, SpawnPos.y);
-
 	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 
 	m_WeakHookSpawn = false;
