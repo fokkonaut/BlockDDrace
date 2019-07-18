@@ -3237,11 +3237,38 @@ void CCharacter::SetActiveWeapon(int Weapon)
 	UpdateWeaponIndicator();
 }
 
+bool CCharacter::GetWeaponGot(int Type)
+{
+	if (m_FreezeTime)
+		m_aWeaponsBackupGot[Type][BACKUP_FREEZE];
+	return m_aWeapons[Type].m_Got;
+}
+
 int CCharacter::GetWeaponAmmo(int Type)
 {
 	if (m_FreezeTime)
 		return m_aWeaponsBackup[Type][BACKUP_FREEZE];
 	return m_aWeapons[Type].m_Ammo;
+}
+
+void CCharacter::SetWeaponGot(int Type, bool Value)
+{
+	if (m_FreezeTime)
+	{
+		m_aWeaponsBackupGot[Type][BACKUP_FREEZE] = Value;
+		return;
+	}
+	m_aWeapons[Type].m_Got = Value;
+}
+
+void CCharacter::SetWeaponAmmo(int Type, int Value)
+{
+	if (m_FreezeTime)
+	{
+		m_aWeaponsBackup[Type][BACKUP_FREEZE] = Value;
+		return;
+	}
+	m_aWeapons[Type].m_Ammo = Value;
 }
 
 void CCharacter::UpdateWeaponIndicator()
