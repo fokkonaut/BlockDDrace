@@ -48,12 +48,10 @@ void CLightsaber::Retract()
 
 void CLightsaber::PlaySound()
 {
-	if (!m_SoundTick)
-		m_SoundTick = Server()->Tick() + Server()->TickSpeed() / 10;
 	if (m_SoundTick < Server()->Tick())
 	{
 		GameServer()->CreateSound(m_Pos, SOUND_RIFLE_BOUNCE, m_pOwner->Teams()->TeamMask(m_pOwner->Team(), -1, m_Owner));
-		m_SoundTick = 0;
+		m_SoundTick = Server()->Tick() + Server()->TickSpeed() / 10;
 	}
 }
 
