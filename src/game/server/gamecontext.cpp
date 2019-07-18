@@ -408,7 +408,7 @@ void CGameContext::SendEmoticon(int ClientID, int Emoticon)
 void CGameContext::SendWeaponPickup(int ClientID, int Weapon)
 {
 	// BlockDDrace
-	if (Weapon > WEAPON_NINJA)
+	if (Weapon >= NUM_VANILLA_WEAPONS)
 	{
 		if (GetPlayerChar(ClientID))
 			GetPlayerChar(ClientID)->SetWeapon(Weapon);
