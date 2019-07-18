@@ -64,10 +64,10 @@ bool CLightsaber::HitCharacter()
 		i != HitCharacters.end(); i++)
 	{
 		CCharacter *pChr = *i;
-		if (m_LastHit[pChr->GetPlayer()->GetCID()] < Server()->Tick())
+		if (pChr && m_LastHit[pChr->GetPlayer()->GetCID()] < Server()->Tick())
 		{
-			pChr->TakeDamage(vec2(0.f, 0.f), g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Damage, m_Owner, WEAPON_LIGHTSABER);
 			m_LastHit[pChr->GetPlayer()->GetCID()] = Server()->Tick() + Server()->TickSpeed() / 4;
+			pChr->TakeDamage(vec2(0.f, 0.f), g_pData->m_Weapons.m_aId[WEAPON_GUN].m_Damage, m_Owner, WEAPON_LIGHTSABER);
 		}
 	}
 	return true;
