@@ -67,6 +67,10 @@ CONSOLE_COMMAND("heartgun", "?v[id] ?i[spread]", CFGFLAG_SERVER, ConHeartGun, th
 CONSOLE_COMMAND("unheartgun", "?v[id]", CFGFLAG_SERVER, ConUnHeartGun, this, "Takes the heart gun from player v", AUTHED_ADMIN)
 CONSOLE_COMMAND("straightgrenade", "?v[id] ?i[spread]", CFGFLAG_SERVER, ConStraightGrenade, this, "Gives a straight grenade to player v, or spread straight grenade", AUTHED_ADMIN)
 CONSOLE_COMMAND("unstraightgrenade", "?v[id]", CFGFLAG_SERVER, ConUnStraightGrenade, this, "Takes the straight grenade from player v", AUTHED_ADMIN)
+CONSOLE_COMMAND("telekinesis", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConTelekinesis, this, "Gives telekinses power to player v", AUTHED_ADMIN)
+CONSOLE_COMMAND("untelekinesis", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnTelekinesis, this, "Takes telekinses power from player v", AUTHED_ADMIN)
+CONSOLE_COMMAND("lightsaber", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConLightsaber, this, "Gives a lightsaber to player v", AUTHED_ADMIN)
+CONSOLE_COMMAND("unlightsaber", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConUnLightsaber, this, "Takes the lightsaber from player v", AUTHED_ADMIN)
 
 CONSOLE_COMMAND("hammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConHammer, this, "Gives a hammer to player v", AUTHED_ADMIN)
 CONSOLE_COMMAND("gun", "?v[id] ?i[spread]", CFGFLAG_SERVER|CMDFLAG_TEST, ConGun, this, "Gives a gun to player v, or spread gun", AUTHED_ADMIN)
@@ -92,7 +96,6 @@ CONSOLE_COMMAND("playerinfo", "r[name]", CFGFLAG_SERVER|CFGFLAG_CHAT, ConPlayerI
 
 //extras
 CONSOLE_COMMAND("invisible", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInvisible, this, "Toggles invisibility for player v", AUTHED_ADMIN)
-CONSOLE_COMMAND("telekinesis", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConTelekinesis, this, "Toggles telekinesis for player v", AUTHED_ADMIN)
 
 CONSOLE_COMMAND("hookpower", "?s[power] ?v[id]", CFGFLAG_SERVER, ConHookPower, this, "Sets hook power for player v", AUTHED_ADMIN)
 CONSOLE_COMMAND("freezehammer", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConFreezeHammer, this, "Toggles freeze hammer for player v", AUTHED_ADMIN)

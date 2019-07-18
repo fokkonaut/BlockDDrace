@@ -166,9 +166,6 @@ void CPickup::Tick()
 							else
 								break;
 
-							if (m_Subtype == WEAPON_TELEKINESIS)
-								pChr->Telekinesis();
-
 							RespawnTime = g_pData->m_aPickups[m_Type].m_Respawntime;
 
 							if (m_Subtype == WEAPON_GRENADE || m_Subtype == WEAPON_STRAIGHT_GRENADE)
@@ -179,6 +176,8 @@ void CPickup::Tick()
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 							else if (m_Subtype == WEAPON_TELEKINESIS)
 								GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, pChr->Teams()->TeamMask(pChr->Team()));
+							else if (m_Subtype == WEAPON_LIGHTSABER)
+								GameServer()->CreateSound(m_Pos, SOUND_WEAPON_SPAWN, pChr->Teams()->TeamMask(pChr->Team()));
 
 							if (pChr->GetPlayer())
 								GameServer()->SendWeaponPickup(pChr->GetPlayer()->GetCID(), m_Subtype);

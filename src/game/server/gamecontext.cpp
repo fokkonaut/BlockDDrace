@@ -4094,6 +4094,8 @@ const char *CGameContext::GetWeaponName(int Weapon)
 		return "Straight Grenade";
 	case WEAPON_TELEKINESIS:
 		return "Telekinesis";
+	case WEAPON_LIGHTSABER:
+		return "Lightsaber";
 	}
 	return "Unknown";
 }
@@ -4110,6 +4112,8 @@ int CGameContext::GetRealWeapon(int Weapon)
 		return WEAPON_GRENADE;
 	case WEAPON_TELEKINESIS:
 		return WEAPON_NINJA;
+	case WEAPON_LIGHTSABER:
+		return WEAPON_GUN;
 	}
 	return Weapon;
 }
@@ -4225,8 +4229,6 @@ const char *CGameContext::GetExtraName(int Extra, int Special)
 		return "Freeze Hammer";
 	case INVISIBLE:
 		return "Invisibility";
-	case TELEKINESIS:
-		return "Telekinesis";
 	}
 	return "Unknown";
 }

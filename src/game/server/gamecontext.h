@@ -549,6 +549,10 @@ private:
 	static void ConUnHeartGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConStraightGrenade(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserData);
+	static void ConTelekinesis(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnTelekinesis(IConsole::IResult *pResult, void *pUserData);
+	static void ConLightsaber(IConsole::IResult *pResult, void *pUserData);
+	static void ConUnLightsaber(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnPlasmaRifle(IConsole::IResult *pResult, void *pUserData);
@@ -572,7 +576,6 @@ private:
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConInvisible(IConsole::IResult *pResult, void *pUserData);
-	static void ConTelekinesis(IConsole::IResult *pResult, void *pUserData);
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData);

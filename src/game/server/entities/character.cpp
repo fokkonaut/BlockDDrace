@@ -421,7 +421,7 @@ void CCharacter::FireWeapon()
 	vec2 ProjStartPos = m_Pos+TempDirection*m_ProximityRadius*0.75f;
 	float Spread[] = { 0, -0.1f, 0.1f, -0.2f, 0.2f, -0.3f, 0.3f, -0.4f, 0.4f };
 	int NumShots = m_aSpreadWeapon[GetActiveWeapon()] ? g_Config.m_SvNumSpreadShots : 1;
-	if ((GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || GetActiveWeapon() == WEAPON_TELEKINESIS)
+	if ((GetActiveWeapon() == WEAPON_SHOTGUN && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || GetActiveWeapon() == WEAPON_TELEKINESIS || GetActiveWeapon() == WEAPON_LIGHTSABER)
 		NumShots = 1;
 	bool Sound = true;
 
@@ -734,6 +734,19 @@ void CCharacter::FireWeapon()
 
 			if (Sound && TelekinesisSound)
 				GameServer()->CreateSound(m_Pos, SOUND_NINJA_HIT, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+		} break;
+
+		case WEAPON_LIGHTSABER:
+		{
+			if (!m_pLightsaber)
+			{
+				m_pLightsaber = new CLightsaber(GameWorld(), m_pPlayer->GetCID());
+				m_pLightsaber->Extend();
+			}
+			else
+			{
+				m_pLightsaber->Retract();
+			}
 		} break;
 		}
 
@@ -1220,7 +1233,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		m_LastHitWeapon = Weapon;
 	}
 
-	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
+	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA || Weapon == WEAPON_LIGHTSABER)
 	{
 		// m_pPlayer only inflicts half damage on self
 		if(From == m_pPlayer->GetCID())
@@ -1242,7 +1255,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 
 		if(Dmg)
 		{
-			if(m_Armor)
+			if(m_Armor && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
 			{
 				if(Dmg > 1)
 				{
@@ -1308,7 +1321,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 	{
 		// dont do emote pain if the shooter has spooky ghost
 	}
-	else if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE)
+	else if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE || Weapon == WEAPON_LIGHTSABER)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
@@ -2917,6 +2930,7 @@ void CCharacter::BlockDDraceInit()
 	m_Passive = false;
 	m_PoliceHelper = false;
 	m_TelekinesisTee = -1;
+	m_pLightsaber = 0;
 
 	m_InShop = false;
 	m_EnteredShop = false;
@@ -3116,8 +3130,6 @@ void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 			SpreadWeapon(WeaponID, false);
 		if (WeaponID == WEAPON_GUN && m_Jetpack)
 			Jetpack(false);
-		if (WeaponID == WEAPON_TELEKINESIS)
-			Telekinesis(false);
 	}
 }
 
@@ -3214,6 +3226,8 @@ void CCharacter::SetActiveWeapon(int Weapon)
 		m_Core.m_ActiveWeapon = WEAPON_GRENADE;
 	else if (Weapon == WEAPON_TELEKINESIS)
 		m_Core.m_ActiveWeapon = WEAPON_NINJA;
+	else if (Weapon == WEAPON_LIGHTSABER)
+		m_Core.m_ActiveWeapon = WEAPON_GUN;
 	else
 		m_Core.m_ActiveWeapon = Weapon;
 
@@ -3492,10 +3506,4 @@ void CCharacter::Invisible(bool Set, int FromID, bool Silent)
 {
 	m_Invisible = Set;
 	GameServer()->SendExtraMessage(INVISIBLE, m_pPlayer->GetCID(), Set, FromID, Silent);
-}
-
-void CCharacter::Telekinesis(bool Set, int FromID, bool Silent)
-{
-	GiveWeapon(WEAPON_TELEKINESIS, !Set);
-	GameServer()->SendExtraMessage(TELEKINESIS, m_pPlayer->GetCID(), Set, FromID, Silent);
 }

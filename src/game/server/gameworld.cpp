@@ -352,7 +352,7 @@ CCharacter *CGameWorld::ClosestCharacter(vec2 Pos, float Radius, CEntity *pNotTh
 	return pClosest;
 }
 
-std::list<class CCharacter *> CGameWorld::IntersectedCharacters(vec2 Pos0, vec2 Pos1, float Radius, class CEntity *pNotThis)
+std::list<class CCharacter *> CGameWorld::IntersectedCharacters(vec2 Pos0, vec2 Pos1, float Radius, class CEntity *pNotThis, int CollideWith)
 {
 	std::list< CCharacter * > listOfChars;
 
@@ -360,6 +360,9 @@ std::list<class CCharacter *> CGameWorld::IntersectedCharacters(vec2 Pos0, vec2 
 	for (; pChr; pChr = (CCharacter *)pChr->TypeNext())
 	{
 		if (pChr == pNotThis)
+			continue;
+
+		if (CollideWith != -1 && !pChr->CanCollide(CollideWith))
 			continue;
 
 		vec2 IntersectPos = closest_point_on_line(Pos0, Pos1, pChr->m_Pos);

@@ -11,6 +11,9 @@
 
 #include <game/gamecore.h>
 
+// BlockDDrace
+#include "lightsaber.h"
+
 class CGameTeams;
 
 enum
@@ -62,7 +65,6 @@ enum Extra
 	SPREAD_WEAPON,
 	FREEZE_HAMMER,
 	INVISIBLE,
-	TELEKINESIS,
 	NUM_EXTRAS
 };
 
@@ -180,7 +182,6 @@ public:
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
 	void Invisible(bool Set = true, int FromID = -1, bool Silent = false);
-	void Telekinesis(bool Set = true, int FromID = -1, bool Silent = false);
 
 	/*************************************************
 	*                                                *
@@ -434,6 +435,7 @@ public:
 	int m_HookPower;
 	bool m_aSpreadWeapon[NUM_WEAPONS];
 	int m_TelekinesisTee;
+	CLightsaber *m_pLightsaber;
 
 	bool m_Passive;
 	bool m_PoliceHelper;
@@ -461,6 +463,8 @@ public:
 	//others
 	int HasFlag();
 	void CheckMoved();
+
+	CNetObj_PlayerInput GetInput() { return m_Input; };
 
 	//this means the character is directly on a freezetile
 	bool m_IsFrozen;

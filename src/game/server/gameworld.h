@@ -33,6 +33,7 @@ public:
 		ENTTYPE_PICKUP_DROP,
 		ENTTYPE_STABLE_PROJECTILE,
 		ENTTYPE_TRAIL,
+		ENTTYPE_LIGHTSABER,
 		// BlockDDrace
 
 		NUM_ENTTYPES
@@ -187,7 +188,7 @@ public:
 		Returns:
 			Returns list with all Characters on line.
 	*/
-	std::list<class CCharacter *> IntersectedCharacters(vec2 Pos0, vec2 Pos1, float Radius, class CEntity *pNotThis = 0);
+	std::list<class CCharacter *> IntersectedCharacters(vec2 Pos0, vec2 Pos1, float Radius, class CEntity *pNotThis = 0, int CollideWith = -1);
 };
 
 #endif

@@ -22,7 +22,6 @@ class CClock : public CEntity
 {
 	struct HandInfo
 	{
-		float m_AngularSpeed;
 		int m_Length;
 		float m_Rotation;
 		vec2 m_To;

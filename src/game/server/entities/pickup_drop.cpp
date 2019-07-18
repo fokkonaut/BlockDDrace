@@ -104,8 +104,6 @@ void CPickupDrop::Pickup()
 				pChr->Jetpack();
 			if (m_SpreadWeapon)
 				pChr->SpreadWeapon(m_Weapon);
-			if (m_Weapon == WEAPON_TELEKINESIS)
-				pChr->Telekinesis();
 
 			if (m_Weapon == WEAPON_SHOTGUN || m_Weapon == WEAPON_RIFLE || m_Weapon == WEAPON_PLASMA_RIFLE)
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_SHOTGUN, pChr->Teams()->TeamMask(pChr->Team()));
@@ -115,6 +113,8 @@ void CPickupDrop::Pickup()
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_ARMOR, pChr->Teams()->TeamMask(pChr->Team()));
 			else if (m_Weapon == WEAPON_TELEKINESIS)
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_NINJA, pChr->Teams()->TeamMask(pChr->Team()));
+			else if (m_Weapon == WEAPON_LIGHTSABER)
+				GameServer()->CreateSound(m_Pos, SOUND_WEAPON_SPAWN, pChr->Teams()->TeamMask(pChr->Team()));
 		}
 		else if (m_Type == POWERUP_HEALTH)
 			GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, pChr->Teams()->TeamMask(pChr->Team()));

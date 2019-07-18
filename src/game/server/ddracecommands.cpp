@@ -224,6 +224,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, in
 	if (!pChr)
 		return;
 
+	// BlockDDrace
+
 	if (clamp(Weapon, -2, NUM_WEAPONS - 1) != Weapon)
 	{
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "info",
@@ -231,7 +233,7 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, in
 		return;
 	}
 
-	int Amount = (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && Weapon != WEAPON_HAMMER) ? 10 : -1;
+	int Amount = (pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA && Weapon != WEAPON_HAMMER && Weapon != WEAPON_TELEKINESIS && Weapon != WEAPON_LIGHTSABER) ? 10 : -1;
 
 	bool Spread = Remove ? false : pResult->NumArguments() > 1+Offset ? pResult->GetInteger(1+Offset) : Weapon >= 0 ? pChr->m_aSpreadWeapon[Weapon] : false;
 
@@ -254,6 +256,8 @@ void CGameContext::ModifyWeapons(IConsole::IResult *pResult, void *pUserData, in
 		pChr->GiveWeapon(WEAPON_PLASMA_RIFLE, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_HEART_GUN, Remove, Amount);
 		pChr->GiveWeapon(WEAPON_STRAIGHT_GRENADE, Remove, Amount);
+		pChr->GiveWeapon(WEAPON_TELEKINESIS, Remove);
+		pChr->GiveWeapon(WEAPON_LIGHTSABER, Remove);
 
 		for (int i = WEAPON_NINJA; i < NUM_WEAPONS; i++)
 			if (pChr->m_aSpreadWeapon[i] != Spread)
@@ -780,6 +784,30 @@ void CGameContext::ConUnStraightGrenade(IConsole::IResult *pResult, void *pUserD
 	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_STRAIGHT_GRENADE, true);
 }
 
+void CGameContext::ConTelekinesis(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_TELEKINESIS, false);
+}
+
+void CGameContext::ConUnTelekinesis(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_TELEKINESIS, true);
+}
+
+void CGameContext::ConLightsaber(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_LIGHTSABER, false);
+}
+
+void CGameContext::ConUnLightsaber(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	pSelf->ModifyWeapons(pResult, pUserData, WEAPON_LIGHTSABER, true);
+}
+
 void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
@@ -917,15 +945,6 @@ void CGameContext::ConInvisible(IConsole::IResult *pResult, void *pUserData)
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
 	if (pChr)
 		pChr->Invisible(!pChr->m_Invisible, pResult->m_ClientID);
-}
-
-void CGameContext::ConTelekinesis(IConsole::IResult *pResult, void *pUserData)
-{
-	CGameContext *pSelf = (CGameContext *)pUserData;
-	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
-	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Telekinesis(!pChr->GetWeaponGot(WEAPON_TELEKINESIS), pResult->m_ClientID);
 }
 
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
