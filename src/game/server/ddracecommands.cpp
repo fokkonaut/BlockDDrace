@@ -919,6 +919,15 @@ void CGameContext::ConInvisible(IConsole::IResult *pResult, void *pUserData)
 		pChr->Invisible(!pChr->m_Invisible, pResult->m_ClientID);
 }
 
+void CGameContext::ConTelekinesis(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Telekinesis(!pChr->GetWeaponGot(WEAPON_TELEKINESIS), pResult->m_ClientID);
+}
+
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

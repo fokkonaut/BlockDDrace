@@ -62,6 +62,7 @@ enum Extra
 	SPREAD_WEAPON,
 	FREEZE_HAMMER,
 	INVISIBLE,
+	TELEKINESIS,
 	NUM_EXTRAS
 };
 
@@ -179,6 +180,7 @@ public:
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
 	void Invisible(bool Set = true, int FromID = -1, bool Silent = false);
+	void Telekinesis(bool Set = true, int FromID = -1, bool Silent = false);
 
 	/*************************************************
 	*                                                *
@@ -432,6 +434,7 @@ public:
 	bool m_ScrollNinja;
 	int m_HookPower;
 	bool m_aSpreadWeapon[NUM_WEAPONS];
+	int m_TelekinesisTee;
 
 	bool m_Passive;
 	bool m_PoliceHelper;

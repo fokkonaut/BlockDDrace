@@ -708,6 +708,19 @@ void CCharacter::FireWeapon()
 			if (Sound)
 				GameServer()->CreateSound(m_Pos, SOUND_PICKUP_HEALTH, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 		} break;
+
+		case WEAPON_TELEKINESIS:
+		{
+			if (m_TelekinesisTee == -1)
+			{
+				vec2 CursorPos = vec2(m_Pos.x + m_Input.m_TargetX, m_Pos.y + m_Input.m_TargetY);
+				CCharacter *pChr = GameWorld()->ClosestCharacter(CursorPos, 20.f, this);
+				if (pChr && pChr->GetPlayer()->GetCID() != m_pPlayer->GetCID())
+					m_TelekinesisTee = pChr->GetPlayer()->GetCID();
+			}
+			else
+				m_TelekinesisTee = -1;
+		} break;
 		}
 
 		Sound = false;
@@ -2891,6 +2904,7 @@ void CCharacter::BlockDDraceInit()
 		m_aSpreadWeapon[i] = false;
 	m_Passive = false;
 	m_PoliceHelper = false;
+	m_TelekinesisTee = -1;
 
 	m_InShop = false;
 	m_EnteredShop = false;
@@ -2987,6 +3001,18 @@ void CCharacter::BlockDDraceTick()
 
 	m_AtomHooked = m_pPlayer->IsHooked(ATOM);
 	m_TrailHooked = m_pPlayer->IsHooked(TRAIL);
+
+	if (m_TelekinesisTee != -1)
+	{
+		CCharacter *pChr = GameServer()->GetPlayerChar(m_TelekinesisTee);
+		if (pChr && GetActiveWeapon() == WEAPON_TELEKINESIS)
+		{
+			pChr->Core()->m_Pos = vec2(m_Pos.x+m_Input.m_TargetX, m_Pos.y+m_Input.m_TargetY);
+			pChr->Core()->m_Vel = vec2(0.f, 0.f);
+		}
+		else
+			m_TelekinesisTee = -1;
+	}
 }
 
 void CCharacter::BackupWeapons(int Type)
@@ -3079,6 +3105,8 @@ void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 			SpreadWeapon(WeaponID, false);
 		if (WeaponID == WEAPON_GUN && m_Jetpack)
 			Jetpack(false);
+		if (WeaponID == WEAPON_TELEKINESIS)
+			Telekinesis(false);
 	}
 }
 
@@ -3173,6 +3201,8 @@ void CCharacter::SetActiveWeapon(int Weapon)
 		m_Core.m_ActiveWeapon = WEAPON_GUN;
 	else if (Weapon == WEAPON_STRAIGHT_GRENADE)
 		m_Core.m_ActiveWeapon = WEAPON_GRENADE;
+	else if (Weapon == WEAPON_TELEKINESIS)
+		m_Core.m_ActiveWeapon = WEAPON_NINJA;
 	else
 		m_Core.m_ActiveWeapon = Weapon;
 
@@ -3451,4 +3481,10 @@ void CCharacter::Invisible(bool Set, int FromID, bool Silent)
 {
 	m_Invisible = Set;
 	GameServer()->SendExtraMessage(INVISIBLE, m_pPlayer->GetCID(), Set, FromID, Silent);
+}
+
+void CCharacter::Telekinesis(bool Set, int FromID, bool Silent)
+{
+	GiveWeapon(WEAPON_TELEKINESIS, !Set);
+	GameServer()->SendExtraMessage(TELEKINESIS, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
