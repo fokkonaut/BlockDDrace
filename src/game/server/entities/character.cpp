@@ -537,7 +537,7 @@ void CCharacter::FireWeapon()
 
 				Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
 				if (Sound)
-					GameServer()->CreateSound(m_Pos, SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
+					GameServer()->CreateSound(m_Pos, (m_Jetpack && !g_Config.m_SvOldJetpackSound) ? SOUND_HOOK_LOOP : SOUND_GUN_FIRE, Teams()->TeamMask(Team(), -1, m_pPlayer->GetCID()));
 			}
 		} break;
 
