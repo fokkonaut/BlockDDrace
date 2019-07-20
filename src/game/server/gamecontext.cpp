@@ -972,7 +972,7 @@ void CGameContext::OnTick()
 		SurvivalTick();
 
 	for (int i = 0; i < 2; i++)
-		if (!m_aMinigameDisabled[i == 0 ? INSTAGIB_BOOMFNG : INSTAGIB_FNG])
+		if (!m_aMinigameDisabled[i == 0 ? MINIGAME_INSTAGIB_BOOMFNG : MINIGAME_INSTAGIB_FNG])
 			InstagibTick(i);
 
 
@@ -4521,10 +4521,10 @@ void CGameContext::SendSurvivalBroadcast(const char *pMsg, bool Sound, bool IsIm
 
 void CGameContext::InstagibTick(int Type)
 {
-	Type = Type == 0 ? INSTAGIB_BOOMFNG : INSTAGIB_FNG;
+	Type = Type == 0 ? MINIGAME_INSTAGIB_BOOMFNG : MINIGAME_INSTAGIB_FNG;
 
 	// if there are no spawn tiles, we cant play the game
-	if (!m_aMinigameDisabled[Type] && Collision()->GetRandomTile(Type == INSTAGIB_BOOMFNG ? ENTITY_SPAWN_RED : ENTITY_SPAWN_BLUE) == vec2(-1, -1))
+	if (!m_aMinigameDisabled[Type] && Collision()->GetRandomTile(Type == MINIGAME_INSTAGIB_BOOMFNG ? ENTITY_SPAWN_RED : ENTITY_SPAWN_BLUE) == vec2(-1, -1))
 	{
 		m_aMinigameDisabled[Type] = true;
 		return;

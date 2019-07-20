@@ -104,12 +104,6 @@ enum Survival
 	BACKGROUND_DEATHMATCH_COUNTDOWN,
 };
 
-enum Instagib
-{
-	INSTAGIB_BOOMFNG = 0,
-	INSTAGIB_FNG
-};
-
 #define ACC_START 1 // account ids start with 1, 0 means not logged in
 
 /*************************************************
