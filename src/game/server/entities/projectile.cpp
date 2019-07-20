@@ -194,7 +194,7 @@ void CProjectile::Tick()
 		{
 			if (!m_Explosive)
 			{
-				pTargetChr->TakeDamage(m_Direction * max(0.001f, m_Force), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
+				pTargetChr->TakeDamage(m_Direction * maximum(0.001f, m_Force), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
 			}
 			if (m_Spooky)
 			{
