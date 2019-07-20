@@ -2944,18 +2944,8 @@ void CCharacter::BlockDDraceInit()
 	SaveRealInfos();
 	UnsetSpookyGhost();
 
-	if (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
-		m_pPlayer->m_Gamemode = GAMEMODE_VANILLA;
-	else
-		m_pPlayer->m_Gamemode = GAMEMODE_DDRACE;
-
-	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
-	{
-		m_Armor = 0;
-		m_aWeapons[WEAPON_GUN].m_Ammo = 10;
-	}
-	else
-		m_Armor = 10;
+	m_pPlayer->m_Gamemode = (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
+	m_Armor = m_pPlayer->m_Gamemode == GAMEMODE_VANILLA ? 0 : 10;
 }
 
 void CCharacter::BlockDDraceTick()

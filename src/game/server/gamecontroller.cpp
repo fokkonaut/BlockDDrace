@@ -462,7 +462,7 @@ void IGameController::OnCharacterSpawn(class CCharacter *pChr)
 		default:
 		{
 			pChr->GiveWeapon(WEAPON_HAMMER);
-			pChr->GiveWeapon(WEAPON_GUN);
+			pChr->GiveWeapon(WEAPON_GUN, false, pChr->GetPlayer()->m_Gamemode == GAMEMODE_VANILLA ? 10 : -1);
 			pChr->SetActiveWeapon(WEAPON_GUN);
 		}
 	}
