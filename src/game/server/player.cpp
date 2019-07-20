@@ -168,7 +168,7 @@ void CPlayer::Reset()
 	m_InfMeteors = 0;
 	m_HasSpookyGhost = false;
 
-	m_DisplayScore = SCORE_LEVEL;
+	m_DisplayScore = g_Config.m_SvDefaultScore;
 	m_InstagibScore = 0;
 
 	m_ForceSpawnPos = vec2(-1, -1);
