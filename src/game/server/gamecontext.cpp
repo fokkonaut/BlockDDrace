@@ -4023,8 +4023,8 @@ int CGameContext::GetShopBot()
 
 void CGameContext::ConnectDefaultBots()
 {
-	if (Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
-		ConnectDummy(DUMMYMODE_V3_BLOCKER);
+	if (GetShopBot() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
+		ConnectDummy(DUMMYMODE_SHOP_BOT);
 
 	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
 	{
@@ -4038,8 +4038,8 @@ void CGameContext::ConnectDefaultBots()
 		ConnectDummy(DUMMYMODE_BLMAPCHILL_POLICE);
 	}
 
-	if (GetShopBot() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
-		ConnectDummy(DUMMYMODE_SHOP_BOT);
+	if (Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
+		ConnectDummy(DUMMYMODE_V3_BLOCKER);
 }
 
 void CGameContext::SetV3Offset(int X, int Y)
