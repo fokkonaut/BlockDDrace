@@ -67,8 +67,8 @@ MACRO_CONFIG_INT(SvHideBotsStatus, sv_hide_bots_status, 1, 0, 1, CFGFLAG_SERVER,
 MACRO_CONFIG_INT(SvHideServerInfo, sv_hide_server_info, 0, 0, 1, CFGFLAG_SERVER, "Whether to hide server info like map and gametype from the browser", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvDefaultBots, sv_default_bots, 0, 0, 1, CFGFLAG_SERVER, "Whether to create default bots for specific maps when the server starts", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvFakeBotPing, sv_fake_bot_ping, 0, 0, 1, CFGFLAG_SERVER, "Whether ping of server-side bots are more natural or 1000", AUTHED_ADMIN)
-MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, 374, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 bot", AUTHED_ADMIN)
-MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, 59, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 bot", AUTHED_ADMIN)
+MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 bot", AUTHED_ADMIN)
+MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 bot", AUTHED_ADMIN)
 
 // weapon indicator
 MACRO_CONFIG_INT(SvWeaponIndicatorDefault, sv_weapon_indicator_default, 0, 0, 1, CFGFLAG_SERVER, "Whether the weapon names are displayed under the health and armor bars", AUTHED_ADMIN)

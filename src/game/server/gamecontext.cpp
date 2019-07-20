@@ -3018,7 +3018,7 @@ void CGameContext::OnInit()
 
 	if (g_Config.m_SvDefaultBots)
 		ConnectDefaultBots();
-	SetV3Offset();
+	SetV3Offset(g_Config.m_V3OffsetX, g_Config.m_V3OffsetY);
 
 
 #ifdef CONF_DEBUG
