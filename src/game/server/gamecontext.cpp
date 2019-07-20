@@ -4058,9 +4058,9 @@ void CGameContext::SetV3Offset(int X, int Y)
 			X = 97;
 			Y = 19;
 		}
+		g_Config.m_V3OffsetX = X;
+		g_Config.m_V3OffsetY = Y;
 	}
-	g_Config.m_V3OffsetX = X;
-	g_Config.m_V3OffsetY = Y;
 }
 
 void CGameContext::SendMotd(const char *pMsg, int ClientID)
