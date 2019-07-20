@@ -311,7 +311,7 @@ void CPickup::Snap(int SnappingClient)
 	pP->m_Type = m_Type;
 	pP->m_Subtype = GameServer()->GetRealWeapon(m_Subtype);
 
-	if (m_Subtype == WEAPON_PLASMA_RIFLE)
+	if (m_Subtype == WEAPON_PLASMA_RIFLE || m_Subtype == WEAPON_LIGHTSABER)
 	{
 		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID2, sizeof(CNetObj_Laser)));
 		if (!pLaser)

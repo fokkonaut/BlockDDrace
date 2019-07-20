@@ -439,7 +439,7 @@ void CPickupDrop::Snap(int SnappingClient)
 		pJetpackIndicator->m_Type = WEAPON_SHOTGUN;
 		pJetpackIndicator->m_StartTick = Server()->Tick();
 	}
-	else if (m_Weapon == WEAPON_PLASMA_RIFLE)
+	else if (m_Weapon == WEAPON_PLASMA_RIFLE || m_Weapon == WEAPON_LIGHTSABER)
 	{
 		CNetObj_Laser *pLaser = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ID2, sizeof(CNetObj_Laser)));
 		if (!pLaser)
