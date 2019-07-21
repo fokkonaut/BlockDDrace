@@ -753,7 +753,8 @@ void CCharacter::FireWeapon()
 		Sound = false;
 	}
 
-	m_AttackTick = Server()->Tick();
+	if (GetActiveWeapon() != WEAPON_LIGHTSABER) // we don't want the client to render the fire animation
+		m_AttackTick = Server()->Tick();
 
 	if(m_aWeapons[GetActiveWeapon()].m_Ammo > 0) // -1 == unlimited
 		m_aWeapons[GetActiveWeapon()].m_Ammo--;
