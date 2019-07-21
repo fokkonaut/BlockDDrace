@@ -21,7 +21,7 @@ public:
 class CLaserText : public CEntity
 {
 public:
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, const char* pText, int pTextLen, float pCharPointOffset = 15.f, float pCharOffsetFactor = 3.5f);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char* pText, int TextLen, float CharPointOffset = 15.f, float CharOffsetFactor = 3.5f);
 	virtual ~CLaserText(){ 
 		delete[] m_Text; 
 		for(int i = 0; i < m_CharNum; ++i) {
