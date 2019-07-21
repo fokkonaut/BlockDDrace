@@ -392,6 +392,8 @@ public:
 
 	int CountConnectedPlayers(bool CountSpectators = true, bool ExcludeBots = false);
 
+	void CreateLaserText(vec2 Pos, int Owner, const char *pText);
+
 	//pickup drops
 	std::vector<CPickupDrop*> m_vPickupDropLimit;
 
@@ -568,6 +570,7 @@ private:
 	static void ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
+	static void ConLaserText(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConInvisible(IConsole::IResult *pResult, void *pUserData);
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);

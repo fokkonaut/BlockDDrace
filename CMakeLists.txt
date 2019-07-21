@@ -787,6 +787,8 @@ set_glob(GAME_SERVER GLOB_RECURSE src/game/server
   entities/gun.h
   entities/laser.cpp
   entities/laser.h
+  entities/lasertext.cpp
+  entities/lasertext.h
   entities/light.cpp
   entities/light.h
   entities/lightsaber.cpp

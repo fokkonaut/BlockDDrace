@@ -1162,6 +1162,15 @@ void CGameContext::ConPlayerInfo(IConsole::IResult *pResult, void *pUserData)
 	}
 }
 
+void CGameContext::ConLaserText(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pSelf->CreateLaserText(pChr->m_Pos, Victim, pResult->GetString(1));
+}
+
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

@@ -16,7 +16,10 @@
 #include <game/version.h>
 #include <game/collision.h>
 #include <game/gamecore.h>
+// BlockDDrace
 #include <game/server/entities/flag.h>
+#include <game/server/entities/lasertext.h>
+// BlockDDrace
 #include "gamemodes/blockddrace.h"
 #include "score.h"
 #include "score/file_score.h"
@@ -4066,6 +4069,12 @@ void CGameContext::SendMotd(const char *pMsg, int ClientID)
 	CNetMsg_Sv_Motd Msg;
 	Msg.m_pMessage = pMsg;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientID);
+}
+
+void CGameContext::CreateLaserText(vec2 Pos, int Owner, const char *pText)
+{
+	Pos.y -= 40.0 * 2.5;
+	new CLaserText(&m_World, Pos, Owner, Server()->TickSpeed() * 3, pText, (int)(strlen(pText)));
 }
 
 const char *CGameContext::GetWeaponName(int Weapon)
