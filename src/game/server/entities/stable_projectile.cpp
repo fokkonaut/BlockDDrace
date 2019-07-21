@@ -1,3 +1,9 @@
+/*************************************************
+*                                                *
+*              B L O C K D D R A C E             *
+*                                                *
+**************************************************/
+
 #include <game/server/gamecontext.h>
 #include "stable_projectile.h"
 #include <game/server/teams.h>
