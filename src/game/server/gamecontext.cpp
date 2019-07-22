@@ -1198,9 +1198,7 @@ void CGameContext::OnClientConnected(int ClientID)
 #endif
 
 	// BlockDDrace
-	char aMotd[900];
-	str_copy(aMotd, FixMotd(g_Config.m_SvMotd), sizeof(aMotd));
-	SendMotd(aMotd, ClientID);
+	SendMotd(FixMotd(g_Config.m_SvMotd), ClientID);
 }
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
