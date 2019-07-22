@@ -3973,7 +3973,6 @@ const char *CGameContext::FixMotd(const char *pMsg)
 			str_format(aTemp, sizeof(aTemp), "%s%s", aTemp2, "\n");
 		}
 		str_format(aMotd, sizeof(aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", aMotd, aTemp, GAME_VERSION);
-		return aMotd;
 	}
 	return aMotd;
 }
