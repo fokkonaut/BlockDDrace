@@ -371,8 +371,7 @@ public:
 	std::vector<AccountInfo> m_Accounts;
 
 	//motd
-	void FixMotd();
-	char m_aMotd[900];
+	const char *FixMotd(const char *pMsg);
 
 	//extras
 	void SendExtraMessage(int Extra, int ToID, bool Set, int FromID, bool Silent, int Special = 0);

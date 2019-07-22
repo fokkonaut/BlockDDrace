@@ -1198,8 +1198,7 @@ void CGameContext::OnClientConnected(int ClientID)
 #endif
 
 	// BlockDDrace
-	FixMotd();
-	SendMotd(m_aMotd, ClientID);
+	SendMotd(FixMotd(g_Config.m_SvMotd), ClientID);
 }
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
@@ -2658,10 +2657,11 @@ void CGameContext::ConchainSpecialMotdupdate(IConsole::IResult *pResult, void *p
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{
-		pSelf->FixMotd();
+		char aMotd[900];
+		str_copy(aMotd, pSelf->FixMotd(g_Config.m_SvMotd), sizeof(aMotd));
 		for(int i = 0; i < MAX_CLIENTS; ++i)
 			if(pSelf->m_apPlayers[i])
-				pSelf->SendMotd(pSelf->m_aMotd, i);
+				pSelf->SendMotd(aMotd, i);
 	}
 }
 
@@ -3926,18 +3926,20 @@ int CGameContext::GetCIDByName(const char * pName)
 	return -1;
 }
 
-void CGameContext::FixMotd()
+const char *CGameContext::FixMotd(const char *pMsg)
 {
 	char aTemp[64];
 	char aTemp2[64];
-	if (g_Config.m_SvMotd[0])
+	char aMotd[900];
+	str_copy(aMotd, pMsg, sizeof(aMotd));
+	if (aMotd[0])
 	{
 		int count = 0;
-		int MotdLen = str_length(g_Config.m_SvMotd) + 1;
-		for (int i = 0, k = 0, s = 0; i < MotdLen && k < (int)sizeof(g_Config.m_SvMotd); i++, k++)
+		int MotdLen = str_length(aMotd) + 1;
+		for (int i = 0, k = 0, s = 0; i < MotdLen && k < (int)sizeof(aMotd); i++, k++)
 		{
 			s++;
-			if (g_Config.m_SvMotd[i] == '\\' && g_Config.m_SvMotd[i + 1] == 'n')
+			if (aMotd[i] == '\\' && aMotd[i + 1] == 'n')
 			{
 				i++;
 				count++;
@@ -3952,10 +3954,10 @@ void CGameContext::FixMotd()
 
 		for (int i = MotdLen; i > 0; i--)
 		{
-			if ((g_Config.m_SvMotd[i - 1] == '\\' && g_Config.m_SvMotd[i] == 'n') || count > 20)
+			if ((aMotd[i - 1] == '\\' && aMotd[i] == 'n') || count > 20)
 			{
-				g_Config.m_SvMotd[i] = '\0';
-				g_Config.m_SvMotd[i - 1] = '\0';
+				aMotd[i] = '\0';
+				aMotd[i - 1] = '\0';
 			}
 			else
 				break;
@@ -3969,12 +3971,11 @@ void CGameContext::FixMotd()
 		{
 			str_format(aTemp2, sizeof(aTemp2), "%s", aTemp);
 			str_format(aTemp, sizeof(aTemp), "%s%s", aTemp2, "\n");
-
 		}
-		str_format(m_aMotd, sizeof(m_aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", g_Config.m_SvMotd, aTemp, GAME_VERSION);
+		str_format(aMotd, sizeof(aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", aMotd, aTemp, GAME_VERSION);
+		return aMotd;
 	}
-	else
-		m_aMotd[0] = 0;
+	return aMotd;
 }
 
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
