@@ -12,7 +12,7 @@ class CPickup : public CEntity
 public:
 	CPickup(CGameWorld *pGameWorld, int Type, int SubType = 0, int Layer = 0, int Number = 0, int Owner = -1);
 
-	virtual void Reset();
+	virtual void Reset(bool Destroy = false);
 	virtual void Tick();
 	virtual void TickPaused();
 	virtual void Snap(int SnappingClient);
@@ -31,7 +31,6 @@ private:
 	// DDRace
 
 	int m_Owner;
-	bool m_CanRemove;
 
 	void Move();
 	vec2 m_Core;

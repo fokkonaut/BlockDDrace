@@ -24,14 +24,14 @@ CPickup::CPickup(CGameWorld *pGameWorld, int Type, int SubType, int Layer, int N
 	GameWorld()->InsertEntity(this);
 }
 
-void CPickup::Reset()
+void CPickup::Reset(bool Destroy)
 {
 	if (g_pData->m_aPickups[m_Type].m_Spawndelay > 0 && g_Config.m_SvVanillaModeStart)
 		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * g_pData->m_aPickups[m_Type].m_Spawndelay;
 	else
 		m_SpawnTick = -1;
 
-	if (m_CanRemove)
+	if (Destroy)
 	{
 		Server()->SnapFreeID(m_ID2);
 		GameWorld()->DestroyEntity(this);
@@ -46,8 +46,7 @@ void CPickup::Tick()
 		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
 		if (!pChr || !pChr->m_Passive)
 		{
-			m_CanRemove = true;
-			Reset();
+			Reset(true);
 		}
 		else
 		{
