@@ -3932,9 +3932,10 @@ const char *CGameContext::FixMotd(const char *pMsg)
 {
 	char aTemp[64];
 	char aTemp2[64];
-	static char aMotd[900];
+	char aMotd[900];
+	static char aRet[900];
 	str_copy(aMotd, pMsg, sizeof(aMotd));
-	dbg_msg("debug", "%s", aMotd);
+	str_copy(aRet, pMsg, sizeof(aRet));
 	if (aMotd[0])
 	{
 		int count = 0;
@@ -3975,9 +3976,9 @@ const char *CGameContext::FixMotd(const char *pMsg)
 			str_format(aTemp2, sizeof(aTemp2), "%s", aTemp);
 			str_format(aTemp, sizeof(aTemp), "%s%s", aTemp2, "\n");
 		}
-		str_format(aMotd, sizeof(aMotd), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", aMotd, aTemp, GAME_VERSION);
+		str_format(aRet, sizeof(aRet), "%s%sBlockDDrace is a mod by fokkonaut\nBlockDDrace Mod. Ver.: %s", aMotd, aTemp, GAME_VERSION);
 	}
-	return aMotd;
+	return aRet;
 }
 
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
