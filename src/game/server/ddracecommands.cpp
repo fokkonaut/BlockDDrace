@@ -956,6 +956,15 @@ void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 		pChr->Passive(!pChr->m_Passive, pResult->m_ClientID);
 }
 
+void CGameContext::ConItem(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
+	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
+	if (pChr)
+		pChr->Item(pResult->GetInteger(1), pResult->m_ClientID);
+}
+
 void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

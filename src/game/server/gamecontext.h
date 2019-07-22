@@ -571,6 +571,7 @@ private:
 	static void ConPlayerInfo(IConsole::IResult *pResult, void *pUserData);
 	static void ConLaserText(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConItem(IConsole::IResult *pResult, void *pUserData);
 	static void ConInvisible(IConsole::IResult *pResult, void *pUserData);
 	static void ConHookPower(IConsole::IResult *pResult, void *pUserData);
 

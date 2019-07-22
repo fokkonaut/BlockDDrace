@@ -2932,6 +2932,8 @@ void CCharacter::BlockDDraceInit()
 	m_PoliceHelper = false;
 	m_TelekinesisTee = -1;
 	m_pLightsaber = 0;
+	m_Item = -3;
+	m_pItem = 0;
 
 	m_InShop = false;
 	m_EnteredShop = false;
@@ -3527,4 +3529,15 @@ void CCharacter::Invisible(bool Set, int FromID, bool Silent)
 {
 	m_Invisible = Set;
 	GameServer()->SendExtraMessage(INVISIBLE, m_pPlayer->GetCID(), Set, FromID, Silent);
+}
+
+void CCharacter::Item(int Item, int FromID, bool Silent)
+{
+	if ((m_Item == -3 && Item == -3) || Item >= NUM_WEAPONS || Item < -3)
+		return;
+	int Type = Item == -2 ? POWERUP_HEALTH : Item == -1 ? POWERUP_ARMOR : Item >= 0 ? POWERUP_WEAPON : 0;
+	int SubType = Item >= 0 ? Item : 0;
+	m_Item = Item;
+	m_pItem = Item == -3 ? 0 : new CPickup(GameWorld(), Type, SubType, 0, 0, m_pPlayer->GetCID());
+	GameServer()->SendExtraMessage(ITEM, m_pPlayer->GetCID(), Item == -3 ? false : true, FromID, Silent, Item);
 }

@@ -4083,6 +4083,10 @@ const char *CGameContext::GetWeaponName(int Weapon)
 {
 	switch (Weapon)
 	{
+	case -2:
+		return "Heart";
+	case -1:
+		return "Armor";
 	case WEAPON_HAMMER:
 		return "Hammer";
 	case WEAPON_GUN:
@@ -4159,7 +4163,7 @@ const char *CGameContext::CreateExtraMessage(int Extra, bool Set, int FromID, in
 	// message without a sender
 	if (FromID == -1 || FromID == ToID)
 	{
-		if (Extra == JETPACK || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER || Extra == SPREAD_WEAPON || Extra == FREEZE_HAMMER)
+		if (Extra == JETPACK || Extra == ATOM || Extra == TRAIL || Extra == METEOR || Extra == INF_METEOR || Extra == SCROLL_NINJA || Extra == HOOK_POWER || Extra == SPREAD_WEAPON || Extra == FREEZE_HAMMER || Extra == ITEM)
 			str_format(aMsg, sizeof(aMsg), "You %s %s", Set ? "have a" : "lost your", aItem);
 		else if (Extra == VANILLA_MODE || Extra == DDRACE_MODE)
 			str_format(aMsg, sizeof(aMsg), "You are now in %s", aItem);
@@ -4238,6 +4242,12 @@ const char *CGameContext::GetExtraName(int Extra, int Special)
 		return "Freeze Hammer";
 	case INVISIBLE:
 		return "Invisibility";
+	case ITEM:
+		{
+			static char aItem[64];
+			str_format(aItem, sizeof(aItem), "%s%sItem", Special > -3 ? GetWeaponName(Special) : "", Special > -3 ? " " : "");
+			return aItem;
+		}
 	}
 	return "Unknown";
 }

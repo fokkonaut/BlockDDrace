@@ -66,6 +66,7 @@ enum Extra
 	SPREAD_WEAPON,
 	FREEZE_HAMMER,
 	INVISIBLE,
+	ITEM,
 	NUM_EXTRAS
 };
 
@@ -183,6 +184,7 @@ public:
 	void SpreadWeapon(int Type, bool Set = true, int FromID = -1, bool Silent = false);
 	void FreezeHammer(bool Set = true, int FromID = -1, bool Silent = false);
 	void Invisible(bool Set = true, int FromID = -1, bool Silent = false);
+	void Item(int Item, int FromID = -1, bool Silent = false);
 
 	/*************************************************
 	*                                                *
@@ -440,6 +442,9 @@ public:
 
 	bool m_Passive;
 	CPickup *m_pPassiveShield;
+
+	int m_Item;
+	CPickup *m_pItem;
 
 	bool m_PoliceHelper;
 

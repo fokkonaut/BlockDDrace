@@ -44,7 +44,7 @@ void CPickup::Tick()
 	if (m_Owner >= 0)
 	{
 		CCharacter *pChr = GameServer()->GetPlayerChar(m_Owner);
-		if (pChr && pChr->m_pPassiveShield == this)
+		if (pChr && (pChr->m_pPassiveShield == this || pChr->m_pItem == this))
 		{
 			m_Pos.x = pChr->m_Pos.x;
 			m_Pos.y = pChr->m_Pos.y - 50;

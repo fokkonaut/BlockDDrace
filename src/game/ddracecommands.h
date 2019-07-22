@@ -96,6 +96,7 @@ CONSOLE_COMMAND("playerinfo", "r[name]", CFGFLAG_SERVER|CFGFLAG_CHAT, ConPlayerI
 CONSOLE_COMMAND("lasertext", "v[id] r[text]", CFGFLAG_SERVER, ConLaserText, this, "Sends a laser text", AUTHED_ADMIN)
 
 //extras
+CONSOLE_COMMAND("item", "v[id] i[item]", CFGFLAG_SERVER, ConItem, this, "Gives player v item i (-3=none, -2=heart, -1=armor, 0 and up=weapon id)", AUTHED_ADMIN)
 CONSOLE_COMMAND("invisible", "?v[id]", CFGFLAG_SERVER|CMDFLAG_TEST, ConInvisible, this, "Toggles invisibility for player v", AUTHED_ADMIN)
 
 CONSOLE_COMMAND("hookpower", "?s[power] ?v[id]", CFGFLAG_SERVER, ConHookPower, this, "Sets hook power for player v", AUTHED_ADMIN)
