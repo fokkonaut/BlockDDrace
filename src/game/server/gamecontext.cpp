@@ -32,7 +32,6 @@
 #include "score/sql_score.h"
 #endif
 
-
 enum
 {
 	RESET,
