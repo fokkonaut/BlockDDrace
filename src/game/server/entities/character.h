@@ -13,6 +13,7 @@
 
 // BlockDDrace
 #include "lightsaber.h"
+#include "pickup.h"
 
 class CGameTeams;
 
@@ -438,6 +439,8 @@ public:
 	CLightsaber *m_pLightsaber;
 
 	bool m_Passive;
+	CPickup *m_pPassiveShield;
+
 	bool m_PoliceHelper;
 
 	bool m_AtomHooked;

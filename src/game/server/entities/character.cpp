@@ -13,7 +13,6 @@
 #include "flag.h"
 #include "custom_projectile.h"
 #include "meteor.h"
-#include "pickup.h"
 #include "pickup_drop.h"
 #include "atom.h"
 #include "trail.h"
@@ -2929,6 +2928,7 @@ void CCharacter::BlockDDraceInit()
 	for (int i = 0; i < NUM_WEAPONS; i++)
 		m_aSpreadWeapon[i] = false;
 	m_Passive = false;
+	m_pPassiveShield = 0;
 	m_PoliceHelper = false;
 	m_TelekinesisTee = -1;
 	m_pLightsaber = 0;
@@ -3366,7 +3366,7 @@ void CCharacter::Passive(bool Set, int FromID, bool Silent)
 	Teams()->m_Core.SetPassive(m_pPlayer->GetCID(), Set);
 	PassiveCollision(Set);
 
-	new CPickup(GameWorld(), POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
+	m_pPassiveShield = !Set ? 0 : new CPickup(GameWorld(), POWERUP_ARMOR, 0, 0, 0, m_pPlayer->GetCID());
 	GameServer()->SendExtraMessage(PASSIVE, m_pPlayer->GetCID(), Set, FromID, Silent);
 }
 

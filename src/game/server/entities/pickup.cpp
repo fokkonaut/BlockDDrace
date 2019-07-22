@@ -43,16 +43,14 @@ void CPickup::Tick()
 	// BlockDDrace
 	if (m_Owner >= 0)
 	{
-		CCharacter* pChr = GameServer()->GetPlayerChar(m_Owner);
-		if (!pChr || !pChr->m_Passive)
-		{
-			Reset(true);
-		}
-		else
+		CCharacter *pChr = GameServer()->GetPlayerChar(m_Owner);
+		if (pChr && pChr->m_pPassiveShield == this)
 		{
 			m_Pos.x = pChr->m_Pos.x;
 			m_Pos.y = pChr->m_Pos.y - 50;
 		}
+		else
+			Reset(true);
 	}
 	// BlockDDrace
 	else
