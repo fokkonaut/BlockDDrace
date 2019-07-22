@@ -1198,7 +1198,9 @@ void CGameContext::OnClientConnected(int ClientID)
 #endif
 
 	// BlockDDrace
-	SendMotd(FixMotd(g_Config.m_SvMotd), ClientID);
+	char aMotd[900];
+	str_copy(aMotd, FixMotd(g_Config.m_SvMotd), sizeof(aMotd));
+	SendMotd(aMotd, ClientID);
 }
 
 void CGameContext::OnClientDrop(int ClientID, const char *pReason)
@@ -3918,7 +3920,7 @@ int CGameContext::GetNextClientID()
 	return -1;
 }
 
-int CGameContext::GetCIDByName(const char * pName)
+int CGameContext::GetCIDByName(const char *pName)
 {
 	for (int i = 0; i < MAX_CLIENTS; i++)
 		if (m_apPlayers[i] && !str_comp(pName, Server()->ClientName(i)))
