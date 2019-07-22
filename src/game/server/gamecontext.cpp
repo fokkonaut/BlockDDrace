@@ -3934,6 +3934,7 @@ const char *CGameContext::FixMotd(const char *pMsg)
 	char aTemp2[64];
 	static char aMotd[900];
 	str_copy(aMotd, pMsg, sizeof(aMotd));
+	dbg_msg("debug", "%s", aMotd);
 	if (aMotd[0])
 	{
 		int count = 0;
