@@ -3930,7 +3930,7 @@ const char *CGameContext::FixMotd(const char *pMsg)
 {
 	char aTemp[64];
 	char aTemp2[64];
-	char aMotd[900];
+	static char aMotd[900];
 	str_copy(aMotd, pMsg, sizeof(aMotd));
 	if (aMotd[0])
 	{
