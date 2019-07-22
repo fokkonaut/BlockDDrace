@@ -19,6 +19,11 @@
 // BlockDDrace
 #include <game/server/entities/flag.h>
 #include <game/server/entities/lasertext.h>
+#include <fstream>
+#include <limits>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
 // BlockDDrace
 #include "gamemodes/blockddrace.h"
 #include "score.h"
@@ -26,11 +31,7 @@
 #if defined(CONF_SQL)
 #include "score/sql_score.h"
 #endif
-#include <fstream>
-#include <limits>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
+
 
 enum
 {
