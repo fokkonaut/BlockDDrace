@@ -407,10 +407,9 @@ void CCharacter::FireWeapon()
 		}
 		else
 		{
-			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
-			/*// 125ms is a magical limit of how fast a human can click
+			// 125ms is a magical limit of how fast a human can click
 			m_ReloadTimer = 125 * Server()->TickSpeed() / 1000;
-			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);*/
+			GameServer()->CreateSound(m_Pos, SOUND_WEAPON_NOAMMO);
 			// Timer stuff to avoid shrieking orchestra caused by unfreeze-plasma
 		}
 		return;
