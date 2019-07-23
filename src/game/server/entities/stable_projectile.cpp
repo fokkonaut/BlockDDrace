@@ -8,13 +8,14 @@
 #include "stable_projectile.h"
 #include <game/server/teams.h>
 
-CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos)
+CStableProjectile::CStableProjectile(CGameWorld *pGameWorld, int Type, int Owner, vec2 Pos, bool HideOnSpec)
 : CEntity(pGameWorld, CGameWorld::ENTTYPE_STABLE_PROJECTILE)
 {
 	m_Type = GameServer()->GetRealWeapon(Type);
 	m_Pos = Pos;
 	m_LastResetPos = Pos;
 	m_Owner = Owner;
+	m_HideOnSpec = HideOnSpec;
 	m_LastResetTick = Server()->Tick();
 	m_CalculatedVel = false;
 
@@ -110,6 +111,10 @@ void CStableProjectile::Snap(int SnappingClient)
 		if (!CmaskIsSet(TeamMask, SnappingClient))
 			return;
 	}
+
+	if (m_HideOnSpec && pOwner && pOwner->IsPaused())
+		return;
+
 
 	CNetObj_Projectile *pProj = static_cast<CNetObj_Projectile *>(Server()->SnapNewItem(NETOBJTYPE_PROJECTILE, m_ID, sizeof(CNetObj_Projectile)));
 	if(!pProj)

@@ -2,7 +2,7 @@
 #include "meteor.h"
 
 CMeteor::CMeteor(CGameWorld *pGameWorld, vec2 Pos, int Owner, bool Infinite)
-: CStableProjectile(pGameWorld, WEAPON_SHOTGUN, Owner, Pos)
+: CStableProjectile(pGameWorld, WEAPON_SHOTGUN, Owner, Pos, true)
 {
 	m_Vel = vec2(0.1f, 0.1f);
 	m_Owner = Owner;
