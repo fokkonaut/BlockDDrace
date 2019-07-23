@@ -48,7 +48,7 @@ void CAtom::Tick()
 			return;
 		}
 
-		if (!pChr)
+		if (!pChr || pChr->IsPaused())
 		{
 			Clear();
 			return;
