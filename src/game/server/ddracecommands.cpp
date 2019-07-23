@@ -140,8 +140,7 @@ void CGameContext::ConUnSolo(IConsole::IResult *pResult, void *pUserData)
 		return;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->SetSolo(false);
+	if (pChr) pChr->SetSolo(false);
 }
 
 void CGameContext::ConUnDeep(IConsole::IResult *pResult, void *pUserData)
@@ -151,8 +150,7 @@ void CGameContext::ConUnDeep(IConsole::IResult *pResult, void *pUserData)
 		return;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->m_DeepFreeze = false;
+	if (pChr) pChr->m_DeepFreeze = false;
 }
 
 void CGameContext::ConShotgun(IConsole::IResult *pResult, void *pUserData)
@@ -813,8 +811,7 @@ void CGameContext::ConScrollNinja(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->ScrollNinja(!pChr->m_ScrollNinja, pResult->m_ClientID);
+	if (pChr) pChr->ScrollNinja(!pChr->m_ScrollNinja, pResult->m_ClientID);
 }
 
 void CGameContext::ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData)
@@ -822,8 +819,7 @@ void CGameContext::ConInfiniteJumps(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter* pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfiniteJumps(!pChr->m_SuperJump, pResult->m_ClientID);
+	if (pChr) pChr->InfiniteJumps(!pChr->m_SuperJump, pResult->m_ClientID);
 }
 
 void CGameContext::ConEndlessHook(IConsole::IResult *pResult, void *pUserData)
@@ -831,8 +827,7 @@ void CGameContext::ConEndlessHook(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->EndlessHook(!pChr->m_EndlessHook, pResult->m_ClientID);
+	if (pChr) pChr->EndlessHook(!pChr->m_EndlessHook, pResult->m_ClientID);
 }
 
 void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
@@ -840,8 +835,7 @@ void CGameContext::ConJetpack(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Jetpack(!pChr->m_Jetpack, pResult->m_ClientID);
+	if (pChr) pChr->Jetpack(!pChr->m_Jetpack, pResult->m_ClientID);
 }
 
 void CGameContext::ConRainbowSpeed(IConsole::IResult *pResult, void *pUserData)
@@ -871,8 +865,7 @@ void CGameContext::ConRainbow(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Rainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
+	if (pChr) pChr->Rainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
 }
 
 void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
@@ -880,8 +873,7 @@ void CGameContext::ConInfRainbow(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->InfRainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
+	if (pChr) pChr->InfRainbow(!(pChr->m_Rainbow || pChr->GetPlayer()->m_InfRainbow), pResult->m_ClientID);
 }
 
 void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
@@ -889,8 +881,7 @@ void CGameContext::ConAtom(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Atom(!pChr->m_Atom, pResult->m_ClientID);
+	if (pChr) pChr->Atom(!pChr->m_Atom, pResult->m_ClientID);
 }
 
 void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
@@ -898,8 +889,7 @@ void CGameContext::ConTrail(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Trail(!pChr->m_Trail, pResult->m_ClientID);
+	if (pChr) pChr->Trail(!pChr->m_Trail, pResult->m_ClientID);
 }
 
 void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
@@ -907,8 +897,7 @@ void CGameContext::ConSpookyGhost(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->SpookyGhost(!pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
+	if (pChr) pChr->SpookyGhost(!pChr->GetPlayer()->m_HasSpookyGhost, pResult->m_ClientID);
 }
 
 void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
@@ -916,8 +905,7 @@ void CGameContext::ConAddMeteor(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Meteor(true, pResult->m_ClientID);
+	if (pChr) pChr->Meteor(true, pResult->m_ClientID);
 }
 
 void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
@@ -925,8 +913,7 @@ void CGameContext::ConAddInfMeteor(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Meteor(true, pResult->m_ClientID, true);
+	if (pChr) pChr->Meteor(true, pResult->m_ClientID, true);
 }
 
 void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
@@ -934,8 +921,7 @@ void CGameContext::ConRemoveMeteors(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Meteor(false, pResult->m_ClientID);
+	if (pChr) pChr->Meteor(false, pResult->m_ClientID);
 }
 
 void CGameContext::ConInvisible(IConsole::IResult *pResult, void *pUserData)
@@ -943,8 +929,7 @@ void CGameContext::ConInvisible(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Invisible(!pChr->m_Invisible, pResult->m_ClientID);
+	if (pChr) pChr->Invisible(!pChr->m_Invisible, pResult->m_ClientID);
 }
 
 void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
@@ -952,8 +937,7 @@ void CGameContext::ConPassive(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Passive(!pChr->m_Passive, pResult->m_ClientID);
+	if (pChr) pChr->Passive(!pChr->m_Passive, pResult->m_ClientID);
 }
 
 void CGameContext::ConItem(IConsole::IResult *pResult, void *pUserData)
@@ -961,8 +945,7 @@ void CGameContext::ConItem(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Item(pResult->GetInteger(1), pResult->m_ClientID);
+	if (pChr) pChr->Item(pResult->GetInteger(1), pResult->m_ClientID);
 }
 
 void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
@@ -970,8 +953,7 @@ void CGameContext::ConVanillaMode(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->VanillaMode(pResult->m_ClientID);
+	if (pChr) pChr->VanillaMode(pResult->m_ClientID);
 }
 
 void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
@@ -979,8 +961,7 @@ void CGameContext::ConDDraceMode(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->DDraceMode(pResult->m_ClientID);
+	if (pChr) pChr->DDraceMode(pResult->m_ClientID);
 }
 
 void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
@@ -988,8 +969,7 @@ void CGameContext::ConBloody(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->Bloody(!(pChr->m_Bloody || pChr->m_StrongBloody), pResult->m_ClientID);
+	if (pChr) pChr->Bloody(!(pChr->m_Bloody || pChr->m_StrongBloody), pResult->m_ClientID);
 }
 
 void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
@@ -997,8 +977,7 @@ void CGameContext::ConStrongBloody(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->StrongBloody(!pChr->m_StrongBloody, pResult->m_ClientID);
+	if (pChr) pChr->StrongBloody(!pChr->m_StrongBloody, pResult->m_ClientID);
 }
 
 void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
@@ -1006,8 +985,7 @@ void CGameContext::ConPoliceHelper(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->PoliceHelper(!pChr->m_PoliceHelper, pResult->m_ClientID);
+	if (pChr) pChr->PoliceHelper(!pChr->m_PoliceHelper, pResult->m_ClientID);
 }
 
 void CGameContext::ConHookPower(IConsole::IResult *pResult, void *pUserData)
@@ -1050,8 +1028,7 @@ void CGameContext::ConFreezeHammer(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pChr->FreezeHammer(!pChr->m_FreezeHammer, pResult->m_ClientID);
+	if (pChr) pChr->FreezeHammer(!pChr->m_FreezeHammer, pResult->m_ClientID);
 }
 
 void CGameContext::ConForceFlagOwner(IConsole::IResult *pResult, void *pUserData)
@@ -1176,8 +1153,7 @@ void CGameContext::ConLaserText(IConsole::IResult *pResult, void *pUserData)
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int Victim = pResult->NumArguments() ? pResult->GetVictim() : pResult->m_ClientID;
 	CCharacter *pChr = pSelf->GetPlayerChar(Victim);
-	if (pChr)
-		pSelf->CreateLaserText(pChr->m_Pos, Victim, pResult->GetString(1));
+	if (pChr) pSelf->CreateLaserText(pChr->m_Pos, Victim, pResult->GetString(1));
 }
 
 void CGameContext::ConConnectDummy(IConsole::IResult *pResult, void *pUserData)
