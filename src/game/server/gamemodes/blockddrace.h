@@ -12,8 +12,6 @@ class CGameControllerBlockDDrace: public IGameController
 {
 public:
 
-	bool Grounded;
-
 	class CFlag *m_apFlags[2];
 
 	virtual void Snap(int SnappingClient);
