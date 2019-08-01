@@ -594,12 +594,7 @@ void CCharacterCore::Tick(bool UseInput)
 			vec2 Dir;
 			vec2 FPos;
 			vec2 Temp;
-			int Team;
-
-			if (m_HookedPlayer == FLAG_RED)
-				Team = TEAM_RED;
-			else if (m_HookedPlayer == FLAG_BLUE)
-				Team = TEAM_BLUE;
+			int Team = m_HookedPlayer == FLAG_RED ? TEAM_RED : TEAM_BLUE;
 
 			m_UpdateFlagVel = m_HookedPlayer;
 			Temp = m_FlagVel[Team];
