@@ -1173,7 +1173,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		Msg.m_ModeSpecial = ModeSpecial;
 		// BlockDDrace // only send kill message to players in the same minigame
 		for (int i = 0; i < MAX_CLIENTS; i++)
-			if (GameServer()->m_apPlayers[i] && m_pPlayer->m_Minigame == GameServer()->m_apPlayers[i]->m_Minigame)
+			if (!g_Config.m_SvHideMinigamePlayers || GameServer()->m_apPlayers[i] && m_pPlayer->m_Minigame == GameServer()->m_apPlayers[i]->m_Minigame)
 				Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, i);
 	}
 
