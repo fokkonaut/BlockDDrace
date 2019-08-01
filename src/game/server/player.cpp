@@ -528,6 +528,7 @@ void CPlayer::Snap(int SnappingClient)
 		return;
 
 	pDDNetPlayer->m_AuthLevel = g_Config.m_SvAuthedPlayersColored ? Server()->GetAuthedState(id) : AUTHED_NO;
+	pDDNetPlayer->m_Flags = m_Afk ? EXPLAYERFLAG_AFK : 0;
 }
 
 void CPlayer::FakeSnap()
@@ -625,6 +626,9 @@ void CPlayer::OnPredictedInput(CNetObj_PlayerInput *NewInput)
 
 void CPlayer::OnDirectInput(CNetObj_PlayerInput *NewInput)
 {
+	if (NewInput->m_PlayerFlags)
+		Server()->SetClientFlags(m_ClientID, NewInput->m_PlayerFlags);
+
 	if (AfkTimer(NewInput->m_TargetX, NewInput->m_TargetY))
 		return; // we must return if kicked, as player struct is already deleted
 	AfkVoteTimer(NewInput);
