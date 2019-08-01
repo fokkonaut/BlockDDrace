@@ -5,6 +5,9 @@
 #include <game/server/teams.h>
 #include <game/server/entities/door.h>
 
+// BlockDDrace
+#include <game/server/entities/flag.h>
+
 #include <vector>
 #include <map>
 

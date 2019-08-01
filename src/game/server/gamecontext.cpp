@@ -1924,7 +1924,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			if(pMsg->m_SpectatorID >= 0 && (!m_apPlayers[pMsg->m_SpectatorID] || m_apPlayers[pMsg->m_SpectatorID]->GetTeam() == TEAM_SPECTATORS))
 				SendChatTarget(ClientID, "Invalid spectator id used");
 			else
+			{
 				pPlayer->m_SpectatorID = pMsg->m_SpectatorID;
+				pPlayer->m_SpectatorFlag = SPEC_FREEVIEW;
+			}
 		}
 		else if (MsgID == NETMSGTYPE_CL_CHANGEINFO)
 		{

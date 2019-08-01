@@ -312,6 +312,9 @@ public:
 	void SetPlaying();
 	bool m_ResumeMoved;
 
+	// used for spectating flags
+	int m_SpectatorFlag;
+
 	//minigames
 	int m_Minigame;
 	int m_SurvivalState;

@@ -177,6 +177,8 @@ void CPlayer::Reset()
 	m_Minigame = MINIGAME_NONE;
 	m_SurvivalState = SURVIVAL_OFFLINE;
 	m_ForceKilled = false;
+
+	m_SpectatorFlag = SPEC_FREEVIEW;
 }
 
 void CPlayer::Tick()
@@ -332,9 +334,21 @@ void CPlayer::PostTick()
 		}
 	}
 
+	CFlag *Flag = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[m_SpectatorFlag];
+	if (m_SpectatorFlag != SPEC_FREEVIEW)
+	{
+		if (!Flag)
+		{
+			m_SpectatorID = SPEC_FREEVIEW;
+			m_SpectatorFlag = SPEC_FREEVIEW;
+		}
+		else
+			m_SpectatorID = Flag->GetCarrier() ? Flag->GetCarrier()->GetPlayer()->GetCID() : m_ClientID;
+	}
+
 	// update view pos for spectators
 	if((m_Team == TEAM_SPECTATORS || m_Paused) && m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[m_SpectatorID] && GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter())
-		m_ViewPos = GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter()->m_Pos;
+		m_ViewPos = Flag && m_SpectatorID == m_ClientID ? Flag->m_Pos : GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter()->m_Pos;
 }
 
 void CPlayer::PostPostTick()
@@ -1004,7 +1018,17 @@ void CPlayer::SpectatePlayerName(const char *pName)
 	if(!pName)
 		return;
 
-	for(int i = 0; i < MAX_CLIENTS; ++i)
+	if (!str_comp(pName, "flag red"))
+	{
+		m_SpectatorID = m_ClientID;
+		m_SpectatorFlag = TEAM_RED;
+	}
+	else if (!str_comp(pName, "flag blue"))
+	{
+		m_SpectatorID = m_ClientID;
+		m_SpectatorFlag = TEAM_BLUE;
+	}
+	else for (int i = 0; i < MAX_CLIENTS; ++i)
 	{
 		if(i != m_ClientID && Server()->ClientIngame(i) && !str_comp(pName, Server()->ClientName(i)))
 		{
