@@ -16,7 +16,8 @@ class CPickupDrop : public CEntity
 public:
 	CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Direction, int Weapon = WEAPON_GUN, int Lifetime = 300, int Bullets = -1, bool SpreadWeapon = false, bool Jetpack = false);
 
-	void Reset(bool EreaseWeapon = true, bool Picked = false);
+	void Reset(bool Erase, bool Picked);
+	virtual void Reset() { Reset(true, false); };
 	virtual void Tick();
 	virtual void Snap(int SnappingClient);
 

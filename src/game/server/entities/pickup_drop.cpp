@@ -34,9 +34,9 @@ CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Dire
 	GameWorld()->InsertEntity(this);
 }
 
-void CPickupDrop::Reset(bool EreaseWeapon, bool Picked)
+void CPickupDrop::Reset(bool Erase, bool Picked)
 {
-	if (EreaseWeapon && m_Type == POWERUP_WEAPON)
+	if (Erase && m_Type == POWERUP_WEAPON)
 	{
 		CPlayer* pOwner = GameServer()->m_apPlayers[m_Owner];
 		if (pOwner)

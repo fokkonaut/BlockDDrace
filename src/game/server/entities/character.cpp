@@ -3097,7 +3097,7 @@ void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)
 
 	if (m_pPlayer->m_vWeaponLimit[WeaponID].size() == (unsigned)g_Config.m_SvMaxWeaponDrops)
 	{
-		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset(false);
+		m_pPlayer->m_vWeaponLimit[WeaponID][0]->Reset(false, false);
 		m_pPlayer->m_vWeaponLimit[WeaponID].erase(m_pPlayer->m_vWeaponLimit[WeaponID].begin());
 	}
 
