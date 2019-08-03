@@ -3028,9 +3028,8 @@ void CGameContext::OnInit()
 		ConnectDefaultBots();
 	SetV3Offset(g_Config.m_V3OffsetX, g_Config.m_V3OffsetY);
 
-	// flag spectating
 	for (int i = 0; i < 2; i++)
-		if (((CGameControllerBlockDDrace*)m_pController)->m_apFlags[i])
+		if (g_Config.m_SvFlagSpectating && ((CGameControllerBlockDDrace*)m_pController)->m_apFlags[i])
 			ConnectDummy(0, vec2(-1, -1), i);
 
 

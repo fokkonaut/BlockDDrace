@@ -60,6 +60,7 @@ MACRO_CONFIG_STR(SvAccFilePath, sv_acc_file_path, 128, "data/accounts", CFGFLAG_
 // flags
 MACRO_CONFIG_INT(SvFlagSounds, sv_flag_sounds, 0, 0, 1, CFGFLAG_SERVER, "Whether flags create a public sound on drop/pickup/respawn", AUTHED_ADMIN)
 MACRO_CONFIG_INT(SvFlagHooking, sv_flag_hooking, 1, 0, 1, CFGFLAG_SERVER|CFGFLAG_GAME, "Whether flags are hookable", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvFlagSpectating, sv_flag_spectating, 0, 0, 1, CFGFLAG_SERVER, "Whether you can spectate flags", AUTHED_ADMIN)
 
 // dummy
 MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "Whether to hide server-side bots (0=show bots, 1=show in scoreboard, 2=hide in browser and scoreboard)", AUTHED_ADMIN)
