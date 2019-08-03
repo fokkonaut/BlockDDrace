@@ -3999,12 +3999,9 @@ const char *CGameContext::FixMotd(const char *pMsg)
 
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 {
-	int BotID = GetNextClientID();
-	if (BotID < 0)
+	int BotID = GetNextClientID(FlagPlayer != -1);
+	if (BotID < 0 || BotID >= MAX_CLIENTS)
 		return;
-
-	if (FlagPlayer != -1)
-		BotID = GetNextClientID(true);
 
 	if (m_apPlayers[BotID])
 	{
