@@ -511,12 +511,14 @@ void CPlayer::Snap(int SnappingClient)
 		pPlayerInfo->m_Team = TEAM_BLUE;
 
 	// score
+	int FlagPlayerScore = -1;
 	int Score = 0;
 	bool TimeFormat = false;
 
 	// send 0 if times of others are not shown
 	if(SnappingClient != m_ClientID && g_Config.m_SvHideScore)
 	{
+		FlagPlayerScore = -9999;
 		Score = -9999;
 		TimeFormat = true;
 	}
@@ -539,12 +541,13 @@ void CPlayer::Snap(int SnappingClient)
 	}
 	else
 	{
+		FlagPlayerScore = -9999;
 		Score = abs(m_Score) * -1;
 		TimeFormat = true;
 	}
 	if (!TimeFormat && GetAccID() < ACC_START)
 		Score = 0;
-	pPlayerInfo->m_Score = Score;
+	pPlayerInfo->m_Score = m_FlagPlayer != -1 ? FlagPlayerScore : Score;
 
 
 	if (m_ClientID == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))
