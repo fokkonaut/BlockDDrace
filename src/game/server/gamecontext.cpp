@@ -1925,8 +1925,9 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				SendChatTarget(ClientID, "Invalid spectator id used");
 			else
 			{
+				CPlayer *pSpec = pMsg->m_SpectatorID >= 0 ? m_apPlayers[pMsg->m_SpectatorID] : 0;
+				pPlayer->m_SpectatorFlag = pSpec && pSpec->m_FlagPlayer != -1 ? pSpec->m_FlagPlayer : SPEC_FREEVIEW;
 				pPlayer->m_SpectatorID = pMsg->m_SpectatorID;
-				pPlayer->m_SpectatorFlag = SPEC_FREEVIEW;
 			}
 		}
 		else if (MsgID == NETMSGTYPE_CL_CHANGEINFO)
@@ -3027,6 +3028,11 @@ void CGameContext::OnInit()
 		ConnectDefaultBots();
 	SetV3Offset(g_Config.m_V3OffsetX, g_Config.m_V3OffsetY);
 
+	// flag spectating
+	for (int i = 0; i < 2; i++)
+		if (((CGameControllerBlockDDrace*)m_pController)->m_apFlags[i])
+			ConnectDummy(0, vec2(-1, -1), i);
+
 
 #ifdef CONF_DEBUG
 	if(g_Config.m_DbgDummies)
@@ -3983,11 +3989,15 @@ const char *CGameContext::FixMotd(const char *pMsg)
 	return aRet;
 }
 
-void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
+void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 {
 	int BotID = GetNextClientID();
 	if (BotID < 0)
 		return;
+
+	for (int i = 2; i > 0; i--)
+		if (FlagPlayer != -1 && !m_apPlayers[DDRACE_MAX_CLIENTS-i])
+			BotID = DDRACE_MAX_CLIENTS-i;
 
 	if (m_apPlayers[BotID])
 	{
@@ -4001,6 +4011,7 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos)
 	m_apPlayers[BotID]->m_IsDummy = true;
 	m_apPlayers[BotID]->m_Dummymode = Dummymode;
 	m_apPlayers[BotID]->m_ForceSpawnPos = Pos;
+	m_apPlayers[BotID]->m_FlagPlayer = FlagPlayer;
 
 	if (m_apPlayers[BotID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
 		m_apPlayers[BotID]->m_Minigame = MINIGAME_BLOCK;
@@ -4068,6 +4079,16 @@ void CGameContext::SetV3Offset(int X, int Y)
 		g_Config.m_V3OffsetX = X;
 		g_Config.m_V3OffsetY = Y;
 	}
+}
+
+int CGameContext::GetFlagPlayer(int Team)
+{
+	if (Team != TEAM_RED && Team != TEAM_BLUE)
+		return -1;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (m_apPlayers[i] && m_apPlayers[i]->m_FlagPlayer == Team)
+			return i;
+	return -1;
 }
 
 void CGameContext::SendMotd(const char *pMsg, int ClientID)

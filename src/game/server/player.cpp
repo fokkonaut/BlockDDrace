@@ -179,6 +179,7 @@ void CPlayer::Reset()
 	m_ForceKilled = false;
 
 	m_SpectatorFlag = SPEC_FREEVIEW;
+	m_FlagPlayer = -1;
 }
 
 void CPlayer::Tick()
@@ -334,7 +335,7 @@ void CPlayer::PostTick()
 		}
 	}
 
-	CFlag *Flag = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[m_SpectatorFlag];
+	CFlag *Flag = m_SpectatorFlag == SPEC_FREEVIEW ? 0 : ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[m_SpectatorFlag];
 	if (m_SpectatorFlag != SPEC_FREEVIEW)
 	{
 		if (!Flag)
@@ -342,13 +343,20 @@ void CPlayer::PostTick()
 			m_SpectatorID = SPEC_FREEVIEW;
 			m_SpectatorFlag = SPEC_FREEVIEW;
 		}
+		else if (Flag->GetCarrier())
+			m_SpectatorID = Flag->GetCarrier()->GetPlayer()->GetCID();
 		else
-			m_SpectatorID = Flag->GetCarrier() ? Flag->GetCarrier()->GetPlayer()->GetCID() : m_ClientID;
+			m_SpectatorID = GameServer()->GetFlagPlayer(m_SpectatorFlag);
 	}
 
 	// update view pos for spectators
-	if((m_Team == TEAM_SPECTATORS || m_Paused) && m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[m_SpectatorID] && GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter())
-		m_ViewPos = Flag && m_SpectatorID == m_ClientID ? Flag->m_Pos : GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter()->m_Pos;
+	if(m_Team == TEAM_SPECTATORS || m_Paused)
+	{
+		if (Flag && m_SpectatorID == GameServer()->GetFlagPlayer(m_SpectatorFlag))
+			m_ViewPos = Flag->m_Pos;
+		else if (m_SpectatorID != SPEC_FREEVIEW && GameServer()->m_apPlayers[m_SpectatorID] && GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter())
+			m_ViewPos = GameServer()->m_apPlayers[m_SpectatorID]->GetCharacter()->m_Pos;
+	}
 }
 
 void CPlayer::PostPostTick()
@@ -416,6 +424,9 @@ void CPlayer::Snap(int SnappingClient)
 	if (!m_SetRealName && !m_ShowName)
 		pName = " ";
 
+	if (m_FlagPlayer != -1)
+		pName = m_FlagPlayer == TEAM_RED ? "Red Flag" : "Blue Flag";
+
 	// get the clan
 	if (m_SpookyGhost)
 		pClan = Server()->ClientName(m_ClientID);
@@ -427,9 +438,16 @@ void CPlayer::Snap(int SnappingClient)
 	StrToInts(&pClientInfo->m_Name0, 4, pName);
 	pClientInfo->m_Country = Server()->ClientCountry(m_ClientID);
 
-	// setting rainbow
-	if ((m_pCharacter && m_pCharacter->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
+	if (m_FlagPlayer != -1)
 	{
+		StrToInts(&pClientInfo->m_Skin0, 6, "default");
+		pClientInfo->m_UseCustomColor = 1;
+		pClientInfo->m_ColorBody = m_FlagPlayer == TEAM_RED ? 65387 : 10223467;
+		pClientInfo->m_ColorFeet = m_FlagPlayer == TEAM_RED ? 65387 : 10223467;
+	}
+	else if ((m_pCharacter && m_pCharacter->m_Rainbow) || m_InfRainbow || IsHooked(RAINBOW))
+	{
+		// setting rainbow
 		StrToInts(&pClientInfo->m_Skin0, 6, m_TeeInfos.m_SkinName);
 		pClientInfo->m_UseCustomColor = 1;
 		m_RainbowColor = (m_RainbowColor + m_RainbowSpeed) % 256;
@@ -488,6 +506,9 @@ void CPlayer::Snap(int SnappingClient)
 
 	if(m_ClientID == SnappingClient && m_Paused == PAUSE_PAUSED && (m_ClientVersion < VERSION_DDNET_OLD || m_SnapFixDDNet))
 		pPlayerInfo->m_Team = TEAM_SPECTATORS;
+
+	if (m_FlagPlayer != -1)
+		pPlayerInfo->m_Team = TEAM_BLUE;
 
 	// score
 	int Score = 0;
@@ -779,7 +800,7 @@ void CPlayer::SetTeam(int Team, bool DoChatMsg)
 
 void CPlayer::TryRespawn()
 {
-	if (m_Team == TEAM_SPECTATORS)
+	if (m_Team == TEAM_SPECTATORS || m_FlagPlayer != -1)
 		return;
 
 	vec2 SpawnPos;
@@ -1018,17 +1039,7 @@ void CPlayer::SpectatePlayerName(const char *pName)
 	if(!pName)
 		return;
 
-	if (!str_comp(pName, "flag red"))
-	{
-		m_SpectatorID = m_ClientID;
-		m_SpectatorFlag = TEAM_RED;
-	}
-	else if (!str_comp(pName, "flag blue"))
-	{
-		m_SpectatorID = m_ClientID;
-		m_SpectatorFlag = TEAM_BLUE;
-	}
-	else for (int i = 0; i < MAX_CLIENTS; ++i)
+	for (int i = 0; i < MAX_CLIENTS; ++i)
 	{
 		if(i != m_ClientID && Server()->ClientIngame(i) && !str_comp(pName, Server()->ClientName(i)))
 		{

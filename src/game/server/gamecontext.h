@@ -333,9 +333,10 @@ public:
 	**************************************************/
 
 	//dummy
-	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1));
+	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1), int FlagPlayer = -1);
 	void ConnectDefaultBots();
 	void SetV3Offset(int X = -1, int Y = -1);
+	int GetFlagPlayer(int Team);
 
 	bool IsShopBot(int ClientID);
 	int GetShopBot();

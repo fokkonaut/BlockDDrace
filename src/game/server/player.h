@@ -314,6 +314,7 @@ public:
 
 	// used for spectating flags
 	int m_SpectatorFlag;
+	int m_FlagPlayer;
 
 	//minigames
 	int m_Minigame;
