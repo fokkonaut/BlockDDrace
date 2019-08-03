@@ -274,6 +274,9 @@ public:
 	int ClientCount();
 	int DistinctClientCount();
 
+	// BlockDDrace
+	int BotCount();
+
 	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID);
 	int SendMsgEx(CMsgPacker *pMsg, int Flags, int ClientID, bool System);
 
