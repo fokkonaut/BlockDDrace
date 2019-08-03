@@ -341,7 +341,7 @@ public:
 	bool IsShopBot(int ClientID);
 	int GetShopBot();
 
-	int GetNextClientID();
+	int GetNextClientID(bool Inverted = false);
 
 	//account
 	static int AccountsCallback(const char *pName, int IsDir, int StorageType, void *pUser);

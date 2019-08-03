@@ -3919,11 +3919,20 @@ void CGameContext::Logout(int ID)
 	m_Accounts.erase(m_Accounts.begin() + ID);
 }
 
-int CGameContext::GetNextClientID()
+int CGameContext::GetNextClientID(bool Inverted)
 {
-	for (int i = 0; i < g_Config.m_SvMaxClients; i++)
-		if (((CServer*)Server())->m_aClients[i].m_State == CServer::CClient::STATE_EMPTY)
-			return i;
+	if (!Inverted)
+	{
+		for (int i = 0; i < g_Config.m_SvMaxClients; i++)
+			if (((CServer*)Server())->m_aClients[i].m_State == CServer::CClient::STATE_EMPTY)
+				return i;
+	}
+	else
+	{
+		for (int i = DDRACE_MAX_CLIENTS-1; i > -1; i--)
+			if (((CServer*)Server())->m_aClients[i].m_State == CServer::CClient::STATE_EMPTY)
+				return i;
+	}
 	return -1;
 }
 
@@ -3994,9 +4003,8 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 	if (BotID < 0)
 		return;
 
-	for (int i = 2; i > 0; i--)
-		if (FlagPlayer != -1 && !m_apPlayers[DDRACE_MAX_CLIENTS-i])
-			BotID = DDRACE_MAX_CLIENTS-i;
+	if (FlagPlayer != -1)
+		BotID = GetNextClientID(true);
 
 	if (m_apPlayers[BotID])
 	{
