@@ -592,8 +592,6 @@ void CCharacterCore::Tick(bool UseInput)
 			m_UpdateFlagVel = m_HookedPlayer;
 			int Team = m_HookedPlayer == FLAG_RED ? TEAM_RED : TEAM_BLUE;
 			vec2 Temp = m_FlagVel[Team];
-			vec2 FlagVel = m_FlagVel[Team];
-			vec2 FPos = m_FlagPos[Team];
 			float Distance = distance(m_Pos, m_FlagPos[Team]);
 			vec2 Dir = normalize(m_Pos - m_FlagPos[Team]);
 
@@ -603,8 +601,8 @@ void CCharacterCore::Tick(bool UseInput)
 				float Accel = m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookDragAccel * (Distance / m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookLength);
 				float DragSpeed = m_pWorld->m_Tuning[g_Config.m_ClDummy].m_HookDragSpeed;
 
-				Temp.x = SaturatedAdd(-DragSpeed, DragSpeed, FlagVel.x, Accel*Dir.x*1.5f);
-				Temp.y = SaturatedAdd(-DragSpeed, DragSpeed, FlagVel.y, Accel*Dir.y*1.5f);
+				Temp.x = SaturatedAdd(-DragSpeed, DragSpeed, m_FlagVel[Team].x, Accel*Dir.x*1.5f);
+				Temp.y = SaturatedAdd(-DragSpeed, DragSpeed, m_FlagVel[Team].y, Accel*Dir.y*1.5f);
 
 				m_UFlagVel = Temp;
 
