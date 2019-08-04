@@ -424,9 +424,6 @@ void CPlayer::Snap(int SnappingClient)
 	if (!m_SetRealName && !m_ShowName)
 		pName = " ";
 
-	if (m_FlagPlayer != -1)
-		pName = m_FlagPlayer == TEAM_RED ? "Red Flag" : "Blue Flag";
-
 	// get the clan
 	if (m_SpookyGhost)
 		pClan = Server()->ClientName(m_ClientID);

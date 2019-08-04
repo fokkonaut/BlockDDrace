@@ -4027,6 +4027,12 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 	m_apPlayers[BotID]->m_TeeInfos.m_ColorFeet = 0;
 	m_apPlayers[BotID]->m_TeeInfos.m_ColorBody = 0;
 
+	if (FlagPlayer != -1)
+	{
+		Server()->SetClientName(BotID, FlagPlayer == TEAM_RED ? "Red Flag" : "Blue Flag");
+		Server()->SetClientClan(BotID, "BlockDDrace");
+	}
+
 	OnClientEnter(BotID);
 
 	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", BotID, Dummymode);
