@@ -589,19 +589,13 @@ void CCharacterCore::Tick(bool UseInput)
 		
 		if (m_HookedPlayer == FLAG_RED || m_HookedPlayer == FLAG_BLUE)
 		{
-			float Distance;
-			vec2 FlagVel;
-			vec2 Dir;
-			vec2 FPos;
-			vec2 Temp;
-			int Team = m_HookedPlayer == FLAG_RED ? TEAM_RED : TEAM_BLUE;
-
 			m_UpdateFlagVel = m_HookedPlayer;
-			Temp = m_FlagVel[Team];
-			FlagVel = m_FlagVel[Team];
-			FPos = m_FlagPos[Team];
-			Distance = distance(m_Pos, m_FlagPos[Team]);
-			Dir = normalize(m_Pos - m_FlagPos[Team]);
+			int Team = m_HookedPlayer == FLAG_RED ? TEAM_RED : TEAM_BLUE;
+			vec2 Temp = m_FlagVel[Team];
+			vec2 FlagVel = m_FlagVel[Team];
+			vec2 FPos = m_FlagPos[Team];
+			float Distance = distance(m_Pos, m_FlagPos[Team]);
+			vec2 Dir = normalize(m_Pos - m_FlagPos[Team]);
 
 			if (Distance > PhysSize*1.50f)
 			{
