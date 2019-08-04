@@ -22,6 +22,8 @@ private:
 	vec2 m_PrevPos;
 
 	int m_TeleCheckpoint;
+	int m_TuneZone;
+
 	void HandleTiles(int Index);
 	int m_TileIndex;
 	int m_TileFlags;

@@ -28,7 +28,9 @@ CPickupDrop::CPickupDrop(CGameWorld *pGameWorld, int Type, int Owner, float Dire
 	m_Vel = vec2(5*Direction, -5);
 	m_PickupDelay = Server()->TickSpeed() * 2;
 	m_TeleCheckpoint = 0;
+	m_ProximityRadius = ms_PhysSize;
 	m_PrevPos = m_Pos;
+	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
 
 	m_ID2 = Server()->SnapNewID();
 	GameWorld()->InsertEntity(this);
@@ -182,15 +184,15 @@ void CPickupDrop::IsShieldNear()
 
 bool CPickupDrop::IsGrounded(bool SetVel)
 {
-	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + ms_PhysSize, m_Pos.y + ms_PhysSize + 5))
-		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - ms_PhysSize, m_Pos.y + ms_PhysSize + 5)))
+	if ((GameServer()->Collision()->CheckPoint(m_Pos.x + m_ProximityRadius, m_Pos.y + m_ProximityRadius + 5))
+		|| (GameServer()->Collision()->CheckPoint(m_Pos.x - m_ProximityRadius, m_Pos.y + m_ProximityRadius + 5)))
 	{
 		if (SetVel)
 			m_Vel.x *= 0.75f;
 		return true;
 	}
 
-	int index = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + ms_PhysSize + 4));
+	int index = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + m_ProximityRadius + 4));
 	int tile = GameServer()->Collision()->GetTileIndex(index);
 	int flags = GameServer()->Collision()->GetTileFlags(index);
 	if (GameServer()->Collision()->GetDTileIndex(index) == TILE_STOPA || tile == TILE_STOPA || (tile == TILE_STOP && flags == ROTATION_0) || (tile == TILE_STOPS && (flags == ROTATION_0 || flags == ROTATION_180)))
@@ -216,7 +218,10 @@ bool CPickupDrop::IsGrounded(bool SetVel)
 void CPickupDrop::HandleDropped()
 {
 	//Gravity
-	m_Vel.y += GameServer()->Tuning()->m_Gravity;
+	if (!m_TuneZone)
+		m_Vel.y += GameServer()->Tuning()->m_Gravity;
+	else
+		m_Vel.y += GameServer()->TuningList()[m_TuneZone].m_Gravity;
 
 	//Speedups
 	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
@@ -280,6 +285,8 @@ void CPickupDrop::HandleDropped()
 
 	// tiles
 	int CurrentIndex = GameServer()->Collision()->GetMapIndex(m_Pos);
+	m_TuneZone = GameServer()->Collision()->IsTune(CurrentIndex);
+
 	std::list < int > Indices = GameServer()->Collision()->GetMapIndices(m_PrevPos, m_Pos);
 	if (!Indices.empty())
 		for (std::list < int >::iterator i = Indices.begin(); i != Indices.end(); i++)
@@ -289,7 +296,7 @@ void CPickupDrop::HandleDropped()
 		HandleTiles(CurrentIndex);
 	}
 	IsGrounded(true);
-	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(ms_PhysSize, ms_PhysSize), 0.5f);
+	GameServer()->Collision()->MoveBox(&m_Pos, &m_Vel, vec2(m_ProximityRadius, m_ProximityRadius), 0.5f);
 }
 
 void CPickupDrop::HandleTiles(int Index)
@@ -301,10 +308,10 @@ void CPickupDrop::HandleTiles(int Index)
 	CGameControllerBlockDDrace* Controller = (CGameControllerBlockDDrace*)GameServer()->m_pController;
 	int MapIndex = Index;
 	float Offset = 4.0f;
-	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + ms_PhysSize + Offset, m_Pos.y));
-	int MapIndexR = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x - ms_PhysSize - Offset, m_Pos.y));
-	int MapIndexT = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + ms_PhysSize + Offset));
-	int MapIndexB = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y - ms_PhysSize - Offset));
+	int MapIndexL = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x + m_ProximityRadius + Offset, m_Pos.y));
+	int MapIndexR = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x - m_ProximityRadius - Offset, m_Pos.y));
+	int MapIndexT = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y + m_ProximityRadius + Offset));
+	int MapIndexB = GameServer()->Collision()->GetPureMapIndex(vec2(m_Pos.x, m_Pos.y - m_ProximityRadius - Offset));
 	m_TileIndex = GameServer()->Collision()->GetTileIndex(MapIndex);
 	m_TileFlags = GameServer()->Collision()->GetTileFlags(MapIndex);
 	m_TileIndexL = GameServer()->Collision()->GetTileIndex(MapIndexL);

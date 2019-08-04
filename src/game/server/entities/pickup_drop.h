@@ -49,6 +49,8 @@ private:
 	int m_ID2;
 
 	int m_TeleCheckpoint;
+	int m_TuneZone;
+
 	void HandleTiles(int Index);
 	int m_TileIndex;
 	int m_TileFlags;

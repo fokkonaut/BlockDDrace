@@ -21,6 +21,7 @@ CFlag::CFlag(CGameWorld *pGameWorld, int Team, vec2 Pos)
 	m_Team = Team;
 	m_ProximityRadius = ms_PhysSize;
 	m_PrevPos = m_Pos;
+	m_TuneZone = GameServer()->Collision()->IsTune(GameServer()->Collision()->GetMapIndex(m_Pos));
 
 	GameWorld()->InsertEntity(this);
 
@@ -168,7 +169,10 @@ bool CFlag::IsGrounded(bool SetVel)
 void CFlag::HandleDropped()
 {
 	//Gravity
-	m_Vel.y += GameServer()->Tuning()->m_Gravity;
+	if (!m_TuneZone)
+		m_Vel.y += GameServer()->Tuning()->m_Gravity;
+	else
+		m_Vel.y += GameServer()->TuningList()[m_TuneZone].m_Gravity;
 
 	//Speedups
 	if (GameServer()->Collision()->IsSpeedup(GameServer()->Collision()->GetMapIndex(m_Pos)))
