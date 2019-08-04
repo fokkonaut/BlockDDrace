@@ -35,6 +35,7 @@ void CFlag::Reset(bool Init)
 		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", "flag_return");
 		if (g_Config.m_SvFlagSounds)
 			GameServer()->CreateSoundGlobal(SOUND_CTF_RETURN);
+		GameServer()->CreateDeath(m_Pos, m_pLastCarrier ? m_pLastCarrier->GetPlayer()->GetCID() : -1);
 	}
 	m_pCarrier = NULL;
 	m_pLastCarrier = NULL;

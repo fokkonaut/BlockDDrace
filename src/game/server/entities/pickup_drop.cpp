@@ -48,7 +48,7 @@ void CPickupDrop::Reset(bool Erase, bool Picked)
 	}
 
 	if (!Picked)
-		GameServer()->CreateDeath(m_Pos, -1);
+		GameServer()->CreateDeath(m_Pos, m_pOwner ? m_Owner : -1);
 
 	Server()->SnapFreeID(m_ID2);
 	GameWorld()->DestroyEntity(this);
