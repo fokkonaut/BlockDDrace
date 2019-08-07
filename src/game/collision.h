@@ -100,6 +100,10 @@ public:
 	// BlockDDrace
 	vec2 GetRandomTile(int Index);
 	std::vector< std::vector<vec2> > m_vTiles;;
+
+	bool FakeCheckPoint(float x, float y) { return IsFakeSolid(round_to_int(x), round_to_int(y)); }
+	int IsFakeSolid(int x, int y);
+	int FakeTestBox(vec2 Pos, vec2 Size);
 	// BlockDDrace
 
 private:
