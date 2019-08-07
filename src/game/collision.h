@@ -99,7 +99,7 @@ public:
 
 	// BlockDDrace
 	vec2 GetRandomTile(int Index);
-	std::vector< std::vector<vec2> > m_vTiles;;
+	std::vector< std::vector<vec2> > m_vTiles;
 	// BlockDDrace
 
 private:
