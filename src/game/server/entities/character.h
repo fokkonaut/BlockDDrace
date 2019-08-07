@@ -474,8 +474,6 @@ public:
 
 	CNetObj_PlayerInput GetInput() { return m_Input; };
 
-	bool m_HasFakeTunings;
-
 	//this means the character is directly on a freezetile
 	bool m_IsFrozen;
 

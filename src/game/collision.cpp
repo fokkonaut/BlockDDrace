@@ -140,7 +140,7 @@ int CCollision::GetTile(int x, int y)
 	int Ny = clamp(y/32, 0, m_Height-1);
 	int pos = Ny * m_Width + Nx;
 
-	if((m_pTiles[pos].m_Index >= TILE_SOLID && m_pTiles[pos].m_Index <= TILE_NOLASER) || m_pTiles[pos].m_Index == TILE_FAKE_SOLID || m_pTiles[pos].m_Index == TILE_FAKE_NOHOOK)
+	if(m_pTiles[pos].m_Index >= TILE_SOLID && m_pTiles[pos].m_Index <= TILE_NOLASER)
 		return m_pTiles[pos].m_Index;
 	return 0;
 }
@@ -414,7 +414,7 @@ void CCollision::Dest()
 int CCollision::IsSolid(int x, int y)
 {
 	int index = GetTile(x,y);
-	return index == TILE_SOLID || index == TILE_NOHOOK || index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK;
+	return index == TILE_SOLID || index == TILE_NOHOOK;
 }
 
 bool CCollision::IsThrough(int x, int y, int xoff, int yoff, vec2 pos0, vec2 pos1)
@@ -1153,24 +1153,4 @@ vec2 CCollision::GetRandomTile(int Index)
 		return m_vTiles[Index][Rand];
 	}
 	return vec2(-1, -1);
-}
-
-int CCollision::IsFakeSolid(int x, int y)
-{
-	int index = GetTile(x, y);
-	return index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK;
-}
-
-int CCollision::FakeTestBox(vec2 Pos, vec2 Size)
-{
-	Size *= 0.5f;
-	if (FakeCheckPoint(Pos.x - Size.x, Pos.y - Size.y))
-		return 1;
-	if (FakeCheckPoint(Pos.x + Size.x, Pos.y - Size.y))
-		return 2;
-	if (FakeCheckPoint(Pos.x - Size.x, Pos.y + Size.y))
-		return 3;
-	if (FakeCheckPoint(Pos.x + Size.x, Pos.y + Size.y))
-		return 4;
-	return 0;
 }

@@ -311,7 +311,7 @@ void CCharacterCore::Tick(bool UseInput)
 
 		if(Hit)
 		{
-			if(Hit == TILE_NOHOOK || Hit == TILE_FAKE_NOHOOK)
+			if(Hit == TILE_NOHOOK)
 				GoingToRetract = true;
 			else if (Hit == TILE_TELEINHOOK)
 				GoingThroughTele = true;

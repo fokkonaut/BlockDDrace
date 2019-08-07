@@ -3033,40 +3033,6 @@ void CCharacter::BlockDDraceTick()
 
 	if (m_pLightsaber && (m_FreezeTime || GetActiveWeapon() != WEAPON_LIGHTSABER))
 		m_pLightsaber->Retract();
-
-	int FakeTestBox = GameServer()->Collision()->FakeTestBox(m_Core.m_Pos, vec2(m_ProximityRadius + 5.f, m_ProximityRadius + 5.f));
-	if ((FakeTestBox == 1 /*&& m_Input.m_Direction == -1*/) || (FakeTestBox == 2 /*&& m_Input.m_Direction == 1*/))
-	{
-		m_Core.m_Vel = vec2(0, 0);
-
-		static CTuningParams FakeTuning;
-
-		if (!m_TuneZone)
-			FakeTuning = *GameServer()->Tuning();
-		else
-			FakeTuning = GameServer()->TuningList()[m_TuneZone];
-
-		if (FakeTestBox == 1 || FakeTestBox == 2)
-		{
-			FakeTuning.m_GroundControlSpeed = 0.f;
-			FakeTuning.m_GroundControlAccel = 0.f;
-			FakeTuning.m_AirControlSpeed = 0.f;
-			FakeTuning.m_AirControlAccel = 0.f;
-		}
-
-		CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
-		int *pParams = (int *)&FakeTuning;
-		for (unsigned i = 0; i < sizeof(FakeTuning) / sizeof(int); i++)
-			Msg.AddInt(pParams[i]);
-		Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
-
-		m_HasFakeTunings = true;
-	}
-	else if (m_HasFakeTunings)
-	{
-		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone);
-		m_HasFakeTunings = false;
-	}
 }
 
 void CCharacter::BackupWeapons(int Type)
