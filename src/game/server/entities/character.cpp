@@ -2955,6 +2955,8 @@ void CCharacter::BlockDDraceInit()
 	m_Armor = m_pPlayer->m_Gamemode == GAMEMODE_VANILLA ? 0 : 10;
 
 	m_FakeBlockTuning = false;
+	m_FakeBlockUpState = 0;
+	m_FakeBlockOldVelX = 0.f;
 }
 
 void CCharacter::BlockDDraceTick()
@@ -3049,7 +3051,7 @@ void CCharacter::FakeBlockTick()
 		LEFT=1<<0,
 		RIGHT=1<<1,
 		DOWN=1<<2,
-		//UP=1<<3 // unused at the moment
+		UP=1<<3
 	};
 
 	int FakeCheckPoint = 0;
@@ -3068,11 +3070,22 @@ void CCharacter::FakeBlockTick()
 		m_Core.m_Pos.y -= 0.001f;
 		m_Core.m_Vel.y = 0;
 	}
-	/*if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x+m_ProximityRadius/2, m_Pos.y-(m_ProximityRadius/2+5)) ||
+	if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x+m_ProximityRadius/2, m_Pos.y-(m_ProximityRadius/2+5)) ||
 	GameServer()->Collision()->FakeCheckPoint(m_Pos.x-m_ProximityRadius/2, m_Pos.y-(m_ProximityRadius/2+5)))
 	{
 		FakeCheckPoint |= UP;
-	}*/
+		if (m_FakeBlockUpState == 0)
+		{
+			m_FakeBlockOldVelX = m_Core.m_Vel.x;
+			m_Core.m_Vel = vec2(0.f, 0.f);
+			m_FakeBlockUpState = 1;
+		}
+		else if (m_FakeBlockUpState == 1)
+		{
+			m_Core.m_Vel.x = m_FakeBlockOldVelX;
+			m_FakeBlockUpState = 2;
+		}
+	}
 
 	if ((m_Input.m_Direction == -1 && FakeCheckPoint & LEFT) || (m_Input.m_Direction == 1 && FakeCheckPoint & RIGHT))
 		m_Input.m_Direction = 0;
@@ -3110,6 +3123,7 @@ void CCharacter::FakeBlockTick()
 	{
 		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone);
 		m_FakeBlockTuning = false;
+		m_FakeBlockUpState = 0;
 	}
 }
 
