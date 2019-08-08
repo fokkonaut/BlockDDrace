@@ -1744,17 +1744,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 						}
 					}
 					else
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							CFlag *F = ((CGameControllerBlockDDrace*)m_pController)->m_apFlags[i];
-							if (!F)
-								continue;
-
-							if (F->GetCarrier() == pChr)
-								F->Drop(pChr->GetAimDir());
-						}
-					}
+						pChr->DropFlag();
 				}
 			}
 			else if (pMsg->m_Vote == -1) //vote no (f4)

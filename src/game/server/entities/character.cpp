@@ -2981,7 +2981,7 @@ void CCharacter::BlockDDraceTick()
 		m_LastHitWeapon = -1;
 	}
 
-	// fix miss prediction for other players if one is in solo
+	// fix miss prediction for other players if one is in passive
 	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS) // the newer clients use the DDNet network character to know whether they can collide or not
 	{
 		CCharacter *pPas = GameWorld()->ClosestCharacter(m_Pos, 50.0f, this);
@@ -3108,7 +3108,7 @@ void CCharacter::FakeBlockTick()
 		}
 		if (FakeCheckPoint & DOWN)
 		{
-			FakeTuning.m_Gravity = 0;
+			FakeTuning.m_Gravity = 0.f;
 		}
 
 		CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
@@ -3180,6 +3180,19 @@ void CCharacter::SetAvailableWeapon(int PreferedWeapon)
 				SetWeapon(i);
 	}
 	UpdateWeaponIndicator();
+}
+
+void CCharacter::DropFlag()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		CFlag *F = ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[i];
+		if (!F)
+			continue;
+
+		if (F->GetCarrier() == this)
+			F->Drop(GetAimDir());
+	}
 }
 
 void CCharacter::DropWeapon(int WeaponID, float Dir, bool Forced)

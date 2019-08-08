@@ -155,6 +155,7 @@ public:
 	**************************************************/
 
 	//drops
+	void DropFlag();
 	void DropWeapon(int WeaponID, float Dir = -3, bool Forced = false);
 	void DropPickup(int Type, int Amount = 1);
 	void DropLoot();
