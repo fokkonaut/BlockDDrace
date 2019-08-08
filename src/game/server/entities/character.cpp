@@ -929,7 +929,12 @@ void CCharacter::Tick()
 	BlockDDraceTick();
 	DummyTick();
 	// BlockDDrace
+
 	DDRaceTick();
+
+	// BlockDDrace
+	FakeBlockTick();
+	// BlockDDrace
 
 	m_Core.m_Input = m_Input;
 
@@ -2948,6 +2953,8 @@ void CCharacter::BlockDDraceInit()
 
 	m_pPlayer->m_Gamemode = (g_Config.m_SvVanillaModeStart || m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) ? GAMEMODE_VANILLA : GAMEMODE_DDRACE;
 	m_Armor = m_pPlayer->m_Gamemode == GAMEMODE_VANILLA ? 0 : 10;
+
+	m_FakeBlockTuning = false;
 }
 
 void CCharacter::BlockDDraceTick()
@@ -3033,6 +3040,77 @@ void CCharacter::BlockDDraceTick()
 
 	if (m_pLightsaber && (m_FreezeTime || GetActiveWeapon() != WEAPON_LIGHTSABER))
 		m_pLightsaber->Retract();
+}
+
+void CCharacter::FakeBlockTick()
+{
+	enum
+	{
+		LEFT=1<<0,
+		RIGHT=1<<1,
+		DOWN=1<<2,
+		//UP=1<<3 // unused at the moment
+	};
+
+	int FakeCheckPoint = 0;
+	if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x-(m_ProximityRadius/2+5), m_Pos.y-m_ProximityRadius/2))
+	{
+		FakeCheckPoint |= LEFT;
+	}
+	if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x+(m_ProximityRadius/2+5), m_Pos.y-m_ProximityRadius/2))
+	{
+		FakeCheckPoint |= RIGHT;
+	}
+	if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x+m_ProximityRadius/2, m_Pos.y+m_ProximityRadius/2+5) ||
+	GameServer()->Collision()->FakeCheckPoint(m_Pos.x-m_ProximityRadius/2, m_Pos.y+m_ProximityRadius/2+5))
+	{
+		FakeCheckPoint |= DOWN;
+		m_Core.m_Pos.y -= 0.001f;
+		m_Core.m_Vel.y = 0;
+	}
+	/*if (GameServer()->Collision()->FakeCheckPoint(m_Pos.x+m_ProximityRadius/2, m_Pos.y-(m_ProximityRadius/2+5)) ||
+	GameServer()->Collision()->FakeCheckPoint(m_Pos.x-m_ProximityRadius/2, m_Pos.y-(m_ProximityRadius/2+5)))
+	{
+		FakeCheckPoint |= UP;
+	}*/
+
+	if ((m_Input.m_Direction == -1 && FakeCheckPoint & LEFT) || (m_Input.m_Direction == 1 && FakeCheckPoint & RIGHT))
+		m_Input.m_Direction = 0;
+
+	if(!m_FakeBlockTuning && FakeCheckPoint != 0)
+	{
+		static CTuningParams FakeTuning;
+
+		if (!m_TuneZone)
+			FakeTuning = *GameServer()->Tuning();
+		else
+			FakeTuning = GameServer()->TuningList()[m_TuneZone];
+
+		if (FakeCheckPoint & LEFT || FakeCheckPoint & RIGHT)
+		{
+			FakeTuning.m_GroundControlSpeed = 0.f;
+			FakeTuning.m_GroundControlAccel = 0.f;
+			FakeTuning.m_AirControlSpeed = 0.f;
+			FakeTuning.m_AirControlAccel = 0.f;
+		}
+		if (FakeCheckPoint & DOWN)
+		{
+			FakeTuning.m_Gravity = 0;
+		}
+
+		CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
+		int *pParams = (int *)&FakeTuning;
+		for (unsigned i = 0; i < sizeof(FakeTuning) / sizeof(int); i++)
+			Msg.AddInt(pParams[i]);
+		Server()->SendMsg(&Msg, MSGFLAG_VITAL, m_pPlayer->GetCID());
+
+		m_FakeBlockTuning = true;
+	}
+	else if (m_FakeBlockTuning && FakeCheckPoint == 0)
+	{
+		GameServer()->SendTuningParams(m_pPlayer->GetCID(), m_TuneZone);
+		m_FakeBlockTuning = false;
+	}
 }
 
 void CCharacter::BackupWeapons(int Type)

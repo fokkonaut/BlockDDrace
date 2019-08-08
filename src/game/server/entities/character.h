@@ -287,6 +287,7 @@ private:
 	// BlockDDrace
 	void BlockDDraceTick();
 	void DummyTick();
+	void FakeBlockTick();
 	void BlockDDraceInit();
 
 public:
@@ -473,6 +474,8 @@ public:
 	void CheckMoved();
 
 	CNetObj_PlayerInput GetInput() { return m_Input; };
+
+	bool m_FakeBlockTuning;
 
 	//this means the character is directly on a freezetile
 	bool m_IsFrozen;

@@ -222,6 +222,10 @@ enum
 	TILE_SURVIVAL_SPAWN,
 	TILE_SURVIVAL_DEATHMATCH,
 
+	// when using fake blocks, add front layer blocks on it, so entities see it as a real un/hookable
+	TILE_FAKE_SOLID = 188,
+	TILE_FAKE_NOHOOK,
+
 	TILE_END_CUSTOM,
 	//End of higher tiles
 	//Layers
