@@ -381,18 +381,34 @@ void CCharacter::FireWeapon()
 	if(CountInput(m_LatestPrevInput.m_Fire, m_LatestInput.m_Fire).m_Presses)
 		WillFire = true;
 
-	// shop window
-	if (WillFire && m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
-	{
-		ShopWindow(GetAimDir());
-		return;
-	}
-
 	if(FullAuto && (m_LatestInput.m_Fire&1) && m_aWeapons[GetActiveWeapon()].m_Ammo)
 		WillFire = true;
 
 	if(!WillFire)
 		return;
+
+	// shop window
+	if (m_ShopWindowPage != SHOP_PAGE_NONE && m_PurchaseState == SHOP_STATE_OPENED_WINDOW)
+	{
+		ShopWindow(GetAimDir());
+		return;
+	}
+
+	//spooky ghost
+	if (m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
+	{
+		m_NumGhostShots++;
+		if ((m_pPlayer->m_HasSpookyGhost || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST]) && m_NumGhostShots == 2 && !m_pPlayer->m_SpookyGhost)
+		{
+			SetSpookyGhost();
+			m_NumGhostShots = 0;
+		}
+		else if (m_NumGhostShots == 2 && m_pPlayer->m_SpookyGhost)
+		{
+			UnsetSpookyGhost();
+			m_NumGhostShots = 0;
+		}
+	}
 
 	// check for ammo
 	if(!m_aWeapons[GetActiveWeapon()].m_Ammo)
@@ -765,23 +781,6 @@ void CCharacter::FireWeapon()
 		else
 			GameServer()->TuningList()[m_TuneZone].Get(OLD_TUNES + GetActiveWeapon(), &FireDelay);
 		m_ReloadTimer = FireDelay * Server()->TickSpeed() / 1000;
-	}
-
-	// BlockDDrace
-	//spooky ghost
-	if (WillFire && m_pPlayer->m_PlayerFlags&PLAYERFLAG_SCOREBOARD && GameServer()->GetRealWeapon(GetActiveWeapon()) == WEAPON_GUN)
-	{
-		m_NumGhostShots++;
-		if ((m_pPlayer->m_HasSpookyGhost || GameServer()->m_Accounts[m_pPlayer->GetAccID()].m_aHasItem[SPOOKY_GHOST]) && (m_NumGhostShots == 2) && !m_pPlayer->m_SpookyGhost)
-		{
-			SetSpookyGhost();
-			m_NumGhostShots = 0;
-		}
-		else if (m_NumGhostShots == 2 && m_pPlayer->m_SpookyGhost)
-		{
-			UnsetSpookyGhost();
-			m_NumGhostShots = 0;
-		}
 	}
 }
 
