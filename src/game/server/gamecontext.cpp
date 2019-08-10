@@ -3806,6 +3806,7 @@ void CGameContext::ReadAccountStats(int ID, char *pName)
 	str_copy(m_Accounts[ID].m_Password, aData, sizeof(m_Accounts[ID].m_Password));
 
 	getline(AccFile, data);
+	str_copy(aData, data.c_str(), sizeof(aData));
 	str_copy(m_Accounts[ID].m_Username, aData, sizeof(m_Accounts[ID].m_Username));
 
 	getline(AccFile, data);
