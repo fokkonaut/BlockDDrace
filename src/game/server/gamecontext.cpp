@@ -1206,6 +1206,16 @@ void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 	// BlockDDrace
 	if (m_apPlayers[ClientID]->GetAccID() >= ACC_START)
 		Logout(m_apPlayers[ClientID]->GetAccID());
+
+	for (int i = 0; i < MAX_CLIENTS; i++)
+	{
+		CCharacter *pChr = GetPlayerChar(i);
+		if (pChr && pChr->m_Killer.m_ClientID == ClientID)
+		{
+			pChr->m_Killer.m_ClientID = -1;
+			pChr->m_Killer.m_Weapon = -1;
+		}
+	}
 	// BlockDDrace
 
 	AbortVoteKickOnDisconnect(ClientID);

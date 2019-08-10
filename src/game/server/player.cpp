@@ -1123,7 +1123,7 @@ bool CPlayer::IsHooked(int Power)
 		if (pChr->Core()->m_HookedPlayer == m_ClientID)
 		{
 			if (Power == -2 && m_pCharacter)
-				m_pCharacter->m_LastTouchedTee = i;
+				m_pCharacter->m_Killer.m_ClientID = i;
 			return Power >= 0 ? pChr->m_HookPower == Power : true;
 		}
 	}
