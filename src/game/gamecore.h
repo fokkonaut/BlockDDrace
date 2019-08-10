@@ -253,7 +253,16 @@ public:
 	bool m_LeftWall;
 	
 	// BlockDDrace
+	struct KillerInfo
+	{
+		int m_ClientID;
+		int m_Weapon;
+	};
+	KillerInfo m_Killer;
+
 	int m_LastHookedPlayer;
+	int m_OldLastHookedPlayer;
+	
 	bool m_Passive;
 
 	// DDNet Character

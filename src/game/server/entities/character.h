@@ -410,16 +410,6 @@ public:
 	int m_LastIndexTile;
 	int m_LastIndexFrontTile;
 
-	//last toucher
-	int m_OldLastHookedPlayer;
-
-	struct KillerInfo
-	{
-		int m_ClientID;
-		int m_Weapon;
-	};
-	KillerInfo m_Killer;
-
 	//backups
 	void BackupWeapons(int Type);
 	void LoadWeaponBackup(int Type);

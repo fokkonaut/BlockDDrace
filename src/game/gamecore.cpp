@@ -103,7 +103,11 @@ void CCharacterCore::Reset()
 	m_Collision = true;
 
 	// BlockDDrace
+	m_Killer.m_ClientID = -1;
+	m_Killer.m_Weapon = -1;
 	m_LastHookedPlayer = -1;
+	m_OldLastHookedPlayer = -1;
+
 	m_Passive = false;
 
 	// DDNet Character
@@ -540,6 +544,9 @@ void CCharacterCore::Tick(bool UseInput)
 
 				m_Vel += Dir*a*(Velocity*0.75f);
 				m_Vel *= 0.85f;
+
+				// BlockDDrace // body check
+				m_Killer.m_ClientID = pCharCore->m_Id;
 			}
 
 			// handle hook influence

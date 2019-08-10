@@ -1210,10 +1210,10 @@ void CGameContext::OnClientDrop(int ClientID, const char *pReason)
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		CCharacter *pChr = GetPlayerChar(i);
-		if (pChr && pChr->m_Killer.m_ClientID == ClientID)
+		if (pChr && pChr->Core()->m_Killer.m_ClientID == ClientID)
 		{
-			pChr->m_Killer.m_ClientID = -1;
-			pChr->m_Killer.m_Weapon = -1;
+			pChr->Core()->m_Killer.m_ClientID = -1;
+			pChr->Core()->m_Killer.m_Weapon = -1;
 		}
 	}
 	// BlockDDrace

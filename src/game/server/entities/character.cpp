@@ -1112,18 +1112,18 @@ void CCharacter::Die(int Killer, int Weapon)
 	// only let unfrozen kills through if you have damage activated
 	if (!m_FreezeTime && (Killer < 0 || Killer == m_pPlayer->GetCID() || Weapon < 0))
 	{
-		m_Killer.m_ClientID = -1;
-		m_Killer.m_Weapon = -1;
+		m_Core.m_Killer.m_ClientID = -1;
+		m_Core.m_Killer.m_Weapon = -1;
 	}
 
 	// if no killer exists its a selfkill
-	if (m_Killer.m_ClientID == -1)
-		m_Killer.m_ClientID = m_pPlayer->GetCID();
+	if (m_Core.m_Killer.m_ClientID == -1)
+		m_Core.m_Killer.m_ClientID = m_pPlayer->GetCID();
 
 	// set the new killer and weapon
-	Killer = m_Killer.m_ClientID;
+	Killer = m_Core.m_Killer.m_ClientID;
 	if (Weapon >= 0)
-		Weapon = m_Killer.m_Weapon;
+		Weapon = m_Core.m_Killer.m_Weapon;
 
 
 	CPlayer *pKiller = (Killer >= 0 && Killer != m_pPlayer->GetCID()) ? GameServer()->m_apPlayers[Killer] : 0;
@@ -1165,7 +1165,7 @@ void CCharacter::Die(int Killer, int Weapon)
 			pKiller->FixForNoName(FIX_SET_NAME_ONLY);
 
 		m_pPlayer->m_MsgKiller = Killer;
-		m_pPlayer->m_MsgWeapon = GameServer()->GetRealWeapon(m_Killer.m_Weapon);
+		m_pPlayer->m_MsgWeapon = GameServer()->GetRealWeapon(m_Core.m_Killer.m_Weapon);
 		m_pPlayer->m_MsgModeSpecial = ModeSpecial;
 		m_pPlayer->FixForNoName(FIX_KILL_MSG);
 	} // BlockDDrace
@@ -1174,7 +1174,7 @@ void CCharacter::Die(int Killer, int Weapon)
 		CNetMsg_Sv_KillMsg Msg;
 		Msg.m_Killer = Killer;
 		Msg.m_Victim = m_pPlayer->GetCID();
-		Msg.m_Weapon = GameServer()->GetRealWeapon(m_Killer.m_Weapon);
+		Msg.m_Weapon = GameServer()->GetRealWeapon(m_Core.m_Killer.m_Weapon);
 		Msg.m_ModeSpecial = ModeSpecial;
 		// BlockDDrace // only send kill message to players in the same minigame
 		for (int i = 0; i < MAX_CLIENTS; i++)
@@ -1233,8 +1233,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 
 	if (GameServer()->m_apPlayers[From] && From != m_pPlayer->GetCID())
 	{
-		m_Killer.m_ClientID = From;
-		m_Killer.m_Weapon = Weapon;
+		m_Core.m_Killer.m_ClientID = From;
+		m_Core.m_Killer.m_Weapon = Weapon;
 	}
 
 	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA || Weapon == WEAPON_LIGHTSABER)
@@ -2758,8 +2758,8 @@ bool CCharacter::UnFreeze()
 		m_FreezeTime = 0;
 		m_FreezeTick = 0;
 		m_FirstFreezeTick = 0;
-		m_Killer.m_ClientID = -1;
-		m_Killer.m_Weapon = -1;
+		m_Core.m_Killer.m_ClientID = -1;
+		m_Core.m_Killer.m_Weapon = -1;
 		if (GetActiveWeapon()==WEAPON_HAMMER) m_ReloadTimer = 0;
 		return true;
 	}
@@ -2914,10 +2914,6 @@ void CCharacter::BlockDDraceInit()
 	m_LastIndexTile = 0;
 	m_LastIndexFrontTile = 0;
 
-	m_Killer.m_ClientID = -1;
-	m_Killer.m_Weapon = -1;
-	m_OldLastHookedPlayer = -1;
-
 	m_NumGhostShots = 0;
 
 	m_Invisible = false;
@@ -2961,19 +2957,13 @@ void CCharacter::BlockDDraceInit()
 
 void CCharacter::BlockDDraceTick()
 {
-	// checking for body checks
-	CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, 20.0f, this);
-	if (pChr && pChr->m_Pos.x < m_Core.m_Pos.x + 45 && pChr->m_Pos.x > m_Core.m_Pos.x - 45 && pChr->m_Pos.y < m_Core.m_Pos.y + 45 && pChr->m_Pos.y > m_Core.m_Pos.y - 45)
-		if (pChr && !pChr->m_FreezeTime && CanCollide(pChr->GetPlayer()->GetCID()))
-			m_Killer.m_ClientID = pChr->GetPlayer()->GetCID();
-
 	// checking if someone hooks you, setting last touched tee
 	m_pPlayer->IsHooked(-2);
 
 	// reset last hit weapon if someone new hooks us
-	if (m_Core.m_LastHookedPlayer != m_OldLastHookedPlayer)
-		m_Killer.m_Weapon = -1;
-	m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
+	if (m_Core.m_LastHookedPlayer != m_Core.m_OldLastHookedPlayer)
+		m_Core.m_Killer.m_Weapon = -1;
+	m_Core.m_OldLastHookedPlayer = m_Core.m_LastHookedPlayer;
 
 	// fix miss prediction for other players if one is in passive
 	if (m_pPlayer->m_ClientVersion < VERSION_DDNET_KNOW_SOLO_PLAYERS) // the newer clients use the DDNet network character to know whether they can collide or not
