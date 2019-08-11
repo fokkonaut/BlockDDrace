@@ -1596,16 +1596,12 @@ void CGameContext::SetMinigame(IConsole::IResult *pResult, void *pUserData, int 
 			Disable = false;
 		else if (!str_comp_nocase(pResult->GetString(0), "disable"))
 			Disable = true;
-		else
-			return;
+		else return;
 
 		str_format(aMsg, sizeof(aMsg), "Minigame '%s' %s%sd", pSelf->GetMinigameName(Minigame), (pSelf->m_aMinigameDisabled[Minigame] == Disable ? "is already " : ""), pResult->GetString(0));
 		pSelf->SendChatTarget(pResult->m_ClientID, aMsg);
 
-		if (!Disable)
-			pSelf->m_aMinigameDisabled[Minigame] = false;
-		if (Disable)
-			pSelf->m_aMinigameDisabled[Minigame] = true;
+		pSelf->m_aMinigameDisabled[Minigame] = Disable;
 		return;
 	}
 
