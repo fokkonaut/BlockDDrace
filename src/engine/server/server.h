@@ -128,7 +128,7 @@ public:
 			STATE_INGAME,
 
 			// BlockDDrace
-			STATE_BOT,
+			STATE_DUMMY,
 			// BlockDDrace
 
 			SNAPRATE_INIT=0,
@@ -183,8 +183,6 @@ public:
 		// DDRace
 
 		NETADDR m_Addr;
-
-		bool m_IsClientDummy;
 
 		// DNSBL
 		int m_DnsblState;
@@ -275,7 +273,7 @@ public:
 	int DistinctClientCount();
 
 	// BlockDDrace
-	int BotCount();
+	int DummyCount();
 
 	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID);
 	int SendMsgEx(CMsgPacker *pMsg, int Flags, int ClientID, bool System);
@@ -408,8 +406,8 @@ public:
 	void SetErrorShutdown(const char *pReason);
 
 	// BlockDDrace
-	void BotJoin(int BotID);
-	void BotLeave(int BotID);
+	void DummyJoin(int DummyID);
+	void DummyLeave(int DummyID);
 	// BlockDDrace
 
 #ifdef CONF_FAMILY_UNIX

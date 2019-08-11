@@ -433,7 +433,7 @@ void CServer::Kick(int ClientID, const char *pReason)
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "kick command denied");
 		return;
 	}
-	else if (m_aClients[ClientID].m_State == CClient::STATE_BOT)
+	else if (m_aClients[ClientID].m_State == CClient::STATE_DUMMY)
 	{
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "server", "you can't kick dummies");
 		return;
@@ -536,7 +536,7 @@ const char *CServer::ClientName(int ClientID)
 {
 	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CServer::CClient::STATE_EMPTY)
 		return "(invalid)";
-	if(m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CClient::STATE_BOT)
+	if(m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CClient::STATE_DUMMY)
 		return m_aClients[ClientID].m_aName;
 	else
 		return "(connecting)";
@@ -547,7 +547,7 @@ const char *CServer::ClientClan(int ClientID)
 {
 	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CServer::CClient::STATE_EMPTY)
 		return "";
-	if(m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CServer::CClient::STATE_BOT)
+	if(m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CServer::CClient::STATE_DUMMY)
 		return m_aClients[ClientID].m_aClan;
 	else
 		return "";
@@ -555,7 +555,7 @@ const char *CServer::ClientClan(int ClientID)
 
 int CServer::ClientCountry(int ClientID)
 {
-	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CServer::CClient::STATE_EMPTY || m_aClients[ClientID].m_State == CClient::STATE_BOT)
+	if(ClientID < 0 || ClientID >= MAX_CLIENTS || m_aClients[ClientID].m_State == CServer::CClient::STATE_EMPTY || m_aClients[ClientID].m_State == CClient::STATE_DUMMY)
 		return -1;
 	if(m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME)
 		return m_aClients[ClientID].m_Country;
@@ -565,7 +565,7 @@ int CServer::ClientCountry(int ClientID)
 
 bool CServer::ClientIngame(int ClientID)
 {
-	return ClientID >= 0 && ClientID < MAX_CLIENTS && (m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CClient::STATE_BOT);
+	return ClientID >= 0 && ClientID < MAX_CLIENTS && (m_aClients[ClientID].m_State == CServer::CClient::STATE_INGAME || m_aClients[ClientID].m_State == CClient::STATE_DUMMY);
 }
 
 bool CServer::ClientAuthed(int ClientID)
@@ -954,7 +954,6 @@ int CServer::DelClientCallback(int ClientID, const char *pReason, void *pUser)
 	pThis->m_aClients[ClientID].m_aName[0] = 0;
 	pThis->m_aClients[ClientID].m_aClan[0] = 0;
 	pThis->m_aClients[ClientID].m_Country = -1;
-	pThis->m_aClients[ClientID].m_IsClientDummy = false;
 	pThis->m_aClients[ClientID].m_Authed = AUTHED_NO;
 	pThis->m_aClients[ClientID].m_AuthKey = -1;
 	pThis->m_aClients[ClientID].m_AuthTries = 0;
@@ -1521,7 +1520,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 	int PlayerCount = 0, ClientCount = 0;
 	for(int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if(m_aClients[i].m_State != CClient::STATE_EMPTY && (m_aClients[i].m_State != CClient::STATE_BOT || !m_aClients[i].m_IsClientDummy || !g_Config.m_SvHideBots))
+		if(m_aClients[i].m_State != CClient::STATE_EMPTY && (m_aClients[i].m_State != CClient::STATE_DUMMY || !g_Config.m_SvHideDummies))
 		{
 			if(GameServer()->IsClientPlayer(i))
 				PlayerCount++;
@@ -1616,12 +1615,12 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 			PlayerCount = ClientCount;
 	}
 
-	int Bots = g_Config.m_SvHideBots ? BotCount() : 0;
+	int Dummies = g_Config.m_SvHideDummies ? DummyCount() : 0;
 
 	ADD_INT(p, PlayerCount); // num players
-	ADD_INT(p, maximum(MaxClients - maximum(g_Config.m_SvSpectatorSlots, g_Config.m_SvReservedSlots, Bots), PlayerCount)); // max players
+	ADD_INT(p, maximum(MaxClients - maximum(g_Config.m_SvSpectatorSlots, g_Config.m_SvReservedSlots, Dummies), PlayerCount)); // max players
 	ADD_INT(p, ClientCount); // num clients
-	ADD_INT(p, maximum(MaxClients - g_Config.m_SvReservedSlots - Bots, ClientCount)); // max clients
+	ADD_INT(p, maximum(MaxClients - g_Config.m_SvReservedSlots - Dummies, ClientCount)); // max clients
 
 	if(Type == SERVERINFO_EXTENDED)
 		p.AddString("", 0); // extra info, reserved
@@ -1687,7 +1686,7 @@ void CServer::SendServerInfo(const NETADDR *pAddr, int Token, int Type, bool Sen
 
 	for(int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (m_aClients[i].m_State != CClient::STATE_EMPTY && (m_aClients[i].m_State != CClient::STATE_BOT || !m_aClients[i].m_IsClientDummy || !g_Config.m_SvHideBots))
+		if (m_aClients[i].m_State != CClient::STATE_EMPTY && (m_aClients[i].m_State != CClient::STATE_DUMMY || !g_Config.m_SvHideDummies))
 		{
 			if(Remaining == 0)
 			{
@@ -1826,8 +1825,8 @@ int CServer::LoadMap(const char *pMapName)
 
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (m_aClients[i].m_State == CClient::STATE_BOT)
-			BotLeave(i);
+		if (m_aClients[i].m_State == CClient::STATE_DUMMY)
+			DummyLeave(i);
 	}
 
 	// stop recording when we change map
@@ -2268,9 +2267,9 @@ void CServer::ConStatus(IConsole::IResult *pResult, void *pUser)
 				i, aAddrStr, pThis->m_aClients[i].m_aName, pThis->GameServer()->GetClientVersion(i),
 				pThis->m_NetServer.HasSecurityToken(i) ? "yes" : "no", pThis->m_aClients[i].m_Flags, aDnsblStr, aAuthStr);
 		}
-		else if (pThis->m_aClients[i].m_State == CClient::STATE_BOT)
+		else if (pThis->m_aClients[i].m_State == CClient::STATE_DUMMY)
 		{
-			str_format(aBuf, sizeof(aBuf), "id=%d name='%s' score=%d bot=yes", i, pThis->m_aClients[i].m_aName, pThis->GameServer()->GetClientVersion(i));
+			str_format(aBuf, sizeof(aBuf), "id=%d name='%s' score=%d dummy=yes", i, pThis->m_aClients[i].m_aName, pThis->GameServer()->GetClientVersion(i));
 		}
 		else
 		{
@@ -3198,9 +3197,9 @@ void CServer::SetErrorShutdown(const char *pReason)
 *                                                *
 **************************************************/
 
-void CServer::BotJoin(int BotID)
+void CServer::DummyJoin(int DummyID)
 {
-	const char *pNames[] = { //name array
+	const char *pNames[] = {
 		"ZillyDreck", /*0*/ "flappy", "Chillingo", "Fluffy", "MLG_PRO", "Enzym", "ciliDR[HUN]", "fuzzle", "Piko", "chilliger", "fokkonautt", "GubbaFubba", "fuZZle", "<bot>", "<noob>", "<police>", "<train>", //16th name
 		"<boat>", "<blocker>", "<racer>", "<hyper>", "$heeP", "b3ep", "chilluminatee", "auftragschiller", "abcJuhee", "BANANA", "POTATO", "<cucumber>", "fokkoNUT", "<_BoT__>", "NotMyName", "NotChiller", //32nd name
 		"NotChiIIer", "NotChlIer", "fuckmesoon", "DataNub", "5.196.132.14", "<hacker>", "<cheater>", "<glitcher>", "__ERROR", "404_kein_tier", "ZitrusFRUCHT", "BAUMKIND", "KELLERKIND", "KINDERKIND", "einZug-", "<bob>",  //48th name
@@ -3218,7 +3217,7 @@ void CServer::BotJoin(int BotID)
 		"2JezzicaP", "2Jeqqicaqua", "2analyticus", "2haspiclecane", "2nameus", "2tahdequz", "2rostBEULEH", "2regenwurm674", "2mc_cm", "2blockddrace", "2BlockDDrace", "2pidgin.,a", "2bibubablbl", "2randomNAME2", "2Mircaduzla", "2zer0_brain", //240th name
 		"2haxxor-420", "2fok-me-fok", "2fok-fee-san", "2denzulat", "2epsilat", "2destructat", "2hinzuckat", "2penZilin", "2deszilin", "2VogelFisch7", "2Dont4sk", "2i_fokmen_i", "2noobScout24", "2geneticual", "2trollface" //255th name
 	};
-	const char *pClans[] = { //clan array
+	const char *pClans[] = {
 		"1", /*0*/ "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", //16th clan
 		"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", //32th clan
 		"34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", //48th clan
@@ -3237,43 +3236,40 @@ void CServer::BotJoin(int BotID)
 		"242", "243", "244", "245", "246", "247", "248", "249", "250", "251", "252", "253", "254", "255", "256" //255th clan
 	};
 
-	m_NetServer.BotInit(BotID);
-	m_aClients[BotID].m_State = CClient::STATE_BOT;
-	m_aClients[BotID].m_IsClientDummy = true;
+	m_NetServer.DummyInit(DummyID);
+	m_aClients[DummyID].m_State = CClient::STATE_DUMMY;
 
-	m_aClients[BotID].m_Authed = AUTHED_NO;
+	m_aClients[DummyID].m_Authed = AUTHED_NO;
 
-	str_copy(m_aClients[BotID].m_aName, pNames[BotID], MAX_NAME_LENGTH);
-	str_copy(m_aClients[BotID].m_aClan, pClans[BotID], MAX_CLAN_LENGTH);
+	str_copy(m_aClients[DummyID].m_aName, pNames[DummyID], MAX_NAME_LENGTH);
+	str_copy(m_aClients[DummyID].m_aClan, pClans[DummyID], MAX_CLAN_LENGTH);
 }
 
-void CServer::BotLeave(int BotID)
+void CServer::DummyLeave(int DummyID)
 {
-	GameServer()->OnClientDrop(BotID, "");
+	GameServer()->OnClientDrop(DummyID, "");
 
-	m_aClients[BotID].m_State = CClient::STATE_EMPTY;
-	m_aClients[BotID].m_IsClientDummy = false;
-	m_aClients[BotID].m_aName[0] = 0;
-	m_aClients[BotID].m_aClan[0] = 0;
-	m_aClients[BotID].m_Country = -1;
-	m_aClients[BotID].m_Authed = AUTHED_NO;
-	m_aClients[BotID].m_AuthTries = 0;
-	m_aClients[BotID].m_pRconCmdToSend = 0;
-	m_aClients[BotID].m_Snapshots.PurgeAll();
+	m_aClients[DummyID].m_State = CClient::STATE_EMPTY;
+	m_aClients[DummyID].m_aName[0] = 0;
+	m_aClients[DummyID].m_aClan[0] = 0;
+	m_aClients[DummyID].m_Country = -1;
+	m_aClients[DummyID].m_Authed = AUTHED_NO;
+	m_aClients[DummyID].m_AuthTries = 0;
+	m_aClients[DummyID].m_pRconCmdToSend = 0;
+	m_aClients[DummyID].m_Snapshots.PurgeAll();
 
-	m_NetServer.BotDelete(BotID);
+	m_NetServer.DummyDelete(DummyID);
 }
 
-int CServer::BotCount()
+int CServer::DummyCount()
 {
-	int BotCount = 0;
+	int DummyCount = 0;
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (m_aClients[i].m_State == CClient::STATE_BOT)
+		if (m_aClients[i].m_State == CClient::STATE_DUMMY)
 		{
-			BotCount++;
+			DummyCount++;
 		}
 	}
-
-	return BotCount;
+	return DummyCount;
 }

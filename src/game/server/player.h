@@ -44,7 +44,7 @@ enum Dummymode
 	DUMMYMODE_CHILLBLOCK5_BLOCKER = 29,
 	DUMMYMODE_CHILLBOCK5_POLICE = 31,
 	DUMMYMODE_BLMAPCHILL_POLICE = 32,
-	DUMMYMODE_SHOP_BOT = 99,
+	DUMMYMODE_SHOP_DUMMY = 99,
 };
 
 /*************************************************

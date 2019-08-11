@@ -63,13 +63,14 @@ MACRO_CONFIG_INT(SvFlagHooking, sv_flag_hooking, 1, 0, 1, CFGFLAG_SERVER|CFGFLAG
 MACRO_CONFIG_INT(SvFlagSpectating, sv_flag_spectating, 0, 0, 1, CFGFLAG_SERVER, "Whether you can spectate flags", AUTHED_ADMIN)
 
 // dummy
-MACRO_CONFIG_INT(SvHideBots, sv_hide_bots, 1, 0, 2, CFGFLAG_SERVER, "Whether to hide server-side bots (0=show bots, 1=show in scoreboard, 2=hide in browser and scoreboard)", AUTHED_ADMIN)
-MACRO_CONFIG_INT(SvHideBotsStatus, sv_hide_bots_status, 1, 0, 1, CFGFLAG_SERVER, "Whether to hide server-side bots from status command", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvHideDummies, sv_hide_dummies, 1, 0, 2, CFGFLAG_SERVER, "Whether to hide server-side dummies (0=show dummies, 1=show in scoreboard, 2=hide in browser and scoreboard)", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvHideDummiesStatus, sv_hide_dummies_status, 1, 0, 1, CFGFLAG_SERVER, "Whether to hide server-side dummies from status command", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvDefaultDummies, sv_default_dummies, 0, 0, 1, CFGFLAG_SERVER, "Whether to create default dummies for specific maps when the server starts", AUTHED_ADMIN)
+MACRO_CONFIG_INT(SvFakeDummyPing, sv_fake_dummy_ping, 0, 0, 1, CFGFLAG_SERVER, "Whether ping of server-side dummies are more natural or 1000", AUTHED_ADMIN)
+MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 dummy", AUTHED_ADMIN)
+MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 dummy", AUTHED_ADMIN)
+
 MACRO_CONFIG_INT(SvHideServerInfo, sv_hide_server_info, 0, 0, 1, CFGFLAG_SERVER, "Whether to hide server info like map and gametype from the browser", AUTHED_ADMIN)
-MACRO_CONFIG_INT(SvDefaultBots, sv_default_bots, 0, 0, 1, CFGFLAG_SERVER, "Whether to create default bots for specific maps when the server starts", AUTHED_ADMIN)
-MACRO_CONFIG_INT(SvFakeBotPing, sv_fake_bot_ping, 0, 0, 1, CFGFLAG_SERVER, "Whether ping of server-side bots are more natural or 1000", AUTHED_ADMIN)
-MACRO_CONFIG_INT(V3OffsetX, v3_offset_x, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset X for the blmapV3 bot", AUTHED_ADMIN)
-MACRO_CONFIG_INT(V3OffsetY, v3_offset_y, -1, 0, 9999, CFGFLAG_SERVER|CFGFLAG_GAME, "Offset Y for the blmapV3 bot", AUTHED_ADMIN)
 
 // weapon indicator
 MACRO_CONFIG_INT(SvWeaponIndicatorDefault, sv_weapon_indicator_default, 0, 0, 1, CFGFLAG_SERVER, "Whether the weapon names are displayed under the health and armor bars", AUTHED_ADMIN)

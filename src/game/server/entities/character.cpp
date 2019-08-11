@@ -2086,18 +2086,18 @@ void CCharacter::HandleTiles(int Index)
 		}
 		if (m_EnteredShop)
 		{
-			if (m_ShopBotAntiSpamTick <= Server()->Tick())
+			if (m_ShopAntiSpamTick <= Server()->Tick())
 			{
 				char aBuf[256];
 				str_format(aBuf, sizeof(aBuf), "Welcome to the shop, %s! Press f4 to start shopping.", Server()->ClientName(m_pPlayer->GetCID()));
-				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, aBuf, -1, m_pPlayer->GetCID());
+				GameServer()->SendChat(GameWorld()->GetClosestShopDummy(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, aBuf, -1, m_pPlayer->GetCID());
 			}
 			m_EnteredShop = false;
 		}
 		if (Server()->Tick() % 50 == 0)
 			GameServer()->SendBroadcast("~ S H O P ~", m_pPlayer->GetCID(), false);
 	}
-	if (m_pPlayer->m_IsDummy && (m_TileIndex == ENTITY_SHOP_BOT_SPAWN || m_TileFIndex == ENTITY_SHOP_BOT_SPAWN))
+	if (m_pPlayer->m_IsDummy && (m_TileIndex == ENTITY_SHOP_DUMMY_SPAWN || m_TileFIndex == ENTITY_SHOP_DUMMY_SPAWN))
 		m_InShop = true;
 
 
@@ -2939,7 +2939,7 @@ void CCharacter::BlockDDraceInit()
 	m_EnteredShop = false;
 
 	int64 Now = Server()->Tick();
-	m_ShopBotAntiSpamTick = Now;
+	m_ShopAntiSpamTick = Now;
 	m_ShopWindowPage = SHOP_PAGE_NONE;
 	m_ShopMotdTick = Now;
 	m_PurchaseState = SHOP_STATE_NONE;
@@ -2984,12 +2984,12 @@ void CCharacter::BlockDDraceTick()
 
 	if (m_InShop)
 	{
-		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP && m_TileIndex != ENTITY_SHOP_BOT_SPAWN && m_TileFIndex != ENTITY_SHOP_BOT_SPAWN)
+		if (m_TileIndex != TILE_SHOP && m_TileFIndex != TILE_SHOP && m_TileIndex != ENTITY_SHOP_DUMMY_SPAWN && m_TileFIndex != ENTITY_SHOP_DUMMY_SPAWN)
 		{
-			if (m_ShopBotAntiSpamTick < Server()->Tick())
+			if (m_ShopAntiSpamTick < Server()->Tick())
 			{
-				GameServer()->SendChat(GameWorld()->GetClosestShopBot(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
-				m_ShopBotAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
+				GameServer()->SendChat(GameWorld()->GetClosestShopDummy(m_Pos, this, m_pPlayer->GetCID()), CGameContext::CHAT_SINGLE, "Bye! Come back if you need something.", -1, m_pPlayer->GetCID());
+				m_ShopAntiSpamTick = Server()->Tick() + Server()->TickSpeed() * 5;
 			}
 
 			if (m_ShopWindowPage != SHOP_PAGE_NONE)

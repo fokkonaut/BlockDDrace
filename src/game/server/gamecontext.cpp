@@ -3024,8 +3024,8 @@ void CGameContext::OnInit()
 	AddAccount(); // account id 0 means not logged in, so we add an unused account with id 0
 	Storage()->ListDirectory(IStorage::TYPE_ALL, g_Config.m_SvAccFilePath, AccountsCallback, this);
 
-	if (g_Config.m_SvDefaultBots)
-		ConnectDefaultBots();
+	if (g_Config.m_SvDefaultDummies)
+		ConnectDefaultDummies();
 	SetV3Offset(g_Config.m_V3OffsetX, g_Config.m_V3OffsetY);
 
 	for (int i = 0; i < 2; i++)
@@ -4000,62 +4000,62 @@ const char *CGameContext::FixMotd(const char *pMsg)
 
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 {
-	int BotID = GetNextClientID(FlagPlayer != -1);
-	if (BotID < 0 || BotID >= MAX_CLIENTS)
+	int DummyID = GetNextClientID(FlagPlayer != -1);
+	if (DummyID < 0 || DummyID >= MAX_CLIENTS)
 		return;
 
-	if (m_apPlayers[BotID])
+	if (m_apPlayers[DummyID])
 	{
-		m_apPlayers[BotID]->OnDisconnect("");
-		delete m_apPlayers[BotID];
-		m_apPlayers[BotID] = 0;
+		m_apPlayers[DummyID]->OnDisconnect("");
+		delete m_apPlayers[DummyID];
+		m_apPlayers[DummyID] = 0;
 	}
 
-	m_apPlayers[BotID] = new(BotID) CPlayer(this, BotID, TEAM_RED);
-	Server()->BotJoin(BotID);
-	m_apPlayers[BotID]->m_IsDummy = true;
-	m_apPlayers[BotID]->m_Dummymode = Dummymode;
-	m_apPlayers[BotID]->m_ForceSpawnPos = Pos;
-	m_apPlayers[BotID]->m_FlagPlayer = FlagPlayer;
+	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
+	Server()->DummyJoin(DummyID);
+	m_apPlayers[DummyID]->m_IsDummy = true;
+	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
+	m_apPlayers[DummyID]->m_ForceSpawnPos = Pos;
+	m_apPlayers[DummyID]->m_FlagPlayer = FlagPlayer;
 
-	if (m_apPlayers[BotID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
-		m_apPlayers[BotID]->m_Minigame = MINIGAME_BLOCK;
-	else if (m_apPlayers[BotID]->m_Dummymode == DUMMYMODE_SHOP_BOT && Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
-		m_apPlayers[BotID]->m_Minigame = -1;
+	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
+		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;
+	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_DUMMY && Collision()->GetRandomTile(ENTITY_SHOP_DUMMY_SPAWN) != vec2(-1, -1))
+		m_apPlayers[DummyID]->m_Minigame = -1;
 
-	str_copy(m_apPlayers[BotID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[BotID]->m_TeeInfos.m_SkinName));
-	m_apPlayers[BotID]->m_TeeInfos.m_UseCustomColor = 1;
-	m_apPlayers[BotID]->m_TeeInfos.m_ColorFeet = 0;
-	m_apPlayers[BotID]->m_TeeInfos.m_ColorBody = 0;
+	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
+	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
+	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
 
 	if (FlagPlayer != -1)
 	{
-		Server()->SetClientName(BotID, FlagPlayer == TEAM_RED ? "Red Flag" : "Blue Flag");
-		Server()->SetClientClan(BotID, "BlockDDrace");
+		Server()->SetClientName(DummyID, FlagPlayer == TEAM_RED ? "Red Flag" : "Blue Flag");
+		Server()->SetClientClan(DummyID, "BlockDDrace");
 	}
 
-	OnClientEnter(BotID);
+	OnClientEnter(DummyID);
 
-	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", BotID, Dummymode);
+	dbg_msg("dummy", "Dummy connected: %d, Dummymode: %d", DummyID, Dummymode);
 }
 
-bool CGameContext::IsShopBot(int ClientID)
+bool CGameContext::IsShopDummy(int ClientID)
 {
-	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == DUMMYMODE_SHOP_BOT;
+	return m_apPlayers[ClientID] && m_apPlayers[ClientID]->m_Dummymode == DUMMYMODE_SHOP_DUMMY;
 }
 
-int CGameContext::GetShopBot()
+int CGameContext::GetShopDummy()
 {
 	for (int i = 0; i < MAX_CLIENTS; i++)
-		if (IsShopBot(i))
+		if (IsShopDummy(i))
 			return i;
 	return -1;
 }
 
-void CGameContext::ConnectDefaultBots()
+void CGameContext::ConnectDefaultDummies()
 {
-	if (GetShopBot() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
-		ConnectDummy(DUMMYMODE_SHOP_BOT);
+	if (GetShopDummy() == -1 && Collision()->GetRandomTile(TILE_SHOP) != vec2(-1, -1))
+		ConnectDummy(DUMMYMODE_SHOP_DUMMY);
 
 	if (!str_comp(g_Config.m_SvMap, "ChillBlock5"))
 	{
@@ -4288,24 +4288,24 @@ const char *CGameContext::GetExtraName(int Extra, int Special)
 	return "Unknown";
 }
 
-int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeBots)
+int CGameContext::CountConnectedPlayers(bool CountSpectators, bool ExcludeDummies)
 {
-	int count = 0;
+	int Count = 0;
 	for (int i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (((CServer*)Server())->m_aClients[i].m_State != CServer::CClient::STATE_EMPTY)
 		{
 			if (m_apPlayers[i])
 			{
-				if (ExcludeBots && m_apPlayers[i]->m_IsDummy)
+				if (ExcludeDummies && m_apPlayers[i]->m_IsDummy)
 					continue;
 				if (!CountSpectators && m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS)
 					continue;
 			}
-			count++;
+			Count++;
 		}
 	}
-	return count;
+	return Count;
 }
 
 bool CGameContext::IsValidHookPower(int HookPower)

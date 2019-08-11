@@ -276,9 +276,9 @@ bool IGameController::OnEntity(int Index, vec2 Pos, int Layer, int Flags, int Nu
 	{
 		new CClock(&GameServer()->m_World, Pos);
 	}
-	else if (Index == ENTITY_SHOP_BOT_SPAWN)
+	else if (Index == ENTITY_SHOP_DUMMY_SPAWN)
 	{
-		GameServer()->ConnectDummy(DUMMYMODE_SHOP_BOT, Pos);
+		GameServer()->ConnectDummy(DUMMYMODE_SHOP_DUMMY, Pos);
 	}
 	// BlockDDrace
 

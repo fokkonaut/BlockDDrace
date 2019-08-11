@@ -3911,7 +3911,7 @@ void CCharacter::DummyTick()
 			}
 		}
 	}
-	else if (m_pPlayer->m_Dummymode == DUMMYMODE_SHOP_BOT) // shop bot
+	else if (m_pPlayer->m_Dummymode == DUMMYMODE_SHOP_DUMMY) // shop dummy
 	{
 		CCharacter *pChr = GameWorld()->ClosestCharacter(m_Pos, this, m_pPlayer->GetCID(), 9);
 		if (pChr && pChr->m_InShop)

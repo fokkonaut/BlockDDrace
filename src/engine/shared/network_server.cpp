@@ -695,7 +695,7 @@ int CNetServer::Send(CNetChunk *pChunk)
 	else
 	{
 		// BlockDDrace
-		if (m_aSlots[pChunk->m_ClientID].m_Connection.State() == NET_CONNSTATE_BOT)
+		if (m_aSlots[pChunk->m_ClientID].m_Connection.State() == NET_CONNSTATE_DUMMY)
 			return -1;
 		// BlockDDrace
 
@@ -774,12 +774,12 @@ const char *CNetServer::ErrorString(int ClientID)
 *                                                *
 **************************************************/
 
-void CNetServer::BotInit(int BotID)
+void CNetServer::DummyInit(int DummyID)
 {
-	m_aSlots[BotID].m_Connection.BotConnect();
+	m_aSlots[DummyID].m_Connection.DummyConnect();
 }
 
-void CNetServer::BotDelete(int BotID)
+void CNetServer::DummyDelete(int DummyID)
 {
-	m_aSlots[BotID].m_Connection.BotDrop();
+	m_aSlots[DummyID].m_Connection.DummyDrop();
 }

@@ -46,8 +46,8 @@ public:
 	virtual void GetClientAddr(int ClientID, char *pAddrStr, int Size) = 0;
 	virtual void RestrictRconOutput(int ClientID) = 0;
 
-	virtual void BotJoin(int BotID) = 0;
-	virtual void BotLeave(int BotID) = 0;
+	virtual void DummyJoin(int DummyID) = 0;
+	virtual void DummyLeave(int DummyID) = 0;
 
 	virtual int SendMsg(CMsgPacker *pMsg, int Flags, int ClientID) = 0;
 

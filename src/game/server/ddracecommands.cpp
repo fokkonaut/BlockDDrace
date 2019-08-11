@@ -1177,7 +1177,7 @@ void CGameContext::ConDisconnectDummy(IConsole::IResult *pResult, void *pUserDat
 	CGameContext *pSelf = (CGameContext *)pUserData;
 	int ID = pResult->GetVictim();
 	if (ID >= 0 && ID < MAX_CLIENTS && pSelf->m_apPlayers[ID] && pSelf->m_apPlayers[ID]->m_IsDummy && pSelf->m_apPlayers[ID]->m_FlagPlayer == -1)
-		pSelf->Server()->BotLeave(ID);
+		pSelf->Server()->DummyLeave(ID);
 }
 
 void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
@@ -1216,7 +1216,7 @@ void CGameContext::ConDummymode(IConsole::IResult *pResult, void *pUserData)
 void CGameContext::ConConnectDefaultDummies(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
-	pSelf->ConnectDefaultBots();
+	pSelf->ConnectDefaultDummies();
 }
 
 void CGameContext::ConSound(IConsole::IResult *pResult, void *pUserData)

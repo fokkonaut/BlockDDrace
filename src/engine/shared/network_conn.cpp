@@ -410,7 +410,7 @@ int CNetConnection::Update()
 	// check for timeout
 	if(State() != NET_CONNSTATE_OFFLINE &&
 		State() != NET_CONNSTATE_CONNECT &&
-		State() != NET_CONNSTATE_BOT &&
+		State() != NET_CONNSTATE_DUMMY &&
 		(Now-m_LastRecvTime) > time_freq()*g_Config.m_ConnTimeout)
 	{
 		m_State = NET_CONNSTATE_ERROR;
@@ -503,14 +503,14 @@ void CNetConnection::SetTimedOut(const NETADDR *pAddr, int Sequence, int Ack, SE
 *                                                *
 **************************************************/
 
-void CNetConnection::BotConnect()
+void CNetConnection::DummyConnect()
 {
 	Reset();
 	ResetStats();
-	m_State = NET_CONNSTATE_BOT;
+	m_State = NET_CONNSTATE_DUMMY;
 }
 
-void CNetConnection::BotDrop()
+void CNetConnection::DummyDrop()
 {
 	m_State = NET_CONNSTATE_OFFLINE;
 }

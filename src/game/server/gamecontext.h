@@ -334,12 +334,12 @@ public:
 
 	//dummy
 	void ConnectDummy(int Dummymode = 0, vec2 Pos = vec2(-1, -1), int FlagPlayer = -1);
-	void ConnectDefaultBots();
+	void ConnectDefaultDummies();
 	void SetV3Offset(int X = -1, int Y = -1);
 	int GetFlagPlayer(int Team);
 
-	bool IsShopBot(int ClientID);
-	int GetShopBot();
+	bool IsShopDummy(int ClientID);
+	int GetShopDummy();
 
 	int GetNextClientID(bool Inverted = false);
 

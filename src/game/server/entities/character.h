@@ -452,7 +452,7 @@ public:
 	bool m_InShop;
 	bool m_EnteredShop;
 
-	int64 m_ShopBotAntiSpamTick;
+	int64 m_ShopAntiSpamTick;
 
 	void ShopWindow(int Dir);
 	int m_ShopWindowPage;

@@ -125,7 +125,7 @@ public:
 	// BlockDDrace
 
 	class CCharacter *ClosestCharacter(vec2 Pos, CCharacter *pNotThis, int CollideWith = -1, int Mode = 0);
-	int GetClosestShopBot(vec2 Pos, CCharacter *pNotThis, int CollideWith = -1);
+	int GetClosestShopDummy(vec2 Pos, CCharacter *pNotThis, int CollideWith = -1);
 
 	// BlockDDrace
 

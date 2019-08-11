@@ -480,16 +480,16 @@ void CPlayer::Snap(int SnappingClient)
 				m_SnapFixDDNet = true;
 	}
 
-	// hide bots from scoreboard and other players if they are in different minigames
+	// hide dummies from scoreboard and other players if they are in different minigames
 	int Team = m_Team;
 	if (Team != TEAM_SPECTATORS && (
 		(g_Config.m_SvHideMinigamePlayers && pSnapping->m_Minigame != m_Minigame)
-		|| (g_Config.m_SvHideBots == 2 && m_IsDummy)
+		|| (g_Config.m_SvHideDummies == 2 && m_IsDummy)
 		))
 		Team = TEAM_BLUE;
 
-	// realistic ping for bots
-	if (m_IsDummy && g_Config.m_SvFakeBotPing)
+	// realistic ping for dummies
+	if (m_IsDummy && g_Config.m_SvFakeDummyPing)
 	{
 		if (Server()->Tick() % 200 == 0)
 			m_FakePing = 32 + rand() % 11;
@@ -813,10 +813,10 @@ void CPlayer::TryRespawn()
 	{
 		SpawnPos = m_ForceSpawnPos;
 	}
-	else if (m_Dummymode == DUMMYMODE_SHOP_BOT)
+	else if (m_Dummymode == DUMMYMODE_SHOP_DUMMY)
 	{
-		if (GameServer()->Collision()->GetRandomTile(ENTITY_SHOP_BOT_SPAWN) != vec2(-1, -1))
-			Index = ENTITY_SHOP_BOT_SPAWN;
+		if (GameServer()->Collision()->GetRandomTile(ENTITY_SHOP_DUMMY_SPAWN) != vec2(-1, -1))
+			Index = ENTITY_SHOP_DUMMY_SPAWN;
 		else
 			Index = TILE_SHOP;
 	}
