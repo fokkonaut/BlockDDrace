@@ -4004,22 +4004,22 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 	if (DummyID < 0 || DummyID >= MAX_CLIENTS || m_apPlayers[DummyID])
 		return;
 
-	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
+	CPlayer *pDummy = m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
 	Server()->DummyJoin(DummyID);
-	m_apPlayers[DummyID]->m_IsDummy = true;
-	m_apPlayers[DummyID]->m_Dummymode = Dummymode;
-	m_apPlayers[DummyID]->m_ForceSpawnPos = Pos;
-	m_apPlayers[DummyID]->m_FlagPlayer = FlagPlayer;
+	pDummy->m_IsDummy = true;
+	pDummy->m_Dummymode = Dummymode;
+	pDummy->m_ForceSpawnPos = Pos;
+	pDummy->m_FlagPlayer = FlagPlayer;
 
-	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER)
-		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;
-	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_DUMMY)
-		m_apPlayers[DummyID]->m_Minigame = -1;
+	if (pDummy->m_Dummymode == DUMMYMODE_V3_BLOCKER)
+		pDummy->m_Minigame = MINIGAME_BLOCK;
+	else if (pDummy->m_Dummymode == DUMMYMODE_SHOP_DUMMY)
+		pDummy->m_Minigame = -1;
 
-	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
-	m_apPlayers[DummyID]->m_TeeInfos.m_UseCustomColor = 1;
-	m_apPlayers[DummyID]->m_TeeInfos.m_ColorFeet = 0;
-	m_apPlayers[DummyID]->m_TeeInfos.m_ColorBody = 0;
+	str_copy(pDummy->m_TeeInfos.m_SkinName, "greensward", sizeof(pDummy->m_TeeInfos.m_SkinName));
+	pDummy->m_TeeInfos.m_UseCustomColor = 1;
+	pDummy->m_TeeInfos.m_ColorFeet = 0;
+	pDummy->m_TeeInfos.m_ColorBody = 0;
 
 	if (FlagPlayer != -1)
 	{
