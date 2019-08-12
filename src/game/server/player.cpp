@@ -334,6 +334,7 @@ void CPlayer::PostTick()
 		}
 	}
 
+	// BlockDDrace
 	CFlag *Flag = m_SpectatorFlag == SPEC_FREEVIEW ? 0 : ((CGameControllerBlockDDrace*)GameServer()->m_pController)->m_apFlags[m_SpectatorFlag];
 	if (m_SpectatorFlag != SPEC_FREEVIEW)
 	{
