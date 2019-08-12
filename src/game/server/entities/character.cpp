@@ -1321,7 +1321,6 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);
 	}
 
-	// dont do emote pain if the shooter has spooky ghost
 	if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE || Weapon == WEAPON_PLASMA_RIFLE || Weapon == WEAPON_LIGHTSABER)
 	{
 		m_EmoteType = EMOTE_PAIN;
