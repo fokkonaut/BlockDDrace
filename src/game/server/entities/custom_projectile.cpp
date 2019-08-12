@@ -115,14 +115,8 @@ void CCustomProjectile::HitCharacter()
 {
 	vec2 NewPos = m_Pos + m_Core;
 	CCharacter* pHit = GameWorld()->IntersectCharacter(m_PrevPos, NewPos, 6.0f, NewPos, m_pOwner, m_Owner);
-	if (!pHit || pHit->GetPlayer()->GetCID() == m_Owner)
+	if (!pHit)
 		return;
-
-	if (m_Spooky)
-	{
-		pHit->SetEmote(EMOTE_SURPRISE, Server()->Tick() + 2 * Server()->TickSpeed());
-		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), EMOTICON_GHOST);
-	}
 
 	if (m_Bloody)
 		GameServer()->CreateDeath(m_PrevPos, pHit->GetPlayer()->GetCID());
@@ -139,6 +133,12 @@ void CCustomProjectile::HitCharacter()
 	}
 	else
 		pHit->TakeDamage(m_Direction * maximum(0.001f, 0.0f), g_pData->m_Weapons.m_aId[GameServer()->GetRealWeapon(m_Type)].m_Damage, m_Owner, m_Type);
+
+	if (m_Spooky)
+	{
+		pHit->SetEmote(EMOTE_SURPRISE, Server()->Tick() + 2 * Server()->TickSpeed());
+		GameServer()->SendEmoticon(pHit->GetPlayer()->GetCID(), EMOTICON_GHOST);
+	}
 
 	Reset();
 }

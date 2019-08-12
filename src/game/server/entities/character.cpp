@@ -1237,7 +1237,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 		m_Core.m_Killer.m_Weapon = Weapon;
 	}
 
-	if (m_pPlayer->m_Gamemode == GAMEMODE_VANILLA || Weapon == WEAPON_LIGHTSABER)
+	if (Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA || Weapon == WEAPON_LIGHTSABER)
 	{
 		// m_pPlayer only inflicts half damage on self
 		if(From == m_pPlayer->GetCID())
@@ -1259,7 +1259,7 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 
 		if(Dmg)
 		{
-			if(m_Armor && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA)
+			if(m_Armor)
 			{
 				if(Dmg > 1)
 				{
@@ -1321,11 +1321,8 @@ bool CCharacter::TakeDamage(vec2 Force, int Dmg, int From, int Weapon)
 			GameServer()->CreateSound(m_Pos, SOUND_PLAYER_PAIN_SHORT);
 	}
 
-	if (m_pPlayer->m_Gamemode == GAMEMODE_DDRACE && From != -1 && GameServer()->m_apPlayers[From] && GameServer()->m_apPlayers[From]->m_SpookyGhost)
-	{
-		// dont do emote pain if the shooter has spooky ghost
-	}
-	else if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE || Weapon == WEAPON_LIGHTSABER)
+	// dont do emote pain if the shooter has spooky ghost
+	if ((Dmg && m_pPlayer->m_Gamemode == GAMEMODE_VANILLA) || Weapon == WEAPON_HAMMER || Weapon == WEAPON_GRENADE || Weapon == WEAPON_STRAIGHT_GRENADE || Weapon == WEAPON_PLASMA_RIFLE || Weapon == WEAPON_LIGHTSABER)
 	{
 		m_EmoteType = EMOTE_PAIN;
 		m_EmoteStop = Server()->Tick() + 500 * Server()->TickSpeed() / 1000;
