@@ -414,7 +414,7 @@ void CCollision::Dest()
 int CCollision::IsSolid(int x, int y)
 {
 	int index = GetTile(x,y);
-	return index == TILE_SOLID || index == TILE_NOHOOK || index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK;
+	return index == TILE_SOLID || index == TILE_NOHOOK || ((index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK) && g_Config.m_SvFakeBlocks);
 }
 
 bool CCollision::IsThrough(int x, int y, int xoff, int yoff, vec2 pos0, vec2 pos1)
@@ -1158,5 +1158,5 @@ vec2 CCollision::GetRandomTile(int Index)
 int CCollision::IsFakeSolid(int x, int y)
 {
 	int index = GetTile(x, y);
-	return index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK;
+	return (index == TILE_FAKE_SOLID || index == TILE_FAKE_NOHOOK) && g_Config.m_SvFakeBlocks;
 }

@@ -101,4 +101,6 @@ MACRO_CONFIG_INT(SvRainbowSpeedDefault, sv_rainbow_speed_default, 1, 1, 50, CFGF
 MACRO_CONFIG_INT(SvDefaultScore, sv_default_score, 0, 0, 1, CFGFLAG_SERVER, "Default score (0 = time, 1 = level)", AUTHED_ADMIN)
 
 MACRO_CONFIG_INT(SvOldJetpackSound, sv_old_jetpack_sound, 1, 0, 1, CFGFLAG_SERVER, "Whether to use the default gun sound for jetpack or another sound", AUTHED_ADMIN)
+
+MACRO_CONFIG_INT(SvFakeBlocks, sv_fake_blocks, 1, 0, 1, CFGFLAG_SERVER, "Whether fake blocks are activated", AUTHED_ADMIN)
 #endif
