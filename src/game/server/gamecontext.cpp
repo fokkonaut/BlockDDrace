@@ -4001,15 +4001,8 @@ const char *CGameContext::FixMotd(const char *pMsg)
 void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 {
 	int DummyID = GetNextClientID(FlagPlayer != -1);
-	if (DummyID < 0 || DummyID >= MAX_CLIENTS)
+	if (DummyID < 0 || DummyID >= MAX_CLIENTS || m_apPlayers[DummyID])
 		return;
-
-	if (m_apPlayers[DummyID])
-	{
-		m_apPlayers[DummyID]->OnDisconnect("");
-		delete m_apPlayers[DummyID];
-		m_apPlayers[DummyID] = 0;
-	}
 
 	m_apPlayers[DummyID] = new(DummyID) CPlayer(this, DummyID, TEAM_RED);
 	Server()->DummyJoin(DummyID);
