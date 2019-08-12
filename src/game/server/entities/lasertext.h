@@ -4,6 +4,8 @@
 *                                                *
 **************************************************/
 
+// made by fstd, improved by jupeyy
+
 #ifndef GAME_SERVER_ENTITIES_LASERTEXT_H
 #define GAME_SERVER_ENTITIES_LASERTEXT_H
 
