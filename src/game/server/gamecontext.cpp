@@ -4018,9 +4018,9 @@ void CGameContext::ConnectDummy(int Dummymode, vec2 Pos, int FlagPlayer)
 	m_apPlayers[DummyID]->m_ForceSpawnPos = Pos;
 	m_apPlayers[DummyID]->m_FlagPlayer = FlagPlayer;
 
-	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER && Collision()->GetRandomTile(TILE_MINIGAME_BLOCK) != vec2(-1, -1))
+	if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_V3_BLOCKER)
 		m_apPlayers[DummyID]->m_Minigame = MINIGAME_BLOCK;
-	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_DUMMY && Collision()->GetRandomTile(ENTITY_SHOP_DUMMY_SPAWN) != vec2(-1, -1))
+	else if (m_apPlayers[DummyID]->m_Dummymode == DUMMYMODE_SHOP_DUMMY)
 		m_apPlayers[DummyID]->m_Minigame = -1;
 
 	str_copy(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName, "greensward", sizeof(m_apPlayers[DummyID]->m_TeeInfos.m_SkinName));
